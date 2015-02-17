@@ -23,6 +23,8 @@ include_directories(SYSTEM ${THIRDPARTY_DIR}/SDL/include)
 set(SRCS
     src/system/window.cpp
     src/system/resource.cpp
+    src/system/resource_manager.cpp
+
     src/main.cpp
 )
 set(HDRS
@@ -37,6 +39,7 @@ set(HDRS
 
     include/system/window.hpp
     include/system/resource.hpp
+    include/system/resource_manager.hpp
 )
 
 include_directories(include)
