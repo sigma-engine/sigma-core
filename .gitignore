@@ -4,3 +4,6 @@
 # Ide Generated files
 *.txt.user
 .idea/
+
+# Generated Source files
+generated
