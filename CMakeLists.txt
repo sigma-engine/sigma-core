@@ -51,6 +51,7 @@ set(SRCS
     src/system/resource_manager.cpp
 
     generated/gl_core_4_0.cpp
+    src/graphics/opengl/shader.cpp
 
     src/main.cpp
 )
@@ -65,6 +66,7 @@ set(HDRS
     include/math/vec4.hpp
 
     generated/gl_core_4_0.hpp
+    include/graphics/opengl/shader.hpp
 
     include/system/window.hpp
     include/system/resource.hpp
