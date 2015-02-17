@@ -52,6 +52,7 @@ set(SRCS
 
     generated/gl_core_4_0.cpp
     src/graphics/opengl/shader.cpp
+    src/graphics/opengl/program.cpp
 
     src/main.cpp
 )
@@ -67,6 +68,7 @@ set(HDRS
 
     generated/gl_core_4_0.hpp
     include/graphics/opengl/shader.hpp
+    include/graphics/opengl/program.hpp
 
     include/system/window.hpp
     include/system/resource.hpp
