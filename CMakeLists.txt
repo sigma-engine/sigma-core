@@ -53,6 +53,7 @@ set(SRCS
     generated/gl_core_4_0.cpp
     src/graphics/opengl/shader.cpp
     src/graphics/opengl/program.cpp
+    src/graphics/opengl/vertex_buffer.cpp
 
     src/main.cpp
 )
@@ -60,15 +61,17 @@ set(HDRS
     include/math/mat2.hpp
     include/math/mat3.hpp
     include/math/mat4.hpp
-    include/math/quaternion.hpp
-    include/math/utils.hpp
     include/math/vec2.hpp
     include/math/vec3.hpp
     include/math/vec4.hpp
+    include/math/utils.hpp
+    include/math/quaternion.hpp
 
     generated/gl_core_4_0.hpp
+    include/graphics/opengl/buffer.hpp
     include/graphics/opengl/shader.hpp
     include/graphics/opengl/program.hpp
+    include/graphics/opengl/vertex_buffer.hpp
 
     include/system/window.hpp
     include/system/resource.hpp
