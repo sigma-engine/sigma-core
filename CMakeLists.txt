@@ -12,3 +12,5 @@ find_package(Boost REQUIRED COMPONENTS serialization)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
 add_subdirectory(engine)
+
+add_subdirectory(editor)
