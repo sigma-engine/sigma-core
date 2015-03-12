@@ -9,6 +9,7 @@
 namespace sigmafive {
 	namespace graphics {
 		namespace opengl {
+			//TODO make vertex_buffer a template class
 			class vertex_buffer {
 			public:
 				vertex_buffer(buffer_usage usage);
