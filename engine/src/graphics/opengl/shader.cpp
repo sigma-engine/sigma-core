@@ -1,38 +1,22 @@
 #include <graphics/opengl/shader.hpp>
-#include <gl_core_4_0.hpp>
 
 namespace sigmafive {
 	namespace graphics {
 		namespace opengl {
-			namespace detail {
-				static
-				#if __cplusplus >= 201402L //TODO remove this when g++ has full support for c++14
-				constexpr
-				#endif
-				GLenum convert_shader_type(shader::shader_type type) {
-					switch (type) {
-						case shader::vertex_shader:
-							return gl::VERTEX_SHADER;
-						case shader::fragment_shader:
-							return gl::FRAGMENT_SHADER;
-					}
-				}
-			}
-
-			shader::shader(shader::shader_type type) :
+			shader::shader(shader_type type) :
 				type_(type),gl_object_(0),compiled_(false) {
-				gl_object_ = gl::CreateShader(detail::convert_shader_type(type_)); //TODO GL_CHECK_ERROR;
+				gl_object_ = gl::CreateShader((GLenum)type_); //TODO GL_CHECK_ERROR;
 			}
 
 			shader::~shader() {
-				gl::DeleteShader(detail::convert_shader_type(type_)); //TODO GL_CHECK_ERROR;
+				gl::DeleteShader((GLenum)type_); //TODO GL_CHECK_ERROR;
 			}
 
 			bool shader::operator==(const shader &other) const {
 				return gl_object_ == other.gl_object_ && type_ == other.type_; //TODO compiled???
 			}
 
-			shader::shader_type shader::type() const {
+			shader_type shader::type() const {
 				return type_;
 			}
 
@@ -61,14 +45,14 @@ namespace sigmafive {
 						std::string message;
 						message.resize(static_cast<std::size_t>(log_length));
 
-						gl::GetShaderInfoLog(gl_object_, log_length, &log_length, &message[0]); //TODO GL_CHECK_ERROR;
+						gl::GetShaderInfoLog(gl_object_, log_length, &log_length, (GLchar*)message.data()); //TODO GL_CHECK_ERROR;
 						return message;
 					}
 				}
 				return "";
 			}
 
-            shader::operator std::uint32_t() const {
+            shader::operator GLuint() const {
                 return gl_object_;
             }
         }

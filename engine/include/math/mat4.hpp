@@ -168,7 +168,7 @@ public:
 		return std::move(vec4_t<T>(data_[0][c],data_[1][c],data_[2][c],data_[3][c]));
 	}
 
-	inline vec4_t<T> &setColumn(int c,const vec4_t<T> &v) {
+	inline mat4x4_t<T> &setColumn(int c,const vec4_t<T> &v) {
 		data_[0][c] = v.x;
 		data_[1][c] = v.y;
 		data_[2][c] = v.z;

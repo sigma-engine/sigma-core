@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <vector>
 #include <graphics/opengl/buffer.hpp>
+#include <gl_core_4_0.hpp>
 
 namespace sigmafive {
 	namespace graphics {
@@ -20,12 +21,14 @@ namespace sigmafive {
 
 				std::size_t stride() const;
 
+				operator GLuint() const;
+
 			protected:
 				void set_data(const void *data, std::size_t stride, std::size_t size);
 
 			private:
 				buffer_usage usage_;
-				std::uint32_t gl_object_;
+				GLuint gl_object_;
 				std::size_t size_;
 				std::size_t stride_;
 			};

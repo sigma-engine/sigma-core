@@ -1,12 +1,18 @@
 #ifndef SIGMAFIVE_GRAPHICS_OPENGL_PROGRAM_HPP
 #define SIGMAFIVE_GRAPHICS_OPENGL_PROGRAM_HPP
 
+#include <math/vec2.hpp>
+#include <math/vec3.hpp>
+#include <math/vec4.hpp>
+#include <math/mat2.hpp>
+#include <math/mat3.hpp>
+#include <math/mat4.hpp>
+#include <math/quaternion.hpp>
 #include <graphics/opengl/shader.hpp>
 
-#include <cstdint>
 #include <string>
 #include <vector>
-#include <functional>
+#include <gl_core_4_0.hpp>
 
 namespace sigmafive {
 	namespace graphics {
@@ -24,8 +30,49 @@ namespace sigmafive {
 				void detach(shader &shader);
 
 				std::string link();
+
+				GLint get_uniform_location(std::string name) const;
+
+				template<typename T>
+				void set_uniform(const std::string &name,T&& value) {
+					set_uniform(get_uniform_location(name),std::forward<T>(value));
+				}
+
+				void set_uniform(GLint location,bool value);
+
+				void set_uniform(GLint location,int value);
+
+				void set_uniform(GLint location,float value);
+
+				void set_uniform(GLint location,vec2_t<bool> value);
+
+				void set_uniform(GLint location,vec2_t<int> value);
+
+				void set_uniform(GLint location,vec2_t<float> value);
+
+				void set_uniform(GLint location,vec3_t<bool> value);
+
+				void set_uniform(GLint location,vec3_t<int> value);
+
+				void set_uniform(GLint location,vec3_t<float> value);
+
+				void set_uniform(GLint location,vec4_t<bool> value);
+
+				void set_uniform(GLint location,vec4_t<int> value);
+
+				void set_uniform(GLint location,vec4_t<float> value);
+
+				void set_uniform(GLint location,mat2x2_t<float> value);
+
+				void set_uniform(GLint location,mat3x3_t<float> value);
+
+				void set_uniform(GLint location,mat4x4_t<float> value);
+
+				void use() const;
+
+				operator GLuint() const;
 			private:
-				std::uint32_t gl_object_;
+				GLuint gl_object_;
 				bool linked_;
 				std::vector<std::reference_wrapper<shader>> attached_shaders_;
 			};

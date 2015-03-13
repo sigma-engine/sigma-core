@@ -10,11 +10,9 @@
 
 #include <iostream>
 
-struct test_vertex {
-    float3 pos;
-    float3 normal;
-    float2 texcoord;
-    float4 tangent;
+struct vertex {
+    float3 position;
+    float4 color;
 };
 
 int main(int argc, char const *argv[]) {
@@ -33,40 +31,63 @@ int main(int argc, char const *argv[]) {
     context_attributes.vsync = false;
     sigmafive::system::window window("Sigma Five", int2(800, 600), context_attributes);
 
-    float4x4 projection_matrix = float4x4::perspective(deg_to_rad(45.0f),800.0f/600.0f,0.01,1000.0f);
-    float4x4 view_matrix;
-
-    sigmafive::graphics::opengl::shader vertex_shader(sigmafive::graphics::opengl::shader::vertex_shader);
+    sigmafive::graphics::opengl::shader vertex_shader(sigmafive::graphics::opengl::shader_type::vertex);
     vertex_shader.set_source(GLSL_440(
-        in mat4 projection_matrix;
-        in mat4 view_matrix;
-        void main() {
-        }
+            layout(location = 0) in vec3 vertex_position;
+            layout(location = 1) in vec4 vertex_color;
+
+            uniform mat4 projection_matrix;
+            uniform mat4 view_matrix;
+            uniform mat4 model_matrix;
+
+            out vec4 vColor;
+            void main(void) {
+                vec4 a = vec4(vertex_position,1.0f);
+                vColor = vertex_color;
+                gl_Position = projection_matrix * view_matrix * model_matrix * a;
+            }
     ));
 
-    sigmafive::graphics::opengl::shader fragment_shader(sigmafive::graphics::opengl::shader::fragment_shader);
+    sigmafive::graphics::opengl::shader fragment_shader(sigmafive::graphics::opengl::shader_type::fragment);
     fragment_shader.set_source(std::string(GLSL_440(
-        void main() {
-        }
+            in vec4 vColor;
+
+            void main() {
+                gl_FragColor = vColor;
+            }
     )));
 
     sigmafive::graphics::opengl::program program;
+
     program.attach(vertex_shader);
     program.attach(fragment_shader);
 
     std::cout << program.link() << std::endl;
 
-    std::vector<test_vertex> v = {
-            {float3{0,0,0},float3{0,1,0},float2{0,0},float4{0,0,1,0}},
-            {float3{1,0,0},float3{0,1,0},float2{0,0},float4{0,0,1,0}},
-            {float3{0,1,0},float3{0,1,0},float2{0,0},float4{0,0,1,0}}
+    std::vector<vertex> vertices = {
+            {{-1.0f,-1.0f,0.0f}, {1,0,0,1}},
+            {{1.0f ,-1.0f,0.0f}, {0,1,0,1}},
+            {{0.0f ,1.0f ,0.0f}, {0,0,1,1}}
     };
-    sigmafive::graphics::opengl::vertex_buffer<test_vertex> vertex_buffer(sigmafive::graphics::opengl::static_draw);
-    vertex_buffer.set_data(v);
+
+    sigmafive::graphics::opengl::vertex_buffer<vertex> vertex_buffer(sigmafive::graphics::opengl::buffer_usage::static_draw);
+    vertex_buffer.set_data(vertices);
+
 
     sigmafive::graphics::opengl::vertex_array vertex_array;
+    vertex_array.bind(vertex_buffer, 0, &vertex::position);
+    vertex_array.bind(vertex_buffer, 1, &vertex::color);
+
+    float4x4 projection_matrix;
+    float4x4 view_matrix;
+    float4x4 model_matrix;
 
     while(window.good()) {
+        program.use();
+        program.set_uniform("projection_matrix",projection_matrix);
+        program.set_uniform("view_matrix",view_matrix);
+        program.set_uniform("model_matrix",model_matrix);
+        vertex_array.draw(sigmafive::graphics::opengl::primitive_type::triangle_strip,0,3);
     }
 
     return 0;

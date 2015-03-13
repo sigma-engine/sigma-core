@@ -11,6 +11,11 @@
 
 namespace sigmafive {
 
+    template<class T,typename U>
+    std::ptrdiff_t member_offset(U T::* member) {
+        return reinterpret_cast<std::ptrdiff_t >(&(static_cast<T*>(nullptr)->*member));
+    }
+
     //TODO move these into their respective files
     template<typename>
     struct component_info;
@@ -34,7 +39,7 @@ namespace sigmafive {
     };
 
     template<typename T>
-    struct component_info<quad_t<T>> {
+    struct component_info<quaternion_t<T>> {
         static constexpr const int number_of_components = 4;
         typedef T component_type;
     };

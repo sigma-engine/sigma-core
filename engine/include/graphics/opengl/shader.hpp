@@ -1,8 +1,8 @@
 #ifndef SIGMAFIVE_GRAPHICS_OPENGL_SHADER_HPP
 #define SIGMAFIVE_GRAPHICS_OPENGL_SHADER_HPP
 
-#include <cstdint>
 #include <string>
+#include <gl_core_4_0.hpp>
 
 #define GLSL_110(x) "#version 110\n" #x
 #define GLSL_120(x) "#version 120\n" #x
@@ -20,13 +20,12 @@
 namespace sigmafive {
 	namespace graphics {
 		namespace opengl {
+			enum class shader_type {
+				vertex = gl::VERTEX_SHADER,
+				fragment = gl::FRAGMENT_SHADER
+			};
 			class shader {
 			public:
-				enum shader_type {
-					vertex_shader,
-					fragment_shader
-				};
-
 				shader(shader_type type);
 
 				~shader();
@@ -41,10 +40,10 @@ namespace sigmafive {
 
 				std::string compile();
 
-				operator std::uint32_t() const;
+				operator GLuint() const;
 			private:
 				shader_type type_;
-				std::uint32_t gl_object_;
+				GLuint gl_object_;
 				bool compiled_;
 			};
 		}

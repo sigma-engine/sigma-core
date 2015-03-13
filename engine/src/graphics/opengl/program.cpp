@@ -1,6 +1,7 @@
 #include <graphics/opengl/program.hpp>
 #include <algorithm>
 #include <gl_core_4_0.hpp>
+#include <GL/gl.h>
 
 namespace sigmafive {
 	namespace graphics {
@@ -73,6 +74,78 @@ namespace sigmafive {
 					}
 				}
 				return "";
+			}
+
+			GLint program::get_uniform_location(std::string name) const {
+				return gl::GetUniformLocation(gl_object_,name.c_str()); //TODO GL_CHECK_ERROR;
+			}
+
+			void program::set_uniform(GLint location, bool value) {
+				gl::Uniform1ui(location,value); //TODO GL_CHECK_ERROR;
+			}
+
+			void program::set_uniform(GLint location, int value) {
+				gl::Uniform1i(location,value); //TODO GL_CHECK_ERROR;
+			}
+
+			void program::set_uniform(GLint location, float value) {
+				gl::Uniform1f(location,value); //TODO GL_CHECK_ERROR;
+			}
+
+			void program::set_uniform(GLint location,vec2_t<bool> value) {
+				gl::Uniform2ui(location,value.x,value.y); //TODO GL_CHECK_ERROR;
+			}
+
+			void program::set_uniform(GLint location,vec2_t<int> value) {
+				gl::Uniform2i(location,value.x,value.y); //TODO GL_CHECK_ERROR;
+			}
+
+			void program::set_uniform(GLint location,vec2_t<float> value) {
+				gl::Uniform2f(location,value.x,value.y); //TODO GL_CHECK_ERROR;
+			}
+
+			void program::set_uniform(GLint location,vec3_t<bool> value) {
+				gl::Uniform3ui(location,value.x,value.y,value.z); //TODO GL_CHECK_ERROR;
+			}
+
+			void program::set_uniform(GLint location,vec3_t<int> value) {
+				gl::Uniform3i(location,value.x,value.y,value.z); //TODO GL_CHECK_ERROR;
+			}
+
+			void program::set_uniform(GLint location,vec3_t<float> value) {
+				gl::Uniform3f(location,value.x,value.y,value.z); //TODO GL_CHECK_ERROR;
+			}
+
+			void program::set_uniform(GLint location,vec4_t<bool> value) {
+				gl::Uniform4ui(location,value.x,value.y,value.z,value.w); //TODO GL_CHECK_ERROR;
+			}
+
+			void program::set_uniform(GLint location,vec4_t<int> value) {
+				gl::Uniform4i(location,value.x,value.y,value.z,value.w); //TODO GL_CHECK_ERROR;
+			}
+
+			void program::set_uniform(GLint location,vec4_t<float> value) {
+				gl::Uniform4f(location,value.x,value.y,value.z,value.w); //TODO GL_CHECK_ERROR;
+			}
+
+			void program::set_uniform(GLint location,mat2x2_t<float> value) {
+				gl::UniformMatrix2fv(location,1,gl::FALSE_,&value[0].x); //TODO GL_CHECK_ERROR;
+			}
+
+			void program::set_uniform(GLint location,mat3x3_t<float> value) {
+				gl::UniformMatrix3fv(location,1,gl::FALSE_,&value[0].x); //TODO GL_CHECK_ERROR;
+			}
+
+			void program::set_uniform(GLint location,mat4x4_t<float> value) {
+				gl::UniformMatrix4fv(location,1,gl::FALSE_,&value[0].x); //TODO GL_CHECK_ERROR;
+			}
+
+			void program::use() const {
+				gl::UseProgram(gl_object_);
+			}
+
+			program::operator GLuint() const {
+				return gl_object_;
 			}
 		}
 	}
