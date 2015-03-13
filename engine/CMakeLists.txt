@@ -49,6 +49,8 @@ set(SRCS
     src/main.cpp
 )
 set(HDRS
+    include/type_info.hpp
+
     include/math/mat2.hpp
     include/math/mat3.hpp
     include/math/mat4.hpp
