@@ -61,7 +61,7 @@ int main(int argc, char const *argv[]) {
             {float3{1,0,0},float3{0,1,0},float2{0,0},float4{0,0,1,0}},
             {float3{0,1,0},float3{0,1,0},float2{0,0},float4{0,0,1,0}}
     };
-    sigmafive::graphics::opengl::vertex_buffer vertex_buffer(sigmafive::graphics::opengl::static_draw);
+    sigmafive::graphics::opengl::vertex_buffer<test_vertex> vertex_buffer(sigmafive::graphics::opengl::static_draw);
     vertex_buffer.set_data(v);
 
     sigmafive::graphics::opengl::vertex_array vertex_array;
