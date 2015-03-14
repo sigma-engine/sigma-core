@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>sigma-five-editor</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
+  <widget class="sigmafive::editor::widgets::OpenGLWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <property name="spacing">
      <number>0</number>
@@ -50,6 +50,14 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>sigmafive::editor::widgets::OpenGLWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">editor/widgets/OpenGLWidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

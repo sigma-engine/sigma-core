@@ -8,9 +8,11 @@ find_package(Qt5Widgets REQUIRED)
 set(SRCS
     src/main.cpp
     src/editor/widgets/MainWindow.cpp
+    src/editor/widgets/OpenGLWidget.cpp
 )
 set(HDRS
     include/editor/widgets/MainWindow.hpp
+    include/editor/widgets/OpenGLWidget.hpp
 )
 
 qt5_wrap_ui(UI_HEADERS
