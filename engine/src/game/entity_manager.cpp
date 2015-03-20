@@ -5,6 +5,7 @@ namespace sigmafive {
 		entity entity_manager::create() {
 			if(free_entities_.empty()) {
 				entities_.push_back({std::uint32_t(entities_.size()),std::uint32_t(0)});
+				component_masks_.push_back(bitset{std::uint64_t(0)});
 				return entities_.back();
 			}
 			else {
@@ -21,6 +22,7 @@ namespace sigmafive {
 		void entity_manager::destroy(entity e) {
 			if(is_alive(e)) {
 				entities_[e.index].version++;
+				component_masks_[e.index] = bitset{std::uint64_t(0)};
 				free_entities_.push_back(e.index);
 			}
 		}

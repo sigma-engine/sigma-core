@@ -3,8 +3,8 @@
 namespace sigmafive {
 	namespace game {
 		namespace detail {
-			unsigned int create_component_id() {
-				static unsigned int count;
+			std::uint64_t create_component_id() {
+				static std::uint64_t count = -1;
 				return count++;
 			}
 		}
