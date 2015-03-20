@@ -46,6 +46,8 @@ set(SRCS
     src/graphics/opengl/vertex_array.cpp
     src/graphics/opengl/vertex_buffer.cpp
 
+    src/game/entity.cpp
+
     src/main.cpp
 )
 set(HDRS
@@ -70,6 +72,8 @@ set(HDRS
     include/system/window.hpp
     include/system/resource.hpp
     include/system/resource_manager.hpp
+
+    include/game/entity.hpp
 )
 
 include_directories(include)
