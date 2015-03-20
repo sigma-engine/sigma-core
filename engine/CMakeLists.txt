@@ -47,6 +47,7 @@ set(SRCS
     src/graphics/opengl/vertex_buffer.cpp
 
     src/game/entity.cpp
+    src/game/component.cpp
 
     src/main.cpp
 )
@@ -74,6 +75,7 @@ set(HDRS
     include/system/resource_manager.hpp
 
     include/game/entity.hpp
+    include/game/component.hpp
 )
 
 include_directories(include)
