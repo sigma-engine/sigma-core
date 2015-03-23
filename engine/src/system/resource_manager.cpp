@@ -25,6 +25,7 @@ namespace sigmafive {
             if(it != resources_.end())
                 return resources_[resource_key];
             //TODO read from file
+            return nullptr;
         }
     }
 }

@@ -1,6 +1,7 @@
 #ifndef SIGMAFIVE_GAME_COMPONENT_HPP
 #define SIGMAFIVE_GAME_COMPONENT_HPP
 
+#include <bitset>
 #include <cstdint>
 #include <type_traits>
 #include <boost/preprocessor.hpp>
@@ -16,6 +17,10 @@
 
 namespace sigmafive {
 	namespace game {
+		//TODO create a dynamic bitset to avoid this max
+		static constexpr const std::uint64_t MAX_NUM_COMPONENTS = 64;
+		typedef std::bitset<MAX_NUM_COMPONENTS> bitset;
+
 		class component {
 			SIGMAFIVE_COMPONENT();
 		public:
@@ -24,6 +29,23 @@ namespace sigmafive {
 
 		namespace detail {
 			std::uint64_t create_component_id();
+
+			template<typename C,typename ... Rest>
+			struct bitset_builder {
+				bitset operator()() const {
+					return bitset_builder<C>{}() | bitset_builder<Rest...>{}();
+				}
+			};
+
+			template<typename C>
+			struct bitset_builder<C> {
+				bitset operator()() const {
+					bitset b;
+					b.set(C::ID,true);
+					return b;
+				}
+			};
+
 		}
 	}
 }

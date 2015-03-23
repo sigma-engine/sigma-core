@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.12)
 project(sigma-five)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -std=c++11)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror -Wno-unused-function")
 endif()
 
 set(THIRDPARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty)
