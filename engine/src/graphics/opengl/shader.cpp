@@ -9,7 +9,7 @@ namespace sigmafive {
 			}
 
 			shader::~shader() {
-				gl::DeleteShader((GLenum)type_); //TODO GL_CHECK_ERROR;
+				gl::DeleteShader(gl_object_); //TODO GL_CHECK_ERROR;
 			}
 
 			bool shader::operator==(const shader &other) const {
