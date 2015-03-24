@@ -237,18 +237,23 @@ public:
 			   };
 	}
 
+	static mat4x4_t<T> perspective(T fovy, T aspect, T znear, T zfar) {
+		mat4x4_t<T> m;
+		T f = T(1)/std::tan(fovy/T(2));
+		T clip = znear-zfar;
 
-	static mat4x4_t<T> perspective(T fov, T aspect, T near, T far) {
-        T f = T(1)/std::tan(fov/2);
-        T C = -1*(far+near)/(far-near);
-        T D = -2*far*near/(far-near);
-        return {{f/aspect,0,0,0},
-                {0,       f,0,0},
-                {0,       0,C,D},
-                {0,       0,-1,0}};
-    }
+		return {{ f/aspect, 0, 				   	 0,  0 },
+				{ 0		  , f, 				   	 0,  0 },
+				{ 0		  , 0, (zfar+znear)/clip  , -1 },
+				{ 0		  , 0, (2*zfar*znear)/clip,  0 }};
 
-    static mat4x4_t<T> scale(vec3_t<T> scale) {
+		/*return {{ f/aspect, 0, 0				, 0					  },
+			    { 0		  , f, 0				, 0					  },
+			 	{ 0		  , 0, (zfar+znear)/clip, (2*zfar*znear)/clip },
+			 	{ 0		  , 0, -1				, 0					  }};*/
+	};
+
+	static mat4x4_t<T> scale(vec3_t<T> scale) {
         return {{scale.x,0,0,0},
                 {0,scale.y,0,0},
                 {0,0,scale.z},
@@ -265,7 +270,7 @@ public:
                 {0,0,1,pos.z},
                 {0,0,0,1}};
     }
-
+    
 private:
 	vec4_t<T> data_[4];
 };
