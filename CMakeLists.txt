@@ -11,6 +11,13 @@ set(THIRDPARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty)
 find_package(Boost REQUIRED COMPONENTS serialization)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
+#GoogleMock
+set(gtest_force_shared_crt ON)
+set(gtest_disable_pthreads ON)
+
+add_subdirectory(${THIRDPARTY_DIR}/googlemock ${CMAKE_BINARY_DIR}/thirdparty)
+include_directories(SYSTEM ${THIRDPARTY_DIR}/googlemock/include ${THIRDPARTY_DIR}/googlemock/gtest/include)
+
 add_subdirectory(engine)
 
 add_subdirectory(editor)

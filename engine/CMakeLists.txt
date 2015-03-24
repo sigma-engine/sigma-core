@@ -52,7 +52,7 @@ set(SRCS
     src/game/entity_manager.cpp
     src/game/component_pool.cpp
 
-    src/main.cpp
+    #src/main.cpp
 )
 set(HDRS
     include/type_info.hpp
@@ -84,6 +84,14 @@ set(HDRS
     include/game/component_pool.hpp
 )
 
+
+
 include_directories(include)
-add_executable(sigma-five ${SRCS} ${HDRS})
+add_library(sigma-five STATIC ${SRCS} ${HDRS})
 target_link_libraries(sigma-five ${Boost_LIBRARIES} ${OPENGL_LIBRARIES} SDL2 SDL2main)
+
+add_subdirectory(tests)
+
+add_custom_command(TARGET sigma-five
+                   POST_BUILD
+                   COMMAND tests/sigma-five-tests)
