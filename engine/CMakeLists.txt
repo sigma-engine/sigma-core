@@ -43,6 +43,7 @@ set(SRCS
     generated/gl_core_4_0.cpp
     src/graphics/opengl/shader.cpp
     src/graphics/opengl/program.cpp
+    src/graphics/opengl/texture_2d.cpp
     src/graphics/opengl/vertex_array.cpp
     src/graphics/opengl/vertex_buffer.cpp
 
@@ -69,6 +70,7 @@ set(HDRS
     include/graphics/opengl/buffer.hpp
     include/graphics/opengl/shader.hpp
     include/graphics/opengl/program.hpp
+    include/graphics/opengl/texture_2d.hpp
     include/graphics/opengl/vertex_array.hpp
     include/graphics/opengl/vertex_buffer.hpp
 
