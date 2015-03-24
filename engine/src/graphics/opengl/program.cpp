@@ -1,7 +1,6 @@
 #include <graphics/opengl/program.hpp>
 #include <algorithm>
 #include <gl_core_4_0.hpp>
-#include <GL/gl.h>
 
 namespace sigmafive {
 	namespace graphics {
@@ -138,6 +137,16 @@ namespace sigmafive {
 
 			void program::set_uniform(GLint location,mat4x4_t<float> value) {
 				gl::UniformMatrix4fv(location,1,gl::FALSE_,&value[0].x); //TODO GL_CHECK_ERROR;
+			}
+
+			void program::set_uniform(GLint location, unsigned int texture_unit, const texture_2d &texture) {
+				gl::ActiveTexture(gl::TEXTURE0 + texture_unit); //TODO GL_CHECK_ERROR; this might not work right
+				texture.bind();
+				set_uniform(location,(GLint)texture_unit);
+			}
+
+			void program::set_uniform(const std::string &name, unsigned int texture_unit, const texture_2d &texture) {
+				set_uniform(get_uniform_location(name),texture_unit,texture);
 			}
 
 			void program::use() const {

@@ -9,6 +9,7 @@
 #include <math/mat4.hpp>
 #include <math/quaternion.hpp>
 #include <graphics/opengl/shader.hpp>
+#include <graphics/opengl/texture_2d.hpp>
 
 #include <string>
 #include <vector>
@@ -67,6 +68,10 @@ namespace sigmafive {
 				void set_uniform(GLint location,mat3x3_t<float> value);
 
 				void set_uniform(GLint location,mat4x4_t<float> value);
+
+				void set_uniform(GLint location,unsigned int texture_unit,const texture_2d &texture);
+
+				void set_uniform(const std::string &name,unsigned int texture_unit,const texture_2d &texture);
 
 				void use() const;
 
