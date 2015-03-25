@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <type_info.hpp>
 #include <graphics/opengl/util.hpp>
+#include <graphics/opengl/index_buffer.hpp>
 #include <graphics/opengl/vertex_buffer.hpp>
 
 namespace sigmafive {
@@ -38,6 +39,8 @@ namespace sigmafive {
 				}
 
 				void draw(primitive_type mode,std::size_t first,std::size_t count) const;
+
+				void draw(primitive_type mode,const index_buffer &index_buffer,std::size_t first,std::size_t count) const;
 			private:
 				void bind(const vertex_buffer_base &buffer, unsigned int index, unsigned int number_of_components, data_types component_type, bool normalize, const void *offset);
 				std::uint32_t gl_object_;

@@ -41,10 +41,12 @@ set(SRCS
     src/system/resource_manager.cpp
 
     generated/gl_core_4_0.cpp
+    src/graphics/opengl/buffer.cpp
     src/graphics/opengl/shader.cpp
     src/graphics/opengl/program.cpp
     src/graphics/opengl/texture_2d.cpp
     src/graphics/opengl/vertex_array.cpp
+    src/graphics/opengl/index_buffer.cpp
     src/graphics/opengl/vertex_buffer.cpp
 
     src/game/entity.cpp
@@ -72,6 +74,7 @@ set(HDRS
     include/graphics/opengl/program.hpp
     include/graphics/opengl/texture_2d.hpp
     include/graphics/opengl/vertex_array.hpp
+    include/graphics/opengl/index_buffer.hpp
     include/graphics/opengl/vertex_buffer.hpp
 
     include/system/window.hpp
@@ -95,3 +98,6 @@ add_subdirectory(tests)
 add_custom_command(TARGET sigma-five
                    POST_BUILD
                    COMMAND tests/sigma-five-tests)
+
+add_executable(sigma-five-sample src/main.cpp )
+target_link_libraries(sigma-five-sample sigma-five)

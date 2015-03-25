@@ -25,6 +25,18 @@ namespace sigmafive {
 				gl::BindVertexArray(gl_object_); //TODO GL_CHECK_ERROR;
 				gl::DrawArrays(static_cast<GLenum>(mode),first,count); //TODO GL_CHECK_ERROR;
 			}
+
+			void vertex_array::draw(primitive_type mode, const index_buffer &index_buffer, std::size_t first, std::size_t count) const {
+				gl::BindVertexArray(gl_object_); //TODO GL_CHECK_ERROR;
+
+				gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, index_buffer); //TODO index_buffer.bind()
+				gl::DrawElements(
+						gl::TRIANGLES,      // mode
+						count,    // count
+						gl::UNSIGNED_INT,   // type
+						(void*)first           // element array buffer offset
+				);
+			}
 		}
 	}
 }

@@ -1,36 +1,16 @@
 #ifndef SIGMAFIVE_GRAPHICS_OPENGL_VERTEX_BUFFER_HPP
 #define SIGMAFIVE_GRAPHICS_OPENGL_VERTEX_BUFFER_HPP
 
-#include <type_traits>
-#include <cstdint>
-#include <vector>
 #include <graphics/opengl/buffer.hpp>
-#include <gl_core_4_0.hpp>
+
+#include <vector>
 
 namespace sigmafive {
 	namespace graphics {
 		namespace opengl {
-
-			class vertex_buffer_base {
+			class vertex_buffer_base : public buffer {
 			public:
-				vertex_buffer_base(buffer_usage usage);
-
-				virtual ~vertex_buffer_base();
-
-				std::size_t size() const;
-
-				std::size_t stride() const;
-
-				operator GLuint() const;
-
-			protected:
-				void set_data(const void *data, std::size_t stride, std::size_t size);
-
-			private:
-				buffer_usage usage_;
-				GLuint gl_object_;
-				std::size_t size_;
-				std::size_t stride_;
+				vertex_buffer_base(buffer_usage usage) : buffer(buffer_type::array_buffer,usage) {}
 			};
 
 			template<typename T>
@@ -42,7 +22,7 @@ namespace sigmafive {
 				~vertex_buffer() {}
 
 				void set_data(const std::vector<T> &data) {
-					vertex_buffer_base::set_data(data.data(), sizeof(T), data.size());
+					buffer::set_data(data.data(), sizeof(T), data.size());
 				}
 			private:
 			};
