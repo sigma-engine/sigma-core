@@ -49,6 +49,7 @@ set(SRCS
     src/graphics/opengl/index_buffer.cpp
     src/graphics/opengl/vertex_buffer.cpp
 
+    src/game/scene.cpp
     src/game/entity.cpp
     src/game/component.cpp
     src/game/entity_manager.cpp
@@ -81,6 +82,7 @@ set(HDRS
     include/system/resource.hpp
     include/system/resource_manager.hpp
 
+    include/game/scene.hpp
     include/game/entity.hpp
     include/game/component.hpp
     include/game/entity_manager.hpp
@@ -94,10 +96,6 @@ add_library(sigma-five STATIC ${SRCS} ${HDRS})
 target_link_libraries(sigma-five ${Boost_LIBRARIES} ${OPENGL_LIBRARIES} SDL2 SDL2main)
 
 add_subdirectory(tests)
-
-add_custom_command(TARGET sigma-five
-                   POST_BUILD
-                   COMMAND tests/sigma-five-tests)
 
 add_executable(sigma-five-sample src/main.cpp )
 target_link_libraries(sigma-five-sample sigma-five)
