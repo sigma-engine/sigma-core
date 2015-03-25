@@ -48,6 +48,7 @@ set(SRCS
     src/graphics/opengl/vertex_array.cpp
     src/graphics/opengl/index_buffer.cpp
     src/graphics/opengl/vertex_buffer.cpp
+    src/graphics/opengl/scene_renderer.cpp
 
     src/game/scene.cpp
     src/game/entity.cpp
@@ -70,6 +71,7 @@ set(HDRS
     include/math/quaternion.hpp
 
     generated/gl_core_4_0.hpp
+    include/graphics/opengl/util.hpp
     include/graphics/opengl/buffer.hpp
     include/graphics/opengl/shader.hpp
     include/graphics/opengl/program.hpp
@@ -77,6 +79,7 @@ set(HDRS
     include/graphics/opengl/vertex_array.hpp
     include/graphics/opengl/index_buffer.hpp
     include/graphics/opengl/vertex_buffer.hpp
+    include/graphics/opengl/scene_renderer.hpp
 
     include/system/window.hpp
     include/system/resource.hpp
