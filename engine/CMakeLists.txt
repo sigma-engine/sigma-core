@@ -40,6 +40,8 @@ set(SRCS
     src/system/resource.cpp
     src/system/resource_manager.cpp
 
+    src/graphics/static_mesh.cpp
+
     generated/gl_core_4_0.cpp
     src/graphics/opengl/buffer.cpp
     src/graphics/opengl/shader.cpp
@@ -69,6 +71,8 @@ set(HDRS
     include/math/vec4.hpp
     include/math/utils.hpp
     include/math/quaternion.hpp
+
+    include/graphics/static_mesh.hpp
 
     generated/gl_core_4_0.hpp
     include/graphics/opengl/util.hpp
