@@ -2,8 +2,8 @@
 #include <iostream>
 namespace sigmafive {
 	namespace game {
-		static_mesh_component_system::static_mesh_component_system() {
-
+		static_mesh_component_system::static_mesh_component_system(game::scene &scene)
+				: scene_(scene) {
 		}
 
 		static_mesh_component_system::~static_mesh_component_system() {

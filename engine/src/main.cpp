@@ -33,7 +33,7 @@ int main(int argc, char const *argv[]) {
 
     sigmafive::game::scene scene;
     sigmafive::game::entity_manager entity_manager;
-    entity_manager.add_system<sigmafive::game::static_mesh_component_system>();
+    entity_manager.add_system<sigmafive::game::static_mesh_component_system>(scene);
 
     auto e = entity_manager.create();
     entity_manager.add_component<sigmafive::game::transform_component>(e);

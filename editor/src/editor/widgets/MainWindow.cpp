@@ -9,6 +9,7 @@
 #include <assimp/scene.h>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
+#include <game/static_mesh_component_system.hpp>
 
 namespace sigmafive {
     namespace editor {
@@ -18,6 +19,8 @@ namespace sigmafive {
                     ui(new Ui::MainWindow) {
                 ui->setupUi(this);
                 this->setCentralWidget(new OpenGLWidget(resource_manager_,scene_,this));
+
+                entity_manager.add_system<game::static_mesh_component_system>(scene_);
             }
 
             MainWindow::~MainWindow() {
@@ -61,12 +64,15 @@ namespace sigmafive {
                         }
                     }
 
-                    auto smesh = new graphics::static_mesh();
-                    smesh->set_data(vertices,triangles);
+                    auto static_mesh_uuid = resource_manager_.generate_key();
+                    boost::shared_ptr<graphics::static_mesh> static_mesh(new graphics::static_mesh());
+                    static_mesh->set_data(vertices,triangles);
+                    resource_manager_.insert(static_mesh_uuid,std::move(static_mesh));
 
-                    auto meshid = resource_manager_.generate_key();
-
-                    resource_manager_.insert(meshid,boost::shared_ptr<graphics::static_mesh>(smesh));
+                    auto e = entity_manager.create();
+                    entity_manager.add_component<game::transform_component>(e);
+                    auto static_mesh_component = entity_manager.add_component<game::static_mesh_component>(e);
+                    static_mesh_component->static_mesh = static_mesh_uuid;
                 }
             }
 

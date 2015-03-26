@@ -4,13 +4,14 @@
 #include <game/component_system.hpp>
 #include <game/transform_component.hpp>
 #include <game/static_mesh_component.hpp>
+#include "scene.hpp"
 
 namespace sigmafive {
 	namespace game {
 		class static_mesh_component_system : public component_system {
 			SIGMAFIVE_COMPONENT_SYSTEM();
 		public:
-			static_mesh_component_system();
+			static_mesh_component_system(game::scene &scene);
 
 			virtual ~static_mesh_component_system();
 
@@ -22,6 +23,7 @@ namespace sigmafive {
 
 			virtual void process(entity_system &entity_system) override;
 		private:
+			scene scene_;
 		};
 	}
 }
