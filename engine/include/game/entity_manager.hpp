@@ -127,11 +127,11 @@ namespace sigmafive {
 
 			void destroy(entity e);
 
-			template<typename T>
-			T *add_system() {
+			template<typename T,typename ... ARGS>
+			T *add_system(ARGS&& ... args) {
 				if(T::ID >= component_systems_.size())
 					component_systems_.resize(T::ID+1,nullptr);
-				component_systems_[T::ID] = std::unique_ptr<T>(new T());
+				component_systems_[T::ID] = std::unique_ptr<T>(new T(std::forward<ARGS>(args)...));
 				for(entity e:*this) {
 					if(component_systems_[T::ID]->is_intrested(e))
 						component_systems_[T::ID]->entity_added(e);
