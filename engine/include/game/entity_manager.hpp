@@ -65,6 +65,10 @@ namespace sigmafive {
 
 			~entity_manager();
 
+			entity_manager(const entity_manager &) = delete;
+
+			entity_manager&operator=(const entity_manager &) = delete;
+
 			entity create();
 
 			bool is_alive(entity e) const;
@@ -78,15 +82,16 @@ namespace sigmafive {
 					components_by_type_.resize(T::ID + 1);
 
 				if(!components_by_type_[T::ID])
-					components_by_type_[T::ID] = std::move(std::unique_ptr<component_pool_base>(new component_pool<T>{}));
+					components_by_type_[T::ID] = std::unique_ptr<component_pool_base>(new component_pool<T>{});
 
+				entity old = entities_[e.id().index];
 				entities_[e.id().index].component_mask_.set(T::ID,true);
 				auto c = components_by_type_[T::ID]->add_component(e.id());
 
 				for(const auto &sys:component_systems_) {
 					if(sys) {
-						if (sys->is_intrested(e))
-							sys->entity_added(e);
+						if (!sys->is_intrested(old) && sys->is_intrested(entities_[e.id().index]))
+							sys->entity_added(entities_[e.id().index]);
 					}
 				}
 
@@ -118,14 +123,16 @@ namespace sigmafive {
 				assert(is_alive(e) && "entity must be alive to remove a component from it.");
 				assert(has_component<T>(e) && "can not remove a component from an entity that does not have one.");
 
+				entity newE = entities_[e.id().index];
+				newE.component_mask_.set(T::ID,false);
 				for(const auto &sys:component_systems_) {
 					if(sys) {
-						if (sys->is_intrested(e))
-							sys->entity_removed(e);
+						if (sys->is_intrested(entities_[e.id().index]) && ! sys->is_intrested(newE))
+							sys->entity_removed(entities_[e.id().index]);
 					}
 				}
 
-				components_by_type_[T::ID]->remove_component(e);
+				components_by_type_[T::ID]->remove_component(entities_[e.id().index].id());
 				entities_[e.id().index].component_mask_.set(T::ID,false);
 			}
 
@@ -159,8 +166,8 @@ namespace sigmafive {
 						if (component_systems_[T::ID]->is_intrested(e))
 							component_systems_[T::ID]->entity_removed(e);
 					}
+					component_systems_[T::ID] = nullptr;
 				}
-				component_systems_[T::ID] = nullptr;
 			}
 
 			iterator begin();
