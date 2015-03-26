@@ -7,6 +7,12 @@ namespace sigmafive {
 
 		static_mesh::~static_mesh() {
 		}
+
+		void static_mesh::set_data(const std::vector<static_mesh::vertex> &vertices, const std::vector<static_mesh::triangle> &triangles) {
+			//TODO add checks
+			vertices_ = std::move(vertices);
+			triangles_ = std::move(triangles);
+		}
 	}
 }
 BOOST_CLASS_EXPORT(sigmafive::graphics::static_mesh);

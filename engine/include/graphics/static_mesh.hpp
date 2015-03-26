@@ -13,7 +13,7 @@
 
 namespace sigmafive {
 	namespace graphics {
-		class static_mesh : public  system::resource {
+		class static_mesh : public system::resource {
 		public:
 			struct vertex {
 				float3 position;
@@ -26,15 +26,18 @@ namespace sigmafive {
 
 			static_mesh();
 
+			void set_data(const std::vector<vertex> &vertices, const std::vector<triangle> &triangles);
+
 			~static_mesh();
 		private:
+			friend class boost::serialization::access;
+			template <typename Archive>
+			void serialize(Archive& ar, const unsigned int version) {
+				ar & boost::serialization::base_object<system::resource>(*this);
+			}
+
 			std::vector<vertex> vertices_;
 			std::vector<triangle> triangles_;
-		};
-
-		struct static_mesh_instance {
-			boost::uuids::uuid resource_uuid;
-			float4x4 model_matrix;
 		};
 	}
 }
