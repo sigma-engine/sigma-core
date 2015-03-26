@@ -60,6 +60,7 @@ set(SRCS
     src/game/component_system.cpp
     src/game/transform_component.cpp
     src/game/static_mesh_component.cpp
+    src/game/static_mesh_component_system.cpp
 
     #src/main.cpp
 )
@@ -100,6 +101,7 @@ set(HDRS
     include/game/component_system.hpp
     include/game/transform_component.hpp
     include/game/static_mesh_component.hpp
+    include/game/static_mesh_component_system.hpp
 )
 
 

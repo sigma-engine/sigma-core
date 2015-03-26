@@ -84,8 +84,10 @@ namespace sigmafive {
 				auto c = components_by_type_[T::ID]->add_component(e.id());
 
 				for(const auto &sys:component_systems_) {
-					if(sys->is_intrested(e))
-						sys->entity_added(e);
+					if(sys) {
+						if (sys->is_intrested(e))
+							sys->entity_added(e);
+					}
 				}
 
 				return static_cast<T*>(c);
@@ -117,8 +119,10 @@ namespace sigmafive {
 				assert(has_component<T>(e) && "can not remove a component from an entity that does not have one.");
 
 				for(const auto &sys:component_systems_) {
-					if(sys->is_intrested(e))
-						sys->entity_removed(e);
+					if(sys) {
+						if (sys->is_intrested(e))
+							sys->entity_removed(e);
+					}
 				}
 
 				components_by_type_[T::ID]->remove_component(e);
@@ -130,13 +134,13 @@ namespace sigmafive {
 			template<typename T,typename ... ARGS>
 			T *add_system(ARGS&& ... args) {
 				if(T::ID >= component_systems_.size())
-					component_systems_.resize(T::ID+1,nullptr);
+					component_systems_.resize(T::ID+1);
 				component_systems_[T::ID] = std::unique_ptr<T>(new T(std::forward<ARGS>(args)...));
-				for(entity e:*this) {
-					if(component_systems_[T::ID]->is_intrested(e))
+				for (entity e:*this) {
+					if (component_systems_[T::ID]->is_intrested(e))
 						component_systems_[T::ID]->entity_added(e);
 				}
-				return component_systems_[T::ID];
+				return static_cast<T*>(component_systems_[T::ID].get());
 			}
 
 			template<typename T>
@@ -150,9 +154,11 @@ namespace sigmafive {
 			void remove_system() {
 				if(T::ID >= component_systems_.size())
 					return;
-				for(entity e:*this) {
-					if(component_systems_[T::ID]->is_intrested(e))
-						component_systems_[T::ID]->entity_removed(e);
+				if(component_systems_[T::ID]) {
+					for (entity e:*this) {
+						if (component_systems_[T::ID]->is_intrested(e))
+							component_systems_[T::ID]->entity_removed(e);
+					}
 				}
 				component_systems_[T::ID] = nullptr;
 			}

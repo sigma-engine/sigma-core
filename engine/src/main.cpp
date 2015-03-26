@@ -1,11 +1,10 @@
 #include <math/vec3.hpp>
-#include <system/window.hpp>
-
 #include <game/scene.hpp>
-#include <graphics/static_mesh.hpp>
+#include <system/window.hpp>
+#include <game/entity_manager.hpp>
 #include <system/resource_manager.hpp>
 #include <graphics/opengl/scene_renderer.hpp>
-#include <game/entity_manager.hpp>
+#include <game/static_mesh_component_system.hpp>
 
 int main(int argc, char const *argv[]) {
     sigmafive::system::context_attributes context_attributes;
@@ -28,6 +27,7 @@ int main(int argc, char const *argv[]) {
 
     sigmafive::game::scene scene;
     sigmafive::game::entity_manager entity_manager;
+    entity_manager.add_system<sigmafive::game::static_mesh_component_system>();
 
     while(window.good()) {
         scene_renderer.render(float4x4(),scene);
