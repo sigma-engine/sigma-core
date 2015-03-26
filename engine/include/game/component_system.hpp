@@ -16,11 +16,13 @@
 
 namespace sigmafive {
 	namespace game {
-		class entity_system;
+		class entity_manager;
 
 		class component_system {
 			SIGMAFIVE_COMPONENT_SYSTEM();
 		public:
+			component_system(game::entity_manager &entity_manager);
+
 			virtual ~component_system();
 
 			virtual bool is_intrested(entity e) const = 0;
@@ -29,7 +31,11 @@ namespace sigmafive {
 
 			virtual void entity_removed(entity e) = 0;
 
-			virtual void process(entity_system &entity_system) = 0;
+			virtual void process() = 0;
+
+		protected:
+			entity_manager &entity_manager_;
+
 		private:
 			friend class boost::serialization::access;
 			template <typename Archive>

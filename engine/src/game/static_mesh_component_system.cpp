@@ -2,8 +2,8 @@
 #include <iostream>
 namespace sigmafive {
 	namespace game {
-		static_mesh_component_system::static_mesh_component_system(game::scene &scene)
-				: scene_(scene) {
+		static_mesh_component_system::static_mesh_component_system(game::entity_manager &entity_manager,game::scene &scene)
+				: component_system(entity_manager), scene_(scene) {
 		}
 
 		static_mesh_component_system::~static_mesh_component_system() {
@@ -22,7 +22,7 @@ namespace sigmafive {
 			std::cout << "entity removed." << std::endl;
 		}
 
-		void static_mesh_component_system::process(entity_system &entity_system) {
+		void static_mesh_component_system::process() {
 
 		}
 	}

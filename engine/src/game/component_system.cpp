@@ -9,6 +9,11 @@ namespace sigmafive {
 			}
 		}
 
+		component_system::component_system(game::entity_manager &entity_manager)
+			: entity_manager_(entity_manager) {
+
+		}
+
 		component_system::~component_system() {
 		}
 	}

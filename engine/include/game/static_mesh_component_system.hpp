@@ -11,7 +11,7 @@ namespace sigmafive {
 		class static_mesh_component_system : public component_system {
 			SIGMAFIVE_COMPONENT_SYSTEM();
 		public:
-			static_mesh_component_system(game::scene &scene);
+			static_mesh_component_system(game::entity_manager &entity_manager,game::scene &scene);
 
 			virtual ~static_mesh_component_system();
 
@@ -21,7 +21,7 @@ namespace sigmafive {
 
 			virtual void entity_removed(entity e) override;
 
-			virtual void process(entity_system &entity_system) override;
+			virtual void process() override;
 		private:
 			scene scene_;
 		};

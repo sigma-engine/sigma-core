@@ -142,7 +142,7 @@ namespace sigmafive {
 			T *add_system(ARGS&& ... args) {
 				if(T::ID >= component_systems_.size())
 					component_systems_.resize(T::ID+1);
-				component_systems_[T::ID] = std::unique_ptr<T>(new T(std::forward<ARGS>(args)...));
+				component_systems_[T::ID] = std::unique_ptr<T>(new T(*this,std::forward<ARGS>(args)...));
 				for (entity e:*this) {
 					if (component_systems_[T::ID]->is_intrested(e))
 						component_systems_[T::ID]->entity_added(e);
