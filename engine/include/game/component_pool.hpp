@@ -5,6 +5,7 @@
 #include <game/component.hpp>
 
 #include <vector>
+#include <memory>
 
 namespace sigmafive {
 	namespace game {
@@ -20,26 +21,31 @@ namespace sigmafive {
 		private:
 		};
 
+		//TODO replace this with a real pool
 		template<typename T>
 		class component_pool : public component_pool_base {
 		public:
+			~component_pool() {
+			}
+
 			virtual component *add_component(entity::entity_id e) override {
 				if(e.index >= components_.size())
-					components_.resize(e.index + 1);
-				return static_cast<component*>(components_.data()+e.index);
+					components_.resize(e.index + 1, nullptr);
+				components_[e.index] = std::unique_ptr<T>(new T());
+				return static_cast<component*>(components_[e.index]);
 			}
 
 			virtual component *get_component(entity::entity_id e) override {
 				if(e.index >= components_.size())
 					return nullptr;
-				return static_cast<component*>(components_.data()+e.index);
+				return static_cast<component*>(components_[e.index]);
 			}
 
 			virtual void remove_component(entity::entity_id e) override {
-				//TODO can't really do anything here
+				components_[e.index] = nullptr;
 			}
 		private:
-			std::vector<T> components_;
+			std::vector<std::unique_ptr<T>> components_;
 		};
 	}
 }
