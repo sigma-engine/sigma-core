@@ -30,6 +30,7 @@ namespace sigmafive {
 		}
 
 		void entity_manager::destroy(entity e) {
+			//TODO remove components
 			if(is_alive(e)) {
 				auto eid = e.id();
 				entities_[eid.index].id_.index = std::uint32_t(-1);

@@ -4,6 +4,7 @@
 #include <game/entity.hpp>
 #include <game/component.hpp>
 #include <game/component_pool.hpp>
+#include <game/component_system.hpp>
 
 #include <utility>
 #include <vector>
@@ -80,8 +81,14 @@ namespace sigmafive {
 					components_by_type_[T::ID] = std::move(std::unique_ptr<component_pool_base>(new component_pool<T>{}));
 
 				entities_[e.id().index].component_mask_.set(T::ID,true);
+				auto c = components_by_type_[T::ID]->add_component(e.id());
 
-				return static_cast<T*>(components_by_type_[T::ID]->add_component(e.id()));
+				for(const auto &sys:component_systems_) {
+					if(sys->is_intrested(e))
+						sys->entity_added(e);
+				}
+
+				return static_cast<T*>(c);
 			}
 
 			template<class T>
@@ -108,11 +115,47 @@ namespace sigmafive {
 			void remove_component(entity e) {
 				assert(is_alive(e) && "entity must be alive to remove a component from it.");
 				assert(has_component<T>(e) && "can not remove a component from an entity that does not have one.");
+
+				for(const auto &sys:component_systems_) {
+					if(sys->is_intrested(e))
+						sys->entity_removed(e);
+				}
+
 				components_by_type_[T::ID]->remove_component(e);
 				entities_[e.id().index].component_mask_.set(T::ID,false);
 			}
 
 			void destroy(entity e);
+
+			template<typename T>
+			T *add_system() {
+				if(T::ID >= component_systems_.size())
+					component_systems_.resize(T::ID+1,nullptr);
+				component_systems_[T::ID] = std::unique_ptr<T>(new T());
+				for(entity e:*this) {
+					if(component_systems_[T::ID]->is_intrested(e))
+						component_systems_[T::ID]->entity_added(e);
+				}
+				return component_systems_[T::ID];
+			}
+
+			template<typename T>
+			T *get_system() {
+				if(T::ID >= component_systems_.size())
+					return nullptr;
+				return component_systems_[T::ID];
+			}
+
+			template<typename T>
+			void remove_system() {
+				if(T::ID >= component_systems_.size())
+					return;
+				for(entity e:*this) {
+					if(component_systems_[T::ID]->is_intrested(e))
+						component_systems_[T::ID]->entity_removed(e);
+				}
+				component_systems_[T::ID] = nullptr;
+			}
 
 			iterator begin();
 
@@ -141,6 +184,7 @@ namespace sigmafive {
 			container entities_;
 			std::vector<std::uint32_t> free_entities_;
 			std::vector<std::unique_ptr<component_pool_base>> components_by_type_;
+			std::vector<std::unique_ptr<component_system>> component_systems_;
 		};
 	}
 }
