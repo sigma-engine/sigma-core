@@ -4,7 +4,8 @@
 
 namespace sigmafive {
 	namespace system {
-        resource_manager::resource_manager() {
+        resource_manager::resource_manager(boost::filesystem::path path)
+            : path_(path) {
         }
 
         resource_manager::~resource_manager() {
