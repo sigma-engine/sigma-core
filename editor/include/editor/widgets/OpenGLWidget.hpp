@@ -3,18 +3,21 @@
 
 #include <editor/trackball_controller.hpp>
 
-#include <QMatrix4x4>
+#include <game/scene.hpp>
+#include <system/resource_manager.hpp>
+#include <graphics/opengl/scene_renderer.hpp>
+
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <QOpenGLWidget>
-#include <QOpenGLFunctions>
 
 namespace sigmafive {
 	namespace editor {
         namespace widgets {
-			class OpenGLWidget: public QOpenGLWidget, public QOpenGLFunctions {
+            class OpenGLWidget: public QOpenGLWidget {
 			public:
-				explicit OpenGLWidget(QWidget *parent = nullptr);
+                explicit OpenGLWidget(system::resource_manager &resource_manager,game::scene &scene,
+                                      QWidget *parent = nullptr);
 
 				~OpenGLWidget();
 
@@ -34,10 +37,14 @@ namespace sigmafive {
 
 				void keyPressEvent(QKeyEvent *e) override;
 			private:
-				float4x4 view_;
-				float4x4 projection_;
-				QMatrix4x4 projection;
-				trackball_controller trackball_controller_;
+                system::resource_manager &resource_manager_;
+                game::scene &scene_;
+
+                float4x4 view_matrix_;
+                float4x4 projection_matrix_;
+                trackball_controller trackball_controller_;
+
+                std::unique_ptr<graphics::opengl::scene_renderer> scene_render_;
 			};
 		}
 	}

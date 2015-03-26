@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>sigma-five-editor</string>
   </property>
-  <widget class="sigmafive::editor::widgets::OpenGLWidget" name="centralwidget">
+  <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <property name="spacing">
      <number>0</number>
@@ -47,17 +47,21 @@
      <height>23</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionImport"/>
+   </widget>
+   <addaction name="menuFile"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionImport">
+   <property name="text">
+    <string>Import</string>
+   </property>
+  </action>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>sigmafive::editor::widgets::OpenGLWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">editor/widgets/OpenGLWidget.hpp</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

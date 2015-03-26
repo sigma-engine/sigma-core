@@ -1,14 +1,19 @@
 #include <editor/widgets/OpenGLWidget.hpp>
+#include <GL/gl.h>
 
 namespace sigmafive {
 	namespace editor {
 		namespace widgets {
-			OpenGLWidget::OpenGLWidget(QWidget *parent) : QOpenGLWidget(parent), trackball_controller_(.8f) {
+            OpenGLWidget::OpenGLWidget(system::resource_manager &resource_manager,game::scene &scene,QWidget *parent)
+                : QOpenGLWidget(parent),
+                  resource_manager_(resource_manager),
+                  scene_(scene),
+                  trackball_controller_(.8f) {
+
 				QSurfaceFormat format;
 				format.setDepthBufferSize(24);
 				format.setSamples(8);
 				setFormat(format);
-
 
 				this->setFocus();
 			}
@@ -17,50 +22,46 @@ namespace sigmafive {
 			}
 
 			void OpenGLWidget::initializeGL() {
-				initializeOpenGLFunctions();
-
-				glEnable(GL_DEPTH_TEST);
-				glEnable(GL_POINT_SMOOTH);
-				glPointSize(6);
-				glLineWidth(2);
-
+                scene_render_ = std::unique_ptr<graphics::opengl::scene_renderer>(new graphics::opengl::scene_renderer(resource_manager_));
 				QOpenGLWidget::initializeGL();
 			}
 
 			void OpenGLWidget::resizeGL(int w, int h) {
 				trackball_controller_.resize(int2(w,h));
+                projection_matrix_ = float4x4::perspective(deg_to_rad(45.0f),float(width())/float(height()),0.01f,1000.0f);
 
-				glViewport(0,0,width(),height());
+                glViewport(0,0,width(),height());
 
-				//projection.setToIdentity();
-				projection.perspective(45.0f,width()/float(height()),0.01f,1000.0f);
-				projection_ = float4x4::perspective(deg_to_rad(45.0f),float(width())/float(height()),0.01f,1000.0f);
+                glViewport(0,0,width(),height());
+                glMatrixMode(GL_PROJECTION);
+                glLoadIdentity();
+                glMultMatrixf(&projection_matrix_[0].x);
 
-				glMatrixMode(GL_PROJECTION);
-				glLoadIdentity();
-				glMultMatrixf(&projection_[0].x);
-
-				glMatrixMode(GL_MODELVIEW);
-				glLoadIdentity();
+                glMatrixMode(GL_MODELVIEW);
+                glLoadIdentity();
 
 				QOpenGLWidget::resizeGL(w,h);
 			}
 
 			void OpenGLWidget::paintGL() {
-				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-				glClearColor(.75,.75,.75,1);
+                view_matrix_ = trackball_controller_.matrix();
 
-				glLoadIdentity();
-				view_ = trackball_controller_.matrix();
-				glMultMatrixf(&view_[0].x);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                glClearColor(.75,.75,.75,1);
 
-				glColor3f(1.0, 1.0, 1.0);
-				glBegin(GL_LINES);
-				for (GLfloat i = -2.5; i <= 2.5; i += 0.25) {
-					glVertex3f(i, 0, 2.5); glVertex3f(i, 0, -2.5);
-					glVertex3f(2.5, 0, i); glVertex3f(-2.5, 0, i);
-				}
-				glEnd();
+                glMatrixMode(GL_MODELVIEW);
+                glLoadIdentity();
+                glMultMatrixf(&view_matrix_[0].x);
+
+                glColor3f(1.0, 1.0, 1.0);
+                glBegin(GL_LINES);
+                for (GLfloat i = -2.5; i <= 2.5; i += 0.25) {
+                    glVertex3f(i, 0, 2.5); glVertex3f(i, 0, -2.5);
+                    glVertex3f(2.5, 0, i); glVertex3f(-2.5, 0, i);
+                }
+                glEnd();
+
+				scene_render_->render(view_matrix_,scene_);
 
 				QOpenGLWidget::paintGL();
 			}
@@ -76,7 +77,6 @@ namespace sigmafive {
 			void OpenGLWidget::mouseMoveEvent(QMouseEvent *e) {
 				if(e->buttons() & Qt::MiddleButton) {
 					trackball_controller_.mouse_move(int2(e->x(),e->y()));
-					view_ = trackball_controller_.matrix();
 					this->update();
 				}
 			}

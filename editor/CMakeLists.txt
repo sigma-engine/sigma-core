@@ -5,6 +5,11 @@ set(CMAKE_AUTOMOC ON)
 
 find_package(Qt5Widgets REQUIRED)
 
+add_library(assimp SHARED IMPORTED)
+set_target_properties(assimp PROPERTIES IMPORTED_IMPLIB ${THIRDPARTY_DIR}/assimp/${CMAKE_STATIC_LIBRARY_PREFIX}assimp${CMAKE_STATIC_LIBRARY_SUFFIX})
+set_target_properties(assimp PROPERTIES IMPORTED_LOCATION ${THIRDPARTY_DIR}/assimp/lib/${CMAKE_SHARED_LIBRARY_PREFIX}assimp${CMAKE_SHARED_LIBRARY_SUFFIX})
+include_directories(SYSTEM ${THIRDPARTY_DIR}/assimp/include)
+
 include_directories(SYSTEM ../engine/include)
 
 set(SRCS
@@ -28,4 +33,4 @@ qt5_add_resources(UI_RESOURCES
 
 include_directories(include)
 add_executable(sigma-five-editor WIN32 ${SRCS} ${HDRS} ${UI_HEADERS} ${UI_RESOURCES})
-target_link_libraries(sigma-five-editor Qt5::Widgets sigma-five)
+target_link_libraries(sigma-five-editor Qt5::Widgets sigma-five assimp)
