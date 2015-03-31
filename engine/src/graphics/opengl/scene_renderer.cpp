@@ -4,8 +4,9 @@
 namespace sigmafive {
 	namespace graphics {
 		namespace opengl {
-			scene_renderer::scene_renderer(system::resource_manager &resource_ranager)
-				: vertex_shader(shader_type::vertex), fragment_shader(shader_type::fragment), resource_manager_(resource_ranager) {
+			scene_renderer::scene_renderer(system::resource_manager &resource_manager)
+				: vertex_shader(shader_type::vertex), fragment_shader(shader_type::fragment),
+				  resource_manager_(resource_manager), static_mesh_manager_(resource_manager_) {
 				vertex_shader.set_source(GLSL_440(
 						layout(location = 0) in vec3 vertex_position;
 						layout(location = 1) in vec3 vertex_normal;
@@ -46,20 +47,18 @@ namespace sigmafive {
 				auto q = scene.static_meshes();
 
 				while(!q.empty()) {
-
-					auto static_mesh_instance = q.front();
-					q.pop();
-					if(!meshes_[static_mesh_instance.static_mesh->static_mesh]) {
-						auto mesh_resource = resource_manager_.get<sigmafive::graphics::static_mesh>(static_mesh_instance.static_mesh->static_mesh);
-						meshes_[static_mesh_instance.static_mesh->static_mesh] = std::unique_ptr<opengl_static_mesh>(new opengl_static_mesh(mesh_resource.get()));
-					}
+					auto static_mesh = static_mesh_manager_.get(q.front().static_mesh->static_mesh);
 
 					float4x4 model_matrix;
+
 					program.use();
 					program.set_uniform("projection_matrix",projection_matrix);
 					program.set_uniform("view_matrix",view_matrix);
 					program.set_uniform("model_matrix",model_matrix);
-					meshes_[static_mesh_instance.static_mesh->static_mesh]->draw();
+
+					static_mesh->draw();
+
+					q.pop();
 				}
 			}
 		}

@@ -50,6 +50,9 @@ set(SRCS
     src/graphics/opengl/vertex_array.cpp
     src/graphics/opengl/index_buffer.cpp
     src/graphics/opengl/vertex_buffer.cpp
+
+    src/graphics/opengl/static_mesh.cpp
+    src/graphics/opengl/static_mesh_manager.cpp
     src/graphics/opengl/scene_renderer.cpp
 
     src/game/scene.cpp
@@ -87,6 +90,9 @@ set(HDRS
     include/graphics/opengl/vertex_array.hpp
     include/graphics/opengl/index_buffer.hpp
     include/graphics/opengl/vertex_buffer.hpp
+
+    include/graphics/opengl/static_mesh.hpp
+    include/graphics/opengl/static_mesh_manager.hpp
     include/graphics/opengl/scene_renderer.hpp
 
     include/system/window.hpp
