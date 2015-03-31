@@ -10,7 +10,7 @@ set_target_properties(assimp PROPERTIES IMPORTED_IMPLIB ${THIRDPARTY_DIR}/assimp
 set_target_properties(assimp PROPERTIES IMPORTED_LOCATION ${THIRDPARTY_DIR}/assimp/lib/${CMAKE_SHARED_LIBRARY_PREFIX}assimp${CMAKE_SHARED_LIBRARY_SUFFIX})
 include_directories(SYSTEM ${THIRDPARTY_DIR}/assimp/include)
 
-include_directories(SYSTEM ../engine/include)
+include_directories(SYSTEM ../engine/include ../engine/generated)
 
 set(SRCS
     src/main.cpp

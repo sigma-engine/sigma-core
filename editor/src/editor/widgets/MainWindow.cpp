@@ -30,11 +30,33 @@ namespace sigmafive {
             void MainWindow::on_actionImport_triggered() {
                 std::string file = QFileDialog::getOpenFileName(this,"Import","/home/aaron/Desktop/sigma-five/resources").toStdString();
                 Assimp::Importer importer;
-                const aiScene *scene =  importer.ReadFile(file.c_str(),aiProcessPreset_TargetRealtime_MaxQuality |
-                                                                       aiProcess_CalcTangentSpace |
-                                                                       aiProcess_PreTransformVertices |
-                                                                       aiProcess_OptimizeGraph |
-                                                                       aiProcess_Triangulate);
+                const aiScene *scene =  importer.ReadFile(file.c_str(),aiProcess_CalcTangentSpace |
+                                                                       aiProcess_JoinIdenticalVertices |
+                                                                       //aiProcess_MakeLeftHanded |
+                                                                       aiProcess_Triangulate |
+                                                                       //aiProcess_RemoveComponent |
+                                                                       //???aiProcess_GenNormals |
+                                                                       //???aiProcess_GenSmoothNormals |
+                                                                       //aiProcess_SplitLargeMeshes |
+                                                                       //aiProcess_PreTransformVertices |
+                                                                       aiProcess_LimitBoneWeights |
+                                                                       aiProcess_ValidateDataStructure |
+                                                                       aiProcess_ImproveCacheLocality |
+                                                                       //??aiProcess_RemoveRedundantMaterials |
+                                                                       aiProcess_FixInfacingNormals | //???
+                                                                       aiProcess_SortByPType |
+                                                                       aiProcess_FindDegenerates |
+                                                                       aiProcess_FindInvalidData |
+                                                                       aiProcess_GenUVCoords |
+                                                                       aiProcess_TransformUVCoords | //???
+                                                                       aiProcess_FindInstances |
+                                                                       //aiProcess_OptimizeMeshes  |
+                                                                       //aiProcess_OptimizeGraph  |
+                                                                       //aiProcess_FlipUVs |
+                                                                       //aiProcess_FlipWindingOrder  |
+                                                                       //aiProcess_SplitByBoneCount  |
+                                                                       aiProcess_Debone //???
+                                                        );
                 assert(scene != nullptr);
                 for(unsigned int i=0;i<scene->mNumMeshes;++i) {
                     auto mesh = scene->mMeshes[i];

@@ -42,7 +42,7 @@ int main(int argc, char const *argv[]) {
     entity_manager.remove_component<test>(e);
 
     while(window.good()) {
-        scene_renderer.render(float4x4(),scene);
+        scene_renderer.render(float4x4(),float4x4(),scene);
     }
 
     return 0;

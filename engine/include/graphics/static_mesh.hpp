@@ -28,6 +28,9 @@ namespace sigmafive {
 
 			void set_data(const std::vector<vertex> &vertices, const std::vector<triangle> &triangles);
 
+			std::vector<vertex> vertices() const { return vertices_; }
+			std::vector<triangle> triangles() const { return triangles_; }
+
 			~static_mesh();
 		private:
 			friend class boost::serialization::access;

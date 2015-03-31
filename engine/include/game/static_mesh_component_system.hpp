@@ -23,7 +23,7 @@ namespace sigmafive {
 
 			virtual void process() override;
 		private:
-			scene scene_;
+			scene &scene_;
 		};
 	}
 }

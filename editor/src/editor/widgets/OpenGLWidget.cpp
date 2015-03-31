@@ -30,15 +30,14 @@ namespace sigmafive {
 				trackball_controller_.resize(int2(w,h));
                 projection_matrix_ = float4x4::perspective(deg_to_rad(45.0f),float(width())/float(height()),0.01f,1000.0f);
 
-                glViewport(0,0,width(),height());
+				gl::Viewport(0,0,width(),height());
 
-                glViewport(0,0,width(),height());
-                glMatrixMode(GL_PROJECTION);
-                glLoadIdentity();
-                glMultMatrixf(&projection_matrix_[0].x);
+                /*-gl::MatrixMode(GL_PROJECTION);
+                gl::LoadIdentity();
+                gl::MultMatrixf(&projection_matrix_[0].x);
 
-                glMatrixMode(GL_MODELVIEW);
-                glLoadIdentity();
+                gl::MatrixMode(GL_MODELVIEW);
+                gl::LoadIdentity();*/
 
 				QOpenGLWidget::resizeGL(w,h);
 			}
@@ -46,10 +45,10 @@ namespace sigmafive {
 			void OpenGLWidget::paintGL() {
                 view_matrix_ = trackball_controller_.matrix();
 
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                glClearColor(.75,.75,.75,1);
+				gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
+                gl::ClearColor(.75,.75,.75,1);
 
-                glMatrixMode(GL_MODELVIEW);
+                /*glMatrixMode(GL_MODELVIEW);
                 glLoadIdentity();
                 glMultMatrixf(&view_matrix_[0].x);
 
@@ -59,9 +58,9 @@ namespace sigmafive {
                     glVertex3f(i, 0, 2.5); glVertex3f(i, 0, -2.5);
                     glVertex3f(2.5, 0, i); glVertex3f(-2.5, 0, i);
                 }
-                glEnd();
+                glEnd();*/
 
-				scene_render_->render(view_matrix_,scene_);
+				scene_render_->render(projection_matrix_,view_matrix_,scene_);
 
 				QOpenGLWidget::paintGL();
 			}
