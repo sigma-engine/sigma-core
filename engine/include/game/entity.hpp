@@ -1,37 +1,44 @@
 #ifndef SIGMAFIVE_GAME_ENTITY_HPP
 #define SIGMAFIVE_GAME_ENTITY_HPP
 
-#include <game/component.hpp>
+#include <cinttypes>
 
-#include <cstdint>
-#include <functional>
+#include <boost/serialization/nvp.hpp>
 
 namespace sigmafive {
 	namespace game {
-		class entity {
-		public:
-			struct entity_id {
-				std::uint32_t index;
-				std::uint32_t version;
+		struct entity {
+			std::uint32_t index;
+			std::uint32_t version;
 
-				bool operator<(entity_id e) const;
+			entity();
 
-				bool operator==(entity_id e) const;
+			entity(std::uint32_t index,std::uint32_t version);
 
-				operator std::uint64_t() const;
-			};
+			entity(const entity &) = default;
 
-			inline entity(entity_id id) : id_(id), component_mask_(0) { }
+			entity(entity &&) = default;
 
-			inline entity_id id() const { return id_; }
+			~entity() = default;
 
-			inline bitset component_mask() const { return component_mask_; }
-		private:
-			friend class entity_manager;
-			entity_id id_;
-			bitset component_mask_;
+			entity &operator=(const entity &) = default;
+
+			entity &operator=(entity &&) = default;
+
+			bool operator==(const entity &o) const;
+
+			bool operator!=(const entity &o) const;
+
+			bool is_valid() const;
+
+			template<class Archive>
+			void serialize(Archive &ar, const unsigned int format_version) {
+				ar & BOOST_SERIALIZATION_NVP(index);
+				ar & BOOST_SERIALIZATION_NVP(version);
+			}
 		};
 	}
 }
+
 
 #endif //SIGMAFIVE_GAME_ENTITY_HPP

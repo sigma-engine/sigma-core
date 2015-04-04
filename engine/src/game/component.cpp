@@ -3,14 +3,10 @@
 namespace sigmafive {
 	namespace game {
 		namespace detail {
-			std::uint64_t create_component_id() {
-				static std::uint64_t count = 0;
+			std::uint32_t create_component_id() {
+				static std::uint32_t count = 0;
 				return count++;
 			}
-		}
-
-		component::~component() {
-
 		}
 	}
 }

@@ -13,10 +13,10 @@ namespace sigmafive {
 			float3 position;
 			float3 scale;
 			quaternionf rotation;
-		private:
-			friend class boost::serialization::access;
+
 			template <typename Archive>
 			void serialize(Archive& ar, const unsigned int version) {
+				ar & SIGMAFIVE_SERIALIZE_BASE(component);
 				ar & boost::serialization::base_object<game::component>(*this);
 				ar & position;
 				ar & scale;

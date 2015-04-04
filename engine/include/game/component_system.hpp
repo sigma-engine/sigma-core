@@ -8,24 +8,31 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/serialization.hpp>
+#include "entity_manager.hpp"
 
 #define SIGMAFIVE_COMPONENT_SYSTEM_()
 #define SIGMAFIVE_COMPONENT_SYSTEM_FOR_EACH_BODY(r, data, elem) BOOST_PP_CAT(data,elem)()
-#define SIGMAFIVE_COMPONENT_SYSTEM(...) public: static const std::uint64_t ID; BOOST_PP_SEQ_FOR_EACH(SIGMAFIVE_COMPONENT_SYSTEM_FOR_EACH_BODY,SIGMAFIVE_COMPONENT_SYSTEM_,BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__)) private:
-#define SIGMAFIVE_IMPLEMENT_COMPONENT_SYSTEM(C) const std::uint64_t C::ID = sigmafive::game::detail::create_component_system_id(); BOOST_CLASS_EXPORT(C);
+#define SIGMAFIVE_COMPONENT_SYSTEM(...) public: static const std::uint32_t ID; BOOST_PP_SEQ_FOR_EACH(SIGMAFIVE_COMPONENT_SYSTEM_FOR_EACH_BODY,SIGMAFIVE_COMPONENT_SYSTEM_,BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__)) private:
+#define SIGMAFIVE_IMPLEMENT_COMPONENT_SYSTEM(C) const std::uint32_t C::ID = sigmafive::game::detail::create_component_system_id(); BOOST_CLASS_EXPORT(C);
 
 namespace sigmafive {
 	namespace game {
-		class entity_manager;
-
 		class component_system {
 			SIGMAFIVE_COMPONENT_SYSTEM();
 		public:
-			component_system(game::entity_manager &entity_manager);
+			component_system() = default;
 
-			virtual ~component_system();
+			component_system(const component_system &) = default;
 
-			virtual bool is_intrested(entity e) const = 0;
+			component_system(component_system &&) = default;
+
+			virtual ~component_system() = default;
+
+			component_system &operator=(const component_system &) = default;
+
+			component_system &operator=(component_system &&) = default;
+
+			virtual bool is_intrested(bitset mask) const = 0;
 
 			virtual void entity_added(entity e) = 0;
 
@@ -33,18 +40,13 @@ namespace sigmafive {
 
 			virtual void process() = 0;
 
-		protected:
-			entity_manager &entity_manager_;
-
-		private:
-			friend class boost::serialization::access;
-			template <typename Archive>
-			void serialize(Archive& ar, const unsigned int version) {
+			template<class Archive>
+			void serialize(Archive &ar, const unsigned int format_version) {
 			}
 		};
 
 		namespace detail {
-			std::uint64_t create_component_system_id();
+			std::uint32_t create_component_system_id();
 		}
 	}
 }

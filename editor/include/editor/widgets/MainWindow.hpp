@@ -2,9 +2,12 @@
 #define SIGMAFIVE_EDITOR_WIDGETS_MAINWINDOW_HPP
 
 #include <game/scene.hpp>
-#include <system/resource_manager.hpp>
-#include <QMainWindow>
 #include <game/entity_manager.hpp>
+#include <game/component_manager.hpp>
+#include <system/resource_manager.hpp>
+#include <game/component_system_manager.hpp>
+
+#include <QMainWindow>
 
 namespace sigmafive {
     namespace editor {
@@ -27,6 +30,8 @@ namespace sigmafive {
                 Ui::MainWindow *ui;
                 system::resource_manager resource_manager_;
                 game::entity_manager entity_manager;
+                game::component_manager component_manager;
+                game::component_system_manager component_system_manager;
                 game::scene scene_;
             };
         }

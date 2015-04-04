@@ -20,7 +20,7 @@ namespace sigmafive {
                 ui->setupUi(this);
                 this->setCentralWidget(new OpenGLWidget(resource_manager_,scene_,this));
 
-                entity_manager.add_system<game::static_mesh_component_system>(scene_);
+                component_system_manager.add_component_system<game::static_mesh_component_system>();
             }
 
             MainWindow::~MainWindow() {
@@ -92,8 +92,8 @@ namespace sigmafive {
                     resource_manager_.insert(static_mesh_uuid,std::move(static_mesh));
 
                     auto e = entity_manager.create();
-                    entity_manager.add_component<game::transform_component>(e);
-                    auto static_mesh_component = entity_manager.add_component<game::static_mesh_component>(e);
+                    component_manager.add_component<game::transform_component>(e);
+                    auto static_mesh_component = component_manager.add_component<game::static_mesh_component>(e);
                     static_mesh_component->static_mesh = static_mesh_uuid;
                 }
             }

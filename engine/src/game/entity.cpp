@@ -1,18 +1,25 @@
 #include <game/entity.hpp>
-#include <stdint-gcc.h>
 
 namespace sigmafive {
 	namespace game {
-		bool entity::entity_id::operator<(entity_id e) const  {
-			return (std::uint64_t)*this < (std::uint64_t)e;
+		entity::entity()
+			: entity(std::uint32_t(-1),0) {
 		}
 
-		bool entity::entity_id::operator==(entity_id e) const {
-			return index == e.index && version == e.version;
+		entity::entity(std::uint32_t index, std::uint32_t version)
+			: index(index), version(version) {
 		}
 
-		entity::entity_id::operator std::uint64_t() const {
-			return std::uint64_t(index) | (std::uint64_t(version) << std::uint64_t(32));
+		bool entity::is_valid() const {
+			return index != std::uint32_t(-1);
+		}
+
+		bool entity::operator==(const entity &o) const {
+			return index == o.index && version == o.version;
+		}
+
+		bool entity::operator!=(const entity &o) const {
+			return index != o.index || version != o.version;
 		}
 	}
 }

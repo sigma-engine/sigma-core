@@ -3,18 +3,10 @@
 namespace sigmafive {
 	namespace game {
 		namespace detail {
-			std::uint64_t create_component_system_id() {
-				static std::uint64_t count = 0;
+			std::uint32_t create_component_system_id() {
+				static std::uint32_t count = 0;
 				return count++;
 			}
-		}
-
-		component_system::component_system(game::entity_manager &entity_manager)
-			: entity_manager_(entity_manager) {
-
-		}
-
-		component_system::~component_system() {
 		}
 	}
 }

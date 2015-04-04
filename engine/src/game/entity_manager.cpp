@@ -2,42 +2,27 @@
 
 namespace sigmafive {
 	namespace game {
-		entity_manager::entity_manager() {
-
-		}
-
-		entity_manager::~entity_manager() {
-			//TODO free components
-		}
-
 		entity entity_manager::create() {
-			if(free_entities_.empty()) {
-				entity e{ entity::entity_id{std::uint32_t(entities_.size()), 0} };
-				entities_.push_back(e);
+			if(destroyed_entities_.empty()) {
+				entities_.push_back(entity{std::uint32_t(entities_.size()),0});
 				return entities_.back();
 			}
 			else {
-				auto i = free_entities_.back();
-				free_entities_.pop_back();
-				entities_[i].id_.index = i;
-				return entities_[i];
+				auto b = destroyed_entities_.back();
+				entities_[b].index = b;
+				destroyed_entities_.pop_back();
+				return entities_[b];
 			}
 		}
 
 		bool entity_manager::is_alive(entity e) const {
-			auto eid = e.id();
-			return eid.index >= 0 && eid.index < entities_.size() && entities_[eid.index].id() == eid;
+			return e.index >= 0 && e.index < entities_.size() && entities_[e.index].version == e.version;
 		}
 
 		void entity_manager::destroy(entity e) {
-			//TODO remove components
-			if(is_alive(e)) {
-				auto eid = e.id();
-				entities_[eid.index].id_.index = std::uint32_t(-1);
-				entities_[eid.index].id_.version++;
-				entities_[eid.index].component_mask_ = bitset{0};
-				free_entities_.push_back(eid.index);
-			}
+			entities_[e.index].version++;
+			destroyed_entities_.push_back(e.index);
+			entities_[e.index].index = std::uint32_t(-1);
 		}
 
 		entity_manager::iterator entity_manager::begin() {

@@ -11,11 +11,9 @@ namespace sigmafive {
 		class static_mesh_component_system : public component_system {
 			SIGMAFIVE_COMPONENT_SYSTEM();
 		public:
-			static_mesh_component_system(game::entity_manager &entity_manager,game::scene &scene);
-
 			virtual ~static_mesh_component_system();
 
-			virtual bool is_intrested(entity e) const override;
+			virtual bool is_intrested(bitset mask) const override;
 
 			virtual void entity_added(entity e) override;
 
@@ -23,7 +21,6 @@ namespace sigmafive {
 
 			virtual void process() override;
 		private:
-			scene &scene_;
 		};
 	}
 }

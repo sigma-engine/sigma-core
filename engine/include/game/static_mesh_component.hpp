@@ -10,11 +10,11 @@ namespace sigmafive {
 			SIGMAFIVE_COMPONENT();
 		public:
 			boost::uuids::uuid static_mesh;
-		private:
+
 			friend class boost::serialization::access;
 			template <typename Archive>
 			void serialize(Archive& ar, const unsigned int version) {
-				ar & boost::serialization::base_object<game::component>(*this);
+				ar & SIGMAFIVE_SERIALIZE_BASE(component);
 			}
 		};
 	}

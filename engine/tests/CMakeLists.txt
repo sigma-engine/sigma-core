@@ -7,6 +7,14 @@ set(TESTS_SRCS
     math/vec4_tests.cpp
     math/quaternion_tests.cpp
     math/util_tests.cpp
+
+    game/entity_tests.cpp
+    game/component_tests.cpp
+    game/entity_manager_tests.cpp
+    game/component_manager_tests.cpp
+    game/component_system_tests.cpp
+    game/component_system_manager_tests.cpp
+
     main.cpp
 )
 set(TESTS_HDRS
