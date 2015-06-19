@@ -155,7 +155,7 @@ struct quaternion_t {
 		return quaternion_t<T>(-x,-y,-z,w);
 	}
 
-	inline quaternion_t<T> get_inverse() {
+    inline quaternion_t<T> get_inverse() const {
 		quaternion_t<T> q(-x,-y,-z,w);
 		q /= q.square_length();
 		return q;
@@ -193,6 +193,10 @@ struct quaternion_t {
                         vec4_t<T>(2*this->x*this->z - 2*this->y*this->w    , 2*this->y*this->z + 2*this->x*this->w     , 1 - 2*this->x*this->x - 2*this->y*this->y,0),
                         vec4_t<T>(0,0,0,1)
                         );
+    }
+
+    vec3_t<T> rotate(vec3_t<T> v) const {
+        return ((*this) * quaternion_t<T>{v,0} * this->get_inverse()).vector;
     }
 
     static quaternion_t<T> from_axis_angle(vec3_t<T> axis, T angle) {
