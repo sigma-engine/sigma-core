@@ -17,27 +17,28 @@ namespace sigmafive {
 
             void set_radius(float radius);
 
-            quaternionf rotation() const;
-
             float4x4 matrix() const;
 
-            void resize(int2 size);
+            void begin_rotate(float2 location);
 
-            float3 project_to_sphere(int2 point) const;
+            void begin_pan();
 
-            void mouse_down(int2 location);
+            void update(float2 location);
 
-            void mouse_up(int2 location);
+            void end_rotate(float2 location);
 
-            void mouse_move(int2 location);
+            void end_pan();
 
-            void mouse_scroll(int direction);
+            void zoom(int direction);
         private:
+            float3 project_to_sphere(float2 point) const;
+
             float radius_;
-            int2 size_;
-            int2 currentLocation_, lastLocation_;
+            float2 currentLocation_, lastLocation_;
             float3 position_;
             quaternionf rotation_;
+            bool rotating_;
+            bool panning_;
         };
     }
 }

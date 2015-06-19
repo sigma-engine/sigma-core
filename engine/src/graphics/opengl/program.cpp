@@ -128,15 +128,15 @@ namespace sigmafive {
 			}
 
 			void program::set_uniform(GLint location,mat2x2_t<float> value) {
-				gl::UniformMatrix2fv(location,1,gl::FALSE_,&value[0].x); //TODO GL_CHECK_ERROR;
+                gl::UniformMatrix2fv(location,1,gl::TRUE_,&value[0].x); //TODO GL_CHECK_ERROR;
 			}
 
 			void program::set_uniform(GLint location,mat3x3_t<float> value) {
-				gl::UniformMatrix3fv(location,1,gl::FALSE_,&value[0].x); //TODO GL_CHECK_ERROR;
+                gl::UniformMatrix3fv(location,1,gl::TRUE_,&value[0].x); //TODO GL_CHECK_ERROR;
 			}
 
 			void program::set_uniform(GLint location,mat4x4_t<float> value) {
-				gl::UniformMatrix4fv(location,1,gl::FALSE_,&value[0].x); //TODO GL_CHECK_ERROR;
+                gl::UniformMatrix4fv(location,1,gl::TRUE_,&value[0].x); //TODO GL_CHECK_ERROR;
 			}
 
 			void program::set_uniform(GLint location, unsigned int texture_unit, const texture_2d &texture) {

@@ -1,13 +1,11 @@
 #include <editor/widgets/OpenGLWidget.hpp>
-#include <GL/gl.h>
+#include <QMatrix4x4>
 
 namespace sigmafive {
 	namespace editor {
 		namespace widgets {
-            OpenGLWidget::OpenGLWidget(system::resource_manager &resource_manager,game::scene &scene,QWidget *parent)
+            OpenGLWidget::OpenGLWidget(QWidget *parent)
                 : QOpenGLWidget(parent),
-                  resource_manager_(resource_manager),
-                  scene_(scene),
                   trackball_controller_(.8f) {
 
 				QSurfaceFormat format;
@@ -22,22 +20,15 @@ namespace sigmafive {
 			}
 
 			void OpenGLWidget::initializeGL() {
-                scene_render_ = std::unique_ptr<graphics::opengl::scene_renderer>(new graphics::opengl::scene_renderer(resource_manager_));
+                scene_render_ = std::unique_ptr<graphics::opengl::scene_renderer>(new graphics::opengl::scene_renderer(*resource_manager_));
+                gl::Enable(gl::DEPTH_TEST);
 				QOpenGLWidget::initializeGL();
 			}
 
 			void OpenGLWidget::resizeGL(int w, int h) {
-				trackball_controller_.resize(int2(w,h));
                 projection_matrix_ = float4x4::perspective(deg_to_rad(45.0f),float(width())/float(height()),0.01f,1000.0f);
 
 				gl::Viewport(0,0,width(),height());
-
-                /*-gl::MatrixMode(GL_PROJECTION);
-                gl::LoadIdentity();
-                gl::MultMatrixf(&projection_matrix_[0].x);
-
-                gl::MatrixMode(GL_MODELVIEW);
-                gl::LoadIdentity();*/
 
 				QOpenGLWidget::resizeGL(w,h);
 			}
@@ -48,54 +39,51 @@ namespace sigmafive {
 				gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
                 gl::ClearColor(.75,.75,.75,1);
 
-                /*glMatrixMode(GL_MODELVIEW);
-                glLoadIdentity();
-                glMultMatrixf(&view_matrix_[0].x);
-
-                glColor3f(1.0, 1.0, 1.0);
-                glBegin(GL_LINES);
-                for (GLfloat i = -2.5; i <= 2.5; i += 0.25) {
-                    glVertex3f(i, 0, 2.5); glVertex3f(i, 0, -2.5);
-                    glVertex3f(2.5, 0, i); glVertex3f(-2.5, 0, i);
-                }
-                glEnd();*/
-
-				scene_render_->render(projection_matrix_,view_matrix_,scene_);
+                scene_render_->render(projection_matrix_,view_matrix_,*scene_);
 
 				QOpenGLWidget::paintGL();
 			}
 
 			void OpenGLWidget::mousePressEvent(QMouseEvent *e) {
-				if(e->buttons() & Qt::MiddleButton) {
-					trackball_controller_.mouse_down(int2(e->x(),e->y()));
+                if(e->button() == Qt::MiddleButton) {
+                    trackball_controller_.begin_rotate(convert(e->pos()));
 					this->update();
 				}
 				QOpenGLWidget::mousePressEvent(e);
 			}
 
 			void OpenGLWidget::mouseMoveEvent(QMouseEvent *e) {
-				if(e->buttons() & Qt::MiddleButton) {
-					trackball_controller_.mouse_move(int2(e->x(),e->y()));
-					this->update();
-				}
+                trackball_controller_.update(convert(e->pos()));
+                this->update();
 			}
 
 			void OpenGLWidget::mouseReleaseEvent(QMouseEvent *e) {
-				if(e->buttons() & Qt::MiddleButton) {
-					trackball_controller_.mouse_up(int2(e->x(),e->y()));
+                if(e->button() == Qt::MiddleButton) {
+                    trackball_controller_.end_rotate(convert(e->pos()));
 					this->update();
 				}
 			}
 
 			void OpenGLWidget::wheelEvent(QWheelEvent *e) {
-				trackball_controller_.mouse_scroll(e->delta());
+                trackball_controller_.zoom(e->delta());
 				this->update();
 				QOpenGLWidget::wheelEvent(e);
 			}
 
 			void OpenGLWidget::keyPressEvent(QKeyEvent *e) {
-				QOpenGLWidget::keyPressEvent(e);
-			}
+                trackball_controller_.begin_pan();
+                QOpenGLWidget::keyPressEvent(e);
+            }
+
+            void OpenGLWidget::keyReleaseEvent(QKeyEvent *e) {
+                trackball_controller_.end_pan();
+                QOpenGLWidget::keyReleaseEvent(e);
+            }
+
+            float2 OpenGLWidget::convert(QPoint p) const {
+                return float2( remap<float>(p.x(), 0.0f, width() , -1.0f, 1.0f),
+                              -remap<float>(p.y(), 0.0f, height(), -1.0f, 1.0f));
+            }
 		}
 	}
 }

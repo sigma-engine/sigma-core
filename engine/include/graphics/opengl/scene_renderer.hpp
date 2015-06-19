@@ -7,6 +7,7 @@
 #include <graphics/opengl/program.hpp>
 #include <system/resource_manager.hpp>
 #include <graphics/opengl/static_mesh.hpp>
+#include <graphics/opengl/material.hpp>
 #include <graphics/opengl/static_mesh_manager.hpp>
 
 #include <memory>
@@ -20,9 +21,11 @@ namespace sigmafive {
 
 				void render(float4x4 projection_matrix,float4x4 view_matrix,const game::scene &scene);
 			private:
+                opengl::material material_;
+
 				opengl::shader vertex_shader;
 				opengl::shader fragment_shader;
-				opengl::program program;
+
 				system::resource_manager &resource_manager_;
 				opengl::static_mesh_manager static_mesh_manager_;
 			};

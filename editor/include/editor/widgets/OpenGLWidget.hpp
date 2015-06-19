@@ -16,8 +16,7 @@ namespace sigmafive {
         namespace widgets {
             class OpenGLWidget: public QOpenGLWidget {
 			public:
-                explicit OpenGLWidget(system::resource_manager &resource_manager,game::scene &scene,
-                                      QWidget *parent = nullptr);
+                explicit OpenGLWidget(QWidget *parent = nullptr);
 
 				~OpenGLWidget();
 
@@ -36,9 +35,13 @@ namespace sigmafive {
 				void wheelEvent(QWheelEvent *e) override;
 
 				void keyPressEvent(QKeyEvent *e) override;
-			private:
-                system::resource_manager &resource_manager_;
-                game::scene &scene_;
+
+                void keyReleaseEvent(QKeyEvent *e) override;
+
+                system::resource_manager *resource_manager_;
+                game::scene *scene_;
+            private:
+                float2 convert(QPoint p) const;
 
                 float4x4 view_matrix_;
                 float4x4 projection_matrix_;
