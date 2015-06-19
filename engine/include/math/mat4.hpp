@@ -238,19 +238,13 @@ public:
 	}
 
 	static mat4x4_t<T> perspective(T fovy, T aspect, T znear, T zfar) {
-		mat4x4_t<T> m;
 		T f = T(1)/std::tan(fovy/T(2));
 		T clip = znear-zfar;
 
-		return {{ f/aspect, 0, 				   	 0,  0 },
-				{ 0		  , f, 				   	 0,  0 },
-				{ 0		  , 0, (zfar+znear)/clip  , -1 },
-				{ 0		  , 0, (2*zfar*znear)/clip,  0 }};
-
-		/*return {{ f/aspect, 0, 0				, 0					  },
-			    { 0		  , f, 0				, 0					  },
-			 	{ 0		  , 0, (zfar+znear)/clip, (2*zfar*znear)/clip },
-			 	{ 0		  , 0, -1				, 0					  }};*/
+        return {{ f/aspect, 0, 				  0,                    0 },
+                { 0,        f, 				  0,                    0 },
+                { 0,        0, (zfar+znear)/clip, (2*zfar*znear)/clip },
+                { 0,        0,                -1,                   0 }};
 	};
 
 	static mat4x4_t<T> scale(vec3_t<T> scale) {
