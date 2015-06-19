@@ -1,8 +1,11 @@
 #include <game/transform_component.hpp>
 
 namespace sigmafive {
-	namespace game {
-	}
+    namespace game {
+       /* float4x4 transform_component::matrix() const {
+            return float4x4::transform(scale,rotation,position);
+        }*/
+    }
 }
 
-SIGMAFIVE_IMPLEMENT_COMPONENT(sigmafive::game::transform_component);
+SIGMAFIVE_IMPLEMENT_OBJECT(sigmafive::game::transform_component)

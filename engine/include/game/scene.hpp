@@ -4,6 +4,7 @@
 #include <game/entity.hpp>
 #include <game/transform_component.hpp>
 #include <game/static_mesh_component.hpp>
+
 #include <queue>
 #include <unordered_map>
 
@@ -14,6 +15,7 @@ namespace sigmafive {
 			transform_component *transform;
 			static_mesh_component *static_mesh;
 		};
+
 		class scene {
 		public:
 			void add_static_mesh(std::uint32_t id,transform_component *transform,static_mesh_component *static_mesh);

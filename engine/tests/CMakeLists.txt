@@ -8,17 +8,23 @@ set(TESTS_SRCS
     math/quaternion_tests.cpp
     math/util_tests.cpp
 
+    object_tests.cpp
+
+    game/fake_components.cpp
     game/entity_tests.cpp
     game/component_tests.cpp
     game/entity_manager_tests.cpp
     game/component_manager_tests.cpp
     game/component_system_tests.cpp
     game/component_system_manager_tests.cpp
+    game/entity_world_tests.cpp
+
 
     main.cpp
 )
 set(TESTS_HDRS
+    game/fake_components.hpp
 )
-
-add_executable(sigma-five-tests ${TESTS_SRCS} ${TESTS_HDRS})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+add_executable(sigma-five-tests ${TESTS_HDRS} ${TESTS_SRCS})
 target_link_libraries(sigma-five-tests gmock gmock_main sigma-five)

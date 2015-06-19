@@ -1,12 +1,11 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+
+#include <game/entity_manager.hpp>
 #include <game/component_system_manager.hpp>
 
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-
 class fake_1_component_system : public sigmafive::game::component_system {
-    SIGMAFIVE_COMPONENT_SYSTEM();
+    SIGMAFIVE_OBJECT()
 public:
     virtual ~fake_1_component_system() {
     }
@@ -32,7 +31,7 @@ public:
         ar & SIGMAFIVE_SERIALIZE_BASE(sigmafive::game::component_system);
     }
 };
-SIGMAFIVE_IMPLEMENT_COMPONENT_SYSTEM(fake_1_component_system);
+SIGMAFIVE_IMPLEMENT_OBJECT(fake_1_component_system)
 
 TEST(component_system_manager_tests,add_component_system) {
     sigmafive::game::component_system_manager component_system_manager;

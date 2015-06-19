@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+
+#include <object.hpp>
 #include <game/entity.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
 
 TEST(entity_tests,default_constructor) {
     sigmafive::game::entity e;

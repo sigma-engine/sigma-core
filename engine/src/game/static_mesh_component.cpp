@@ -5,4 +5,4 @@ namespace sigmafive {
 	}
 }
 
-SIGMAFIVE_IMPLEMENT_COMPONENT(sigmafive::game::static_mesh_component);
+SIGMAFIVE_IMPLEMENT_OBJECT(sigmafive::game::static_mesh_component)

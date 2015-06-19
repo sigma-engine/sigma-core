@@ -11,4 +11,4 @@ namespace sigmafive {
 	}
 }
 
-SIGMAFIVE_IMPLEMENT_COMPONENT(sigmafive::game::component);
+SIGMAFIVE_IMPLEMENT_OBJECT(sigmafive::game::component)

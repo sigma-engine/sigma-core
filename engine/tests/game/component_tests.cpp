@@ -8,6 +8,6 @@ TEST(component_tests,component_is_polymorphic_true) {
 }
 
 TEST(component_tests,component_has_ID) {
-    auto e = sigmafive::game::component::ID;
+    auto e = sigmafive::game::component::CLASS_ID;
     (void)e;
 }

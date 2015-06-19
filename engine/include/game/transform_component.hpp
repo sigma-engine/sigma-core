@@ -2,25 +2,27 @@
 #define SIGMAFIVE_GAME_TRANSFORM_COMPONENT_HPP
 
 #include <math/vec3.hpp>
-#include <math/quaternion.hpp>
 #include <game/component.hpp>
+#include <math/quaternion.hpp>
 
 namespace sigmafive {
 	namespace game {
 		class transform_component : public game::component {
-			SIGMAFIVE_COMPONENT();
+            SIGMAFIVE_OBJECT()
 		public:
-			float3 position;
+            typedef sigmafive::game::component_pool<transform_component> pool_type;
+            float3 position;
 			float3 scale;
-			quaternionf rotation;
+            quaternionf rotation;
+
+            float4x4 matrix() {
+                return float4x4::translation(position)  * rotation * float4x4::scale(scale);
+            }
 
 			template <typename Archive>
 			void serialize(Archive& ar, const unsigned int version) {
 				ar & SIGMAFIVE_SERIALIZE_BASE(component);
-				ar & boost::serialization::base_object<game::component>(*this);
-				ar & position;
-				ar & scale;
-				ar & rotation;
+                //TODO implement
 			}
 		};
 	}

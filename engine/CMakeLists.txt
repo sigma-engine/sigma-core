@@ -36,6 +36,9 @@ endif()
 include_directories(SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/generated)
 
 set(SRCS
+    src/object.cpp
+    src/object_pool.cpp
+
     src/system/window.cpp
     src/system/resource.cpp
     src/system/resource_manager.cpp
@@ -58,8 +61,10 @@ set(SRCS
     src/game/scene.cpp
     src/game/entity.cpp
     src/game/component.cpp
+    src/game/entity_world.cpp
     src/game/entity_manager.cpp
-    #src/game/component_pool.cpp
+    src/game/component_pool.cpp
+    src/game/component_bitset_manager.cpp
     src/game/component_system.cpp
     src/game/component_manager.cpp
     src/game/transform_component.cpp
@@ -68,7 +73,11 @@ set(SRCS
     src/game/static_mesh_component_system.cpp
 )
 set(HDRS
+    include/object.hpp
+    include/object_pool.hpp
+
     include/type_info.hpp
+    include/compile_time_hash.hpp
     include/serialization/unique_ptr.hpp
 
     include/math/mat2.hpp
@@ -102,8 +111,10 @@ set(HDRS
     include/game/scene.hpp
     include/game/entity.hpp
     include/game/component.hpp
+    include/game/entity_world.hpp
     include/game/entity_manager.hpp
-    #include/game/component_pool.hpp
+    include/game/component_pool.hpp
+    include/game/component_bitset_manager.hpp
     include/game/component_system.hpp
     include/game/component_manager.hpp
     include/game/transform_component.hpp

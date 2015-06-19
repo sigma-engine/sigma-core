@@ -63,4 +63,8 @@ namespace sigmafive {
     };
 }
 
+//http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n3911
+template< class... > struct voider { using type = void; };
+template< class... T0toN > using void_t = typename voider<T0toN...>::type;
+
 #endif //SIGMAFIVE_TYPE_INFO_HPP
