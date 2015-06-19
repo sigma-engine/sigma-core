@@ -117,11 +117,11 @@ struct vec4_t {
 		return std::sqrt(x*x+y*y+z*z+w*w);
 	}
 
-	inline T squareLength() const {
+	inline T square_length() const {
 		return x*x+y*y+z*z+w*w;
 	}
 
-	inline vec4_t<T> getNormalized() {
+	inline vec4_t<T> get_normalized() {
 		T mag = length();
 		if(almost_equal(mag,(T)0))
 			return vec4_t<T>();
@@ -133,10 +133,11 @@ struct vec4_t {
 	}
 
 	inline vec4_t<T> &normalize() {
-		*this = getNormalized();
+		*this = get_normalized();
 		return *this;
 	}
 };
+
 typedef vec4_t<int> int4;
 typedef vec4_t<float> float4;
 typedef vec4_t<double> double4;

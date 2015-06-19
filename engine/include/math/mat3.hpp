@@ -81,9 +81,9 @@ public:
 	}
 
 	inline mat3x3_t<T> operator*(const mat3x3_t<T> &other) const {
-		vec3_t<T> column0 = other.getColumn(0);
-		vec3_t<T> column1 = other.getColumn(1);
-		vec3_t<T> column2 = other.getColumn(2);
+		vec3_t<T> column0 = other.get_column(0);
+		vec3_t<T> column1 = other.get_column(1);
+		vec3_t<T> column2 = other.get_column(2);
 		return std::move(mat3x3_t<T>({data_[0].dot(column0),data_[0].dot(column1),data_[0].dot(column2)},
 								 {data_[1].dot(column0),data_[1].dot(column1),data_[1].dot(column2)},
 								 {data_[2].dot(column0),data_[2].dot(column1),data_[2].dot(column2)}));
@@ -120,9 +120,9 @@ public:
 	}
 
 	inline mat3x3_t<T> &operator*=(const mat3x3_t<T> &other) {
-		vec3_t<T> column0 = other.getColumn(0);
-		vec3_t<T> column1 = other.getColumn(1);
-		vec3_t<T> column2 = other.getColumn(2);
+		vec3_t<T> column0 = other.get_column(0);
+		vec3_t<T> column1 = other.get_column(1);
+		vec3_t<T> column2 = other.get_column(2);
 		data_[0] = {data_[0].dot(column0),data_[0].dot(column1),data_[0].dot(column2)};
 		data_[1] = {data_[1].dot(column0),data_[1].dot(column1),data_[1].dot(column2)};
 		data_[2] = {data_[2].dot(column0),data_[2].dot(column1),data_[2].dot(column2)};
@@ -143,11 +143,11 @@ public:
 		return *this;
 	}
 
-	inline vec3_t<T> getColumn(int c) const {
+	inline vec3_t<T> get_column(int c) const {
 		return std::move(vec3_t<T>(data_[0][c],data_[1][c],data_[2][c]));
 	}
 
-	inline vec3_t<T> &setColumn(int c,const vec3_t<T> &v) {
+	inline vec3_t<T> &set_column(int c, const vec3_t<T> &v) {
 		data_[0][c] = v.x;
 		data_[1][c] = v.y;
 		data_[2][c] = v.z;
@@ -160,7 +160,7 @@ public:
 			   data_[0].z*(data_[1].x*data_[2].y-data_[2].x*data_[1].y);
 	}
 
-	inline mat3x3_t<T> getTranspose() const {
+	inline mat3x3_t<T> get_transpose() const {
 		mat3x3_t<T> m;
 		for(int i=0;i<3;++i) {
 			for(int j=0;j<3;++j)
@@ -169,7 +169,7 @@ public:
 		return std::move(m);
 	}
 
-	inline mat3x3_t<T> getInverse() const {
+	inline mat3x3_t<T> get_inverse() const {
 		T s = 1/det();
 		return mat3x3_t<T>({(( data_[1][1]*data_[2][2]-data_[2][1]*data_[1][2]))*s,
 						(-(data_[0][1]*data_[2][2]-data_[2][1]*data_[0][2]))*s,
@@ -183,12 +183,12 @@ public:
 	}
 
 	inline mat3x3_t<T> &transpose() {
-		*this = std::move(getTranspose());
+		*this = std::move(get_transpose());
 		return *this;
 	}
 
 	inline mat3x3_t<T> &inverse() {
-		*this = std::move(getInverse());
+		*this = std::move(get_inverse());
 		return *this;
 	}
 private:

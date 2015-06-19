@@ -104,11 +104,11 @@ struct vec2_t {
 		return std::sqrt(x*x+y*y);
 	}
 
-	inline T squareLength() const {
+	inline T square_length() const {
 		return x*x+y*y;
 	}
 
-	inline vec2_t<T> getNormalized() {
+	inline vec2_t<T> get_normalized() {
 		T mag = length();
 		if(almost_equal(mag,(T)0))
 			return vec2_t<T>();
@@ -120,7 +120,7 @@ struct vec2_t {
 	}
 
 	inline vec2_t<T> &normalize() {
-		*this = getNormalized();
+		*this = get_normalized();
 		return *this;
 	}
 };

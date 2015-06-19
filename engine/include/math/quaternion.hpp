@@ -91,9 +91,10 @@ struct quaternion_t {
 		return quaternion_t<T>(-x,-y,-z,-w);
 	}
 
-	inline quaternion_t<T> operator*(const quaternion_t<T> &other) const {
-		return quaternion_t<T>(real * other.vector + other.real * vector + vector * other.vector,
-							 real * other.real - vector.dot(other.vector));
+    inline quaternion_t<T> operator*(const quaternion_t<T> &other) const {
+        return {real*other.vector + other.real*vector+ vector * other.vector,
+                real*other.real - vector.dot(other.vector)};
+
 	}
 
 	inline quaternion_t<T> operator*(const T &s) const {
@@ -140,24 +141,24 @@ struct quaternion_t {
 		return std::sqrt(x*x+y*y+z*z+w*w);
 	}
 
-	inline T squareLength() const {
+	inline T square_length() const {
 		return x*x+y*y+z*z+w*w;
 	}
 
-	inline quaternion_t<T> getNormalized() {
+    inline quaternion_t<T> get_normalized() const {
 		T mag = length();
 		if(almost_equal(mag,(T)0))
 			return quaternion_t<T>();
 		return quaternion_t<T>(x,y,z,w)/mag;
 	}
 
-	inline quaternion_t<T> getConjugate() {
+    inline quaternion_t<T> get_conjugate() const {
 		return quaternion_t<T>(-x,-y,-z,w);
 	}
 
-	inline quaternion_t<T> getInverse() {
+    inline quaternion_t<T> get_inverse() const {
 		quaternion_t<T> q(-x,-y,-z,w);
-		q /= q.squareLength();
+		q /= q.square_length();
 		return q;
 	}
 
@@ -166,36 +167,64 @@ struct quaternion_t {
 	}
 
 	inline quaternion_t<T> &normalize() {
-		*this = getNormalized();
+		*this = get_normalized();
 		return *this;
 	}
 
 	inline quaternion_t<T> &conjugate() {
-		*this = getConjugate();
+		*this = get_conjugate();
 		return *this;
 	}
 
 	inline quaternion_t<T> &inverse() {
-		*this = getInverse();
+		*this = get_inverse();
 		return *this;
 	}
 
     operator mat3x3_t<T>() const {
-        return mat3x3_t<T>(vec3_t<T>(1 - 2*this->y*this->y - 2*this->z*this->z, 2*this->x*this->y - 2*this->z*this->w     , 2*this->x*this->z + 2*this->y*this->w),
-                        vec3_t<T>(2*this->x*this->y + 2*this->z*this->w    , 1 - 2*this->x*this->x - 2*this->z*this->z , 2*this->y*this->z - 2*this->x*this->w),
-                        vec3_t<T>(2*this->x*this->z - 2*this->y*this->w    , 2*this->y*this->z + 2*this->x*this->w     , 1 - 2*this->x*this->x - 2*this->y*this->y)
-                        );
+        //https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation#Conversion_to_and_from_the_matrix_representation
+        T ww = w*w;
+        T xx = x*x;
+        T yy = y*y;
+        T zz = z*z;
+
+        T xy = x*y;
+        T wz = w*z;
+        T xz = x*z;
+        T wy = w*y;
+        T yz = y*z;
+        T wx = w*x;
+
+        return {{ww+xx-yy-zz,2*(xy-wz)  ,2*(xz+wy)},
+                {2*(xy+wz)  ,ww-xx+yy-zz,2*(yz-wx)},
+                {2*(xz-wy)  ,2*(yz+wx)  ,ww-xx-yy+zz}};
     }
 
     operator mat4x4_t<T>() const {
-        return mat4x4_t<T>(vec4_t<T>(1 - 2*this->y*this->y - 2*this->z*this->z, 2*this->x*this->y - 2*this->z*this->w     , 2*this->x*this->z + 2*this->y*this->w,0),
-                        vec4_t<T>(2*this->x*this->y + 2*this->z*this->w    , 1 - 2*this->x*this->x - 2*this->z*this->z , 2*this->y*this->z - 2*this->x*this->w,0),
-                        vec4_t<T>(2*this->x*this->z - 2*this->y*this->w    , 2*this->y*this->z + 2*this->x*this->w     , 1 - 2*this->x*this->x - 2*this->y*this->y,0),
-                        vec4_t<T>(0,0,0,1)
-                        );
+        //https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation#Conversion_to_and_from_the_matrix_representation
+        T ww = w*w;
+        T xx = x*x;
+        T yy = y*y;
+        T zz = z*z;
+
+        T xy = x*y;
+        T wz = w*z;
+        T xz = x*z;
+        T wy = w*y;
+        T yz = y*z;
+        T wx = w*x;
+
+        return {{ww+xx-yy-zz,2*(xy-wz)  ,2*(xz+wy)  ,0},
+                {2*(xy+wz)  ,ww-xx+yy-zz,2*(yz-wx)  ,0},
+                {2*(xz-wy)  ,2*(yz+wx)  ,ww-xx-yy+zz,0},
+                {0          ,0          ,0          ,1}};
     }
 
-    static quaternion_t<T> fromAxisAngle(vec3_t<T> axis,T angle) {
+    vec3_t<T> rotate(vec3_t<T> v) const {
+        return (*this * quaternion_t<T>(v,0) * this->get_inverse()).vector;
+    }
+
+    static quaternion_t<T> from_axis_angle(vec3_t<T> axis, T angle) {
         quaternion_t<T> q;
         q.vector = axis.normalize();
         q.vector *= std::sin(angle/T(2));

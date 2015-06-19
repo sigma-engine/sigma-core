@@ -10,6 +10,10 @@ struct vec4_t;
 
 template <typename T>
 struct vec3_t {
+
+    static const vec3_t<T> RIGHT;
+    static const vec3_t<T> UP;
+    static const vec3_t<T> OUTWARD;
 	T x,y,z;
 
 	vec3_t(T x=0,T y=0,T z=0)
@@ -116,11 +120,11 @@ struct vec3_t {
 		return std::sqrt(x*x+y*y+z*z);
 	}
 
-	inline T squareLength() const {
+	inline T square_length() const {
 		return x*x+y*y+z*z;
 	}
 
-	inline vec3_t<T> getNormalized() {
+	inline vec3_t<T> get_normalized() {
 		T mag = length();
 		if(almost_equal(mag,(T)0))
 			return vec3_t<T>();
@@ -132,7 +136,7 @@ struct vec3_t {
 	}
 
 	inline vec3_t<T> &normalize() {
-		*this = getNormalized();
+		*this = get_normalized();
 		return *this;
 	}
 };
@@ -140,6 +144,13 @@ struct vec3_t {
 typedef vec3_t<int> int3;
 typedef vec3_t<float> float3;
 typedef vec3_t<double> double3;
+
+template<typename T>
+const vec3_t<T> vec3_t<T>::RIGHT   = {1,0,0};
+template<typename T>
+const vec3_t<T> vec3_t<T>::UP      = {0,1,0};
+template<typename T>
+const vec3_t<T> vec3_t<T>::OUTWARD = {0,0,1};
 
 template<typename T>
 vec3_t<T> operator *(const T &s,const vec3_t<T> &v) {

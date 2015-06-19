@@ -70,8 +70,8 @@ public:
 	}
 
 	inline mat2x2_t<T> operator*(const mat2x2_t<T> &other) const {
-		vec2_t<T> column0 = other.getColumn(0);
-		vec2_t<T> column1 = other.getColumn(1);
+		vec2_t<T> column0 = other.get_column(0);
+		vec2_t<T> column1 = other.get_column(1);
 		return std::move(mat2x2_t<T>({data_[0].dot(column0),data_[0].dot(column1)},
 								 {data_[1].dot(column0),data_[1].dot(column1)}));
 	}
@@ -103,8 +103,8 @@ public:
 	}
 
 	inline mat2x2_t<T> &operator*=(const mat2x2_t<T> &other) {
-		vec2_t<T> column0 = other.getColumn(0);
-		vec2_t<T> column1 = other.getColumn(1);
+		vec2_t<T> column0 = other.get_column(0);
+		vec2_t<T> column1 = other.get_column(1);
 		data_[0] = {data_[0].dot(column0),data_[0].dot(column1)};
 		data_[1] = {data_[1].dot(column0),data_[1].dot(column1)};
 		return *this;
@@ -122,11 +122,11 @@ public:
 		return *this;
 	}
 
-	inline vec2_t<T> getColumn(int c) const {
-		return std::move(vec2_t<T>(data_[0][c],data_[1][c]));
+	inline vec2_t<T> get_column(int c) const {
+		return vec2_t<T>(data_[0][c],data_[1][c]);
 	}
 
-	inline vec2_t<T> &setColumn(int c,const vec2_t<T> &v) {
+	inline vec2_t<T> &set_column(int c, const vec2_t<T> &v) {
 		data_[0][c] = v.x;
 		data_[1][c] = v.y;
 		return *this;
@@ -136,7 +136,7 @@ public:
 		return data_[0].x*data_[1].y-data_[1].x*data_[0].y;
 	}
 
-	inline mat2x2_t<T> getTranspose() const {
+	inline mat2x2_t<T> get_transpose() const {
 		mat2x2_t<T> m;
 		for(int i=0;i<2;++i) {
 			for(int j=0;j<2;++j)
@@ -145,19 +145,19 @@ public:
 		return std::move(m);
 	}
 
-	inline mat2x2_t<T> getInverse() const {
+	inline mat2x2_t<T> get_inverse() const {
 		T s = det();
 		return mat2x2_t<T>({data_[1].y/s,-data_[0].y/s},
 					   {-data_[1].x/s,data_[0].x/s});
 	}
 
 	inline mat2x2_t<T> &transpose() {
-		*this = std::move(getTranspose());
+		*this = std::move(get_transpose());
 		return *this;
 	}
 
 	inline mat2x2_t<T> &inverse() {
-		*this = std::move(getInverse());
+		*this = std::move(get_inverse());
 		return *this;
 	}
 private:
