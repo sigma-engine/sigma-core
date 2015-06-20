@@ -6,7 +6,6 @@
 
 #include <memory>
 #include <vector>
-#include <boost/iterator/filter_iterator.hpp>
 
 namespace sigmafive {
 	namespace game {

@@ -25,7 +25,7 @@ SIGMAFIVE_IMPLEMENT_OBJECT(object_1)
 SIGMAFIVE_IMPLEMENT_OBJECT(object_2)
 
 TEST(object_tests,CLASS) {
-    EXPECT_EQ("object_1", object_1::CLASS);
+    EXPECT_EQ(std::string("object_1"), object_1::CLASS);
 }
 
 TEST(object_tests,CLASS_ID) {

@@ -1,0 +1,23 @@
+#ifndef SIGMAFIVE_CONTEXT_HPP
+#define SIGMAFIVE_CONTEXT_HPP
+
+#include <object.hpp>
+#include <unordered_map>
+
+namespace sigmafive {
+	class context {
+    public:
+        void set_system(unsigned long class_id,object &system);
+
+        template<typename T,typename R>
+        void set_system(R &system) {
+            set_system(T::CLASS_ID,system);
+        }
+
+        void remove_system(object &system);
+    private:
+        std::unordered_map<unsigned long,object *> systems_;
+	};
+}
+
+#endif //SIGMAFIVE_CONTEXT_HPP

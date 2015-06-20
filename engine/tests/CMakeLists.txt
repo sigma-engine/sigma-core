@@ -19,6 +19,8 @@ set(TESTS_SRCS
     game/component_system_manager_tests.cpp
     game/entity_world_tests.cpp
 
+    system/resource_tests.cpp
+    system/resource_manager_tests.cpp
 
     main.cpp
 )

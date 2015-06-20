@@ -6,3 +6,5 @@ namespace sigmafive {
 		}
 	}
 }
+
+SIGMAFIVE_IMPLEMENT_OBJECT(sigmafive::graphics::static_mesh)

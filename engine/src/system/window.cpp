@@ -1,4 +1,5 @@
 #include <system/window.hpp>
+
 #include <unordered_map>
 #include <SDL2/SDL.h>
 
@@ -14,8 +15,8 @@ namespace sigmafive {
             }
             static std::unordered_map<Uint32,window *> created_windows;
         }
-        window::window(std::string title,int2 size,context_attributes context_attributes)
-            : title_(title), size_(size), context_attributes_(context_attributes), good_(false) {
+        window::window(std::string title, int2 size, context_attributes context_attributes)
+            : graphics_system_(context_), title_(title), size_(size), context_attributes_(context_attributes), good_(false) {
             detail::init_sdl2_if_not_already();
 
             SDL_GL_SetAttribute(SDL_GL_RED_SIZE, context_attributes_.red);
@@ -58,6 +59,10 @@ namespace sigmafive {
 
         window::~window() {
             close();
+        }
+
+        sigmafive::context &window::context() {
+            return context_;
         }
 
         bool window::good() {

@@ -1,13 +1,8 @@
-#include <math/vec3.hpp>
+#include <context.hpp>
 #include <game/scene.hpp>
 #include <system/window.hpp>
-#include <game/entity_manager.hpp>
-#include <system/resource_manager.hpp>
-#include <graphics/opengl/scene_renderer.hpp>
+#include <game/entity_world.hpp>
 #include <game/static_mesh_component_system.hpp>
-#include <game/component_manager.hpp>
-#include <game/component_system_manager.hpp>
-
 
 int main(int argc, char const *argv[]) {
     sigmafive::system::context_attributes context_attributes;
@@ -24,22 +19,18 @@ int main(int argc, char const *argv[]) {
     context_attributes.core_profile = false;
     context_attributes.vsync = false;
     sigmafive::system::window window("sigma five sample", int2(800, 600), context_attributes);
-
-    sigmafive::system::resource_manager resource_manager;
-    sigmafive::graphics::opengl::scene_renderer scene_renderer(resource_manager);
+    //sigmafive::context &context = window.context();
 
     sigmafive::game::scene scene;
-    sigmafive::game::entity_manager entity_manager;
-    sigmafive::game::component_manager component_manager;
-    sigmafive::game::component_system_manager component_system_manager;
-    component_system_manager.add_component_system<sigmafive::game::static_mesh_component_system>();
+    sigmafive::game::entity_world world;
+    auto system = world.add_component_system<sigmafive::game::static_mesh_component_system>();
+    system->init(world,scene);
 
-    auto e = entity_manager.create();
-    component_manager.add_component<sigmafive::game::transform_component>(e);
-    component_manager.add_component<sigmafive::game::static_mesh_component>(e);
+    auto e = world.create();
+    world.add_component<sigmafive::game::transform_component>(e);
+    world.add_component<sigmafive::game::static_mesh_component>(e);
 
     while(window.good()) {
-        scene_renderer.render(float4x4(),float4x4(),scene);
     }
 
     return 0;

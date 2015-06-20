@@ -36,6 +36,7 @@ endif()
 include_directories(SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/generated)
 
 set(SRCS
+    src/context.cpp
     src/object.cpp
     src/object_pool.cpp
 
@@ -43,22 +44,23 @@ set(SRCS
     src/system/resource.cpp
     src/system/resource_manager.cpp
 
+    src/graphics/graphics_system.cpp
     src/graphics/static_mesh.cpp
 
     generated/gl_core_4_0.cpp
     src/graphics/opengl/buffer.cpp
-    src/graphics/opengl/shader.cpp
-    src/graphics/opengl/program.cpp
-    src/graphics/opengl/texture_2d.cpp
-    src/graphics/opengl/vertex_array.cpp
-    src/graphics/opengl/index_buffer.cpp
-    src/graphics/opengl/vertex_buffer.cpp
     src/graphics/opengl/frame_buffer.cpp
+    src/graphics/opengl/index_buffer.cpp
     src/graphics/opengl/material.cpp
-
+    src/graphics/opengl/ogl_graphics_system.cpp
+    src/graphics/opengl/program.cpp
+    src/graphics/opengl/scene_renderer.cpp
+    src/graphics/opengl/shader.cpp
     src/graphics/opengl/static_mesh.cpp
     src/graphics/opengl/static_mesh_manager.cpp
-    src/graphics/opengl/scene_renderer.cpp
+    src/graphics/opengl/texture_2d.cpp
+    src/graphics/opengl/vertex_array.cpp
+    src/graphics/opengl/vertex_buffer.cpp
 
     src/game/scene.cpp
     src/game/entity.cpp
@@ -75,6 +77,7 @@ set(SRCS
     src/game/static_mesh_component_system.cpp
 )
 set(HDRS
+    include/context.hpp
     include/object.hpp
     include/object_pool.hpp
 
@@ -91,26 +94,28 @@ set(HDRS
     include/math/utils.hpp
     include/math/quaternion.hpp
 
-    include/graphics/static_mesh.hpp
-
-    generated/gl_core_4_0.hpp
-    include/graphics/opengl/util.hpp
-    include/graphics/opengl/buffer.hpp
-    include/graphics/opengl/shader.hpp
-    include/graphics/opengl/program.hpp
-    include/graphics/opengl/texture_2d.hpp
-    include/graphics/opengl/vertex_array.hpp
-    include/graphics/opengl/index_buffer.hpp
-    include/graphics/opengl/vertex_buffer.hpp
-    include/graphics/opengl/static_mesh.hpp
-    include/graphics/opengl/static_mesh_manager.hpp
-    include/graphics/opengl/scene_renderer.hpp
-    include/graphics/opengl/frame_buffer.hpp
-    include/graphics/opengl/material.hpp
-
     include/system/window.hpp
     include/system/resource.hpp
     include/system/resource_manager.hpp
+
+    include/graphics/graphics_system.hpp
+    include/graphics/static_mesh.hpp
+
+    generated/gl_core_4_0.hpp
+    include/graphics/opengl/buffer.hpp
+    include/graphics/opengl/frame_buffer.hpp
+    include/graphics/opengl/index_buffer.hpp
+    include/graphics/opengl/material.hpp
+    include/graphics/opengl/ogl_graphics_system.hpp
+    include/graphics/opengl/program.hpp
+    include/graphics/opengl/scene_renderer.hpp
+    include/graphics/opengl/shader.hpp
+    include/graphics/opengl/static_mesh.hpp
+    include/graphics/opengl/static_mesh_manager.hpp
+    include/graphics/opengl/texture_2d.hpp
+    include/graphics/opengl/util.hpp
+    include/graphics/opengl/vertex_array.hpp
+    include/graphics/opengl/vertex_buffer.hpp
 
     include/game/scene.hpp
     include/game/entity.hpp

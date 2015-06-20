@@ -36,6 +36,11 @@ public:\
     sigmafive::object_info C::info = sigmafive::object::add_object_info<C>(#C,compile_time_hash(#C));\
     BOOST_CLASS_EXPORT(C);
 
+#define SIGMAFIVE_IMPLEMENT_OBJECT_NOT_SERIALIZABLE(C) \
+    const char *C::CLASS = #C; \
+    const unsigned long C::CLASS_ID = compile_time_hash(#C);\
+    sigmafive::object_info C::info = sigmafive::object::add_object_info<C>(#C,compile_time_hash(#C));
+
 #define SIGMAFIVE_SERIALIZE_BASE(base) \
     boost::serialization::make_nvp("base_object",boost::serialization::base_object<base>(*this));
 
@@ -53,6 +58,18 @@ namespace sigmafive {
     class object {
         SIGMAFIVE_OBJECT()
     public:
+        object() = default;
+
+        object(const object &) = default;
+
+        object(object &&) = default;
+
+        object& operator =(const object &) = default;
+
+        object& operator =(object &&) = default;
+
+        virtual ~object() = default;
+
         static bool has_pool(unsigned long class_id) {
             auto it = objects_info().find(class_id);
             return  it != objects_info().end() && it->second.create_pool != nullptr;

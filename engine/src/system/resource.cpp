@@ -4,4 +4,5 @@ namespace sigmafive {
 	namespace system {
 	}
 }
-BOOST_CLASS_EXPORT(sigmafive::system::resource);
+
+SIGMAFIVE_IMPLEMENT_OBJECT(sigmafive::system::resource)

@@ -14,6 +14,7 @@
 namespace sigmafive {
 	namespace graphics {
 		class static_mesh : public system::resource {
+            SIGMAFIVE_OBJECT()
 		public:
 			struct vertex {
 				float3 position;
@@ -36,7 +37,7 @@ namespace sigmafive {
 			friend class boost::serialization::access;
 			template <typename Archive>
 			void serialize(Archive& ar, const unsigned int version) {
-				ar & boost::serialization::base_object<system::resource>(*this);
+                ar & SIGMAFIVE_SERIALIZE_BASE(resource);
 			}
 
 			std::vector<vertex> vertices_;
