@@ -36,6 +36,7 @@ endif()
 include_directories(SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/generated)
 
 set(SRCS
+    src/application.cpp
     src/context.cpp
     src/object.cpp
     src/object_pool.cpp
@@ -77,6 +78,7 @@ set(SRCS
     src/game/static_mesh_component_system.cpp
 )
 set(HDRS
+    include/application.hpp
     include/context.hpp
     include/object.hpp
     include/object_pool.hpp

@@ -7,7 +7,7 @@
 namespace sigmafive {
 	class context {
     public:
-        void set_system(unsigned long class_id,object &system);
+        void set_system(class_hash class_id,object &system);
 
         template<typename T,typename R>
         void set_system(R &system) {
@@ -16,7 +16,7 @@ namespace sigmafive {
 
         void remove_system(object &system);
     private:
-        std::unordered_map<unsigned long,object *> systems_;
+        std::unordered_map<class_hash,object *> systems_;
 	};
 }
 

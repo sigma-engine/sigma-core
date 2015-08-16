@@ -14,10 +14,10 @@ namespace sigmafive {
                 return bitset_for(T::CLASS_ID);
             }
 
-            bitset bitset_for(unsigned long class_id);
+            bitset bitset_for(class_hash class_id);
         private:
             long long count;
-            std::unordered_map<unsigned long,bitset> bitsets_;
+            std::unordered_map<class_hash,bitset> bitsets_;
 		};
 	}
 }

@@ -6,7 +6,7 @@ namespace sigmafive {
             : count(0) {
         }
 
-        bitset component_bitset_manager::bitset_for(unsigned long class_id) {
+        bitset component_bitset_manager::bitset_for(class_hash class_id) {
             auto it = bitsets_.find(class_id);
             if(it == bitsets_.end())
                 it = bitsets_.insert(std::make_pair(class_id,++count)).first;

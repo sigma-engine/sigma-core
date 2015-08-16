@@ -33,13 +33,13 @@ namespace sigmafive {
 
             bitset get_component_mask(entity e) const;
 
-            component *add_component(unsigned long component_id,entity e);
+            component *add_component(class_hash component_id,entity e);
 
-            bool has_component(unsigned long component_id,entity e);
+            bool has_component(class_hash component_id,entity e);
 
-            component *get_component(unsigned long component_id,entity e);
+            component *get_component(class_hash component_id,entity e);
 
-            void remove_component(unsigned long component_id,entity e);
+            void remove_component(class_hash component_id,entity e);
 
             void remove_all_components(entity e);
 
@@ -72,7 +72,7 @@ namespace sigmafive {
 		private:
 			std::vector<bitset> component_masks_;
             game::component_bitset_manager bitset_manager_;
-            std::unordered_map<unsigned long,std::unique_ptr<object_pool>> component_pools_;
+            std::unordered_map<class_hash,std::unique_ptr<object_pool>> component_pools_;
 		};
 	}
 }

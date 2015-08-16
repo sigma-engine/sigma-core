@@ -1,7 +1,7 @@
 #include <context.hpp>
 
 namespace sigmafive {
-    void context::set_system(unsigned long class_id, object &system) {
+    void context::set_system(class_hash class_id, object &system) {
         systems_[class_id] = &system;
     }
 

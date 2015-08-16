@@ -14,7 +14,7 @@ namespace sigmafive {
                 inline bool operator()(entity e) { return e.index != std::uint32_t(-1); }
             };
 		public:
-            typedef std::unordered_map<unsigned long,std::unique_ptr<component_system>> container;
+            typedef std::unordered_map<class_hash,std::unique_ptr<component_system>> container;
             typedef container::reference                      						  reference;
             typedef container::const_reference                						  const_reference;
             typedef container::iterator                                               iterator;

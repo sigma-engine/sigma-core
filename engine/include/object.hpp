@@ -26,25 +26,26 @@
 #define SIGMAFIVE_OBJECT(...) \
 public:\
     static const char *CLASS; \
-    static const unsigned long CLASS_ID;\
+    static const sigmafive::class_hash CLASS_ID;\
     static sigmafive::object_info info; \
  private: /*BOOST_PP_SEQ_FOR_EACH(SIGMAFIVE_OBJECT_FOR_EACH_BODY,SIGMAFIVE_OBJECT_,BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__))*/
 
 #define SIGMAFIVE_IMPLEMENT_OBJECT(C) \
     const char *C::CLASS = #C; \
-    const unsigned long C::CLASS_ID = compile_time_hash(#C);\
+    const sigmafive::class_hash C::CLASS_ID = compile_time_hash(#C);\
     sigmafive::object_info C::info = sigmafive::object::add_object_info<C>(#C,compile_time_hash(#C));\
     BOOST_CLASS_EXPORT(C);
 
 #define SIGMAFIVE_IMPLEMENT_OBJECT_NOT_SERIALIZABLE(C) \
     const char *C::CLASS = #C; \
-    const unsigned long C::CLASS_ID = compile_time_hash(#C);\
+    const sigmafive::class_hash C::CLASS_ID = compile_time_hash(#C);\
     sigmafive::object_info C::info = sigmafive::object::add_object_info<C>(#C,compile_time_hash(#C));
 
 #define SIGMAFIVE_SERIALIZE_BASE(base) \
     boost::serialization::make_nvp("base_object",boost::serialization::base_object<base>(*this));
 
 namespace sigmafive {
+    using class_hash = unsigned long;
     struct object_info {
         std::unique_ptr<object_pool>(*create_pool)();
     };
@@ -70,12 +71,12 @@ namespace sigmafive {
 
         virtual ~object() = default;
 
-        static bool has_pool(unsigned long class_id) {
+        static bool has_pool(class_hash class_id) {
             auto it = objects_info().find(class_id);
             return  it != objects_info().end() && it->second.create_pool != nullptr;
         }
 
-        static std::unique_ptr<object_pool> create_pool(unsigned long class_id) {
+        static std::unique_ptr<object_pool> create_pool(class_hash class_id) {
             if(!has_pool(class_id))
                 throw std::runtime_error("class "+std::to_string(class_id)+" does not have a object pool.");
             return std::move(objects_info().find(class_id)->second.create_pool());
@@ -86,19 +87,19 @@ namespace sigmafive {
         }
     protected:
         template <class T>
-        static typename std::enable_if<has_pool_type<T>::value,object_info>::type add_object_info(const char *klass,const unsigned long class_id) {
+        static typename std::enable_if<has_pool_type<T>::value,object_info>::type add_object_info(const char *klass,const class_hash class_id) {
             objects_info().emplace(std::make_pair(class_id,object_info{&T::pool_type::create_pool}));//klass,class_id,
             return objects_info()[class_id];
         }
 
         template <class T>
-        static typename std::enable_if<!has_pool_type<T>::value,object_info>::type add_object_info(const char *klass, const unsigned long class_id) {
+        static typename std::enable_if<!has_pool_type<T>::value,object_info>::type add_object_info(const char *klass, const class_hash class_id) {
             objects_info().emplace(std::make_pair(class_id,object_info{nullptr}));//klass,class_id,
             return objects_info()[class_id];
         }
 
     private:
-        static std::unordered_map<unsigned long,object_info> &objects_info();
+        static std::unordered_map<class_hash,object_info> &objects_info();
     };
 }
 

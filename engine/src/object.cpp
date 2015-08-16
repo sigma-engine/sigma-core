@@ -1,8 +1,8 @@
 #include <object.hpp>
 
 namespace sigmafive {
-    std::unordered_map<unsigned long,object_info> &object::objects_info() {
-        static std::unordered_map<unsigned long,object_info> object_info_;
+    std::unordered_map<class_hash,object_info> &object::objects_info() {
+        static std::unordered_map<class_hash,object_info> object_info_;
         return object_info_;
     }
 }
