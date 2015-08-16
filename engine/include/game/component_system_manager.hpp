@@ -2,7 +2,6 @@
 #define SIGMAFIVE_GAME_COMPONENT_SYSTEM_MANAGER_HPP
 
 #include <game/component_system.hpp>
-#include <serialization/unique_ptr.hpp>
 
 #include <memory>
 #include <vector>
@@ -66,12 +65,6 @@ namespace sigmafive {
                 if(it != component_systems_.end())
                     component_systems_.erase(it);
             }
-
-			template<class Archive>
-			void serialize(Archive &ar, const unsigned int format_version) {
-                //TODO implement this
-                //ar & BOOST_SERIALIZATION_NVP(component_systems_);
-			}
 		private:
             container component_systems_;
 		};

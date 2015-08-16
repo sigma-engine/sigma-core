@@ -4,8 +4,6 @@
 #include <game/entity.hpp>
 
 #include <vector>
-#include <boost/serialization/nvp.hpp>
-#include <boost/serialization/vector.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 
 namespace sigmafive {
@@ -59,13 +57,6 @@ namespace sigmafive {
 			const_reverse_iterator crbegin() const;
 
 			const_reverse_iterator crend() const;
-
-			template<class Archive>
-			void serialize(Archive &ar, const unsigned int format_version) {
-				ar & BOOST_SERIALIZATION_NVP(entities_);
-				ar & BOOST_SERIALIZATION_NVP(destroyed_entities_);
-			}
-
 		private:
 			container entities_;
 			std::vector<std::uint32_t> destroyed_entities_;

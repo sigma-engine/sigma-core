@@ -26,11 +26,6 @@ namespace sigmafive {
 			component &operator=(const component &) = default;
 
 			component &operator=(component &&) = default;
-
-			template<class Archive>
-			void serialize(Archive &ar, const unsigned int format_version) {
-				ar & SIGMAFIVE_SERIALIZE_BASE(object);
-			}
 		};
 
 		namespace detail {

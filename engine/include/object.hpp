@@ -8,17 +8,6 @@
 #include <memory>
 #include <unordered_map>
 #include <boost/preprocessor.hpp>
-#include <boost/serialization/nvp.hpp>
-#include <boost/serialization/export.hpp>
-#include <boost/serialization/access.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/serialization/base_object.hpp>
-#include <boost/serialization/serialization.hpp>
 
 #define SIGMAFIVE_OBJECT_()
 #define SIGMAFIVE_OBJECT_FOR_EACH_BODY(r, data, elem) BOOST_PP_CAT(data,elem)()
@@ -34,15 +23,6 @@ public:\
     const char *C::CLASS = #C; \
     const sigmafive::class_hash C::CLASS_ID = compile_time_hash(#C);\
     sigmafive::object_info C::info = sigmafive::object::add_object_info<C>(#C,compile_time_hash(#C));\
-    BOOST_CLASS_EXPORT(C);
-
-#define SIGMAFIVE_IMPLEMENT_OBJECT_NOT_SERIALIZABLE(C) \
-    const char *C::CLASS = #C; \
-    const sigmafive::class_hash C::CLASS_ID = compile_time_hash(#C);\
-    sigmafive::object_info C::info = sigmafive::object::add_object_info<C>(#C,compile_time_hash(#C));
-
-#define SIGMAFIVE_SERIALIZE_BASE(base) \
-    boost::serialization::make_nvp("base_object",boost::serialization::base_object<base>(*this));
 
 namespace sigmafive {
     using class_hash = unsigned long;
@@ -80,10 +60,6 @@ namespace sigmafive {
             if(!has_pool(class_id))
                 throw std::runtime_error("class "+std::to_string(class_id)+" does not have a object pool.");
             return std::move(objects_info().find(class_id)->second.create_pool());
-        }
-
-        template<class Archive>
-        void serialize(Archive &ar, const unsigned int format_version) {
         }
     protected:
         template <class T>

@@ -49,19 +49,3 @@ TEST(entity_tests,not_equal_true) {
     sigmafive::game::entity e2{0,0};
     EXPECT_TRUE(e1!=e2);
 }
-
-TEST(entity_tests,serialize) {
-    sigmafive::game::entity e1{1,2};
-    sigmafive::game::entity e2;
-    std::stringstream ss;
-    {
-        boost::archive::text_oarchive oar(ss);
-        oar << boost::serialization::make_nvp("e",e1);
-    }
-    {
-        boost::archive::text_iarchive iar(ss);
-        iar >> boost::serialization::make_nvp("e",e2);
-    }
-
-    EXPECT_EQ(e1,e2);
-}

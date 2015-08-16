@@ -34,12 +34,6 @@ namespace sigmafive {
 
 			~static_mesh();
 		private:
-			friend class boost::serialization::access;
-			template <typename Archive>
-			void serialize(Archive& ar, const unsigned int version) {
-                ar & SIGMAFIVE_SERIALIZE_BASE(resource);
-			}
-
 			std::vector<vertex> vertices_;
 			std::vector<triangle> triangles_;
 		};

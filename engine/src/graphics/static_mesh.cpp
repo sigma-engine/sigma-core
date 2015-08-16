@@ -15,4 +15,3 @@ namespace sigmafive {
 		}
 	}
 }
-BOOST_CLASS_EXPORT(sigmafive::graphics::static_mesh);

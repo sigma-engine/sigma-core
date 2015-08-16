@@ -10,4 +10,4 @@ namespace sigmafive {
 	}
 }
 
-SIGMAFIVE_IMPLEMENT_OBJECT_NOT_SERIALIZABLE(sigmafive::graphics::opengl::ogl_graphics_system)
+SIGMAFIVE_IMPLEMENT_OBJECT(sigmafive::graphics::opengl::ogl_graphics_system)

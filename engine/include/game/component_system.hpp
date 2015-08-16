@@ -29,11 +29,6 @@ namespace sigmafive {
 			virtual void entity_removed(entity e) = 0;
 
 			virtual void process() = 0;
-
-			template<class Archive>
-			void serialize(Archive &ar, const unsigned int format_version) {
-				ar & SIGMAFIVE_SERIALIZE_BASE(object);
-			}
         protected://TODO
             bitset intrested_mask_;
 		};

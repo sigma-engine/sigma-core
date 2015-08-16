@@ -9,9 +9,6 @@
 #include <memory>
 #include <vector>
 #include <unordered_map>
-#include <serialization/unique_ptr.hpp>
-#include <boost/serialization/bitset.hpp>
-#include <boost/serialization/vector.hpp>
 
 namespace sigmafive {
 	namespace game {
@@ -61,13 +58,6 @@ namespace sigmafive {
 			template<class T>
 			void remove_component(entity e) {
                 remove_component(T::CLASS_ID,e);
-            }
-
-            template<class Archive>
-			void serialize(Archive &ar, const unsigned int format_version) {
-                //TODO implment this
-                //ar & BOOST_SERIALIZATION_NVP(component_masks_);
-                //ar & BOOST_SERIALIZATION_NVP(component_pools_);
             }
 		private:
 			std::vector<bitset> component_masks_;

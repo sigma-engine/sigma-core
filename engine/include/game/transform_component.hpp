@@ -18,12 +18,6 @@ namespace sigmafive {
             float4x4 matrix() {
                 return float4x4::translation(position)  * rotation * float4x4::scale(scale);
             }
-
-			template <typename Archive>
-			void serialize(Archive& ar, const unsigned int version) {
-				ar & SIGMAFIVE_SERIALIZE_BASE(component);
-                //TODO implement
-			}
 		};
 	}
 }

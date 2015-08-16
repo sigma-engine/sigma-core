@@ -8,11 +8,6 @@ class fake_1_component : public sigmafive::game::component {
     SIGMAFIVE_OBJECT()
 public:
     typedef sigmafive::game::component_pool<fake_1_component> pool_type;
-
-    template<class Archive>
-    void serialize(Archive &ar, const unsigned int format_version) {
-        ar & SIGMAFIVE_SERIALIZE_BASE(sigmafive::game::component);
-    }
 private:
 };
 
@@ -20,11 +15,6 @@ class fake_2_component : public sigmafive::game::component {
     SIGMAFIVE_OBJECT()
 public:
     typedef sigmafive::game::component_pool<fake_1_component> pool_type;
-
-    template<class Archive>
-    void serialize(Archive &ar, const unsigned int format_version) {
-        ar & SIGMAFIVE_SERIALIZE_BASE(sigmafive::game::component);
-    }
 private:
 };
 

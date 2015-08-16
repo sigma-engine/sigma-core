@@ -19,12 +19,6 @@ namespace sigmafive {
             resource& operator=(resource &&) = default;
 
             virtual ~resource() = default;
-
-            template<class Archive>
-            void serialize(Archive &ar, const unsigned int format_version) {
-                ar & SIGMAFIVE_SERIALIZE_BASE(object);
-                //TODO
-            }
         private:
 		};
 	}

@@ -3,7 +3,7 @@
 
 #include <object_pool.hpp>
 #include <game/entity.hpp>
-//#include <game/component.hpp>
+
 #include <memory>
 #include <vector>
 

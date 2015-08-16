@@ -3,8 +3,6 @@
 
 #include <cinttypes>
 
-#include <boost/serialization/nvp.hpp>
-
 namespace sigmafive {
 	namespace game {
 		struct entity {
@@ -30,12 +28,6 @@ namespace sigmafive {
 			bool operator!=(const entity &o) const;
 
 			bool is_valid() const;
-
-			template<class Archive>
-			void serialize(Archive &ar, const unsigned int format_version) {
-				ar & BOOST_SERIALIZATION_NVP(index);
-				ar & BOOST_SERIALIZATION_NVP(version);
-			}
 		};
 	}
 }

@@ -17,4 +17,4 @@ namespace sigmafive {
 	}
 }
 
-SIGMAFIVE_IMPLEMENT_OBJECT_NOT_SERIALIZABLE(sigmafive::graphics::graphics_system)
+SIGMAFIVE_IMPLEMENT_OBJECT(sigmafive::graphics::graphics_system)

@@ -79,33 +79,3 @@ TEST(entity_manager_tests,iterate_over_alive_entities) {
         ++it;
     }
 }
-
-TEST(entity_manager_tests,serialize) {
-    sigmafive::game::entity_manager entity_manager1;
-    sigmafive::game::entity_manager entity_manager2;
-    for(int i=0;i<50;++i) {
-        entity_manager1.create();
-    }
-    std::vector<sigmafive::game::entity> still_alive;
-    for(auto e:entity_manager1) {
-        if(e.index % 7 == 0)
-            entity_manager1.destroy(e);
-    }
-    std::stringstream ss;
-    {
-        boost::archive::text_oarchive oar(ss);
-        oar << boost::serialization::make_nvp("entity_manager",entity_manager1);
-    }
-    {
-        boost::archive::text_iarchive iar(ss);
-        iar >> boost::serialization::make_nvp("entity_manager",entity_manager2);
-    }
-
-    auto it = entity_manager2.cbegin();
-    auto end = entity_manager2.cend();
-    for(auto e:entity_manager1) {
-        EXPECT_NE(it,end);
-        EXPECT_EQ(e,*it);
-        ++it;
-    }
-}

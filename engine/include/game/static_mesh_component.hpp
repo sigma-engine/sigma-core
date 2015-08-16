@@ -11,13 +11,6 @@ namespace sigmafive {
 		public:
             typedef component_pool<static_mesh_component> pool_type;
 			boost::uuids::uuid static_mesh;
-
-			friend class boost::serialization::access;
-			template <typename Archive>
-			void serialize(Archive& ar, const unsigned int version) {
-				ar & SIGMAFIVE_SERIALIZE_BASE(component);
-                //TODO implement
-			}
 		};
 	}
 }
