@@ -1,6 +1,17 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(sigmafive)
 
+#Boost
+find_package(Boost REQUIRED COMPONENTS system filesystem)
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
+
+#GoogleMock
+set(gtest_force_shared_crt ON)
+set(gtest_disable_pthreads ON)
+
+add_subdirectory(${THIRDPARTY_DIR}/googlemock ${CMAKE_BINARY_DIR}/thirdparty)
+include_directories(SYSTEM ${THIRDPARTY_DIR}/googlemock/include ${THIRDPARTY_DIR}/googlemock/gtest/include)
+
 #SDL2
 add_library(SDL2main STATIC IMPORTED)
 set_target_properties(SDL2main PROPERTIES IMPORTED_LOCATION ${THIRDPARTY_DIR}/SDL/lib/${CMAKE_STATIC_LIBRARY_PREFIX}SDL2main${CMAKE_STATIC_LIBRARY_SUFFIX})
