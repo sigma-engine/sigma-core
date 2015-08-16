@@ -1,4 +1,4 @@
-project(sigma-five-editor)
+project(sigmafive-editor)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
@@ -32,5 +32,5 @@ qt5_add_resources(UI_RESOURCES
 )
 
 include_directories(include)
-add_executable(sigma-five-editor WIN32 ${SRCS} ${HDRS} ${UI_HEADERS} ${UI_RESOURCES})
-target_link_libraries(sigma-five-editor Qt5::Widgets sigma-five assimp)
+add_executable(sigmafive-editor WIN32 ${SRCS} ${HDRS} ${UI_HEADERS} ${UI_RESOURCES})
+target_link_libraries(sigmafive-editor Qt5::Widgets sigmafive assimp)

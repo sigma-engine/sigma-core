@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.12)
-project(sigma-five)
+project(sigmafive)
 
 if(UNIX)
     set(SIGMAFIVE_OS_UNIX TRUE)
@@ -32,7 +32,7 @@ endif()
 set(THIRDPARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty)
 
 #Boost
-find_package(Boost REQUIRED COMPONENTS system filesystem serialization)
+find_package(Boost REQUIRED COMPONENTS system filesystem)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
 #GoogleMock
@@ -44,3 +44,4 @@ include_directories(SYSTEM ${THIRDPARTY_DIR}/googlemock/include ${THIRDPARTY_DIR
 
 add_subdirectory(engine)
 add_subdirectory(editor)
+add_subdirectory(samples)

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.12)
-project(sigma-five)
+project(sigmafive)
 
 #SDL2
 add_library(SDL2main STATIC IMPORTED)
@@ -36,6 +36,7 @@ endif()
 include_directories(SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/generated)
 
 set(SRCS
+    src/sigmafive/application.cpp
     src/sigmafive/context.cpp
     src/sigmafive/object.cpp
 
@@ -76,6 +77,7 @@ set(SRCS
     src/sigmafive/game/static_mesh_component_system.cpp
 )
 set(HDRS
+    include/sigmafive/application.hpp
     include/sigmafive/context.hpp
     include/sigmafive/object.hpp
 
@@ -133,10 +135,10 @@ set(HDRS
 
 
 include_directories(include)
-add_library(sigma-five STATIC ${SRCS} ${HDRS})
-target_link_libraries(sigma-five ${Boost_LIBRARIES} ${OPENGL_LIBRARIES} SDL2 SDL2main)
+add_library(sigmafive STATIC ${SRCS} ${HDRS})
+target_link_libraries(sigmafive ${Boost_LIBRARIES} ${OPENGL_LIBRARIES} SDL2 SDL2main)
 
 add_subdirectory(tests)
 
-add_executable(sigma-five-sample src/sigmafive/main.cpp )
-target_link_libraries(sigma-five-sample sigma-five)
+#add_executable(sigma-five-sample src/sigmafive/main.cpp )
+#target_link_libraries(sigma-five-sample sigma-five)

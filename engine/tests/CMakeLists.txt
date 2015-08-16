@@ -28,5 +28,5 @@ set(TESTS_HDRS
     game/fake_components.hpp
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-add_executable(sigma-five-tests ${TESTS_HDRS} ${TESTS_SRCS})
-target_link_libraries(sigma-five-tests gmock gmock_main sigma-five)
+add_executable(sigmafive-tests ${TESTS_HDRS} ${TESTS_SRCS})
+target_link_libraries(sigmafive-tests gmock gmock_main sigmafive)
