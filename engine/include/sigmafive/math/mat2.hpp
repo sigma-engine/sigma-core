@@ -1,7 +1,7 @@
 #ifndef MAT2X2_HPP
 #define MAT2X2_HPP
 
-#include <math/vec2.hpp>
+#include <sigmafive/math/vec2.hpp>
 
 template<typename T>
 class mat2x2_t {

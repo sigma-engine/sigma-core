@@ -1,8 +1,8 @@
 #ifndef SIGMAFIVE_GAME_COMPONENT_HPP
 #define SIGMAFIVE_GAME_COMPONENT_HPP
 
-#include <object.hpp>
-#include <game/component_pool.hpp>
+#include <sigmafive/object.hpp>
+#include <sigmafive/game/component_pool.hpp>
 
 #include <bitset>
 

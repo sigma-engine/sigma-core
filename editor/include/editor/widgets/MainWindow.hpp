@@ -1,12 +1,12 @@
 #ifndef SIGMAFIVE_EDITOR_WIDGETS_MAINWINDOW_HPP
 #define SIGMAFIVE_EDITOR_WIDGETS_MAINWINDOW_HPP
 
-#include <game/scene.hpp>
-#include <game/entity_world.hpp>
-#include <game/component_manager.hpp>
-#include <system/resource_manager.hpp>
-#include <game/component_system_manager.hpp>
-#include <game/static_mesh_component_system.hpp>
+#include <sigmafive/game/scene.hpp>
+#include <sigmafive/game/entity_world.hpp>
+#include <sigmafive/game/component_manager.hpp>
+#include <sigmafive/system/resource_manager.hpp>
+#include <sigmafive/game/component_system_manager.hpp>
+#include <sigmafive/game/static_mesh_component_system.hpp>
 
 #include <QMainWindow>
 

@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <game/entity_manager.hpp>
-#include <game/component_system_manager.hpp>
+#include <sigmafive/game/entity_manager.hpp>
+#include <sigmafive/game/component_system_manager.hpp>
 
 class fake_1_component_system : public sigmafive::game::component_system {
     SIGMAFIVE_CLASS()

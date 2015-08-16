@@ -1,4 +1,4 @@
-#include <graphics/opengl/ogl_graphics_system.hpp>
+#include <sigmafive/graphics/opengl/ogl_graphics_system.hpp>
 
 namespace sigmafive {
     namespace graphics {

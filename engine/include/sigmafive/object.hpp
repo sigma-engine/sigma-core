@@ -1,8 +1,8 @@
 #ifndef SIGMAFIVE_CLASS_HPP
 #define SIGMAFIVE_CLASS_HPP
 
-#include <type_info.hpp>
-#include <compile_time_hash.hpp>
+#include <sigmafive/type_info.hpp>
+#include <sigmafive/compile_time_hash.hpp>
 
 #include <memory>
 #include <unordered_map>

@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <game/entity_world.hpp>
+#include <sigmafive/game/entity_world.hpp>
 
 TEST(entity_world_tests,default_constructor) {
     sigmafive::game::entity_world entity_world;

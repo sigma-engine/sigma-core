@@ -1,14 +1,14 @@
 #ifndef SIGMAFIVE_GRAPHICS_OPENGL_SCENE_RENDERER_HPP
 #define SIGMAFIVE_GRAPHICS_OPENGL_SCENE_RENDERER_HPP
 
-#include <math/mat4.hpp>
-#include <game/scene.hpp>
-#include <graphics/opengl/shader.hpp>
-#include <graphics/opengl/program.hpp>
-#include <system/resource_manager.hpp>
-#include <graphics/opengl/static_mesh.hpp>
-#include <graphics/opengl/material.hpp>
-#include <graphics/opengl/static_mesh_manager.hpp>
+#include <sigmafive/math/mat4.hpp>
+#include <sigmafive/game/scene.hpp>
+#include <sigmafive/graphics/opengl/shader.hpp>
+#include <sigmafive/graphics/opengl/program.hpp>
+#include <sigmafive/system/resource_manager.hpp>
+#include <sigmafive/graphics/opengl/static_mesh.hpp>
+#include <sigmafive/graphics/opengl/material.hpp>
+#include <sigmafive/graphics/opengl/static_mesh_manager.hpp>
 
 #include <memory>
 

@@ -1,12 +1,12 @@
 #ifndef SIGMAFIVE_GAME_STATIC_MESH_COMPONENT_SYSTEM_HPP
 #define SIGMAFIVE_GAME_STATIC_MESH_COMPONENT_SYSTEM_HPP
 
-#include <game/entity_world.hpp>
-#include <game/component_system.hpp>
-#include <game/component_manager.hpp>
-#include <game/transform_component.hpp>
-#include <game/static_mesh_component.hpp>
-#include <game/scene.hpp>
+#include <sigmafive/game/entity_world.hpp>
+#include <sigmafive/game/component_system.hpp>
+#include <sigmafive/game/component_manager.hpp>
+#include <sigmafive/game/transform_component.hpp>
+#include <sigmafive/game/static_mesh_component.hpp>
+#include <sigmafive/game/scene.hpp>
 
 namespace sigmafive {
     namespace game {

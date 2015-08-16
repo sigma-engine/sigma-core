@@ -2,10 +2,10 @@
 #define SIGMAFIVE_GRAPHICS_OPENGL_VERTEX_ARRAY_HPP
 
 #include <cstdint>
-#include <type_info.hpp>
-#include <graphics/opengl/util.hpp>
-#include <graphics/opengl/index_buffer.hpp>
-#include <graphics/opengl/vertex_buffer.hpp>
+#include <sigmafive/type_info.hpp>
+#include <sigmafive/graphics/opengl/util.hpp>
+#include <sigmafive/graphics/opengl/index_buffer.hpp>
+#include <sigmafive/graphics/opengl/vertex_buffer.hpp>
 
 namespace sigmafive {
 	namespace graphics {

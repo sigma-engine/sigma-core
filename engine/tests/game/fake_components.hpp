@@ -1,8 +1,8 @@
 #ifndef SIGMA_FIVE_FAKE_COMPONENTS_HPP
 #define SIGMA_FIVE_FAKE_COMPONENTS_HPP
 
-#include <game/component.hpp>
-#include <game/component_pool.hpp>
+#include <sigmafive/game/component.hpp>
+#include <sigmafive/game/component_pool.hpp>
 
 class fake_1_component : public sigmafive::game::component {
     SIGMAFIVE_CLASS()

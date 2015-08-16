@@ -1,7 +1,7 @@
 #ifndef VEC2_HPP
 #define VEC2_HPP
 
-#include <math/utils.hpp>
+#include <sigmafive/math/utils.hpp>
 
 template<typename T>
 struct vec3_t;

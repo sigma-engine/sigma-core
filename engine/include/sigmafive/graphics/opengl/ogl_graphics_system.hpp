@@ -1,7 +1,7 @@
 #ifndef SIGMAFIVE_GRAPHICS_OPENGL_OGL_GRAPHICS_SYSTEM_HPP
 #define SIGMAFIVE_GRAPHICS_OPENGL_OGL_GRAPHICS_SYSTEM_HPP
 
-#include <graphics/graphics_system.hpp>
+#include <sigmafive/graphics/graphics_system.hpp>
 
 namespace sigmafive {
 	namespace graphics {

@@ -1,8 +1,8 @@
 #ifndef SIGMAFIVE_GAME_STATIC_MESH_COMPONENT_HPP
 #define SIGMAFIVE_GAME_STATIC_MESH_COMPONENT_HPP
 
-#include <game/component.hpp>
-#include <graphics/static_mesh.hpp>
+#include <sigmafive/game/component.hpp>
+#include <sigmafive/graphics/static_mesh.hpp>
 
 namespace sigmafive {
     namespace game {

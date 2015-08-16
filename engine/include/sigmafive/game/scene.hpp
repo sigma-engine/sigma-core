@@ -1,9 +1,9 @@
 #ifndef SIGMAFIVE_GAME_SCENE_HPP
 #define SIGMAFIVE_GAME_SCENE_HPP
 
-#include <game/entity.hpp>
-#include <game/transform_component.hpp>
-#include <game/static_mesh_component.hpp>
+#include <sigmafive/game/entity.hpp>
+#include <sigmafive/game/transform_component.hpp>
+#include <sigmafive/game/static_mesh_component.hpp>
 
 #include <queue>
 #include <unordered_map>

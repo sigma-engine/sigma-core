@@ -1,4 +1,4 @@
-#include <graphics/opengl/scene_renderer.hpp>
+#include <sigmafive/graphics/opengl/scene_renderer.hpp>
 
 
 namespace sigmafive {

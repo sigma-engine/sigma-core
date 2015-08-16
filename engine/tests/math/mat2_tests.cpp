@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <math/mat2.hpp>
+#include <sigmafive/math/mat2.hpp>
 
 TEST(mat2_tests,default_constructor) {
 	int2x2 a;

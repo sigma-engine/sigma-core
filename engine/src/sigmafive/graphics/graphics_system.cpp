@@ -1,4 +1,4 @@
-#include <graphics/graphics_system.hpp>
+#include <sigmafive/graphics/graphics_system.hpp>
 
 namespace sigmafive {
     namespace graphics {

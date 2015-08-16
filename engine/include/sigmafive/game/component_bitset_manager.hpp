@@ -1,7 +1,7 @@
 #ifndef SIGMAFIVE_GAME_COMPONENT_BITSET_MANAGER_HPP
 #define SIGMAFIVE_GAME_COMPONENT_BITSET_MANAGER_HPP
 
-#include <game/component.hpp>
+#include <sigmafive/game/component.hpp>
 
 namespace sigmafive {
     namespace game {

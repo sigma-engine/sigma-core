@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <object.hpp>
-#include <object.hpp>
+#include <sigmafive/object.hpp>
+#include <sigmafive/object.hpp>
 
 class object_1 : public sigmafive::object {
     SIGMAFIVE_CLASS()

@@ -2,8 +2,8 @@
 #include <gmock/gmock.h>
 #include <game/fake_components.hpp>
 
-#include <game/entity_manager.hpp>
-#include <game/component_manager.hpp>
+#include <sigmafive/game/entity_manager.hpp>
+#include <sigmafive/game/component_manager.hpp>
 
 TEST(component_manager_tests,add_component_T) {
     sigmafive::game::component_manager component_manager;

@@ -1,10 +1,10 @@
 #ifndef SIGMAFIVE_GAME_COMPONENT_MANAGER_HPP
 #define SIGMAFIVE_GAME_COMPONENT_MANAGER_HPP
 
-#include <game/entity.hpp>
-#include <game/component.hpp>
-#include <game/component_pool.hpp>
-#include <game/component_bitset_manager.hpp>
+#include <sigmafive/game/entity.hpp>
+#include <sigmafive/game/component.hpp>
+#include <sigmafive/game/component_pool.hpp>
+#include <sigmafive/game/component_bitset_manager.hpp>
 
 #include <memory>
 #include <vector>

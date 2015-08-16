@@ -1,8 +1,8 @@
 #ifndef SIGMAFIVE_GRAPHICS_OPENGL_STATIC_MESH_MANAGER_HPP
 #define SIGMAFIVE_GRAPHICS_OPENGL_STATIC_MESH_MANAGER_HPP
 
-#include <system/resource_manager.hpp>
-#include <graphics/opengl/static_mesh.hpp>
+#include <sigmafive/system/resource_manager.hpp>
+#include <sigmafive/graphics/opengl/static_mesh.hpp>
 
 #include <memory>
 #include <unordered_map>

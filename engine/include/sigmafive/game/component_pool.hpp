@@ -1,8 +1,8 @@
 #ifndef SIGMAFIVE_GAME_COMPONENT_POOL_HPP
 #define SIGMAFIVE_GAME_COMPONENT_POOL_HPP
 
-#include <object.hpp>
-#include <game/entity.hpp>
+#include <sigmafive/object.hpp>
+#include <sigmafive/game/entity.hpp>
 
 #include <memory>
 #include <vector>

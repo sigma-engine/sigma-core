@@ -3,9 +3,9 @@
 
 #include <editor/trackball_controller.hpp>
 
-#include <game/scene.hpp>
-#include <system/resource_manager.hpp>
-#include <graphics/opengl/scene_renderer.hpp>
+#include <sigmafive/game/scene.hpp>
+#include <sigmafive/system/resource_manager.hpp>
+#include <sigmafive/graphics/opengl/scene_renderer.hpp>
 
 #include <QMouseEvent>
 #include <QWheelEvent>

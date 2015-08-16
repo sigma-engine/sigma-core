@@ -1,10 +1,10 @@
 #ifndef QUATERNION_HPP
 #define QUATERNION_HPP
 
-#include <math/utils.hpp>
-#include <math/vec3.hpp>
-#include <math/mat3.hpp>
-#include <math/mat4.hpp>
+#include <sigmafive/math/utils.hpp>
+#include <sigmafive/math/vec3.hpp>
+#include <sigmafive/math/mat3.hpp>
+#include <sigmafive/math/mat4.hpp>
 
 template<typename T>
 struct vec2_t;

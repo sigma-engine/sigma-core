@@ -1,9 +1,9 @@
 #ifndef SIGMAFIVE_GAME_TRANSFORM_COMPONENT_HPP
 #define SIGMAFIVE_GAME_TRANSFORM_COMPONENT_HPP
 
-#include <math/vec3.hpp>
-#include <game/component.hpp>
-#include <math/quaternion.hpp>
+#include <sigmafive/math/vec3.hpp>
+#include <sigmafive/game/component.hpp>
+#include <sigmafive/math/quaternion.hpp>
 
 namespace sigmafive {
     namespace game {

@@ -1,4 +1,4 @@
-#include <game/component_system.hpp>
+#include <sigmafive/game/component_system.hpp>
 
 namespace sigmafive {
     namespace game {

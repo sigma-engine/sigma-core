@@ -1,9 +1,9 @@
 #ifndef SIGMAFIVE_GAME_COMPONENT_SYSTEM_HPP
 #define SIGMAFIVE_GAME_COMPONENT_SYSTEM_HPP
 
-#include <object.hpp>
-#include <game/entity.hpp>
-#include <game/component.hpp>
+#include <sigmafive/object.hpp>
+#include <sigmafive/game/entity.hpp>
+#include <sigmafive/game/component.hpp>
 
 namespace sigmafive {
     namespace game {

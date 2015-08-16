@@ -1,4 +1,4 @@
-#include <graphics/opengl/static_mesh.hpp>
+#include <sigmafive/graphics/opengl/static_mesh.hpp>
 
 namespace sigmafive {
 	namespace graphics {

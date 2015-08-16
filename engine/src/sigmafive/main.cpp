@@ -1,8 +1,8 @@
-#include <context.hpp>
-#include <game/scene.hpp>
-#include <system/window.hpp>
-#include <game/entity_world.hpp>
-#include <game/static_mesh_component_system.hpp>
+#include <sigmafive/context.hpp>
+#include <sigmafive/game/scene.hpp>
+#include <sigmafive/system/window.hpp>
+#include <sigmafive/game/entity_world.hpp>
+#include <sigmafive/game/static_mesh_component_system.hpp>
 
 int main(int argc, char const *argv[]) {
     sigmafive::system::context_attributes context_attributes;

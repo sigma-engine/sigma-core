@@ -1,4 +1,4 @@
-#include <game/component_bitset_manager.hpp>
+#include <sigmafive/game/component_bitset_manager.hpp>
 
 namespace sigmafive {
     namespace game {

@@ -1,4 +1,4 @@
-#include <system/window.hpp>
+#include <sigmafive/system/window.hpp>
 
 #include <unordered_map>
 #include <SDL2/SDL.h>

@@ -1,8 +1,8 @@
 #ifndef SIGMAFIVE_GRAPHICS_OPENGL_MATERIAL_HPP
 #define SIGMAFIVE_GRAPHICS_OPENGL_MATERIAL_HPP
 
-#include <graphics/opengl/shader.hpp>
-#include <graphics/opengl/program.hpp>
+#include <sigmafive/graphics/opengl/shader.hpp>
+#include <sigmafive/graphics/opengl/program.hpp>
 #include <boost/variant.hpp>
 
 namespace sigmafive {

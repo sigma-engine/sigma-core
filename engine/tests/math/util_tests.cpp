@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <math/utils.hpp>
+#include <sigmafive/math/utils.hpp>
 
 TEST(util_tests,almost_equal_real_true) {
 	float a = 1.1f;

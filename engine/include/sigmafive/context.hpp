@@ -1,7 +1,7 @@
 #ifndef SIGMAFIVE_CONTEXT_HPP
 #define SIGMAFIVE_CONTEXT_HPP
 
-#include <object.hpp>
+#include <sigmafive/object.hpp>
 #include <unordered_map>
 
 namespace sigmafive {

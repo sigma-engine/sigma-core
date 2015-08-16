@@ -1,7 +1,7 @@
 #ifndef SIGMAFIVE_GAME_ENTITY_MANAGER_HPP
 #define SIGMAFIVE_GAME_ENTITY_MANAGER_HPP
 
-#include <game/entity.hpp>
+#include <sigmafive/game/entity.hpp>
 
 #include <vector>
 #include <boost/iterator/filter_iterator.hpp>

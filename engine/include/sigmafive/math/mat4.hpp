@@ -1,7 +1,7 @@
 #ifndef MAT4X4_HPP
 #define MAT4X4_HPP
 
-#include <math/vec4.hpp>
+#include <sigmafive/math/vec4.hpp>
 #include <cmath>
 
 template<typename T>

@@ -1,10 +1,10 @@
 #ifndef SIGMAFIVE_EDITOR_TRACKBALL_CONTROLLER_HPP
 #define SIGMAFIVE_EDITOR_TRACKBALL_CONTROLLER_HPP
 
-#include <math/vec2.hpp>
-#include <math/vec3.hpp>
-#include <math/mat4.hpp>
-#include <math/quaternion.hpp>
+#include <sigmafive/math/vec2.hpp>
+#include <sigmafive/math/vec3.hpp>
+#include <sigmafive/math/mat4.hpp>
+#include <sigmafive/math/quaternion.hpp>
 
 namespace sigmafive {
     namespace editor {

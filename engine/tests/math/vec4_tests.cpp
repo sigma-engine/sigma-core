@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <math/vec2.hpp>
-#include <math/vec3.hpp>
-#include <math/vec4.hpp>
+#include <sigmafive/math/vec2.hpp>
+#include <sigmafive/math/vec3.hpp>
+#include <sigmafive/math/vec4.hpp>
 
 TEST(vec4_tests,default_constructor) {
 	int4 a;

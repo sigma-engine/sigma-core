@@ -1,7 +1,7 @@
 #ifndef SIGMAFIVE_GRAPHICS_OPENGL_INDEX_BUFFER_HPP
 #define SIGMAFIVE_GRAPHICS_OPENGL_INDEX_BUFFER_HPP
 
-#include <graphics/opengl/buffer.hpp>
+#include <sigmafive/graphics/opengl/buffer.hpp>
 #include <vector>
 
 namespace sigmafive {

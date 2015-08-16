@@ -1,5 +1,5 @@
-#include <game/static_mesh_component_system.hpp>
-#include <game/entity_manager.hpp>
+#include <sigmafive/game/static_mesh_component_system.hpp>
+#include <sigmafive/game/entity_manager.hpp>
 
 namespace sigmafive {
     namespace game {

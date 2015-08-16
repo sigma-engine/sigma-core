@@ -1,8 +1,8 @@
 #ifndef SIGMAFIVE_GRAPHICS_GRAPHICS_SYSTEM_HPP
 #define SIGMAFIVE_GRAPHICS_GRAPHICS_SYSTEM_HPP
 
-#include <object.hpp>
-#include <context.hpp>
+#include <sigmafive/object.hpp>
+#include <sigmafive/context.hpp>
 
 namespace sigmafive {
 	namespace graphics {

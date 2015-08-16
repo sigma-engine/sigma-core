@@ -1,4 +1,4 @@
-#include <game/component_system_manager.hpp>
+#include <sigmafive/game/component_system_manager.hpp>
 #include <iterator>
 
 namespace sigmafive {

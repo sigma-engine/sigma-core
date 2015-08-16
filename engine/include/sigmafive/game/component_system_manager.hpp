@@ -1,7 +1,7 @@
 #ifndef SIGMAFIVE_GAME_COMPONENT_SYSTEM_MANAGER_HPP
 #define SIGMAFIVE_GAME_COMPONENT_SYSTEM_MANAGER_HPP
 
-#include <game/component_system.hpp>
+#include <sigmafive/game/component_system.hpp>
 
 #include <memory>
 #include <vector>

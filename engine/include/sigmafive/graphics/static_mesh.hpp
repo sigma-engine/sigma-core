@@ -1,10 +1,10 @@
 #ifndef SIGMAFIVE_GRAPHICS_STATIC_MESH_HPP
 #define SIGMAFIVE_GRAPHICS_STATIC_MESH_HPP
 
-#include <math/vec2.hpp>
-#include <math/vec3.hpp>
-#include <math/mat4.hpp>
-#include <system/resource.hpp>
+#include <sigmafive/math/vec2.hpp>
+#include <sigmafive/math/vec3.hpp>
+#include <sigmafive/math/mat4.hpp>
+#include <sigmafive/system/resource.hpp>
 
 #include <array>
 #include <vector>

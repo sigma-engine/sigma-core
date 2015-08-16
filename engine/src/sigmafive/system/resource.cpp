@@ -1,4 +1,4 @@
-#include <system/resource.hpp>
+#include <sigmafive/system/resource.hpp>
 
 namespace sigmafive {
 	namespace system {

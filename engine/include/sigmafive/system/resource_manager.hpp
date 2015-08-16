@@ -1,7 +1,7 @@
 #ifndef SIGMAFIVE_SYSTEM_RESOURCE_MANAGER_HPP
 #define SIGMAFIVE_SYSTEM_RESOURCE_MANAGER_HPP
 
-#include <system/resource.hpp>
+#include <sigmafive/system/resource.hpp>
 
 #include <unordered_map>
 #include <boost/uuid/uuid.hpp>

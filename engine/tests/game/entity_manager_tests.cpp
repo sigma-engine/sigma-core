@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <object.hpp>
-#include <game/entity_manager.hpp>
+#include <sigmafive/object.hpp>
+#include <sigmafive/game/entity_manager.hpp>
 
 TEST(entity_manager_tests,default_constructor) {
     sigmafive::game::entity_manager entity_manager;

@@ -36,98 +36,98 @@ endif()
 include_directories(SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/generated)
 
 set(SRCS
-    src/context.cpp
-    src/object.cpp
+    src/sigmafive/context.cpp
+    src/sigmafive/object.cpp
 
-    src/system/window.cpp
-    src/system/resource.cpp
-    src/system/resource_manager.cpp
+    src/sigmafive/system/window.cpp
+    src/sigmafive/system/resource.cpp
+    src/sigmafive/system/resource_manager.cpp
 
-    src/graphics/graphics_system.cpp
-    src/graphics/static_mesh.cpp
+    src/sigmafive/graphics/graphics_system.cpp
+    src/sigmafive/graphics/static_mesh.cpp
 
     generated/gl_core_4_0.cpp
-    src/graphics/opengl/buffer.cpp
-    src/graphics/opengl/frame_buffer.cpp
-    src/graphics/opengl/index_buffer.cpp
-    src/graphics/opengl/material.cpp
-    src/graphics/opengl/ogl_graphics_system.cpp
-    src/graphics/opengl/program.cpp
-    src/graphics/opengl/scene_renderer.cpp
-    src/graphics/opengl/shader.cpp
-    src/graphics/opengl/static_mesh.cpp
-    src/graphics/opengl/static_mesh_manager.cpp
-    src/graphics/opengl/texture_2d.cpp
-    src/graphics/opengl/vertex_array.cpp
-    src/graphics/opengl/vertex_buffer.cpp
+    src/sigmafive/graphics/opengl/buffer.cpp
+    src/sigmafive/graphics/opengl/frame_buffer.cpp
+    src/sigmafive/graphics/opengl/index_buffer.cpp
+    src/sigmafive/graphics/opengl/material.cpp
+    src/sigmafive/graphics/opengl/ogl_graphics_system.cpp
+    src/sigmafive/graphics/opengl/program.cpp
+    src/sigmafive/graphics/opengl/scene_renderer.cpp
+    src/sigmafive/graphics/opengl/shader.cpp
+    src/sigmafive/graphics/opengl/static_mesh.cpp
+    src/sigmafive/graphics/opengl/static_mesh_manager.cpp
+    src/sigmafive/graphics/opengl/texture_2d.cpp
+    src/sigmafive/graphics/opengl/vertex_array.cpp
+    src/sigmafive/graphics/opengl/vertex_buffer.cpp
 
-    src/game/scene.cpp
-    src/game/entity.cpp
-    src/game/component.cpp
-    src/game/entity_world.cpp
-    src/game/entity_manager.cpp
-    src/game/component_pool.cpp
-    src/game/component_bitset_manager.cpp
-    src/game/component_system.cpp
-    src/game/component_manager.cpp
-    src/game/transform_component.cpp
-    src/game/static_mesh_component.cpp
-    src/game/component_system_manager.cpp
-    src/game/static_mesh_component_system.cpp
+    src/sigmafive/game/scene.cpp
+    src/sigmafive/game/entity.cpp
+    src/sigmafive/game/component.cpp
+    src/sigmafive/game/entity_world.cpp
+    src/sigmafive/game/entity_manager.cpp
+    src/sigmafive/game/component_pool.cpp
+    src/sigmafive/game/component_bitset_manager.cpp
+    src/sigmafive/game/component_system.cpp
+    src/sigmafive/game/component_manager.cpp
+    src/sigmafive/game/transform_component.cpp
+    src/sigmafive/game/static_mesh_component.cpp
+    src/sigmafive/game/component_system_manager.cpp
+    src/sigmafive/game/static_mesh_component_system.cpp
 )
 set(HDRS
-    include/context.hpp
-    include/object.hpp
+    include/sigmafive/context.hpp
+    include/sigmafive/object.hpp
 
-    include/type_info.hpp
-    include/compile_time_hash.hpp
-    include/serialization/unique_ptr.hpp
+    include/sigmafive/type_info.hpp
+    include/sigmafive/compile_time_hash.hpp
+    include/sigmafive/serialization/unique_ptr.hpp
 
-    include/math/mat2.hpp
-    include/math/mat3.hpp
-    include/math/mat4.hpp
-    include/math/vec2.hpp
-    include/math/vec3.hpp
-    include/math/vec4.hpp
-    include/math/utils.hpp
-    include/math/quaternion.hpp
+    include/sigmafive/math/mat2.hpp
+    include/sigmafive/math/mat3.hpp
+    include/sigmafive/math/mat4.hpp
+    include/sigmafive/math/vec2.hpp
+    include/sigmafive/math/vec3.hpp
+    include/sigmafive/math/vec4.hpp
+    include/sigmafive/math/utils.hpp
+    include/sigmafive/math/quaternion.hpp
 
-    include/system/window.hpp
-    include/system/resource.hpp
-    include/system/resource_manager.hpp
+    include/sigmafive/system/window.hpp
+    include/sigmafive/system/resource.hpp
+    include/sigmafive/system/resource_manager.hpp
 
-    include/graphics/graphics_system.hpp
-    include/graphics/static_mesh.hpp
+    include/sigmafive/graphics/graphics_system.hpp
+    include/sigmafive/graphics/static_mesh.hpp
 
     generated/gl_core_4_0.hpp
-    include/graphics/opengl/buffer.hpp
-    include/graphics/opengl/frame_buffer.hpp
-    include/graphics/opengl/index_buffer.hpp
-    include/graphics/opengl/material.hpp
-    include/graphics/opengl/ogl_graphics_system.hpp
-    include/graphics/opengl/program.hpp
-    include/graphics/opengl/scene_renderer.hpp
-    include/graphics/opengl/shader.hpp
-    include/graphics/opengl/static_mesh.hpp
-    include/graphics/opengl/static_mesh_manager.hpp
-    include/graphics/opengl/texture_2d.hpp
-    include/graphics/opengl/util.hpp
-    include/graphics/opengl/vertex_array.hpp
-    include/graphics/opengl/vertex_buffer.hpp
+    include/sigmafive/graphics/opengl/buffer.hpp
+    include/sigmafive/graphics/opengl/frame_buffer.hpp
+    include/sigmafive/graphics/opengl/index_buffer.hpp
+    include/sigmafive/graphics/opengl/material.hpp
+    include/sigmafive/graphics/opengl/ogl_graphics_system.hpp
+    include/sigmafive/graphics/opengl/program.hpp
+    include/sigmafive/graphics/opengl/scene_renderer.hpp
+    include/sigmafive/graphics/opengl/shader.hpp
+    include/sigmafive/graphics/opengl/static_mesh.hpp
+    include/sigmafive/graphics/opengl/static_mesh_manager.hpp
+    include/sigmafive/graphics/opengl/texture_2d.hpp
+    include/sigmafive/graphics/opengl/util.hpp
+    include/sigmafive/graphics/opengl/vertex_array.hpp
+    include/sigmafive/graphics/opengl/vertex_buffer.hpp
 
-    include/game/scene.hpp
-    include/game/entity.hpp
-    include/game/component.hpp
-    include/game/entity_world.hpp
-    include/game/entity_manager.hpp
-    include/game/component_pool.hpp
-    include/game/component_bitset_manager.hpp
-    include/game/component_system.hpp
-    include/game/component_manager.hpp
-    include/game/transform_component.hpp
-    include/game/static_mesh_component.hpp
-    include/game/component_system_manager.hpp
-    include/game/static_mesh_component_system.hpp
+    include/sigmafive/game/scene.hpp
+    include/sigmafive/game/entity.hpp
+    include/sigmafive/game/component.hpp
+    include/sigmafive/game/entity_world.hpp
+    include/sigmafive/game/entity_manager.hpp
+    include/sigmafive/game/component_pool.hpp
+    include/sigmafive/game/component_bitset_manager.hpp
+    include/sigmafive/game/component_system.hpp
+    include/sigmafive/game/component_manager.hpp
+    include/sigmafive/game/transform_component.hpp
+    include/sigmafive/game/static_mesh_component.hpp
+    include/sigmafive/game/component_system_manager.hpp
+    include/sigmafive/game/static_mesh_component_system.hpp
 )
 
 
@@ -138,5 +138,5 @@ target_link_libraries(sigma-five ${Boost_LIBRARIES} ${OPENGL_LIBRARIES} SDL2 SDL
 
 add_subdirectory(tests)
 
-add_executable(sigma-five-sample src/main.cpp )
+add_executable(sigma-five-sample src/sigmafive/main.cpp )
 target_link_libraries(sigma-five-sample sigma-five)

@@ -1,9 +1,9 @@
 #ifndef SIGMAFIVE_GAME_ENTITY_WORLD_HPP
 #define SIGMAFIVE_GAME_ENTITY_WORLD_HPP
 
-#include <game/entity_manager.hpp>
-#include <game/component_manager.hpp>
-#include <game/component_system_manager.hpp>
+#include <sigmafive/game/entity_manager.hpp>
+#include <sigmafive/game/component_manager.hpp>
+#include <sigmafive/game/component_system_manager.hpp>
 
 namespace sigmafive {
     namespace game {

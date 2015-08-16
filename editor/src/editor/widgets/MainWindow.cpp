@@ -2,7 +2,7 @@
 #include <editor/widgets/OpenGLWidget.hpp>
 #include "ui_MainWindow.h"
 
-#include <graphics/static_mesh.hpp>
+#include <sigmafive/graphics/static_mesh.hpp>
 
 #include <QFileDialog>
 

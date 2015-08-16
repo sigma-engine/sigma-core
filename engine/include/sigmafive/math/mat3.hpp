@@ -1,7 +1,7 @@
 #ifndef MAT3_HPP
 #define MAT3_HPP
 
-#include <math/vec3.hpp>
+#include <sigmafive/math/vec3.hpp>
 
 template<typename T>
 class mat3x3_t {

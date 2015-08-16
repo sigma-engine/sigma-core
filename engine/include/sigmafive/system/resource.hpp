@@ -1,7 +1,7 @@
 #ifndef SIGMAFIVE_SYSTEM_RESOURCE_HPP
 #define SIGMAFIVE_SYSTEM_RESOURCE_HPP
 
-#include <object.hpp>
+#include <sigmafive/object.hpp>
 
 namespace sigmafive {
 	namespace system {
