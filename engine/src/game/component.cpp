@@ -1,14 +1,14 @@
 #include <game/component.hpp>
 
 namespace sigmafive {
-	namespace game {
-		namespace detail {
-			std::uint32_t create_component_id() {
-				static std::uint32_t count = 0;
-				return count++;
-			}
-		}
-	}
+    namespace game {
+        namespace detail {
+            std::uint32_t create_component_id() {
+                static std::uint32_t count = 0;
+                return count++;
+            }
+        }
+    }
 }
 
-SIGMAFIVE_IMPLEMENT_OBJECT(sigmafive::game::component)
+EXPORT_SIGMAFIVE_CLASS(sigmafive::game::component)

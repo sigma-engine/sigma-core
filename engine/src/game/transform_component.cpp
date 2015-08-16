@@ -8,4 +8,4 @@ namespace sigmafive {
     }
 }
 
-SIGMAFIVE_IMPLEMENT_OBJECT(sigmafive::game::transform_component)
+EXPORT_SIGMAFIVE_CLASS(sigmafive::game::transform_component)

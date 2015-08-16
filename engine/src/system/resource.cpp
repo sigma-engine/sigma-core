@@ -5,4 +5,4 @@ namespace sigmafive {
 	}
 }
 
-SIGMAFIVE_IMPLEMENT_OBJECT(sigmafive::system::resource)
+EXPORT_SIGMAFIVE_CLASS(sigmafive::system::resource)

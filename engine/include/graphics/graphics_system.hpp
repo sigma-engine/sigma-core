@@ -7,7 +7,7 @@
 namespace sigmafive {
 	namespace graphics {
         class graphics_system : public object {
-            SIGMAFIVE_OBJECT()
+            SIGMAFIVE_CLASS()
         public:
             graphics_system(sigmafive::context &ctx);
 

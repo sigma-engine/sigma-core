@@ -3,6 +3,6 @@
 
 #include <game/component_system.hpp>
 
-TEST(component_system_tests,CLASS) {
-    EXPECT_EQ(std::string("sigmafive::game::component_system"),sigmafive::game::component_system::CLASS);
+TEST(component_system_tests,CLASS_ID) {
+    EXPECT_EQ(compile_time_hash("sigmafive::game::component_system"),sigmafive::game::component_system::CLASS_ID);
 }

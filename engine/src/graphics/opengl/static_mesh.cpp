@@ -7,4 +7,4 @@ namespace sigmafive {
 	}
 }
 
-SIGMAFIVE_IMPLEMENT_OBJECT(sigmafive::graphics::static_mesh)
+EXPORT_SIGMAFIVE_CLASS(sigmafive::graphics::static_mesh)

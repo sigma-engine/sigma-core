@@ -4,33 +4,24 @@
 #include <cinttypes>
 
 namespace sigmafive {
-	namespace game {
-		struct entity {
-			std::uint32_t index;
-			std::uint32_t version;
+    namespace game {
+        struct entity {
+            std::uint32_t index;
+            std::uint32_t version;
 
-			entity();
+            entity();
 
-			entity(std::uint32_t index,std::uint32_t version);
+            entity(std::uint32_t index,std::uint32_t version);
 
-			entity(const entity &) = default;
+            bool operator==(entity o) const;
 
-			entity(entity &&) = default;
+            bool operator!=(entity o) const;
 
-			~entity() = default;
-
-			entity &operator=(const entity &) = default;
-
-			entity &operator=(entity &&) = default;
-
-			bool operator==(const entity &o) const;
-
-			bool operator!=(const entity &o) const;
-
-			bool is_valid() const;
-		};
-	}
+            bool is_valid() const;
+        };
+    }
 }
 
 
 #endif //SIGMAFIVE_GAME_ENTITY_HPP
+

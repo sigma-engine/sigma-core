@@ -7,12 +7,12 @@
 #include <vector>
 
 namespace sigmafive {
-	namespace game {
-		class component_system_manager {
+    namespace game {
+        class component_system_manager {
             struct is_entity_alive {
                 inline bool operator()(entity e) { return e.index != std::uint32_t(-1); }
             };
-		public:
+        public:
             typedef std::unordered_map<class_hash,std::unique_ptr<component_system>> container;
             typedef container::reference                      						  reference;
             typedef container::const_reference                						  const_reference;
@@ -39,25 +39,25 @@ namespace sigmafive {
 
             const_iterator cend();
 
-			template<typename T>
-			T *add_component_system() {
-				auto component_system = new T();
+            template<typename T>
+            T *add_component_system() {
+                auto component_system = new T();
                 component_systems_[T::CLASS_ID] = std::unique_ptr<T>(component_system);
-				return component_system;
-			}
+                return component_system;
+            }
 
-			template<typename T>
-			bool has_component_system() const {
+            template<typename T>
+            bool has_component_system() const {
                 return component_systems_.find(T::CLASS_ID)!= component_systems_.end();
-			}
+            }
 
-			template<typename T>
-			T *get_component_system() {
+            template<typename T>
+            T *get_component_system() {
                 auto it = component_systems_.find(T::CLASS_ID);
                 if(it == component_systems_.end())
                     return nullptr;
                 return static_cast<T*>(it->second.get());
-			}
+            }
 
             template<typename T>
             void remove_component_system() {
@@ -65,10 +65,10 @@ namespace sigmafive {
                 if(it != component_systems_.end())
                     component_systems_.erase(it);
             }
-		private:
+        private:
             container component_systems_;
-		};
-	}
+        };
+    }
 }
 
 #endif //SIGMAFIVE_GAME_COMPONENT_SYSTEM_MANAGER_HPP

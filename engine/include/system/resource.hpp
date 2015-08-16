@@ -6,7 +6,7 @@
 namespace sigmafive {
 	namespace system {
         class resource : public object {
-            SIGMAFIVE_OBJECT()
+            SIGMAFIVE_CLASS()
         public:
             resource() = default;
 

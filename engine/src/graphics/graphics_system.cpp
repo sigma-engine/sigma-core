@@ -17,4 +17,4 @@ namespace sigmafive {
 	}
 }
 
-SIGMAFIVE_IMPLEMENT_OBJECT(sigmafive::graphics::graphics_system)
+EXPORT_SIGMAFIVE_CLASS(sigmafive::graphics::graphics_system)

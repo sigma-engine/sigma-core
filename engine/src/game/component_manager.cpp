@@ -1,7 +1,7 @@
 #include <game/component_manager.hpp>
 
 namespace sigmafive {
-	namespace game {
+    namespace game {
         component_bitset_manager &component_manager::bitset_manager() {
             return bitset_manager_;
         }
@@ -15,7 +15,7 @@ namespace sigmafive {
         component *component_manager::add_component(class_hash component_id, entity e) {
             auto it = component_pools_.find(component_id);
             if(it == component_pools_.end())
-                it = component_pools_.emplace(std::make_pair(component_id,object::create_pool(component_id))).first;
+                it = component_pools_.emplace(std::make_pair(component_id,object::meta_class_for(component_id).create_pool())).first;
 
             if(e.index >= component_masks_.size())
                 component_masks_.resize(e.index+1);

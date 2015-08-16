@@ -6,14 +6,14 @@
 #include <game/component_system_manager.hpp>
 
 namespace sigmafive {
-	namespace game {
-		class entity_world {
-		public:
+    namespace game {
+        class entity_world {
+        public:
             component_bitset_manager &bitset_manager();
 
-			game::entity create();
+            game::entity create();
 
-			bool is_alive(game::entity e) const;
+            bool is_alive(game::entity e) const;
 
             template<class T>
             T *add_component_system() {
@@ -38,7 +38,7 @@ namespace sigmafive {
             }
 
             template<class T>
-			T *add_component(game::entity e) {
+            T *add_component(game::entity e) {
                 auto premask = component_manager_.get_component_mask(e);
                 auto cmp = component_manager_.add_component<T>(e);
                 auto postmask = component_manager_.get_component_mask(e);
@@ -49,20 +49,20 @@ namespace sigmafive {
                     }
                 }
                 return cmp;
-			}
+            }
 
-			template<class T>
-			bool has_component(game::entity e) {
-				return component_manager_.has_component<T>(e);
-			}
+            template<class T>
+            bool has_component(game::entity e) {
+                return component_manager_.has_component<T>(e);
+            }
 
-			template<class T>
-			T *get_component(game::entity e) {
-				return component_manager_.get_component<T>(e);
-			}
+            template<class T>
+            T *get_component(game::entity e) {
+                return component_manager_.get_component<T>(e);
+            }
 
-			template<class T>
-			void remove_component(game::entity e) {
+            template<class T>
+            void remove_component(game::entity e) {
                 auto premask = component_manager_.get_component_mask(e);
                 component_manager_.remove_component<T>(e);
                 auto postmask = component_manager_.get_component_mask(e);
@@ -73,13 +73,14 @@ namespace sigmafive {
                 }
             }
 
-			void destroy(game::entity e);
-		private:
-			game::entity_manager entity_manager_;
-			game::component_manager component_manager_;
-			game::component_system_manager component_system_manager_;
-		};
-	}
+            void destroy(game::entity e);
+        private:
+            game::entity_manager entity_manager_;
+            game::component_manager component_manager_;
+            game::component_system_manager component_system_manager_;
+        };
+    }
 }
 
 #endif //SIGMAFIVE_GAME_ENTITY_WORLD_HPP
+

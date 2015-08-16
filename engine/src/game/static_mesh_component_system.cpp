@@ -4,7 +4,6 @@
 namespace sigmafive {
     namespace game {
 
-
         void static_mesh_component_system::init(entity_world &world,game::scene &scene) {
             world_ = &world;
             scene_ = &scene;
@@ -15,18 +14,18 @@ namespace sigmafive {
         static_mesh_component_system::~static_mesh_component_system() {
         }
 
-		void static_mesh_component_system::entity_added(entity e) {
+        void static_mesh_component_system::entity_added(entity e) {
             scene_->add_static_mesh(e.index,world_->get_component<transform_component>(e),world_->get_component<static_mesh_component>(e));
-		}
+        }
 
-		void static_mesh_component_system::entity_removed(entity e) {
+        void static_mesh_component_system::entity_removed(entity e) {
             scene_->remove_static_mesh(e.index);
-		}
+        }
 
-		void static_mesh_component_system::process() {
+        void static_mesh_component_system::process() {
 
-		}
-	}
+        }
+    }
 }
 
-SIGMAFIVE_IMPLEMENT_OBJECT(sigmafive::game::static_mesh_component_system)
+EXPORT_SIGMAFIVE_CLASS(sigmafive::game::static_mesh_component_system)

@@ -10,4 +10,4 @@ namespace sigmafive {
 	}
 }
 
-SIGMAFIVE_IMPLEMENT_OBJECT(sigmafive::graphics::opengl::ogl_graphics_system)
+EXPORT_SIGMAFIVE_CLASS(sigmafive::graphics::opengl::ogl_graphics_system)

@@ -7,7 +7,7 @@ namespace sigmafive {
 	namespace graphics {
 		namespace opengl {
             class ogl_graphics_system : public graphics_system {
-                SIGMAFIVE_OBJECT()
+                SIGMAFIVE_CLASS()
             public:
                 ogl_graphics_system(sigmafive::context &ctx);
 

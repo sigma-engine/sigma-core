@@ -38,7 +38,6 @@ include_directories(SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/generated)
 set(SRCS
     src/context.cpp
     src/object.cpp
-    src/object_pool.cpp
 
     src/system/window.cpp
     src/system/resource.cpp
@@ -79,7 +78,6 @@ set(SRCS
 set(HDRS
     include/context.hpp
     include/object.hpp
-    include/object_pool.hpp
 
     include/type_info.hpp
     include/compile_time_hash.hpp

@@ -1,14 +1,14 @@
 #ifndef SIGMAFIVE_GAME_COMPONENT_POOL_HPP
 #define SIGMAFIVE_GAME_COMPONENT_POOL_HPP
 
-#include <object_pool.hpp>
+#include <object.hpp>
 #include <game/entity.hpp>
 
 #include <memory>
 #include <vector>
 
 namespace sigmafive {
-	namespace game {
+    namespace game {
         class component;
         class component_pool_base : public object_pool {
         public:
@@ -19,7 +19,7 @@ namespace sigmafive {
             virtual component *get_component(entity e) = 0;
 
             virtual void remove_component(entity e) = 0;
-		};
+        };
 
         template<typename T>
         class component_pool : public component_pool_base {
@@ -50,7 +50,7 @@ namespace sigmafive {
         private:
             std::vector<std::unique_ptr<T>> components_; //TODO this thrashes cache
         };
-	}
+    }
 }
 
 #endif //SIGMAFIVE_GAME_COMPONENT_POOL_HPP

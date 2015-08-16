@@ -1,8 +1,8 @@
 #include <game/static_mesh_component.hpp>
 
 namespace sigmafive {
-	namespace game {
-	}
+    namespace game {
+    }
 }
 
-SIGMAFIVE_IMPLEMENT_OBJECT(sigmafive::game::static_mesh_component)
+EXPORT_SIGMAFIVE_CLASS(sigmafive::game::static_mesh_component)

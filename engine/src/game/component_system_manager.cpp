@@ -2,7 +2,7 @@
 #include <iterator>
 
 namespace sigmafive {
-	namespace game {
+    namespace game {
         component_system_manager::iterator component_system_manager::begin() {
             return std::begin(component_systems_);
         }
@@ -27,5 +27,5 @@ namespace sigmafive {
         component_system_manager::const_iterator component_system_manager::cend() {
             return component_systems_.cend();
         }
-	}
+    }
 }
