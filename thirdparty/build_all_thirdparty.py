@@ -167,7 +167,7 @@ def main():
 		##	libpng,
 		#	theora,
 		#	vorbis,
-		##	jsoncpp,
+			jsoncpp,
 		#	googlemock,
 		##	openal_soft,
 			SDL,

@@ -3,27 +3,20 @@ project(sigmafive)
 
 #Boost
 find_package(Boost REQUIRED COMPONENTS system filesystem)
-include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
-#GoogleMock
-set(gtest_force_shared_crt ON)
-set(gtest_disable_pthreads ON)
+add_library(jsoncpp STATIC IMPORTED)
+set_target_properties(jsoncpp PROPERTIES IMPORTED_LOCATION ${THIRDPARTY_DIR}/jsoncpp/lib/${CMAKE_STATIC_LIBRARY_PREFIX}jsoncpp${CMAKE_STATIC_LIBRARY_SUFFIX})
 
-add_subdirectory(${THIRDPARTY_DIR}/googlemock ${CMAKE_BINARY_DIR}/thirdparty)
-include_directories(SYSTEM ${THIRDPARTY_DIR}/googlemock/include ${THIRDPARTY_DIR}/googlemock/gtest/include)
-
-#SDL2
+#SDL2main
 add_library(SDL2main STATIC IMPORTED)
 set_target_properties(SDL2main PROPERTIES IMPORTED_LOCATION ${THIRDPARTY_DIR}/SDL/lib/${CMAKE_STATIC_LIBRARY_PREFIX}SDL2main${CMAKE_STATIC_LIBRARY_SUFFIX})
-
+#SDL2
 add_library(SDL2 SHARED IMPORTED)
 set_target_properties(SDL2 PROPERTIES IMPORTED_IMPLIB ${THIRDPARTY_DIR}/SDL/lib/${CMAKE_STATIC_LIBRARY_PREFIX}SDL2${CMAKE_STATIC_LIBRARY_SUFFIX})
 set_target_properties(SDL2 PROPERTIES IMPORTED_LOCATION ${THIRDPARTY_DIR}/SDL/lib/${CMAKE_SHARED_LIBRARY_PREFIX}SDL2${CMAKE_SHARED_LIBRARY_SUFFIX})
-include_directories(SYSTEM ${THIRDPARTY_DIR}/SDL/include)
 
 #OpenGL
 find_package(OpenGL REQUIRED)
-include_directories(SYSTEM ${OPENGL_INCLUDE_DIR})
 
 #Generated opengl header and function pointer loader
 find_program(LUA_EXECUTABLE
@@ -44,9 +37,8 @@ else()
         message(FATAL_ERROR "could not generate opengl headers.")
      endif()
 endif()
-include_directories(SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/generated)
 
-set(SRCS
+set(SOURCES
     src/sigmafive/application.cpp
     src/sigmafive/context.cpp
     src/sigmafive/object.cpp
@@ -87,7 +79,7 @@ set(SRCS
     src/sigmafive/game/component_system_manager.cpp
     src/sigmafive/game/static_mesh_component_system.cpp
 )
-set(HDRS
+set(HEADERS
     include/sigmafive/application.hpp
     include/sigmafive/context.hpp
     include/sigmafive/object.hpp
@@ -143,13 +135,17 @@ set(HDRS
     include/sigmafive/game/static_mesh_component_system.hpp
 )
 
-
-
-include_directories(include)
-add_library(sigmafive STATIC ${SRCS} ${HDRS})
-target_link_libraries(sigmafive ${Boost_LIBRARIES} ${OPENGL_LIBRARIES} SDL2 SDL2main)
+add_library(sigmafive STATIC ${SOURCES} ${HEADERS})
+target_include_directories(sigmafive
+PUBLIC
+    include
+    ${Boost_INCLUDE_DIRS}
+    ${OPENGL_INCLUDE_DIR}
+    ${THIRDPARTY_DIR}/jsoncpp/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/generated
+PRIVATE
+    ${THIRDPARTY_DIR}/SDL/include
+)
+target_link_libraries(sigmafive ${Boost_LIBRARIES} ${OPENGL_LIBRARIES} SDL2 SDL2main jsoncpp)
 
 add_subdirectory(tests)
-
-#add_executable(sigma-five-sample src/sigmafive/main.cpp )
-#target_link_libraries(sigma-five-sample sigma-five)

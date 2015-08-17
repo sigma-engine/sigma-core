@@ -18,9 +18,5 @@ namespace sigmafive {
         return *instance_;
     }
 
-    context &application::context() {
-        return context_;
-    }
-
     application *application::instance_ = nullptr;
 }

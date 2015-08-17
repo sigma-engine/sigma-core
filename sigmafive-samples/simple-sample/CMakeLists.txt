@@ -4,7 +4,6 @@ set(SOURCES
     main.cpp
 )
 set(HEADERS
-
 )
 
 add_executable(simple-sample ${SOURCES} ${HEADERS})

@@ -3,6 +3,8 @@
 
 #include <sigmafive/context.hpp>
 
+#include <json/json.h>
+
 namespace sigmafive {
     class application {
     public:
@@ -11,12 +13,10 @@ namespace sigmafive {
         virtual ~application();
 
         static application &instance();
-
-        sigmafive::context &context();
     private:
         static application *instance_;
 
-        sigmafive::context context_;
+        Json::Value properties_;
     };
 }
 

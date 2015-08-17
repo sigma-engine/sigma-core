@@ -1,3 +1,8 @@
+#GoogleMock
+set(gtest_force_shared_crt ON)
+set(gtest_disable_pthreads ON)
+add_subdirectory(${THIRDPARTY_DIR}/googlemock ${CMAKE_BINARY_DIR}/thirdparty)
+
 set(TESTS_SRCS
     math/mat2_tests.cpp
     math/mat3_tests.cpp
@@ -27,6 +32,12 @@ set(TESTS_SRCS
 set(TESTS_HDRS
     game/fake_components.hpp
 )
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
 add_executable(sigmafive-tests ${TESTS_HDRS} ${TESTS_SRCS})
 target_link_libraries(sigmafive-tests gmock gmock_main sigmafive)
+target_include_directories(sigmafive-tests
+PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${THIRDPARTY_DIR}/googlemock/include
+    ${THIRDPARTY_DIR}/googlemock/gtest/include
+)

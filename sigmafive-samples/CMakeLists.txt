@@ -1,3 +1,3 @@
-include_directories(SYSTEM ../sigmafive-engine/include)
+cmake_minimum_required(VERSION 2.8.12)
 
 add_subdirectory(simple-sample)
