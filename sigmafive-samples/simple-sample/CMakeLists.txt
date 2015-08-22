@@ -8,3 +8,5 @@ set(HEADERS
 
 add_executable(simple-sample ${SOURCES} ${HEADERS})
 target_link_libraries(simple-sample sigmafive)
+
+install(TARGETS simple-sample DESTINATION samples)

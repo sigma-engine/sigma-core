@@ -13,7 +13,7 @@
 
 #include <string>
 #include <vector>
-#include <gl_core_4_0.hpp>
+#include <sigmafive/graphics/opengl/gl_core_4_0.hpp>
 
 namespace sigmafive {
 	namespace graphics {

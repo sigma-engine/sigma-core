@@ -5,10 +5,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
 find_package(Qt5Widgets REQUIRED)
-
-add_library(assimp SHARED IMPORTED)
-set_target_properties(assimp PROPERTIES IMPORTED_IMPLIB ${THIRDPARTY_DIR}/assimp/${CMAKE_STATIC_LIBRARY_PREFIX}assimp${CMAKE_STATIC_LIBRARY_SUFFIX})
-set_target_properties(assimp PROPERTIES IMPORTED_LOCATION ${THIRDPARTY_DIR}/assimp/lib/${CMAKE_SHARED_LIBRARY_PREFIX}assimp${CMAKE_SHARED_LIBRARY_SUFFIX})
+find_package(assimp REQUIRED)
 
 set(SOURCES
     src/main.cpp
@@ -35,6 +32,9 @@ target_include_directories(sigmafive-editor
 PUBLIC
     include
 PRIVATE
-    ${THIRDPARTY_DIR}/assimp/include
+    ${assimp_INCLUDE_DIRS}
 )
 target_link_libraries(sigmafive-editor Qt5::Widgets sigmafive assimp)
+
+install(TARGETS sigmafive-editor DESTINATION bin)
+install(FILES ${HEADERS} DESTINATION include)

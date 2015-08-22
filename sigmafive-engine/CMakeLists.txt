@@ -1,42 +1,11 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(sigmafive)
 
-#Boost
 find_package(Boost REQUIRED COMPONENTS system filesystem)
-
-add_library(jsoncpp STATIC IMPORTED)
-set_target_properties(jsoncpp PROPERTIES IMPORTED_LOCATION ${THIRDPARTY_DIR}/jsoncpp/lib/${CMAKE_STATIC_LIBRARY_PREFIX}jsoncpp${CMAKE_STATIC_LIBRARY_SUFFIX})
-
-#SDL2main
-add_library(SDL2main STATIC IMPORTED)
-set_target_properties(SDL2main PROPERTIES IMPORTED_LOCATION ${THIRDPARTY_DIR}/SDL/lib/${CMAKE_STATIC_LIBRARY_PREFIX}SDL2main${CMAKE_STATIC_LIBRARY_SUFFIX})
-#SDL2
-add_library(SDL2 SHARED IMPORTED)
-set_target_properties(SDL2 PROPERTIES IMPORTED_IMPLIB ${THIRDPARTY_DIR}/SDL/lib/${CMAKE_STATIC_LIBRARY_PREFIX}SDL2${CMAKE_STATIC_LIBRARY_SUFFIX})
-set_target_properties(SDL2 PROPERTIES IMPORTED_LOCATION ${THIRDPARTY_DIR}/SDL/lib/${CMAKE_SHARED_LIBRARY_PREFIX}SDL2${CMAKE_SHARED_LIBRARY_SUFFIX})
-
-#OpenGL
+find_package(jsoncpp REQUIRED)
 find_package(OpenGL REQUIRED)
+find_package(SDL2 REQUIRED)
 
-#Generated opengl header and function pointer loader
-find_program(LUA_EXECUTABLE
-    NAMES lua Lua lua51 Lua51 lua52 Lua52
-    DOC "lua command line client"
-)
-if(${LUA_EXECUTABLE} STREQUAL "LUA_EXECUTABLE-NOTFOUND")
-    message(FATAL_ERROR "could not find lua")
-else()
-    file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/generated)
-    set(args ${THIRDPARTY_DIR}/.src/glloadgen/LoadGen.lua -style=noload_cpp -spec=gl -version=4.0 -profile=core core_4_0)
-    execute_process(COMMAND
-        ${LUA_EXECUTABLE} ${args}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/generated
-        RESULT_VARIABLE RESULT
-     )
-     if(NOT ${RESULT} EQUAL 0)
-        message(FATAL_ERROR "could not generate opengl headers.")
-     endif()
-endif()
 
 set(SOURCES
     src/sigmafive/application.cpp
@@ -50,7 +19,7 @@ set(SOURCES
     src/sigmafive/graphics/graphics_system.cpp
     src/sigmafive/graphics/static_mesh.cpp
 
-    generated/gl_core_4_0.cpp
+    src/sigmafive/graphics/opengl/gl_core_4_0.cpp
     src/sigmafive/graphics/opengl/buffer.cpp
     src/sigmafive/graphics/opengl/frame_buffer.cpp
     src/sigmafive/graphics/opengl/index_buffer.cpp
@@ -104,7 +73,7 @@ set(HEADERS
     include/sigmafive/graphics/graphics_system.hpp
     include/sigmafive/graphics/static_mesh.hpp
 
-    generated/gl_core_4_0.hpp
+    include/sigmafive/graphics/opengl/gl_core_4_0.hpp
     include/sigmafive/graphics/opengl/buffer.hpp
     include/sigmafive/graphics/opengl/frame_buffer.hpp
     include/sigmafive/graphics/opengl/index_buffer.hpp
@@ -140,12 +109,14 @@ target_include_directories(sigmafive
 PUBLIC
     include
     ${Boost_INCLUDE_DIRS}
-    ${OPENGL_INCLUDE_DIR}
-    ${THIRDPARTY_DIR}/jsoncpp/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/generated
+    ${jsoncpp_INCLUDE_DIRS}
 PRIVATE
-    ${THIRDPARTY_DIR}/SDL/include
+    ${OPENGL_INCLUDE_DIRS}
+    ${SDL2_INCLUDE_DIRS}
 )
-target_link_libraries(sigmafive ${Boost_LIBRARIES} ${OPENGL_LIBRARIES} SDL2 SDL2main jsoncpp)
+target_link_libraries(sigmafive ${Boost_LIBRARIES} ${jsoncpp_LIBRARIES} ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES})
 
-add_subdirectory(tests)
+#add_subdirectory(tests)
+
+install(TARGETS sigmafive DESTINATION bin)
+install(FILES ${HEADERS} DESTINATION include)

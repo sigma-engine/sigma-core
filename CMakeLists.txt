@@ -28,8 +28,6 @@ if(SIGMAFIVE_CLANG OR SIGMAFIVE_GNU_GCC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
 
-set(THIRDPARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty)
-
 add_subdirectory(sigmafive-engine)
 add_subdirectory(sigmafive-editor)
 add_subdirectory(sigmafive-samples)

@@ -2,7 +2,7 @@
 #define SIGMAFIVE_GRAPHICS_OPENGL_SHADER_HPP
 
 #include <string>
-#include <gl_core_4_0.hpp>
+#include <sigmafive/graphics/opengl/gl_core_4_0.hpp>
 
 #define GLSL_110(x) "#version 110\n" #x
 #define GLSL_120(x) "#version 120\n" #x
