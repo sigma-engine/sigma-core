@@ -2,6 +2,7 @@
 #define SIGMAFIVE_GRAPHICS_OPENGL_BUFFER_HPP
 
 #include <cstdint>
+#include <cstdlib>
 #include <sigmafive/graphics/opengl/gl_core_4_0.hpp>
 
 namespace sigmafive {

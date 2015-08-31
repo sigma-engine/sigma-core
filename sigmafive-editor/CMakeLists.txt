@@ -27,14 +27,15 @@ qt5_add_resources(UI_RESOURCES
     resources/resources.qrc
 )
 
+link_directories(${ASSIMP_LIBRARY_DIRS})
+
 add_executable(sigmafive-editor WIN32 ${SOURCES} ${HEADERS} ${UI_HEADERS} ${UI_RESOURCES})
 target_include_directories(sigmafive-editor
 PUBLIC
     include
 PRIVATE
-    ${assimp_INCLUDE_DIRS}
+    ${ASSIMP_INCLUDE_DIRS}
 )
-target_link_libraries(sigmafive-editor Qt5::Widgets sigmafive assimp)
 
-install(TARGETS sigmafive-editor DESTINATION bin)
-install(FILES ${HEADERS} DESTINATION include)
+message("${ASSIMP_LIBRARIES}")
+target_link_libraries(sigmafive-editor Qt5::Widgets sigmafive ${ASSIMP_LIBRARIES})

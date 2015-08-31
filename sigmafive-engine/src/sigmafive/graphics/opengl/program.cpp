@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <sigmafive/graphics/opengl/gl_core_4_0.hpp>
 #include <functional>
+#include <numeric>
 
 namespace sigmafive {
 	namespace graphics {

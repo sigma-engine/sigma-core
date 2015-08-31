@@ -1,11 +1,14 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(sigmafive)
 
+set(Boost_USE_STATIC_LIBS ON)
+set(Boost_USE_MULTITHREADED ON) 
+set(Boost_USE_STATIC_RUNTIME OFF)
+
 find_package(Boost REQUIRED COMPONENTS system filesystem)
 find_package(jsoncpp REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(SDL2 REQUIRED)
-
 
 set(SOURCES
     src/sigmafive/application.cpp
@@ -114,9 +117,7 @@ PRIVATE
     ${OPENGL_INCLUDE_DIRS}
     ${SDL2_INCLUDE_DIRS}
 )
-target_link_libraries(sigmafive ${Boost_LIBRARIES} ${jsoncpp_LIBRARIES} ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES})
+
+target_link_libraries(sigmafive ${Boost_LIBRARIES}  ${jsoncpp_LIBRARIES} ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES})
 
 #add_subdirectory(tests)
-
-install(TARGETS sigmafive DESTINATION bin)
-install(FILES ${HEADERS} DESTINATION include)

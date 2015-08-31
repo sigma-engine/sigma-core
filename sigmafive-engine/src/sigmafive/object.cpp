@@ -1,4 +1,5 @@
 #include <sigmafive/object.hpp>
+#include <string>
 
 namespace sigmafive {
     std::unordered_map<class_hash, meta_class> &object::meta_classes() {
