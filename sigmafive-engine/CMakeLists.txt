@@ -117,6 +117,12 @@ PRIVATE
     ${OPENGL_INCLUDE_DIRS}
     ${SDL2_INCLUDE_DIRS}
 )
+if(NOT MSVC)
+    target_compile_options(sigmafive
+    PUBLIC
+        -std=c++11
+    )
+endif()
 
 target_link_libraries(sigmafive ${Boost_LIBRARIES}  ${jsoncpp_LIBRARIES} ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES})
 

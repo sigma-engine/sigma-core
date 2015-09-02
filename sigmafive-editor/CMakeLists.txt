@@ -37,5 +37,4 @@ PRIVATE
     ${ASSIMP_INCLUDE_DIRS}
 )
 
-message("${ASSIMP_LIBRARIES}")
 target_link_libraries(sigmafive-editor Qt5::Widgets sigmafive ${ASSIMP_LIBRARIES})
