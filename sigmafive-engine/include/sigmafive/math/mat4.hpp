@@ -5,7 +5,7 @@
 #include <cmath>
 
 template<typename T>
-class quaternion_t;
+struct quaternion_t;
 
 template<typename T>
 class mat4x4_t {
