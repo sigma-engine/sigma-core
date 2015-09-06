@@ -2,7 +2,6 @@
 #define SIGMAFIVE_GAME_COMPONENT_HPP
 
 #include <sigmafive/object.hpp>
-#include <sigmafive/game/component_pool.hpp>
 
 #include <bitset>
 
@@ -10,7 +9,7 @@ namespace sigmafive {
     namespace game {
         //TODO create a dynamic bitset to avoid this max
         static constexpr const std::uint32_t MAX_NUM_COMPONENTS = 64;
-        typedef std::bitset<MAX_NUM_COMPONENTS> bitset;
+        typedef std::bitset<MAX_NUM_COMPONENTS> component_mask;
 
         class component : public object {
             SIGMAFIVE_CLASS()

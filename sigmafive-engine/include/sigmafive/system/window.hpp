@@ -1,7 +1,6 @@
 #ifndef SIGMAONE_SYSTEM_WINDOW_HPP
 #define SIGMAONE_SYSTEM_WINDOW_HPP
 
-#include <sigmafive/context.hpp>
 #include <sigmafive/math/vec2.hpp>
 #include <sigmafive/graphics/opengl/ogl_graphics_system.hpp>
 
@@ -32,14 +31,11 @@ namespace sigmafive {
 
             ~window();
 
-            sigmafive::context &context();
-
             bool good();
 
             void close();
 
         private:
-            sigmafive::context context_;
             sigmafive::graphics::opengl::ogl_graphics_system graphics_system_;
 
             std::string title_;

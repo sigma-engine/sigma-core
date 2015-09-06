@@ -175,6 +175,11 @@ namespace sigmafive {
                 ui->openGLWidget->resource_manager_ = &resource_manager_;
                 ui->openGLWidget->scene_ = &scene_;
 
+                world_.component_registry().register_component(game::transform_component::CLASS_ID,
+                                                               std::unique_ptr<game::transform_component_pool_factory>(new game::transform_component_pool_factory{}));
+                world_.component_registry().register_component(game::static_mesh_component::CLASS_ID,
+                                                               std::unique_ptr<game::static_mesh_component_pool_factory>(new game::static_mesh_component_pool_factory{}));
+
                 auto s = world_.add_component_system<game::static_mesh_component_system>();
                 s->init(world_,scene_);
             }

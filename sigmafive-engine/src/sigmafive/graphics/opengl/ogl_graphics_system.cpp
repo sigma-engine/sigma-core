@@ -3,8 +3,7 @@
 namespace sigmafive {
     namespace graphics {
         namespace opengl {
-            ogl_graphics_system::ogl_graphics_system(sigmafive::context &ctx)
-                : graphics_system(ctx) {
+            ogl_graphics_system::ogl_graphics_system() {
             }
 		}
 	}

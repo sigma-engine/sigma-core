@@ -6,9 +6,6 @@
 namespace sigmafive {
     namespace game {
         struct entity {
-            std::uint32_t index;
-            std::uint32_t version;
-
             entity();
 
             entity(std::uint32_t index,std::uint32_t version);
@@ -18,10 +15,12 @@ namespace sigmafive {
             bool operator!=(entity o) const;
 
             bool is_valid() const;
+
+            std::uint32_t index;
+            std::uint32_t version;
         };
     }
 }
-
 
 #endif //SIGMAFIVE_GAME_ENTITY_HPP
 

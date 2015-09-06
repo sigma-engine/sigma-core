@@ -3,15 +3,18 @@
 
 #include <sigmafive/game/component.hpp>
 #include <sigmafive/graphics/static_mesh.hpp>
+#include <sigmafive/game/component_registry.hpp>
 
 namespace sigmafive {
     namespace game {
         class static_mesh_component : public game::component {
             SIGMAFIVE_CLASS()
         public:
-            typedef component_pool<static_mesh_component> pool_type;
             boost::uuids::uuid static_mesh;
         };
+
+        using static_mesh_component_pool = simple_component_pool<static_mesh_component>;
+        using static_mesh_component_pool_factory = simple_factory<component_pool,static_mesh_component_pool>;
     }
 }
 

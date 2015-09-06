@@ -1,5 +1,7 @@
 #include <sigmafive/application.hpp>
 
+#include <stdexcept>
+
 namespace sigmafive {
 
     application::application(int &argc, char **argv) {

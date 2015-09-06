@@ -22,7 +22,7 @@ namespace sigmafive {
 
             component_system &operator=(component_system &&) = default;
 
-            virtual bool is_intrested(bitset mask) const;
+            virtual bool is_intrested(component_mask mask) const;
 
             virtual void entity_added(entity e) = 0;
 
@@ -30,7 +30,7 @@ namespace sigmafive {
 
             virtual void process() = 0;
         protected://TODO
-            bitset intrested_mask_;
+            component_mask intrested_mask_;
         };
 
         namespace detail {

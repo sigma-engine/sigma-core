@@ -10,7 +10,7 @@ public:
     virtual ~fake_1_component_system() {
     }
 
-    virtual bool is_intrested(sigmafive::game::bitset mask) const override {
+    virtual bool is_intrested(sigmafive::game::component_mask mask) const override {
         return false;
     }
 

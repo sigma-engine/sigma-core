@@ -9,10 +9,9 @@ namespace sigmafive {
             }
         }
 
-        bool component_system::is_intrested(bitset mask) const {
+        bool component_system::is_intrested(component_mask mask) const {
             return (intrested_mask_ & mask) == intrested_mask_;
         }
-
     }
 }
 

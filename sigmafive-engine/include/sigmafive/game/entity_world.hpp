@@ -3,17 +3,20 @@
 
 #include <sigmafive/game/entity_manager.hpp>
 #include <sigmafive/game/component_manager.hpp>
+#include <sigmafive/game/component_registry.hpp>
 #include <sigmafive/game/component_system_manager.hpp>
 
 namespace sigmafive {
     namespace game {
         class entity_world {
         public:
-            component_bitset_manager &bitset_manager();
+            entity_world();
 
-            game::entity create();
+            game::component_registry &component_registry();
 
-            bool is_alive(game::entity e) const;
+            entity create();
+
+            bool is_alive(entity e) const;
 
             template<class T>
             T *add_component_system() {
@@ -38,7 +41,7 @@ namespace sigmafive {
             }
 
             template<class T>
-            T *add_component(game::entity e) {
+            T *add_component(entity e) {
                 auto premask = component_manager_.get_component_mask(e);
                 auto cmp = component_manager_.add_component<T>(e);
                 auto postmask = component_manager_.get_component_mask(e);
@@ -52,17 +55,17 @@ namespace sigmafive {
             }
 
             template<class T>
-            bool has_component(game::entity e) {
+            bool has_component(entity e) {
                 return component_manager_.has_component<T>(e);
             }
 
             template<class T>
-            T *get_component(game::entity e) {
+            T *get_component(entity e) {
                 return component_manager_.get_component<T>(e);
             }
 
             template<class T>
-            void remove_component(game::entity e) {
+            void remove_component(entity e) {
                 auto premask = component_manager_.get_component_mask(e);
                 component_manager_.remove_component<T>(e);
                 auto postmask = component_manager_.get_component_mask(e);
@@ -73,11 +76,12 @@ namespace sigmafive {
                 }
             }
 
-            void destroy(game::entity e);
+            void destroy(entity e);
         private:
-            game::entity_manager entity_manager_;
-            game::component_manager component_manager_;
-            game::component_system_manager component_system_manager_;
+            game::component_registry registry_;
+            entity_manager entity_manager_;
+            component_manager component_manager_;
+            component_system_manager component_system_manager_;
         };
     }
 }

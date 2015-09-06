@@ -26,12 +26,3 @@ TEST(entity_world_tests,is_alive_and_destroy_false) {
     entity_world.destroy(e);
     EXPECT_FALSE(entity_world.is_alive(e));
 }
-
-/*TEST(entity_world_tests,add_component) {
-    sigmafive::game::entity_world entity_world;
-    auto e = entity_world.create();
-
-    entity_world.add_component<fake_1_component>(e);
-
-    EXPECT_TRUE(entity_world.has_component<fake_1_component>(e));
-}*/

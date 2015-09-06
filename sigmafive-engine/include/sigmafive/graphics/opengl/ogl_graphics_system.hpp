@@ -9,7 +9,7 @@ namespace sigmafive {
             class ogl_graphics_system : public graphics_system {
                 SIGMAFIVE_CLASS()
             public:
-                ogl_graphics_system(sigmafive::context &ctx);
+                ogl_graphics_system();
 
                 ogl_graphics_system(const ogl_graphics_system &) = default;
                 ogl_graphics_system(ogl_graphics_system &&) = default;

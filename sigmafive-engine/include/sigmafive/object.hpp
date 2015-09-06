@@ -1,75 +1,71 @@
-#ifndef SIGMAFIVE_CLASS_HPP
-#define SIGMAFIVE_CLASS_HPP
+#ifndef SIGMAFIVE_OBJECT_HPP
+#define SIGMAFIVE_OBJECT_HPP
 
-#include <sigmafive/type_info.hpp>
-#include <sigmafive/compile_time_hash.hpp>
-
+#include <string>
 #include <memory>
 #include <unordered_map>
 
 #define SIGMAFIVE_CLASS(...) \
 public:\
-    static const sigmafive::class_hash CLASS_ID;\
+    static const sigmafive::class_uid CLASS_ID;\
     static sigmafive::meta_class &klass;\
 private:
 
 #define EXPORT_SIGMAFIVE_CLASS(C) \
-    const sigmafive::class_hash C::CLASS_ID = compile_time_hash(#C);\
-    sigmafive::meta_class &C::klass = sigmafive::object::add_meta_class<C>(#C,compile_time_hash(#C));
+    const sigmafive::class_uid C::CLASS_ID = sigmafive::compile_time_hash(#C);\
+    sigmafive::meta_class &C::klass = sigmafive::object::add_meta_class<C>(#C,sigmafive::compile_time_hash(#C));
 
 namespace sigmafive {
-    using class_hash = unsigned long;
+    class object;
+    class meta_class;
 
-    class object_pool {
+    using class_uid = unsigned long long;
+
+    //http://www.cse.yorku.ca/~oz/hash.html
+    constexpr const class_uid compile_time_hash(const char *input) {
+        return *input ? static_cast<class_uid>(*input) + 33 * compile_time_hash(input + 1) : 5381;
+    }
+
+    class meta_class {
     public:
-        virtual ~object_pool() = default;
-    };
+        std::string name() const;
 
-    struct meta_class {
-        const char *name;
-        std::unique_ptr<object_pool>(*create_pool)();
-    };
+        class_uid uid() const;
+    private:
+        friend class object;
+        meta_class(class_uid uid,std::string name);
 
-    //http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n3911
-    template<class,class = void>
-    struct has_pool_type : std::false_type {};
-    template<class T>
-    struct has_pool_type<T, void_t<typename T::pool_type>> : std::true_type {};
+        std::string name_;
+        class_uid uid_;
+    };
 
     class object {
         SIGMAFIVE_CLASS()
     public:
         virtual ~object() = default;
 
-        static bool has_meta_class(class_hash class_id);
+        static bool has_meta_class(class_uid uid);
+
+        static const meta_class &meta_class_for(class_uid uid);
 
         template<class T>
         static bool has_meta_class() {
             return has_meta_class(T::CLASS_ID);
         }
 
-        static const meta_class &meta_class_for(class_hash class_id);
-
         template<typename T>
         static const meta_class &meta_class_for() {
             return meta_class_for(T::CLASS_ID);
         }
-
     protected:
-        template <class T>
-        static typename std::enable_if<has_pool_type<T>::value, meta_class &>::type add_meta_class(const char *klass,class_hash class_id) {
-            auto it = meta_classes().emplace(std::make_pair(class_id,meta_class{klass,&T::pool_type::create_pool})).first;
-            return it->second;
-        }
-
-        template <class T>
-        static typename std::enable_if<!has_pool_type<T>::value, meta_class &>::type add_meta_class(const char *klass,class_hash class_id) {
-            auto it = meta_classes().emplace(std::make_pair(class_id,meta_class{klass,nullptr})).first;
+        template<class T>
+        static meta_class &add_meta_class(std::string klass,class_uid uid) {
+            auto it = meta_classes().emplace(std::make_pair(uid,meta_class{uid,klass})).first;
             return it->second;
         }
     private:
-        static std::unordered_map<class_hash, meta_class> &meta_classes();
+        static std::unordered_map<class_uid, meta_class> &meta_classes();
     };
 }
 
-#endif //SIGMAFIVE_CLASS_HPP
+#endif //SIGMAFIVE_OBJECT_HPP

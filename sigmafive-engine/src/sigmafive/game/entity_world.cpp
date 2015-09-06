@@ -2,19 +2,23 @@
 
 namespace sigmafive {
     namespace game {
-        component_bitset_manager &entity_world::bitset_manager() {
-            return component_manager_.bitset_manager();
+        entity_world::entity_world() :
+            component_manager_(registry_) {
         }
 
-        game::entity entity_world::create() {
+        game::component_registry &entity_world::component_registry() {
+            return registry_;
+        }
+
+        entity entity_world::create() {
             return entity_manager_.create();
         }
 
-        bool entity_world::is_alive(game::entity e) const {
+        bool entity_world::is_alive(entity e) const {
             return entity_manager_.is_alive(e);
         }
 
-        void entity_world::destroy(game::entity e) {
+        void entity_world::destroy(entity e) {
             auto premask = component_manager_.get_component_mask(e);
             component_manager_.remove_all_components(e);
             auto postmask = component_manager_.get_component_mask(e);

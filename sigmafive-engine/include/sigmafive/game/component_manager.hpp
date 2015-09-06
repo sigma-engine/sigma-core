@@ -3,8 +3,7 @@
 
 #include <sigmafive/game/entity.hpp>
 #include <sigmafive/game/component.hpp>
-#include <sigmafive/game/component_pool.hpp>
-#include <sigmafive/game/component_bitset_manager.hpp>
+#include <sigmafive/game/component_registry.hpp>
 
 #include <memory>
 #include <vector>
@@ -14,29 +13,17 @@ namespace sigmafive {
     namespace game {
         class component_manager {
         public:
-            component_manager() = default;
+            component_manager(component_registry &registry);
 
-            component_manager(const component_manager &) = delete;
+            component_mask get_component_mask(entity e) const;
 
-            component_manager(component_manager &&) = default;
+            component *add_component(class_uid component_id,entity e);
 
-            virtual ~component_manager() = default;
+            bool has_component(class_uid component_id,entity e);
 
-            component_manager &operator=(const component_manager &) = delete;
+            component *get_component(class_uid component_id,entity e);
 
-            component_manager &operator=(component_manager &&) = default;
-
-            game::component_bitset_manager &bitset_manager();
-
-            bitset get_component_mask(entity e) const;
-
-            component *add_component(class_hash component_id,entity e);
-
-            bool has_component(class_hash component_id,entity e);
-
-            component *get_component(class_hash component_id,entity e);
-
-            void remove_component(class_hash component_id,entity e);
+            void remove_component(class_uid component_id,entity e);
 
             void remove_all_components(entity e);
 
@@ -61,9 +48,9 @@ namespace sigmafive {
             }
 
         private:
-            std::vector<bitset> component_masks_;
-            game::component_bitset_manager bitset_manager_;
-            std::unordered_map<class_hash,std::unique_ptr<object_pool>> component_pools_;
+            component_registry &registry_;
+            std::vector<component_mask> component_masks_;
+            std::unordered_map<class_uid,std::unique_ptr<component_pool>> component_pools_;
         };
     }
 }

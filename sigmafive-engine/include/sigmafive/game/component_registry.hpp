@@ -1,33 +1,30 @@
-#ifndef SIGMAFIVE_GAME_COMPONENT_POOL_HPP
-#define SIGMAFIVE_GAME_COMPONENT_POOL_HPP
+#ifndef SIGMAFIVE_GAME_COMPONENT_REGISTRY_HPP
+#define SIGMAFIVE_GAME_COMPONENT_REGISTRY_HPP
 
-#include <sigmafive/object.hpp>
+#include <sigmafive/factory.hpp>
 #include <sigmafive/game/entity.hpp>
+#include <sigmafive/game/component.hpp>
 
-#include <memory>
 #include <vector>
+#include <unordered_map>
 
 namespace sigmafive {
     namespace game {
-        class component;
-        class component_pool_base : public object_pool {
+        class component_pool {
         public:
-            virtual ~component_pool_base() = default;
+            virtual ~component_pool() = default;
 
             virtual component *add_component(entity e) = 0;
 
             virtual component *get_component(entity e) = 0;
 
             virtual void remove_component(entity e) = 0;
+        private:
         };
 
         template<typename T>
-        class component_pool : public component_pool_base {
+        class simple_component_pool : public component_pool {
         public:
-            static std::unique_ptr<sigmafive::object_pool> create_pool() {
-                return std::unique_ptr<sigmafive::object_pool>(new component_pool<T>());
-            }
-
             component *add_component(entity e) override {
                 if(e.index >= components_.size())
                     components_.resize(e.index+1);
@@ -50,7 +47,26 @@ namespace sigmafive {
         private:
             std::vector<std::unique_ptr<T>> components_; //TODO this thrashes cache
         };
+
+        class component_registry {
+        public:
+            void register_component(class_uid uid, std::unique_ptr<factory<component_pool>> pool_factory);
+
+            component_mask mask_for(class_uid uid) const;
+
+            std::unique_ptr<component_pool> create_component_pool_for(class_uid uid) const;
+
+            //TODO implement this
+            //void unregister_component(class_uid uid);
+        private:
+            struct component_register {
+                class_uid uid;
+                std::unique_ptr<factory<component_pool>> pool_factory;
+                component_mask mask;
+            };
+            std::unordered_map<class_uid,component_register> registered_components_;
+        };
     }
 }
 
-#endif //SIGMAFIVE_GAME_COMPONENT_POOL_HPP
+#endif //SIGMAFIVE_GAME_COMPONENT_REGISTRY_HPP

@@ -7,8 +7,8 @@ namespace sigmafive {
         void static_mesh_component_system::init(entity_world &world,game::scene &scene) {
             world_ = &world;
             scene_ = &scene;
-            intrested_mask_ |= world_->bitset_manager().bitset_for<static_mesh_component>();
-            intrested_mask_ |= world_->bitset_manager().bitset_for<transform_component>();
+            intrested_mask_ |= world_->component_registry().mask_for(transform_component::CLASS_ID);
+            intrested_mask_ |= world_->component_registry().mask_for(static_mesh_component::CLASS_ID);
         }
 
         static_mesh_component_system::~static_mesh_component_system() {
