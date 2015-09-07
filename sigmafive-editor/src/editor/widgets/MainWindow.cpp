@@ -167,18 +167,15 @@ namespace sigmafive {
                 TEXFLAGS(t,n);*/
             }
 
-            MainWindow::MainWindow(QWidget *parent) :
+            MainWindow::MainWindow(sigmafive::engine *engine, QWidget *parent) :
                     QMainWindow(parent),
-                    ui(new Ui::MainWindow) {
+                    ui(new Ui::MainWindow),
+                    engine_(engine),
+                    world_(engine->component_registry()) {
                 ui->setupUi(this);
 
-                ui->openGLWidget->resource_manager_ = &resource_manager_;
+                ui->openGLWidget->engine_ = engine_;
                 ui->openGLWidget->scene_ = &scene_;
-
-                world_.component_registry().register_component(game::transform_component::CLASS_ID,
-                                                               std::unique_ptr<game::transform_component_pool_factory>(new game::transform_component_pool_factory{}));
-                world_.component_registry().register_component(game::static_mesh_component::CLASS_ID,
-                                                               std::unique_ptr<game::static_mesh_component_pool_factory>(new game::static_mesh_component_pool_factory{}));
 
                 auto s = world_.add_component_system<game::static_mesh_component_system>();
                 s->init(world_,scene_);
@@ -264,10 +261,10 @@ namespace sigmafive {
                         }
                     }
 
-                    auto static_mesh_uuid = resource_manager_.generate_key();
+                    auto static_mesh_uuid = engine_->resource_manager().generate_key();
                     boost::shared_ptr<graphics::static_mesh> static_mesh(new graphics::static_mesh());
                     static_mesh->set_data(vertices,triangles);
-                    resource_manager_.insert(static_mesh_uuid,std::move(static_mesh));
+                    engine_->resource_manager().insert(static_mesh_uuid,std::move(static_mesh));
                     meshuuids[i] = static_mesh_uuid;
                 }
 

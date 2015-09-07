@@ -1,11 +1,11 @@
+
 #include <QApplication>
 #include <editor/widgets/MainWindow.hpp>
-#include <QMessageBox>
 
-int main(int argc, char *argv[]) {
-
+int main(int argc,char *argv[]) {
     QApplication app(argc,argv);
-    sigmafive::editor::widgets::MainWindow m;
+    sigmafive::engine engine(argc,argv);
+    sigmafive::editor::widgets::MainWindow m(&engine);
     m.show();
     return app.exec();
 }

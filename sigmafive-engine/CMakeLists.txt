@@ -12,14 +12,15 @@ find_package(SDL2 REQUIRED)
 
 set(SOURCES
     src/sigmafive/object.cpp
-    src/sigmafive/application.cpp
+    src/sigmafive/engine.cpp
 
     src/sigmafive/system/window.cpp
     src/sigmafive/system/resource.cpp
     src/sigmafive/system/resource_manager.cpp
 
     src/sigmafive/graphics/static_mesh.cpp
-    src/sigmafive/graphics/graphics_system.cpp
+    src/sigmafive/graphics/context.cpp
+    src/sigmafive/graphics/context_manager.cpp
 
     src/sigmafive/graphics/opengl/buffer.cpp
     src/sigmafive/graphics/opengl/shader.cpp
@@ -32,8 +33,7 @@ set(SOURCES
     src/sigmafive/graphics/opengl/index_buffer.cpp
     src/sigmafive/graphics/opengl/vertex_array.cpp
     src/sigmafive/graphics/opengl/vertex_buffer.cpp
-    src/sigmafive/graphics/opengl/scene_renderer.cpp
-    src/sigmafive/graphics/opengl/ogl_graphics_system.cpp
+    src/sigmafive/graphics/opengl/context.cpp
     src/sigmafive/graphics/opengl/static_mesh_manager.cpp
 
     src/sigmafive/game/scene.cpp
@@ -52,7 +52,7 @@ set(SOURCES
 set(HEADERS
     include/sigmafive/object.hpp
     include/sigmafive/factory.hpp
-    include/sigmafive/application.hpp
+    include/sigmafive/engine.hpp
     include/sigmafive/type_info.hpp
 
     include/sigmafive/math/mat2.hpp
@@ -71,7 +71,8 @@ set(HEADERS
     include/sigmafive/system/resource_manager.hpp
 
     include/sigmafive/graphics/static_mesh.hpp
-    include/sigmafive/graphics/graphics_system.hpp
+    include/sigmafive/graphics/context.hpp
+    include/sigmafive/graphics/context_manager.hpp
 
     include/sigmafive/graphics/opengl/util.hpp
     include/sigmafive/graphics/opengl/buffer.hpp
@@ -85,8 +86,7 @@ set(HEADERS
     include/sigmafive/graphics/opengl/index_buffer.hpp
     include/sigmafive/graphics/opengl/vertex_array.hpp
     include/sigmafive/graphics/opengl/vertex_buffer.hpp
-    include/sigmafive/graphics/opengl/scene_renderer.hpp
-    include/sigmafive/graphics/opengl/ogl_graphics_system.hpp
+    include/sigmafive/graphics/opengl/context.hpp
     include/sigmafive/graphics/opengl/static_mesh_manager.hpp
 
     include/sigmafive/game/entity.hpp

@@ -1,12 +1,11 @@
-#include <sigmafive/graphics/opengl/scene_renderer.hpp>
-
+#include <sigmafive/graphics/opengl/context.hpp>
 
 namespace sigmafive {
 	namespace graphics {
 		namespace opengl {
-			scene_renderer::scene_renderer(system::resource_manager &resource_manager)
-				: vertex_shader(shader_type::vertex), fragment_shader(shader_type::fragment),
-				  resource_manager_(resource_manager), static_mesh_manager_(resource_manager_) {
+            context::context(system::resource_manager &resource_manager)
+                : vertex_shader(shader_type::vertex), fragment_shader(shader_type::fragment),
+                  resource_manager_(resource_manager), static_mesh_manager_(resource_manager) {
 
 
                 vertex_shader.set_source(GLSL_440(
@@ -45,11 +44,15 @@ namespace sigmafive {
                 material_.attach_shader(fragment_shader);
 			}
 
-			void scene_renderer::render(float4x4 projection_matrix,float4x4 view_matrix,const game::scene &scene) {
+            void context::make_current() {
+
+            }
+
+            void context::render(float4x4 projection_matrix,float4x4 view_matrix,const game::scene &scene) {
 				auto q = scene.static_meshes();
 
 				while(!q.empty()) {
-					auto static_mesh = static_mesh_manager_.get(q.front().static_mesh->static_mesh);
+                    auto static_mesh = static_mesh_manager_.get(q.front().static_mesh->static_mesh);
 
                     float4x4 model_matrix = q.front().transform->matrix();
 
@@ -62,7 +65,21 @@ namespace sigmafive {
 
 					q.pop();
 				}
-			}
-		}
+            }
+
+            void context::swap_buffers() {
+
+            }
+
+            context_factory::context_factory(system::resource_manager &resource_manager)
+                : resource_manager_(resource_manager) {
+            }
+
+            std::unique_ptr<graphics::context> context_factory::create() {
+                return std::unique_ptr<context>(new context{resource_manager_});
+            }
+        }
 	}
 }
+
+EXPORT_SIGMAFIVE_CLASS(sigmafive::graphics::opengl::context)

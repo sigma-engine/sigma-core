@@ -2,8 +2,8 @@
 
 namespace sigmafive {
     namespace game {
-        entity_world::entity_world() :
-            component_manager_(registry_) {
+        entity_world::entity_world(game::component_registry &registry) :
+            registry_(registry),component_manager_(registry_) {
         }
 
         game::component_registry &entity_world::component_registry() {

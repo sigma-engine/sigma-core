@@ -10,7 +10,7 @@ namespace sigmafive {
     namespace game {
         class entity_world {
         public:
-            entity_world();
+            entity_world(game::component_registry &registry);
 
             game::component_registry &component_registry();
 
@@ -78,7 +78,7 @@ namespace sigmafive {
 
             void destroy(entity e);
         private:
-            game::component_registry registry_;
+            game::component_registry &registry_;
             entity_manager entity_manager_;
             component_manager component_manager_;
             component_system_manager component_system_manager_;

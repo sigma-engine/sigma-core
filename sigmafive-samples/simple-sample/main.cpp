@@ -1,9 +1,11 @@
+#include <sigmafive/engine.hpp>
 #include <sigmafive/game/scene.hpp>
 #include <sigmafive/system/window.hpp>
 #include <sigmafive/game/entity_world.hpp>
 #include <sigmafive/game/static_mesh_component_system.hpp>
 
-int main(int argc, char const *argv[]) {
+int main(int argc, char *argv[]) {
+    sigmafive::engine engine(argc,argv);
     sigmafive::system::context_attributes context_attributes;
     context_attributes.red = 8;
     context_attributes.green = 8;
@@ -20,13 +22,7 @@ int main(int argc, char const *argv[]) {
     sigmafive::system::window window("sigma five sample", int2(800, 600), context_attributes);
 
     sigmafive::game::scene scene;
-    sigmafive::game::entity_world world;
-
-    world.component_registry().register_component(sigmafive::game::transform_component::CLASS_ID,
-                                std::unique_ptr<sigmafive::game::transform_component_pool_factory>(new sigmafive::game::transform_component_pool_factory{}));
-    world.component_registry().register_component(sigmafive::game::static_mesh_component::CLASS_ID,
-                                std::unique_ptr<sigmafive::game::static_mesh_component_pool_factory>(new sigmafive::game::static_mesh_component_pool_factory{}));
-
+    sigmafive::game::entity_world world(engine.component_registry());
 
     auto system = world.add_component_system<sigmafive::game::static_mesh_component_system>();
     system->init(world,scene);

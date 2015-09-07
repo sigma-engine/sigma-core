@@ -1,6 +1,7 @@
 #ifndef SIGMAFIVE_EDITOR_WIDGETS_MAINWINDOW_HPP
 #define SIGMAFIVE_EDITOR_WIDGETS_MAINWINDOW_HPP
 
+#include <sigmafive/engine.hpp>
 #include <sigmafive/game/scene.hpp>
 #include <sigmafive/game/entity_world.hpp>
 #include <sigmafive/game/component_manager.hpp>
@@ -20,7 +21,7 @@ namespace sigmafive {
             class MainWindow : public QMainWindow {
             Q_OBJECT
             public:
-                explicit MainWindow(QWidget *parent = 0);
+                explicit MainWindow(sigmafive::engine *engine,QWidget *parent = 0);
 
                 ~MainWindow();
 
@@ -29,7 +30,7 @@ namespace sigmafive {
 
             private:
                 Ui::MainWindow *ui;
-                system::resource_manager resource_manager_;
+                sigmafive::engine *engine_;
                 game::scene scene_;
                 game::entity_world world_;
             };

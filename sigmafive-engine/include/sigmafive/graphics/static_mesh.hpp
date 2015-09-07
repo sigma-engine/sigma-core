@@ -1,6 +1,7 @@
 #ifndef SIGMAFIVE_GRAPHICS_STATIC_MESH_HPP
 #define SIGMAFIVE_GRAPHICS_STATIC_MESH_HPP
 
+
 #include <sigmafive/math/vec2.hpp>
 #include <sigmafive/math/vec3.hpp>
 #include <sigmafive/math/mat4.hpp>
@@ -25,7 +26,7 @@ namespace sigmafive {
 
 			typedef std::array<unsigned int,3> triangle;
 
-			static_mesh();
+            static_mesh();
 
 			void set_data(const std::vector<vertex> &vertices, const std::vector<triangle> &triangles);
 

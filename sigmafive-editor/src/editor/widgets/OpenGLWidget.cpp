@@ -5,7 +5,7 @@ namespace sigmafive {
 	namespace editor {
 		namespace widgets {
             OpenGLWidget::OpenGLWidget(QWidget *parent)
-                : QOpenGLWidget(parent),
+                : context_(nullptr),QOpenGLWidget(parent),
                   trackball_controller_(.8f) {
 
 				QSurfaceFormat format;
@@ -20,26 +20,27 @@ namespace sigmafive {
 			}
 
 			void OpenGLWidget::initializeGL() {
-                scene_render_ = std::unique_ptr<graphics::opengl::scene_renderer>(new graphics::opengl::scene_renderer(*resource_manager_));
+                context_ = std::move(engine_->graphics_context_manager().create_context(graphics::opengl::context::CLASS_ID));
                 gl::Enable(gl::DEPTH_TEST);
-				QOpenGLWidget::initializeGL();
+                QOpenGLWidget::initializeGL();
 			}
 
 			void OpenGLWidget::resizeGL(int w, int h) {
                 projection_matrix_ = float4x4::perspective(deg_to_rad(45.0f),float(width())/float(height()),0.01f,1000.0f);
 
-				gl::Viewport(0,0,width(),height());
+                gl::Viewport(0,0,width(),height());
 
-				QOpenGLWidget::resizeGL(w,h);
+                QOpenGLWidget::resizeGL(w,h);
 			}
 
 			void OpenGLWidget::paintGL() {
                 view_matrix_ = trackball_controller_.matrix();
 
-				gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
+                gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
                 gl::ClearColor(.75,.75,.75,1);
 
-                scene_render_->render(projection_matrix_,view_matrix_,*scene_);
+                if(scene_)
+                    context_->render(projection_matrix_,view_matrix_,*scene_);
 
 				QOpenGLWidget::paintGL();
 			}

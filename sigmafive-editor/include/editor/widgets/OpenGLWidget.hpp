@@ -3,10 +3,11 @@
 
 #include <editor/trackball_controller.hpp>
 
+#include <sigmafive/engine.hpp>
 #include <sigmafive/game/scene.hpp>
-#include <sigmafive/system/resource_manager.hpp>
-#include <sigmafive/graphics/opengl/scene_renderer.hpp>
+#include <sigmafive/graphics/opengl/context.hpp>
 
+#include <memory>
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <QOpenGLWidget>
@@ -38,7 +39,8 @@ namespace sigmafive {
 
                 void keyReleaseEvent(QKeyEvent *e) override;
 
-                system::resource_manager *resource_manager_;
+                //TODO get rid of this
+                engine *engine_;
                 game::scene *scene_;
             private:
                 float2 convert(QPoint p) const;
@@ -47,7 +49,7 @@ namespace sigmafive {
                 float4x4 projection_matrix_;
                 trackball_controller trackball_controller_;
 
-                std::unique_ptr<graphics::opengl::scene_renderer> scene_render_;
+                std::unique_ptr<sigmafive::graphics::context> context_;
 			};
 		}
 	}
