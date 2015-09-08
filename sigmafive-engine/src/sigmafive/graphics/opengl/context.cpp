@@ -7,7 +7,6 @@ namespace sigmafive {
                 : vertex_shader(shader_type::vertex), fragment_shader(shader_type::fragment),
                   resource_manager_(resource_manager), static_mesh_manager_(resource_manager) {
 
-
                 vertex_shader.set_source(GLSL_440(
                     layout(location = 0) in vec3 vertex_position;
                     layout(location = 1) in vec3 vertex_normal;
@@ -48,23 +47,26 @@ namespace sigmafive {
 
             }
 
-            void context::render(float4x4 projection_matrix,float4x4 view_matrix,const game::scene &scene) {
-				auto q = scene.static_meshes();
+            void context::add_static_mesh(float4x4 model_matrix, boost::uuids::uuid static_mesh) {
+                static_meshes_.push({model_matrix,static_mesh});
+            }
 
-				while(!q.empty()) {
-                    auto static_mesh = static_mesh_manager_.get(q.front().static_mesh->static_mesh);
+            void context::render(float4x4 projection_matrix, float4x4 view_matrix) {
+                gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT | gl::STENCIL_BUFFER_BIT);
 
-                    float4x4 model_matrix = q.front().transform->matrix();
+                while(!static_meshes_.empty()) {
+                    auto instance = static_meshes_.front();
+                    auto static_mesh = static_mesh_manager_.get(instance.static_mesh);
 
                     material_.use();
                     material_.set_uniform("projection_matrix",projection_matrix);
                     material_.set_uniform("view_matrix",view_matrix);
-                    material_.set_uniform("model_matrix",model_matrix);
+                    material_.set_uniform("model_matrix",instance.model_matrix);
 
                     static_mesh->draw();
 
-					q.pop();
-				}
+                    static_meshes_.pop();
+                }
             }
 
             void context::swap_buffers() {

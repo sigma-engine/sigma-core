@@ -14,12 +14,23 @@ namespace sigmafive {
         class context_manager : public object {
             SIGMAFIVE_CLASS()
         public:
+            context_manager();
+
             void register_context(class_uid uid,std::unique_ptr<context_factory> factory);
 
+            //TODO share_ptr
             std::unique_ptr<context> create_context(class_uid uid);
 
+            //TODO weak_ptr
+            void make_current(context *ctx);
+
+            //TODO weak_ptr
+            context *current_context();
+
             void unregister_context(class_uid uid);
-        private:            
+        private:
+            //TODO weak ptr
+            context *current_context_;
             std::unordered_map<class_uid,std::unique_ptr<context_factory>> context_factories_;
 		};
 	}

@@ -167,18 +167,19 @@ namespace sigmafive {
                 TEXFLAGS(t,n);*/
             }
 
-            MainWindow::MainWindow(sigmafive::engine *engine, QWidget *parent) :
+            MainWindow::MainWindow(QWidget *parent) :
                     QMainWindow(parent),
                     ui(new Ui::MainWindow),
-                    engine_(engine),
-                    world_(engine->component_registry()) {
+                    engine_(dynamic_cast<sigmafive::engine*>(qApp)),
+                    component_manager_(engine_->component_registry()) {
                 ui->setupUi(this);
 
-                ui->openGLWidget->engine_ = engine_;
-                ui->openGLWidget->scene_ = &scene_;
+                ui->openGLWidget->entity_manager_ = &entity_manager_;
+                ui->openGLWidget->component_manager_ = &component_manager_;
+                ui->openGLWidget->component_system_manager_ = &component_system_manager_;
 
-                auto s = world_.add_component_system<game::static_mesh_component_system>();
-                s->init(world_,scene_);
+                auto s = component_system_manager_.add_component_system<game::static_mesh_component_system>();
+                s->init(&engine_->graphics_context_manager());
             }
 
             MainWindow::~MainWindow() {
@@ -272,20 +273,20 @@ namespace sigmafive {
                     aiNode *node = scene->mRootNode->mChildren[i];
                     if(node->mNumMeshes <= 0)
                         continue;
-                    auto e = world_.create();
+                    auto e = entity_manager_.create();
 
                     aiVector3D scaling;
                     aiQuaternion rotation;
                     aiVector3D position;
                     node->mTransformation.Decompose(scaling,rotation,position);
 
-                    auto tc = world_.add_component<game::transform_component>(e);
+                    auto tc = component_manager_.add_component<game::transform_component>(e);
                     tc->rotation = convert(rotation) ;
 
                     tc->position = convert(position);
                     tc->scale = convert(scaling);
 
-                    auto smc = world_.add_component<game::static_mesh_component>(e);
+                    auto smc = component_manager_.add_component<game::static_mesh_component>(e);
                     smc->static_mesh = meshuuids[node->mMeshes[0]];
                 }
             }

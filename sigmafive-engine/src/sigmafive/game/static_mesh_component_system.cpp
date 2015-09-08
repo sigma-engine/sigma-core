@@ -1,29 +1,30 @@
 #include <sigmafive/game/static_mesh_component_system.hpp>
 #include <sigmafive/game/entity_manager.hpp>
+#include <sigmafive/graphics/context.hpp>
 
 namespace sigmafive {
     namespace game {
 
-        void static_mesh_component_system::init(entity_world &world,game::scene &scene) {
-            world_ = &world;
-            scene_ = &scene;
-            intrested_mask_ |= world_->component_registry().mask_for(transform_component::CLASS_ID);
-            intrested_mask_ |= world_->component_registry().mask_for(static_mesh_component::CLASS_ID);
+        void static_mesh_component_system::init(graphics::context_manager *context_manager) {
+            context_manager_ = context_manager;
         }
 
         static_mesh_component_system::~static_mesh_component_system() {
         }
 
-        void static_mesh_component_system::entity_added(entity e) {
-            scene_->add_static_mesh(e.index,world_->get_component<transform_component>(e),world_->get_component<static_mesh_component>(e));
-        }
-
-        void static_mesh_component_system::entity_removed(entity e) {
-            scene_->remove_static_mesh(e.index);
-        }
-
-        void static_mesh_component_system::process() {
-
+        void static_mesh_component_system::process(entity_manager &em,component_manager &cm) {
+            sigmafive::graphics::context *context = context_manager_->current_context();
+            if(!context)
+                return;
+            //TODO this is a mess
+            for(entity e:em) {
+                if(cm.has_component<transform_component>(e) &&  cm.has_component<static_mesh_component>(e)) {
+                    auto tcmp = cm.get_component<transform_component>(e);
+                    auto scmp = cm.get_component<static_mesh_component>(e);
+                    context->add_static_mesh(tcmp->matrix(),
+                                             scmp->static_mesh);
+                }
+            }
         }
     }
 }

@@ -10,19 +10,7 @@ public:
     virtual ~fake_1_component_system() {
     }
 
-    virtual bool is_intrested(sigmafive::game::component_mask mask) const override {
-        return false;
-    }
-
-    virtual void entity_added(sigmafive::game::entity e) override {
-
-    }
-
-    virtual void entity_removed(sigmafive::game::entity e) override {
-
-    }
-
-    virtual void process() override {
+    virtual void process(sigmafive::game::entity_manager &em,sigmafive::game::component_manager &cm) override {
 
     }
 };

@@ -36,10 +36,8 @@ set(SOURCES
     src/sigmafive/graphics/opengl/context.cpp
     src/sigmafive/graphics/opengl/static_mesh_manager.cpp
 
-    src/sigmafive/game/scene.cpp
     src/sigmafive/game/entity.cpp
     src/sigmafive/game/component.cpp
-    src/sigmafive/game/entity_world.cpp
     src/sigmafive/game/component_system.cpp
     src/sigmafive/game/component_manager.cpp
     src/sigmafive/game/entity_manager.cpp
@@ -90,9 +88,7 @@ set(HEADERS
     include/sigmafive/graphics/opengl/static_mesh_manager.hpp
 
     include/sigmafive/game/entity.hpp
-    include/sigmafive/game/scene.hpp
     include/sigmafive/game/component.hpp
-    include/sigmafive/game/entity_world.hpp
     include/sigmafive/game/component_system.hpp
     include/sigmafive/game/component_manager.hpp
     include/sigmafive/game/entity_manager.hpp

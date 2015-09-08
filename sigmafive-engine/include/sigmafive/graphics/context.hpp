@@ -2,9 +2,10 @@
 #define SIGMAFIVE_GRAPHICS_CONTEXT_HPP
 
 #include <sigmafive/object.hpp>
-
 #include <sigmafive/math/mat4.hpp>
-#include <sigmafive/game/scene.hpp>
+
+#include <queue>
+#include <boost/uuid/uuid.hpp>
 
 namespace sigmafive {
 	namespace graphics {
@@ -15,7 +16,10 @@ namespace sigmafive {
 
             virtual void make_current() = 0;
 
-            virtual void render(float4x4 projection_matrix,float4x4 view_matrix,const game::scene &scene) = 0;
+            virtual void add_static_mesh(float4x4 model_matrix,boost::uuids::uuid static_mesh) = 0;
+
+            //TODO remove this???
+            virtual void render(float4x4 projection_matrix,float4x4 view_matrix) = 0;
 
             virtual void swap_buffers() = 0;
 		private:

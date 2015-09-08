@@ -1,11 +1,12 @@
 #include <editor/widgets/OpenGLWidget.hpp>
 #include <QMatrix4x4>
-
+#include <QApplication>
+#include <sigmafive/game/static_mesh_component_system.hpp>
 namespace sigmafive {
 	namespace editor {
 		namespace widgets {
             OpenGLWidget::OpenGLWidget(QWidget *parent)
-                : context_(nullptr),QOpenGLWidget(parent),
+                : context_(nullptr), QOpenGLWidget(parent),
                   trackball_controller_(.8f) {
 
 				QSurfaceFormat format;
@@ -20,7 +21,8 @@ namespace sigmafive {
 			}
 
 			void OpenGLWidget::initializeGL() {
-                context_ = std::move(engine_->graphics_context_manager().create_context(graphics::opengl::context::CLASS_ID));
+                context_manager_ = &dynamic_cast<engine*>(qApp)->graphics_context_manager();
+                context_ = std::move(context_manager_->create_context(graphics::opengl::context::CLASS_ID));
                 gl::Enable(gl::DEPTH_TEST);
                 QOpenGLWidget::initializeGL();
 			}
@@ -39,8 +41,13 @@ namespace sigmafive {
                 gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
                 gl::ClearColor(.75,.75,.75,1);
 
-                if(scene_)
-                    context_->render(projection_matrix_,view_matrix_,*scene_);
+                if(entity_manager_ && component_manager_ && component_system_manager_) {
+                    context_manager_->make_current(context_.get());
+                    //TODO move this to somewhere else
+                    component_system_manager_->get_component_system<game::static_mesh_component_system>()->process(
+                                *entity_manager_,*component_manager_);
+                    context_->render(projection_matrix_,view_matrix_);
+                }
 
 				QOpenGLWidget::paintGL();
 			}

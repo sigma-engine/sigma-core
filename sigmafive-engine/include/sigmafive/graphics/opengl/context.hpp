@@ -1,6 +1,7 @@
 #ifndef SIGMAFIVE_GRAPHICS_OPENGL_SCENE_RENDERER_HPP
 #define SIGMAFIVE_GRAPHICS_OPENGL_SCENE_RENDERER_HPP
 
+#include <sigmafive/factory.hpp>
 #include <sigmafive/graphics/context.hpp>
 #include <sigmafive/system/resource_manager.hpp>
 
@@ -15,6 +16,11 @@
 namespace sigmafive {
 	namespace graphics {
 		namespace opengl {
+            struct static_mesh_instance {
+                float4x4 model_matrix;
+                boost::uuids::uuid static_mesh;
+            };
+
             class context : public graphics::context {
                 SIGMAFIVE_CLASS()
 			public:
@@ -22,10 +28,13 @@ namespace sigmafive {
 
                 virtual void make_current() override;
 
-                virtual void render(float4x4 projection_matrix,float4x4 view_matrix,const game::scene &scene) override;
+                virtual void add_static_mesh(float4x4 model_matrix,boost::uuids::uuid static_mesh) override;
+
+                virtual void render(float4x4 projection_matrix,float4x4 view_matrix) override;
 
                 virtual void swap_buffers() override;
 			private:
+                std::queue<static_mesh_instance> static_meshes_;
                 opengl::material material_;
 
 				opengl::shader vertex_shader;
