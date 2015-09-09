@@ -2,12 +2,7 @@
 #define SIGMAFIVE_EDITOR_WIDGETS_OPENGLWIDGET_HPP
 
 #include <editor/trackball_controller.hpp>
-
-#include <sigmafive/engine.hpp>
-#include <sigmafive/graphics/opengl/context.hpp>
-#include <sigmafive/game/entity_manager.hpp>
-#include <sigmafive/game/component_manager.hpp>
-#include <sigmafive/game/component_system_manager.hpp>
+#include <editor/entity_manager_model.hpp>
 
 #include <memory>
 #include <QMouseEvent>
@@ -18,10 +13,22 @@ namespace sigmafive {
 	namespace editor {
         namespace widgets {
             class OpenGLWidget: public QOpenGLWidget {
+                Q_OBJECT
 			public:
+                static constexpr const class_uid CONTEXT_UID = sigmafive::compile_time_hash("sigmafive::graphics::opengl::context");
+
                 explicit OpenGLWidget(QWidget *parent = nullptr);
 
 				~OpenGLWidget();
+
+                entity_manager_model *entityManager() {
+                    return entity_manager_model_;
+                }
+
+                void setEntityManager(entity_manager_model *model) {
+                    entity_manager_model_ = model;
+                    emit entityManagerChanged();
+                }
 
 				void initializeGL() override;
 
@@ -41,10 +48,9 @@ namespace sigmafive {
 
                 void keyReleaseEvent(QKeyEvent *e) override;
 
-                //TODO get rid of this
-                game::entity_manager *entity_manager_;
-                game::component_manager *component_manager_;
-                game::component_system_manager *component_system_manager_;
+            signals:
+                void entityManagerChanged();
+
             private:
                 float2 convert(QPoint p) const;
 
@@ -52,7 +58,7 @@ namespace sigmafive {
                 float4x4 projection_matrix_;
                 trackball_controller trackball_controller_;
 
-                graphics::context_manager *context_manager_;
+                entity_manager_model *entity_manager_model_;
                 std::unique_ptr<sigmafive::graphics::context> context_;
 			};
 		}

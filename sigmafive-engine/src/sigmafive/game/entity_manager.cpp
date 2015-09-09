@@ -80,5 +80,9 @@ namespace sigmafive {
         entity_manager::const_reverse_iterator entity_manager::crend() const {
             return const_reverse_iterator(begin());
         }
+
+        std::size_t entity_manager::size() const {
+            return entities_.size() - free_entities_.size();
+        }
     }
 }

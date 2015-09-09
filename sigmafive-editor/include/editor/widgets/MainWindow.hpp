@@ -2,10 +2,8 @@
 #define SIGMAFIVE_EDITOR_WIDGETS_MAINWINDOW_HPP
 
 #include <sigmafive/engine.hpp>
-#include <sigmafive/game/component_manager.hpp>
-#include <sigmafive/system/resource_manager.hpp>
-#include <sigmafive/game/component_system_manager.hpp>
-#include <sigmafive/game/static_mesh_component_system.hpp>
+#include <editor/assimp_importer.hpp>
+#include <editor/entity_manager_model.hpp>
 
 #include <QMainWindow>
 
@@ -19,7 +17,7 @@ namespace sigmafive {
             class MainWindow : public QMainWindow {
             Q_OBJECT
             public:
-                explicit MainWindow(QWidget *parent = 0);
+                explicit MainWindow(entity_manager_model *entityManager,assimp_importer *assimpImporter,QWidget *parent = 0);
 
                 ~MainWindow();
 
@@ -28,10 +26,8 @@ namespace sigmafive {
 
             private:
                 Ui::MainWindow *ui;
-                sigmafive::engine *engine_;
-                sigmafive::game::entity_manager entity_manager_;
-                sigmafive::game::component_manager component_manager_;
-                sigmafive::game::component_system_manager component_system_manager_;
+                entity_manager_model *entityManager_;
+                assimp_importer *assimpImporter_;
             };
         }
     }

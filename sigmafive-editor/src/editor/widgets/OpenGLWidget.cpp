@@ -1,12 +1,16 @@
 #include <editor/widgets/OpenGLWidget.hpp>
-#include <QMatrix4x4>
-#include <QApplication>
+
+#include <editor/application.hpp>
+
 #include <sigmafive/game/static_mesh_component_system.hpp>
+
 namespace sigmafive {
 	namespace editor {
 		namespace widgets {
             OpenGLWidget::OpenGLWidget(QWidget *parent)
-                : context_(nullptr), QOpenGLWidget(parent),
+                : QOpenGLWidget(parent),
+                  entity_manager_model_(nullptr),
+                  context_(nullptr),
                   trackball_controller_(.8f) {
 
 				QSurfaceFormat format;
@@ -21,16 +25,15 @@ namespace sigmafive {
 			}
 
 			void OpenGLWidget::initializeGL() {
-                context_manager_ = &dynamic_cast<engine*>(qApp)->graphics_context_manager();
-                context_ = std::move(context_manager_->create_context(graphics::opengl::context::CLASS_ID));
-                gl::Enable(gl::DEPTH_TEST);
+                context_ = dynamic_cast<editor::application*>(qApp)->graphics_context_manager().create_context(CONTEXT_UID);
+
                 QOpenGLWidget::initializeGL();
 			}
 
 			void OpenGLWidget::resizeGL(int w, int h) {
                 projection_matrix_ = float4x4::perspective(deg_to_rad(45.0f),float(width())/float(height()),0.01f,1000.0f);
 
-                gl::Viewport(0,0,width(),height());
+                glViewport(0,0,width(),height());
 
                 QOpenGLWidget::resizeGL(w,h);
 			}
@@ -38,14 +41,18 @@ namespace sigmafive {
 			void OpenGLWidget::paintGL() {
                 view_matrix_ = trackball_controller_.matrix();
 
-                gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
-                gl::ClearColor(.75,.75,.75,1);
+                if(entity_manager_model_) {
+                    auto entity_manager = entity_manager_model_->entity_manager();
+                    auto component_manager = entity_manager_model_->component_manager();
+                    auto component_system_manager = entity_manager_model_->component_system_manager();
+                    auto context_manager = entity_manager_model_->context_manager();
 
-                if(entity_manager_ && component_manager_ && component_system_manager_) {
-                    context_manager_->make_current(context_.get());
-                    //TODO move this to somewhere else
-                    component_system_manager_->get_component_system<game::static_mesh_component_system>()->process(
-                                *entity_manager_,*component_manager_);
+                    auto static_mesh_system = component_system_manager->get_component_system<game::static_mesh_component_system>();
+
+                    context_manager->make_current(context_.get());
+                    static_mesh_system->init(context_manager);
+                    static_mesh_system->process(*entity_manager,*component_manager);
+
                     context_->render(projection_matrix_,view_matrix_);
                 }
 

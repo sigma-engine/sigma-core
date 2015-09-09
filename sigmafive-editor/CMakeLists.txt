@@ -12,12 +12,18 @@ set(SOURCES
     src/editor/application.cpp
     src/editor/trackball_controller.cpp
 
+    src/editor/assimp_importer.cpp
+    src/editor/entity_manager_model.cpp
+
     src/editor/widgets/MainWindow.cpp
     src/editor/widgets/OpenGLWidget.cpp
 )
 set(HEADERS
     include/editor/application.hpp
     include/editor/trackball_controller.hpp
+
+    include/editor/assimp_importer.hpp
+    include/editor/entity_manager_model.hpp
 
     include/editor/widgets/MainWindow.hpp
     include/editor/widgets/OpenGLWidget.hpp

@@ -52,6 +52,8 @@ namespace sigmafive {
             }
 
             void context::render(float4x4 projection_matrix, float4x4 view_matrix) {
+                gl::Enable(gl::DEPTH_TEST);
+                gl::ClearColor(0,0,0,1);
                 gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT | gl::STENCIL_BUFFER_BIT);
 
                 while(!static_meshes_.empty()) {

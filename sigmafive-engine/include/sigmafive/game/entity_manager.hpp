@@ -49,6 +49,7 @@ namespace sigmafive {
 
             const_reverse_iterator crend() const;
 
+            std::size_t size() const;
         private:
             container entities_;
             std::vector<std::uint32_t> free_entities_;

@@ -27,14 +27,13 @@ namespace sigmafive {
         }
 
         void trackball_controller::begin_pan() {
-            rotating_ = false;
             panning_ = true;
         }
 
         void trackball_controller::update(float2 location) {
             lastLocation_ = currentLocation_;
             currentLocation_ = location;
-            if(panning_) {
+            if(panning_ && rotating_) {
                 auto inv_rotation = rotation_.get_inverse();
                 auto view_vector = inv_rotation.rotate(-float3::OUTWARD*position_.length());
                 auto right_vector = inv_rotation.rotate(float3::RIGHT);
@@ -82,7 +81,7 @@ namespace sigmafive {
         }
 
         void trackball_controller::zoom(int direction) {
-            if(!rotating_ && ! panning_) {
+            if(!rotating_ && !panning_) {
                 auto inv_rotation = rotation_.get_inverse();
                 position_ += inv_rotation.rotate((.01f * direction * float3::OUTWARD));
             }
