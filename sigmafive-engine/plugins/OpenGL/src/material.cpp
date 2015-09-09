@@ -1,4 +1,4 @@
-#include <sigmafive/graphics/opengl/material.hpp>
+#include <material.hpp>
 #include <iostream>
 
 namespace sigmafive {

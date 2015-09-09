@@ -1,13 +1,23 @@
 #include <sigmafive/engine.hpp>
-#include <sigmafive/graphics/opengl/context.hpp>
+
 #include <sigmafive/game/transform_component.hpp>
 #include <sigmafive/game/static_mesh_component.hpp>
+
+#include <iostream>
+#include <boost/filesystem.hpp>
+#include <boost/range/iterator_range.hpp>
 
 namespace sigmafive {
 
     engine::engine(int &argc, char **argv) {
-        graphics_context_manager_.register_context(graphics::opengl::context::CLASS_ID,
-                                                   std::unique_ptr<graphics::context_factory>{new graphics::opengl::context_factory{resource_manager_}});
+        //TODO clean this up
+        //this is a hack just to get things working
+        for(auto& entry : boost::make_iterator_range(boost::filesystem::directory_iterator("../plugins"), {})) {
+            if(boost::dll::shared_library::suffix() == entry.path().extension()) {
+                plugins_.emplace_back(entry.path());
+                plugins_.back().get<void(sigmafive::engine *)>("register_plugin")(this);
+            }
+        }
 
         component_registry_.register_component(game::transform_component::CLASS_ID,
                                                        std::unique_ptr<game::transform_component_pool_factory>(new game::transform_component_pool_factory{}));

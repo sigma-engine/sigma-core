@@ -1,6 +1,6 @@
-#include <sigmafive/graphics/opengl/program.hpp>
+#include <program.hpp>
 #include <algorithm>
-#include <sigmafive/graphics/opengl/gl_core_4_0.hpp>
+#include <gl_core_4_0.hpp>
 #include <functional>
 #include <numeric>
 

@@ -2,7 +2,7 @@
 #define SIGMAFIVE_GRAPHICS_OPENGL_STATIC_MESH_MANAGER_HPP
 
 #include <sigmafive/system/resource_manager.hpp>
-#include <sigmafive/graphics/opengl/static_mesh.hpp>
+#include <static_mesh.hpp>
 
 #include <memory>
 #include <unordered_map>

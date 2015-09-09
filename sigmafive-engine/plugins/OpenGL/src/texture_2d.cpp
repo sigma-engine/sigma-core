@@ -1,5 +1,5 @@
-#include <sigmafive/graphics/opengl/texture_2d.hpp>
-#include <sigmafive/graphics/opengl/gl_core_4_0.hpp>
+#include <texture_2d.hpp>
+#include <gl_core_4_0.hpp>
 
 namespace sigmafive {
 	namespace graphics {

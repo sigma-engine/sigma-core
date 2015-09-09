@@ -5,6 +5,8 @@
 #include <sigmafive/game/component_registry.hpp>
 #include <sigmafive/graphics/context_manager.hpp>
 
+#include <boost/dll/shared_library.hpp>
+
 namespace sigmafive {
     class engine {
     public:
@@ -16,6 +18,8 @@ namespace sigmafive {
 
         graphics::context_manager &graphics_context_manager();
     private:
+        //TODO hack
+        std::vector<boost::dll::shared_library> plugins_;
         system::resource_manager resource_manager_;
         game::component_registry component_registry_;
         graphics::context_manager graphics_context_manager_;

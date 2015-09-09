@@ -1,4 +1,4 @@
-#include <sigmafive/graphics/opengl/buffer.hpp>
+#include <buffer.hpp>
 
 namespace sigmafive {
     namespace graphics {

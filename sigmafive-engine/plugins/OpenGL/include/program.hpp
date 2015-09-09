@@ -8,12 +8,12 @@
 #include <sigmafive/math/mat3.hpp>
 #include <sigmafive/math/mat4.hpp>
 #include <sigmafive/math/quaternion.hpp>
-#include <sigmafive/graphics/opengl/shader.hpp>
-#include <sigmafive/graphics/opengl/texture_2d.hpp>
+#include <shader.hpp>
+#include <texture_2d.hpp>
 
 #include <string>
 #include <vector>
-#include <sigmafive/graphics/opengl/gl_core_4_0.hpp>
+#include <gl_core_4_0.hpp>
 
 namespace sigmafive {
 	namespace graphics {

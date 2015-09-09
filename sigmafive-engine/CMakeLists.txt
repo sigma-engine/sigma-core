@@ -1,13 +1,14 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(sigmafive)
 
-set(Boost_USE_STATIC_LIBS ON)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
+include(plugin_utils)
+
+set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON) 
 set(Boost_USE_STATIC_RUNTIME OFF)
 
 find_package(Boost REQUIRED COMPONENTS system filesystem)
-find_package(jsoncpp REQUIRED)
-find_package(OpenGL REQUIRED)
 find_package(SDL2 REQUIRED)
 
 set(SOURCES
@@ -21,20 +22,6 @@ set(SOURCES
     src/sigmafive/graphics/static_mesh.cpp
     src/sigmafive/graphics/context.cpp
     src/sigmafive/graphics/context_manager.cpp
-
-    src/sigmafive/graphics/opengl/buffer.cpp
-    src/sigmafive/graphics/opengl/shader.cpp
-    src/sigmafive/graphics/opengl/program.cpp
-    src/sigmafive/graphics/opengl/material.cpp
-    src/sigmafive/graphics/opengl/texture_2d.cpp
-    src/sigmafive/graphics/opengl/gl_core_4_0.cpp
-    src/sigmafive/graphics/opengl/static_mesh.cpp
-    src/sigmafive/graphics/opengl/frame_buffer.cpp
-    src/sigmafive/graphics/opengl/index_buffer.cpp
-    src/sigmafive/graphics/opengl/vertex_array.cpp
-    src/sigmafive/graphics/opengl/vertex_buffer.cpp
-    src/sigmafive/graphics/opengl/context.cpp
-    src/sigmafive/graphics/opengl/static_mesh_manager.cpp
 
     src/sigmafive/game/entity.cpp
     src/sigmafive/game/component.cpp
@@ -72,21 +59,6 @@ set(HEADERS
     include/sigmafive/graphics/context.hpp
     include/sigmafive/graphics/context_manager.hpp
 
-    include/sigmafive/graphics/opengl/util.hpp
-    include/sigmafive/graphics/opengl/buffer.hpp
-    include/sigmafive/graphics/opengl/shader.hpp
-    include/sigmafive/graphics/opengl/program.hpp
-    include/sigmafive/graphics/opengl/material.hpp
-    include/sigmafive/graphics/opengl/texture_2d.hpp
-    include/sigmafive/graphics/opengl/gl_core_4_0.hpp
-    include/sigmafive/graphics/opengl/static_mesh.hpp
-    include/sigmafive/graphics/opengl/frame_buffer.hpp
-    include/sigmafive/graphics/opengl/index_buffer.hpp
-    include/sigmafive/graphics/opengl/vertex_array.hpp
-    include/sigmafive/graphics/opengl/vertex_buffer.hpp
-    include/sigmafive/graphics/opengl/context.hpp
-    include/sigmafive/graphics/opengl/static_mesh_manager.hpp
-
     include/sigmafive/game/entity.hpp
     include/sigmafive/game/component.hpp
     include/sigmafive/game/component_system.hpp
@@ -99,14 +71,12 @@ set(HEADERS
     include/sigmafive/game/static_mesh_component_system.hpp
 )
 
-add_library(sigmafive STATIC ${SOURCES} ${HEADERS})
+add_library(sigmafive SHARED ${SOURCES} ${HEADERS})
 target_include_directories(sigmafive
 PUBLIC
     include
     ${Boost_INCLUDE_DIRS}
-    ${jsoncpp_INCLUDE_DIRS}
 PRIVATE
-    ${OPENGL_INCLUDE_DIRS}
     ${SDL2_INCLUDE_DIRS}
 )
 if(NOT MSVC)
@@ -116,6 +86,7 @@ if(NOT MSVC)
     )
 endif()
 
-target_link_libraries(sigmafive ${Boost_LIBRARIES}  ${jsoncpp_LIBRARIES} ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES})
+target_link_libraries(sigmafive ${Boost_LIBRARIES} ${SDL2_LIBRARIES})
 
+add_subdirectory(plugins)
 add_subdirectory(tests)

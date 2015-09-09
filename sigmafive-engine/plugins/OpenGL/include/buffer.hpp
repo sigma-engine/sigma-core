@@ -3,7 +3,7 @@
 
 #include <cstdint>
 #include <cstdlib>
-#include <sigmafive/graphics/opengl/gl_core_4_0.hpp>
+#include <gl_core_4_0.hpp>
 
 namespace sigmafive {
     namespace graphics {

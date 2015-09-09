@@ -3,7 +3,7 @@
 
 #include <sigmafive/math/vec2.hpp>
 #include <sigmafive/math/vec4.hpp>
-#include <sigmafive/graphics/opengl/gl_core_4_0.hpp>
+#include <gl_core_4_0.hpp>
 
 #include <vector>
 

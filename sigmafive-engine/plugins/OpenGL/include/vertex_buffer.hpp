@@ -1,7 +1,7 @@
 #ifndef SIGMAFIVE_GRAPHICS_OPENGL_VERTEX_BUFFER_HPP
 #define SIGMAFIVE_GRAPHICS_OPENGL_VERTEX_BUFFER_HPP
 
-#include <sigmafive/graphics/opengl/buffer.hpp>
+#include <buffer.hpp>
 
 #include <vector>
 

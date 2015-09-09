@@ -1,4 +1,5 @@
 #include <sigmafive/graphics/context_manager.hpp>
+#include <stdexcept>
 
 namespace sigmafive {
     namespace graphics {
@@ -7,12 +8,14 @@ namespace sigmafive {
         }
 
         void context_manager::register_context(class_uid uid, std::unique_ptr<context_factory> factory) {
-                context_factories_[uid] = std::move(factory);
-            //TODO maybe an error when trying to register a factory more than once
+            if(context_factories_.count(uid) != 0)
+                throw std::runtime_error("graphics context with uid = "+std::to_string(uid)+" was already registered!");
+            context_factories_[uid] = std::move(factory);
         }
 
         std::unique_ptr<context> context_manager::create_context(class_uid uid) {
-            //TODO error when if the context type does not exits
+            if(context_factories_.count(uid) == 0)
+                throw std::runtime_error("graphics context with uid = "+std::to_string(uid)+" was not registered!");
             return std::move(context_factories_.at(uid)->create());
         }
 
@@ -25,8 +28,9 @@ namespace sigmafive {
         }
 
         void context_manager::unregister_context(class_uid uid) {
+            if(context_factories_.count(uid) == 0)
+                throw std::runtime_error("graphics context with uid = "+std::to_string(uid)+" was not registered!");
             context_factories_.erase(uid);
-            //TODO maybe an error when the class is not registered
         }
 	}
 }

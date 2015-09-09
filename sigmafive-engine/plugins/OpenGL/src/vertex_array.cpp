@@ -1,4 +1,4 @@
-#include <sigmafive/graphics/opengl/vertex_array.hpp>
+#include <vertex_array.hpp>
 
 namespace sigmafive {
 	namespace graphics {

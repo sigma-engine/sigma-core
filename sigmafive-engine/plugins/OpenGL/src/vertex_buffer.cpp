@@ -1,4 +1,4 @@
-#include <sigmafive/graphics/opengl/vertex_buffer.hpp>
+#include <vertex_buffer.hpp>
 
 
 namespace sigmafive {

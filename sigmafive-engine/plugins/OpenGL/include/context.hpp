@@ -5,13 +5,18 @@
 #include <sigmafive/graphics/context.hpp>
 #include <sigmafive/system/resource_manager.hpp>
 
-#include <sigmafive/graphics/opengl/shader.hpp>
-#include <sigmafive/graphics/opengl/program.hpp>
-#include <sigmafive/graphics/opengl/material.hpp>
-#include <sigmafive/graphics/opengl/static_mesh.hpp>
-#include <sigmafive/graphics/opengl/static_mesh_manager.hpp>
+#include <shader.hpp>
+#include <program.hpp>
+#include <material.hpp>
+#include <static_mesh.hpp>
+#include <static_mesh_manager.hpp>
 
 #include <memory>
+
+#include <sigmafive/engine.hpp>
+extern "C" {
+    void register_plugin(sigmafive::engine *engine);
+}
 
 namespace sigmafive {
 	namespace graphics {

@@ -2,7 +2,6 @@
 #define SIGMAONE_SYSTEM_WINDOW_HPP
 
 #include <sigmafive/math/vec2.hpp>
-#include <sigmafive/graphics/opengl/context.hpp>
 
 #include <string>
 

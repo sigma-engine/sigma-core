@@ -1,4 +1,4 @@
-#include <sigmafive/graphics/opengl/context.hpp>
+#include <context.hpp>
 
 namespace sigmafive {
 	namespace graphics {
@@ -85,5 +85,14 @@ namespace sigmafive {
         }
 	}
 }
+
+//TODO this is a hack
+void register_plugin(sigmafive::engine *engine) {
+    engine->graphics_context_manager().register_context(sigmafive::graphics::opengl::context::CLASS_ID,
+                                                        std::unique_ptr<sigmafive::graphics::opengl::context_factory>{
+                                                            new sigmafive::graphics::opengl::context_factory{engine->resource_manager()}
+                                                        });
+}
+
 
 EXPORT_SIGMAFIVE_CLASS(sigmafive::graphics::opengl::context)

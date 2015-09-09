@@ -1,4 +1,4 @@
-#include <sigmafive/graphics/opengl/shader.hpp>
+#include <shader.hpp>
 
 namespace sigmafive {
 	namespace graphics {

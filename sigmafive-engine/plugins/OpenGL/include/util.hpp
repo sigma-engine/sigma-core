@@ -1,7 +1,7 @@
 #ifndef SIGMAFIVE_GRAPHICS_OPENGL_UTIL_HPP
 #define SIGMAFIVE_GRAPHICS_OPENGL_UTIL_HPP
 
-#include <sigmafive/graphics/opengl/gl_core_4_0.hpp>
+#include <gl_core_4_0.hpp>
 
 namespace sigmafive {
     namespace graphics {
