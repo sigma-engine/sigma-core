@@ -4,7 +4,7 @@ project(sigmafive-editor)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt5 COMPONENTS Core Widgets)
+find_package(Qt5 COMPONENTS Core Quick Widgets)
 find_package(assimp REQUIRED)
 
 set(SOURCES
@@ -16,6 +16,7 @@ set(SOURCES
     src/editor/entity_manager_model.cpp
 
     src/editor/widgets/MainWindow.cpp
+    src/editor/widgets/GameView.cpp
     src/editor/widgets/OpenGLWidget.cpp
 )
 set(HEADERS
@@ -26,11 +27,16 @@ set(HEADERS
     include/editor/entity_manager_model.hpp
 
     include/editor/widgets/MainWindow.hpp
+    include/editor/widgets/GameView.hpp
     include/editor/widgets/OpenGLWidget.hpp
 )
 
 qt5_wrap_ui(UI_HEADERS
     resources/ui/MainWindow.ui
+)
+
+set(QML
+    resources/ui/main.qml
 )
 
 qt5_add_resources(RESOURCES
@@ -39,7 +45,7 @@ qt5_add_resources(RESOURCES
 
 link_directories(${ASSIMP_LIBRARY_DIRS})
 
-add_executable(sigmafive-editor WIN32 ${SOURCES} ${HEADERS} ${RESOURCES} ${UI_HEADERS})
+add_executable(sigmafive-editor WIN32 ${SOURCES} ${HEADERS} ${QML} ${RESOURCES} ${UI_HEADERS})
 target_include_directories(sigmafive-editor
 PUBLIC
     include
@@ -47,4 +53,4 @@ PRIVATE
     ${ASSIMP_INCLUDE_DIRS}
 )
 
-target_link_libraries(sigmafive-editor Qt5::Core Qt5::Widgets sigmafive ${ASSIMP_LIBRARIES})
+target_link_libraries(sigmafive-editor Qt5::Core Qt5::Quick Qt5::Widgets sigmafive ${ASSIMP_LIBRARIES})
