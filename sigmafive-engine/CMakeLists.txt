@@ -4,7 +4,7 @@ project(sigmafive)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 include(plugin_utils)
 
-set(Boost_USE_STATIC_LIBS OFF)
+set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON) 
 set(Boost_USE_STATIC_RUNTIME OFF)
 
@@ -35,6 +35,7 @@ set(SOURCES
     src/sigmafive/game/static_mesh_component_system.cpp
 )
 set(HEADERS
+	include/sigmafive/config.hpp
     include/sigmafive/object.hpp
     include/sigmafive/factory.hpp
     include/sigmafive/engine.hpp
@@ -71,6 +72,8 @@ set(HEADERS
     include/sigmafive/game/static_mesh_component_system.hpp
 )
 
+link_directories(${Boost_LIBRARY_DIRS})
+
 add_library(sigmafive SHARED ${SOURCES} ${HEADERS})
 target_include_directories(sigmafive
 PUBLIC
@@ -79,12 +82,6 @@ PUBLIC
 PRIVATE
     ${SDL2_INCLUDE_DIRS}
 )
-if(NOT MSVC)
-    target_compile_options(sigmafive
-    PUBLIC
-        -std=c++11
-    )
-endif()
 
 target_link_libraries(sigmafive ${Boost_LIBRARIES} ${SDL2_LIBRARIES})
 

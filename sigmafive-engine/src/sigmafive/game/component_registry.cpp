@@ -16,3 +16,6 @@ namespace sigmafive {
          }
     }
 }
+
+EXPORT_SIGMAFIVE_CLASS(sigmafive::game::component_pool)
+EXPORT_SIGMAFIVE_CLASS(sigmafive::game::component_registry)

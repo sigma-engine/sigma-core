@@ -4,6 +4,7 @@
 
 #include <sigmafive/game/static_mesh_component_system.hpp>
 
+
 namespace sigmafive {
 	namespace editor {
 		namespace widgets {
@@ -25,16 +26,12 @@ namespace sigmafive {
 			}
 
 			void OpenGLWidget::initializeGL() {
-                context_ = dynamic_cast<editor::application*>(qApp)->graphics_context_manager().create_context(CONTEXT_UID);
-
+				context_ = dynamic_cast<editor::application*>(qApp)->graphics_context_manager().create_context(CONTEXT_UID);
                 QOpenGLWidget::initializeGL();
 			}
 
 			void OpenGLWidget::resizeGL(int w, int h) {
                 projection_matrix_ = float4x4::perspective(deg_to_rad(45.0f),float(width())/float(height()),0.01f,1000.0f);
-
-                glViewport(0,0,width(),height());
-
                 QOpenGLWidget::resizeGL(w,h);
 			}
 
@@ -52,9 +49,9 @@ namespace sigmafive {
                     context_manager->make_current(context_.get());
                     static_mesh_system->init(context_manager);
                     static_mesh_system->process(*entity_manager,*component_manager);
-
-                    context_->render(projection_matrix_,view_matrix_);
                 }
+
+				context_->render(projection_matrix_, view_matrix_);
 
 				QOpenGLWidget::paintGL();
 			}

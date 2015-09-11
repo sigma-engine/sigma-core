@@ -1,7 +1,8 @@
 #include <sigmafive/system/window.hpp>
 
-#include <unordered_map>
 #include <SDL2/SDL.h>
+
+#include <unordered_map>
 
 namespace sigmafive {
 	namespace system {

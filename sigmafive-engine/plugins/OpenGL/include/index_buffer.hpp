@@ -2,6 +2,7 @@
 #define SIGMAFIVE_GRAPHICS_OPENGL_INDEX_BUFFER_HPP
 
 #include <buffer.hpp>
+
 #include <vector>
 
 namespace sigmafive {

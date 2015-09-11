@@ -1,16 +1,15 @@
 #ifndef SIGMAFIVE_EDITOR_ENTITY_MANAGER_MODEL_HPP
 #define SIGMAFIVE_EDITOR_ENTITY_MANAGER_MODEL_HPP
 
-#include <sigmafive/game/entity_manager.hpp>
-#include <sigmafive/game/component_manager.hpp>
-#include <sigmafive/game/component_system_manager.hpp>
+#include <QAbstractListModel>
 
 #include <sigmafive/system/resource_manager.hpp>
 
 #include <sigmafive/graphics/context_manager.hpp>
 
-#include <QAbstractListModel>
-#include <QAbstractItemModel>
+#include <sigmafive/game/entity_manager.hpp>
+#include <sigmafive/game/component_manager.hpp>
+#include <sigmafive/game/component_system_manager.hpp>
 
 namespace sigmafive {
     namespace editor {

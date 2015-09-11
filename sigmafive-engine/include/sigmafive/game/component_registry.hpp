@@ -1,6 +1,9 @@
 #ifndef SIGMAFIVE_GAME_COMPONENT_REGISTRY_HPP
 #define SIGMAFIVE_GAME_COMPONENT_REGISTRY_HPP
 
+#include <sigmafive/config.hpp>
+#include <sigmafive/object.hpp>
+
 #include <sigmafive/factory.hpp>
 #include <sigmafive/game/entity.hpp>
 #include <sigmafive/game/component.hpp>
@@ -10,7 +13,8 @@
 
 namespace sigmafive {
     namespace game {
-        class component_pool {
+        class SIGMAFIVE_API component_pool : public object {
+			SIGMAFIVE_CLASS()
         public:
             virtual ~component_pool() = default;
 
@@ -24,6 +28,7 @@ namespace sigmafive {
 
         template<typename T>
         class simple_component_pool : public component_pool {
+			SIGMAFIVE_CLASS()
         public:
             component *add_component(entity e) override {
                 if(e.index >= components_.size())
@@ -48,7 +53,8 @@ namespace sigmafive {
             std::vector<std::unique_ptr<T>> components_; //TODO this thrashes cache
         };
 
-        class component_registry {
+        class SIGMAFIVE_API component_registry : public object {
+			SIGMAFIVE_CLASS()
         public:
             void register_component(class_uid uid, std::unique_ptr<factory<component_pool>> pool_factory);
 

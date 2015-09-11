@@ -1,8 +1,9 @@
 #ifndef SIGMAFIVE_EDITOR_APPLICATION_HPP
 #define SIGMAFIVE_EDITOR_APPLICATION_HPP
 
-#include <QApplication>
 #include <sigmafive/engine.hpp>
+
+#include <QApplication>
 
 namespace sigmafive {
     namespace editor {

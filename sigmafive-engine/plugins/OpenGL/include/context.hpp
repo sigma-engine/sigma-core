@@ -1,9 +1,7 @@
 #ifndef SIGMAFIVE_GRAPHICS_OPENGL_SCENE_RENDERER_HPP
 #define SIGMAFIVE_GRAPHICS_OPENGL_SCENE_RENDERER_HPP
 
-#include <sigmafive/factory.hpp>
-#include <sigmafive/graphics/context.hpp>
-#include <sigmafive/system/resource_manager.hpp>
+#include <sigmafive/engine.hpp>
 
 #include <shader.hpp>
 #include <program.hpp>
@@ -11,11 +9,15 @@
 #include <static_mesh.hpp>
 #include <static_mesh_manager.hpp>
 
+#include <sigmafive/factory.hpp>
+#include <sigmafive/graphics/context.hpp>
+#include <sigmafive/system/resource_manager.hpp>
+
+#include <queue>
 #include <memory>
 
-#include <sigmafive/engine.hpp>
 extern "C" {
-    void register_plugin(sigmafive::engine *engine);
+    void __declspec(dllexport) register_plugin(sigmafive::engine *engine);
 }
 
 namespace sigmafive {

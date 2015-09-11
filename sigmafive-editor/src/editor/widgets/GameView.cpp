@@ -1,18 +1,9 @@
 #include <editor/widgets/GameView.hpp>
 
-#include <QtQuick/QQuickWindow>
-#include <QOpenGLFramebufferObjectFormat>
-
 #include <QMatrix>
+#include <QtQuick/QQuickWindow>
 #include <QSGSimpleTextureNode>
-
-#include <QFileDialog>
-
-
-#include <future>
-#include <thread>
-#include <chrono>
-#include <iostream>
+#include <QOpenGLFramebufferObjectFormat>
 
 namespace sigmafive {
     namespace editor {

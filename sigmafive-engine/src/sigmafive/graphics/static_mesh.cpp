@@ -15,3 +15,5 @@ namespace sigmafive {
 		}
 	}
 }
+
+EXPORT_SIGMAFIVE_CLASS(sigmafive::graphics::static_mesh)

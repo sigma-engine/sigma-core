@@ -1,12 +1,9 @@
 #include <editor/widgets/MainWindow.hpp>
-#include <editor/widgets/OpenGLWidget.hpp>
 #include "ui_MainWindow.h"
 
-#include <sigmafive/graphics/static_mesh.hpp>
+#include <editor/widgets/OpenGLWidget.hpp>
 
 #include <QFileDialog>
-
-#include <iostream>
 
 namespace sigmafive {
     namespace editor {

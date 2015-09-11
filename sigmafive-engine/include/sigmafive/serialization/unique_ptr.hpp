@@ -1,13 +1,12 @@
 #ifndef SIGMAFIVE_SERIALIZATION_UNIQUE_PTR_HPP
 #define SIGMAFIVE_SERIALIZATION_UNIQUE_PTR_HPP
 
-#include <boost/serialization/serialization.hpp>
-#include <boost/serialization/version.hpp>
-#include <boost/serialization/split_free.hpp>
 #include <memory>
-
-#include <boost/serialization/wrapper.hpp>
 #include <boost/serialization/nvp.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/wrapper.hpp>
+#include <boost/serialization/split_free.hpp>
+#include <boost/serialization/serialization.hpp>
 
 namespace boost {
 	namespace serialization {

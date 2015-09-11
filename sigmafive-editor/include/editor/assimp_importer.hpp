@@ -2,6 +2,7 @@
 #define SIGMAFIVE_EDITOR_ASSIMP_IMPORTER_HPP
 
 #include <QObject>
+
 #include <editor/entity_manager_model.hpp>
 
 namespace sigmafive {

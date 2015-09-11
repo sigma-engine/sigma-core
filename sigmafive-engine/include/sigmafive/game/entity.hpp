@@ -1,11 +1,13 @@
 #ifndef SIGMAFIVE_GAME_ENTITY_HPP
 #define SIGMAFIVE_GAME_ENTITY_HPP
 
+#include <sigmafive/config.hpp>
+
 #include <cinttypes>
 
 namespace sigmafive {
     namespace game {
-        struct entity {
+        struct SIGMAFIVE_API entity {
             entity();
 
             entity(std::uint32_t index,std::uint32_t version);

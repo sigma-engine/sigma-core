@@ -1,13 +1,14 @@
 #ifndef SIGMAFIVE_EDITOR_WIDGETS_OPENGLWIDGET_HPP
 #define SIGMAFIVE_EDITOR_WIDGETS_OPENGLWIDGET_HPP
 
+#include <QOpenGLWidget>
+
 #include <editor/trackball_controller.hpp>
 #include <editor/entity_manager_model.hpp>
 
 #include <memory>
 #include <QMouseEvent>
 #include <QWheelEvent>
-#include <QOpenGLWidget>
 
 namespace sigmafive {
 	namespace editor {

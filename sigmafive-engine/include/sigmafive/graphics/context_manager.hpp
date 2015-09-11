@@ -1,8 +1,10 @@
 #ifndef SIGMAFIVE_GRAPHICS_CONTEXT_MANGER_HPP
 #define SIGMAFIVE_GRAPHICS_CONTEXT_MANGER_HPP
 
+#include <sigmafive/config.hpp>
 #include <sigmafive/object.hpp>
 #include <sigmafive/factory.hpp>
+
 #include <sigmafive/graphics/context.hpp>
 
 #include <memory>
@@ -11,7 +13,7 @@
 namespace sigmafive {
 	namespace graphics {
         using context_factory = factory<context>;
-        class context_manager : public object {
+        class SIGMAFIVE_API context_manager : public object {
             SIGMAFIVE_CLASS()
         public:
             context_manager();

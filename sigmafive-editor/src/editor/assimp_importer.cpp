@@ -1,22 +1,24 @@
 #include <editor/assimp_importer.hpp>
 
+#include <sigmafive/graphics/static_mesh.hpp>
+
 #include <sigmafive/math/vec2.hpp>
 #include <sigmafive/math/vec3.hpp>
 #include <sigmafive/math/vec4.hpp>
 #include <sigmafive/math/quaternion.hpp>
-#include <sigmafive/graphics/static_mesh.hpp>
+
 #include <sigmafive/game/transform_component.hpp>
 #include <sigmafive/game/static_mesh_component.hpp>
+
+#include <iostream>
+#include <unordered_map>
+#include <boost/uuid/uuid.hpp>
 
 #include <QUrl>
 #include <assimp/scene.h>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/DefaultLogger.hpp>
-
-#include <iostream>
-#include <unordered_map>
-#include <boost/uuid/uuid.hpp>
 
 namespace sigmafive {
     namespace editor {

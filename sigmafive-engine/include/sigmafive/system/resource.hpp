@@ -1,23 +1,14 @@
 #ifndef SIGMAFIVE_SYSTEM_RESOURCE_HPP
 #define SIGMAFIVE_SYSTEM_RESOURCE_HPP
 
+#include <sigmafive/config.hpp>
 #include <sigmafive/object.hpp>
 
 namespace sigmafive {
 	namespace system {
-        class resource : public object {
+        class SIGMAFIVE_API resource : public object {
             SIGMAFIVE_CLASS()
-        public:
-            resource() = default;
-
-            resource(const resource &) = default;
-
-            resource(resource &&) = default;
-
-            resource& operator=(const resource &) = default;
-
-            resource& operator=(resource &&) = default;
-
+        public:	
             virtual ~resource() = default;
         private:
 		};

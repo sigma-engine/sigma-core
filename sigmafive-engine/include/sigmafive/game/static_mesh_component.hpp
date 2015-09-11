@@ -1,13 +1,16 @@
 #ifndef SIGMAFIVE_GAME_STATIC_MESH_COMPONENT_HPP
 #define SIGMAFIVE_GAME_STATIC_MESH_COMPONENT_HPP
 
+#include <sigmafive/config.hpp>
+#include <sigmafive/object.hpp>
+
 #include <sigmafive/game/component.hpp>
 #include <sigmafive/graphics/static_mesh.hpp>
 #include <sigmafive/game/component_registry.hpp>
 
 namespace sigmafive {
     namespace game {
-        class static_mesh_component : public game::component {
+        class SIGMAFIVE_API static_mesh_component : public game::component {
             SIGMAFIVE_CLASS()
         public:
             boost::uuids::uuid static_mesh;

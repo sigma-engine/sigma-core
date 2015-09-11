@@ -3,7 +3,6 @@
 
 #include <shader.hpp>
 #include <program.hpp>
-#include <boost/variant.hpp>
 
 namespace sigmafive {
 	namespace graphics {

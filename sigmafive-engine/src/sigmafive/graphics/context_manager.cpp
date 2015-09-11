@@ -1,4 +1,5 @@
 #include <sigmafive/graphics/context_manager.hpp>
+
 #include <stdexcept>
 
 namespace sigmafive {

@@ -86,3 +86,5 @@ namespace sigmafive {
         }
     }
 }
+
+EXPORT_SIGMAFIVE_CLASS(sigmafive::game::entity_manager)

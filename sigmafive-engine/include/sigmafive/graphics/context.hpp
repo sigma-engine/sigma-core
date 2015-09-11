@@ -1,15 +1,16 @@
 #ifndef SIGMAFIVE_GRAPHICS_CONTEXT_HPP
 #define SIGMAFIVE_GRAPHICS_CONTEXT_HPP
 
+#include <sigmafive/config.hpp>
 #include <sigmafive/object.hpp>
+
 #include <sigmafive/math/mat4.hpp>
 
-#include <queue>
 #include <boost/uuid/uuid.hpp>
 
 namespace sigmafive {
 	namespace graphics {
-		class context : public object {
+		class SIGMAFIVE_API context : public object {
             SIGMAFIVE_CLASS()
 		public:
 			virtual ~context() = default;

@@ -12,7 +12,7 @@ namespace sigmafive {
     engine::engine(int &argc, char **argv) {
         //TODO clean this up
         //this is a hack just to get things working
-        for(auto& entry : boost::make_iterator_range(boost::filesystem::directory_iterator("../plugins"), {})) {
+        for(auto& entry : boost::make_iterator_range(boost::filesystem::directory_iterator(default_plugin_path()), {})) {
             if(boost::dll::shared_library::suffix() == entry.path().extension()) {
                 plugins_.emplace_back(entry.path());
                 plugins_.back().get<void(sigmafive::engine *)>("register_plugin")(this);
@@ -20,9 +20,21 @@ namespace sigmafive {
         }
 
         component_registry_.register_component(game::transform_component::CLASS_ID,
-                                                       std::unique_ptr<game::transform_component_pool_factory>(new game::transform_component_pool_factory{}));
+                                               std::unique_ptr<game::transform_component_pool_factory>(new game::transform_component_pool_factory{}));
         component_registry_.register_component(game::static_mesh_component::CLASS_ID,
-                                                       std::unique_ptr<game::static_mesh_component_pool_factory>(new game::static_mesh_component_pool_factory{}));
+                                               std::unique_ptr<game::static_mesh_component_pool_factory>(new game::static_mesh_component_pool_factory{}));
+    }
+
+    boost::filesystem::path engine::default_plugin_path() {
+#ifdef CMAKE_IDE_GENERATOR
+    #ifdef SIGMAFIVE_DEBUG
+		return "../plugins/Debug";
+    #else
+		return "../plugins/Release";
+    #endif
+#else
+        return boost::filesystem::path("../plugins");
+#endif
     }
 
     system::resource_manager &engine::resource_manager() {
@@ -37,3 +49,5 @@ namespace sigmafive {
         return graphics_context_manager_;
     }
 }
+
+EXPORT_SIGMAFIVE_CLASS(sigmafive::engine)

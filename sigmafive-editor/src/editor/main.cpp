@@ -1,4 +1,5 @@
 #include <editor/application.hpp>
+
 #include <editor/assimp_importer.hpp>
 #include <editor/entity_manager_model.hpp>
 

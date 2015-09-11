@@ -1,20 +1,23 @@
 #ifndef SIGMAFIVE_GRAPHICS_STATIC_MESH_HPP
 #define SIGMAFIVE_GRAPHICS_STATIC_MESH_HPP
 
+#include <sigmafive/config.hpp>
+#include <sigmafive/object.hpp>
 
 #include <sigmafive/math/vec2.hpp>
 #include <sigmafive/math/vec3.hpp>
 #include <sigmafive/math/mat4.hpp>
+
 #include <sigmafive/system/resource.hpp>
 
 #include <array>
 #include <vector>
-#include <boost/filesystem/path.hpp>
 #include <boost/uuid/uuid.hpp>
+#include <boost/filesystem/path.hpp>
 
 namespace sigmafive {
 	namespace graphics {
-		class static_mesh : public system::resource {
+		class SIGMAFIVE_API static_mesh : public system::resource {
             SIGMAFIVE_CLASS()
 		public:
 			struct vertex {

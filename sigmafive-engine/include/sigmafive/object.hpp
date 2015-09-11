@@ -1,6 +1,8 @@
 #ifndef SIGMAFIVE_OBJECT_HPP
 #define SIGMAFIVE_OBJECT_HPP
 
+#include <sigmafive/config.hpp>
+
 #include <string>
 #include <memory>
 #include <unordered_map>
@@ -26,7 +28,7 @@ namespace sigmafive {
         return *input ? static_cast<class_uid>(*input) + 33 * compile_time_hash(input + 1) : 5381;
     }
 
-    class meta_class {
+    class SIGMAFIVE_API meta_class {		
     public:
         std::string name() const;
 
@@ -39,9 +41,15 @@ namespace sigmafive {
         class_uid uid_;
     };
 
-    class object {
+    class SIGMAFIVE_API object {
         SIGMAFIVE_CLASS()
     public:
+		object() = default;
+
+		object(const object &) = delete;
+
+		object &operator=(const object &) = delete;
+
         virtual ~object() = default;
 
         static bool has_meta_class(class_uid uid);

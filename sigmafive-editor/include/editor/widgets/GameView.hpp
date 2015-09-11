@@ -1,17 +1,19 @@
 #ifndef SIGMAFIVE_EDITOR_WIDGETS_GAME_VIEW_HPP
 #define SIGMAFIVE_EDITOR_WIDGETS_GAME_VIEW_HPP
 
-#include <sigmafive/engine.hpp>
-#include <sigmafive/graphics/context.hpp>
-#include <sigmafive/game/entity_manager.hpp>
-#include <sigmafive/game/component_manager.hpp>
-#include <sigmafive/game/component_system_manager.hpp>
-#include <sigmafive/game/static_mesh_component_system.hpp>
+#include <QtQuick/QQuickFramebufferObject>
 
 #include <editor/entity_manager_model.hpp>
 #include <editor/trackball_controller.hpp>
 
-#include <QtQuick/QQuickFramebufferObject>
+#include <sigmafive/engine.hpp>
+
+#include <sigmafive/graphics/context.hpp>
+
+#include <sigmafive/game/entity_manager.hpp>
+#include <sigmafive/game/component_manager.hpp>
+#include <sigmafive/game/component_system_manager.hpp>
+#include <sigmafive/game/static_mesh_component_system.hpp>
 
 namespace sigmafive {
     namespace editor {

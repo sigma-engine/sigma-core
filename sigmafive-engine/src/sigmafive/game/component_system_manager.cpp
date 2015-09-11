@@ -1,5 +1,4 @@
 #include <sigmafive/game/component_system_manager.hpp>
-#include <iterator>
 
 namespace sigmafive {
     namespace game {
@@ -29,3 +28,5 @@ namespace sigmafive {
         }
     }
 }
+
+EXPORT_SIGMAFIVE_CLASS(sigmafive::game::component_system_manager)

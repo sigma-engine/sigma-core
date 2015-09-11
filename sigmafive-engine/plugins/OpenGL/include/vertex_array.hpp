@@ -1,11 +1,13 @@
 #ifndef SIGMAFIVE_GRAPHICS_OPENGL_VERTEX_ARRAY_HPP
 #define SIGMAFIVE_GRAPHICS_OPENGL_VERTEX_ARRAY_HPP
 
-#include <cstdint>
-#include <sigmafive/type_info.hpp>
 #include <util.hpp>
 #include <index_buffer.hpp>
 #include <vertex_buffer.hpp>
+
+#include <sigmafive/type_info.hpp>
+
+#include <cstdint>
 
 namespace sigmafive {
 	namespace graphics {

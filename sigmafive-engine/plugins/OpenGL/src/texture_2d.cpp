@@ -1,4 +1,5 @@
 #include <texture_2d.hpp>
+
 #include <gl_core_4_0.hpp>
 
 namespace sigmafive {

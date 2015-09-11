@@ -1,6 +1,10 @@
 #ifndef SIGMAFIVE_GRAPHICS_OPENGL_PROGRAM_HPP
 #define SIGMAFIVE_GRAPHICS_OPENGL_PROGRAM_HPP
 
+#include <shader.hpp>
+#include <texture_2d.hpp>
+#include <gl_core_4_0.hpp>
+
 #include <sigmafive/math/vec2.hpp>
 #include <sigmafive/math/vec3.hpp>
 #include <sigmafive/math/vec4.hpp>
@@ -8,12 +12,10 @@
 #include <sigmafive/math/mat3.hpp>
 #include <sigmafive/math/mat4.hpp>
 #include <sigmafive/math/quaternion.hpp>
-#include <shader.hpp>
-#include <texture_2d.hpp>
 
 #include <string>
 #include <vector>
-#include <gl_core_4_0.hpp>
+#include <functional>
 
 namespace sigmafive {
 	namespace graphics {

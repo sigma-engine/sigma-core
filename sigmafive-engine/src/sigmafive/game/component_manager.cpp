@@ -60,3 +60,5 @@ namespace sigmafive {
         }
     }
 }
+
+EXPORT_SIGMAFIVE_CLASS(sigmafive::game::component_manager)

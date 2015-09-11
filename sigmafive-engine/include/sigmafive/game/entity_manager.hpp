@@ -1,6 +1,9 @@
 #ifndef SIGMAFIVE_GAME_ENTITY_MANAGER_HPP
 #define SIGMAFIVE_GAME_ENTITY_MANAGER_HPP
 
+#include <sigmafive/config.hpp>
+#include <sigmafive/object.hpp>
+
 #include <sigmafive/game/entity.hpp>
 
 #include <vector>
@@ -8,7 +11,8 @@
 
 namespace sigmafive {
     namespace game {
-        class entity_manager {
+        class SIGMAFIVE_API entity_manager : public object {
+			SIGMAFIVE_CLASS()
             struct is_entity_alive {
                 inline bool operator()(entity e) { return e.index != std::uint32_t(-1); }
             };

@@ -1,10 +1,11 @@
 #ifndef SIGMAFIVE_GRAPHICS_OPENGL_STATIC_MESH_HPP
 #define SIGMAFIVE_GRAPHICS_OPENGL_STATIC_MESH_HPP
 
-#include <sigmafive/graphics/static_mesh.hpp>
 #include <vertex_array.hpp>
 #include <index_buffer.hpp>
 #include <vertex_buffer.hpp>
+
+#include <sigmafive/graphics/static_mesh.hpp>
 
 namespace sigmafive {
 	namespace graphics {

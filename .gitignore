@@ -1,6 +1,6 @@
 # Thirdparty Library source files
 /thirdparty/*
-!/thirdparty/build_all_thirdparty.py
+!/thirdparty/CMakeLists.txt
 !/thirdparty/licences.txt
 
 # Ide Generated files

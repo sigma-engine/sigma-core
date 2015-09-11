@@ -30,3 +30,5 @@ namespace sigmafive {
         }
     }
 }
+
+EXPORT_SIGMAFIVE_CLASS(sigmafive::system::resource_manager)

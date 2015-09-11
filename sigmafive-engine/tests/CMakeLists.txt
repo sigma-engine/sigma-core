@@ -1,9 +1,4 @@
-#GoogleMock
-set(gtest_force_shared_crt ON)
-set(gtest_disable_pthreads ON)
-add_subdirectory(${THIRDPARTY_DIR}/googletest/googlemock ${CMAKE_BINARY_DIR}/thirdparty)
-
-set(TESTS_SRCS
+set(SOURCES
     main.cpp
     object_tests.cpp
 
@@ -27,15 +22,10 @@ set(TESTS_SRCS
     game/entity_manager_tests.cpp
     game/component_system_manager_tests.cpp
 )
-set(TESTS_HDRS
+set(HEADERS
     game/fake_components.hpp
 )
 
-add_executable(sigmafive-tests ${TESTS_HDRS} ${TESTS_SRCS})
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+add_executable(sigmafive-tests ${HEADERS} ${SOURCES})
 target_link_libraries(sigmafive-tests gmock gmock_main sigmafive)
-target_include_directories(sigmafive-tests
-PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${THIRDPARTY_DIR}/googletest/googlemock/include
-    ${THIRDPARTY_DIR}/googletest/googletest/include
-)

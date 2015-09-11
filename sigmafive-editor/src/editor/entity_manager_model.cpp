@@ -1,6 +1,5 @@
 #include <editor/entity_manager_model.hpp>
 
-#include <iostream>
 namespace sigmafive {
     namespace editor {
 

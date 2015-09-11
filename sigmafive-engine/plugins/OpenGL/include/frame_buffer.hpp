@@ -1,8 +1,9 @@
 #ifndef SIGMAFIVE_GRAPHICS_OPENGL_FRAME_BUFFER_HPP
 #define SIGMAFIVE_GRAPHICS_OPENGL_FRAME_BUFFER_HPP
 
-#include <cstdint>
 #include <gl_core_4_0.hpp>
+
+#include <cstdint>
 
 namespace sigmafive {
 	namespace graphics {

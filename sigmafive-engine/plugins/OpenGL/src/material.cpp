@@ -1,5 +1,4 @@
 #include <material.hpp>
-#include <iostream>
 
 namespace sigmafive {
     namespace graphics {

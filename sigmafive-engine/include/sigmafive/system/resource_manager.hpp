@@ -1,6 +1,9 @@
 #ifndef SIGMAFIVE_SYSTEM_RESOURCE_MANAGER_HPP
 #define SIGMAFIVE_SYSTEM_RESOURCE_MANAGER_HPP
 
+#include <sigmafive/config.hpp>
+#include <sigmafive/object.hpp>
+
 #include <sigmafive/system/resource.hpp>
 
 #include <unordered_map>
@@ -12,19 +15,12 @@
 
 namespace sigmafive {
 	namespace system {
-		class resource_manager {
+		class SIGMAFIVE_API resource_manager : public object {
+			SIGMAFIVE_CLASS()
         public:
             resource_manager(boost::filesystem::path = boost::filesystem::path("../data"));
 
             virtual ~resource_manager();
-
-            resource_manager(const resource_manager &) = delete;
-
-            resource_manager(resource_manager &&) = delete;
-
-            resource_manager&operator=(const resource_manager &) = delete;
-
-            resource_manager&operator=(resource_manager &&) = delete;
 
             boost::uuids::uuid generate_key() const;
 

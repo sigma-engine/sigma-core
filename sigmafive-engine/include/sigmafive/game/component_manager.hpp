@@ -1,6 +1,9 @@
 #ifndef SIGMAFIVE_GAME_COMPONENT_MANAGER_HPP
 #define SIGMAFIVE_GAME_COMPONENT_MANAGER_HPP
 
+#include <sigmafive/config.hpp>
+#include <sigmafive/object.hpp>
+
 #include <sigmafive/game/entity.hpp>
 #include <sigmafive/game/component.hpp>
 #include <sigmafive/game/component_registry.hpp>
@@ -11,7 +14,8 @@
 
 namespace sigmafive {
     namespace game {
-        class component_manager {
+        class SIGMAFIVE_API component_manager : public object {
+			SIGMAFIVE_CLASS()
         public:
             component_manager(component_registry &registry);
 

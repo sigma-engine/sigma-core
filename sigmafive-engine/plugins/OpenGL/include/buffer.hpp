@@ -1,9 +1,10 @@
 #ifndef SIGMAFIVE_GRAPHICS_OPENGL_BUFFER_HPP
 #define SIGMAFIVE_GRAPHICS_OPENGL_BUFFER_HPP
 
+#include <gl_core_4_0.hpp>
+
 #include <cstdint>
 #include <cstdlib>
-#include <gl_core_4_0.hpp>
 
 namespace sigmafive {
     namespace graphics {

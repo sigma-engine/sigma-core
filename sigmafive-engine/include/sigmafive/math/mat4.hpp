@@ -2,7 +2,7 @@
 #define MAT4X4_HPP
 
 #include <sigmafive/math/vec4.hpp>
-#include <cmath>
+#include <sigmafive/math/utils.hpp>
 
 template<typename T>
 struct quaternion_t;

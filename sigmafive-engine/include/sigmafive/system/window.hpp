@@ -1,6 +1,8 @@
 #ifndef SIGMAONE_SYSTEM_WINDOW_HPP
 #define SIGMAONE_SYSTEM_WINDOW_HPP
 
+#include <sigmafive/config.hpp>
+
 #include <sigmafive/math/vec2.hpp>
 
 #include <string>
@@ -9,7 +11,7 @@ struct SDL_Window;
 
 namespace sigmafive {
 	namespace system {
-        struct context_attributes {
+        struct SIGMAFIVE_API context_attributes {
             int red;
             int green;
             int blue;
@@ -24,7 +26,7 @@ namespace sigmafive {
             bool vsync;
         };
 
-		class window {
+		class SIGMAFIVE_API window {
         public:
             window(std::string title, int2 size, context_attributes context_attributes);
 
@@ -33,7 +35,6 @@ namespace sigmafive {
             bool good();
 
             void close();
-
         private:
             std::string title_;
             int2 size_;

@@ -1,11 +1,12 @@
 #ifndef SIGMAFIVE_EDITOR_WIDGETS_MAINWINDOW_HPP
 #define SIGMAFIVE_EDITOR_WIDGETS_MAINWINDOW_HPP
 
-#include <sigmafive/engine.hpp>
+#include <QMainWindow>
+
 #include <editor/assimp_importer.hpp>
 #include <editor/entity_manager_model.hpp>
 
-#include <QMainWindow>
+#include <sigmafive/engine.hpp>
 
 namespace sigmafive {
     namespace editor {
