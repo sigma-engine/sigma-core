@@ -9,7 +9,6 @@ set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 
 find_package(Boost REQUIRED COMPONENTS system filesystem)
-find_package(SDL2 REQUIRED)
 
 set(SOURCES
     src/sigmafive/object.cpp
@@ -79,11 +78,9 @@ target_include_directories(engine
 PUBLIC
     include
     ${Boost_INCLUDE_DIRS}
-PRIVATE
-    ${SDL2_INCLUDE_DIRS}
 )
 
-target_link_libraries(engine ${Boost_LIBRARIES} ${SDL2_LIBRARIES})
+target_link_libraries(engine ${Boost_LIBRARIES})
 
 add_subdirectory(plugins)
 add_subdirectory(tests)

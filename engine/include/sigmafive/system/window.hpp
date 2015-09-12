@@ -5,43 +5,16 @@
 
 #include <sigmafive/math/vec2.hpp>
 
-#include <string>
-
-struct SDL_Window;
-
 namespace sigmafive {
 	namespace system {
-        struct SIGMAFIVE_API context_attributes {
-            int red;
-            int green;
-            int blue;
-            int alpha;
-            int depth;
-            int stencil;
-            int samples;
-            int major;
-            int minor;
-            bool double_buffer;
-            bool core_profile;
-            bool vsync;
-        };
-
 		class SIGMAFIVE_API window {
         public:
-            window(std::string title, int2 size, context_attributes context_attributes);
+            virtual ~window() = default;
 
-            ~window();
+            virtual bool good() = 0;
 
-            bool good();
-
-            void close();
+            virtual void close() = 0;
         private:
-            std::string title_;
-            int2 size_;
-            context_attributes context_attributes_;
-            SDL_Window *window_;
-            void *gl_context_;
-            bool good_;
         };
 	}
 }
