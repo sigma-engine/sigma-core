@@ -27,7 +27,7 @@ namespace sigmafive {
 
     boost::filesystem::path engine::default_plugin_path() {
 #ifdef CMAKE_IDE_GENERATOR
-    #ifdef SIGMAFIVE_DEBUG
+    #ifdef ENGINE_DEBUG
 		return "../plugins/Debug";
     #else
 		return "../plugins/Release";

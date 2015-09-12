@@ -41,4 +41,4 @@ PUBLIC
 PRIVATE
     ${OPENGL_INCLUDE_DIRS}
 )
-target_link_libraries(OpenGL sigmafive ${OPENGL_LIBRARIES})
+target_link_libraries(OpenGL engine ${OPENGL_LIBRARIES})

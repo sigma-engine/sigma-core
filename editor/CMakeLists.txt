@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.12)
-project(sigmafive-editor)
+project(editor)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -45,12 +45,13 @@ qt5_add_resources(RESOURCES
 
 link_directories(${ASSIMP_LIBRARY_DIRS})
 
-add_executable(sigmafive-editor WIN32 ${SOURCES} ${HEADERS} ${UI_HEADERS} ${QML} ${RESOURCES})
-target_include_directories(sigmafive-editor
+add_executable(editor WIN32 ${SOURCES} ${HEADERS} ${UI_HEADERS} ${QML} ${RESOURCES})
+
+target_include_directories(editor
 PUBLIC
     include
 PRIVATE
     ${ASSIMP_INCLUDE_DIRS}
 )
 
-target_link_libraries(sigmafive-editor Qt5::Core Qt5::OpenGL Qt5::Quick Qt5::Widgets sigmafive ${ASSIMP_LIBRARIES})
+target_link_libraries(editor Qt5::Core Qt5::OpenGL Qt5::Quick Qt5::Widgets engine ${ASSIMP_LIBRARIES})

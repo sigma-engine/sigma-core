@@ -27,5 +27,5 @@ set(HEADERS
 )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-add_executable(sigmafive-tests ${HEADERS} ${SOURCES})
-target_link_libraries(sigmafive-tests gmock gmock_main sigmafive)
+add_executable(tests ${HEADERS} ${SOURCES})
+target_link_libraries(tests gmock gmock_main engine)

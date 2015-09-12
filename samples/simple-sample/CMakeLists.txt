@@ -7,4 +7,4 @@ set(HEADERS
 )
 
 add_executable(simple-sample ${SOURCES} ${HEADERS})
-target_link_libraries(simple-sample sigmafive)
+target_link_libraries(simple-sample engine)

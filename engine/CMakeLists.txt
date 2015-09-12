@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.12)
-project(sigmafive)
+project(engine)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 include(plugin_utils)
@@ -74,8 +74,8 @@ set(HEADERS
 
 link_directories(${Boost_LIBRARY_DIRS})
 
-add_library(sigmafive SHARED ${SOURCES} ${HEADERS})
-target_include_directories(sigmafive
+add_library(engine SHARED ${SOURCES} ${HEADERS})
+target_include_directories(engine
 PUBLIC
     include
     ${Boost_INCLUDE_DIRS}
@@ -83,7 +83,7 @@ PRIVATE
     ${SDL2_INCLUDE_DIRS}
 )
 
-target_link_libraries(sigmafive ${Boost_LIBRARIES} ${SDL2_LIBRARIES})
+target_link_libraries(engine ${Boost_LIBRARIES} ${SDL2_LIBRARIES})
 
 add_subdirectory(plugins)
 add_subdirectory(tests)
