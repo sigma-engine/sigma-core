@@ -20,11 +20,9 @@ set(SOURCES
     game/component_system_tests.cpp
     game/component_manager_tests.cpp
     game/entity_manager_tests.cpp
-    game/component_system_manager_tests.cpp
-)
+    game/component_system_manager_tests.cpp)
 set(HEADERS
-    game/fake_components.hpp
-)
+    game/fake_components.hpp)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_executable(tests ${HEADERS} ${SOURCES})

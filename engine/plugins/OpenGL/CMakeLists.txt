@@ -15,8 +15,7 @@ set(SOURCES
     src/static_mesh_manager.cpp
     src/texture_2d.cpp
     src/vertex_array.cpp
-    src/vertex_buffer.cpp
-)
+    src/vertex_buffer.cpp)
 set(HEADERS
     include/buffer.hpp
     include/context.hpp
@@ -31,14 +30,13 @@ set(HEADERS
     include/texture_2d.hpp
     include/util.hpp
     include/vertex_array.hpp
-    include/vertex_buffer.hpp
-)
+    include/vertex_buffer.hpp)
 
 add_plugin(OpenGL ${SOURCES} ${HEADERS})
-target_include_directories(OpenGL 
+target_include_directories(OpenGL
 PUBLIC
     include
 PRIVATE
     ${OPENGL_INCLUDE_DIRS}
-)
+    )
 target_link_libraries(OpenGL engine ${OPENGL_LIBRARIES})

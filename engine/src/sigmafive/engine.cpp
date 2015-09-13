@@ -48,6 +48,10 @@ namespace sigmafive {
     graphics::context_manager &engine::graphics_context_manager() {
         return graphics_context_manager_;
     }
+
+    system::window_manager &engine::window_manager() {
+        return window_manager_;
+    }
 }
 
 EXPORT_SIGMAFIVE_CLASS(sigmafive::engine)

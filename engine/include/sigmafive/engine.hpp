@@ -5,7 +5,10 @@
 #include <sigmafive/object.hpp>
 
 #include <sigmafive/game/component_registry.hpp>
+
+#include <sigmafive/system/window_manager.hpp>
 #include <sigmafive/system/resource_manager.hpp>
+
 #include <sigmafive/graphics/context_manager.hpp>
 
 #include <vector>
@@ -24,6 +27,8 @@ namespace sigmafive {
         game::component_registry &component_registry();
 
         graphics::context_manager &graphics_context_manager();
+
+        system::window_manager &window_manager();
     private:
         //TODO hack
         std::vector<boost::dll::shared_library> plugins_;
@@ -31,6 +36,7 @@ namespace sigmafive {
         system::resource_manager resource_manager_;
         game::component_registry component_registry_;
         graphics::context_manager graphics_context_manager_;
+        system::window_manager window_manager_;
     };
 }
 

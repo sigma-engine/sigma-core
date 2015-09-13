@@ -1,13 +1,13 @@
-#ifndef SIGMAONE_SYSTEM_WINDOW_HPP
-#define SIGMAONE_SYSTEM_WINDOW_HPP
+#ifndef SIGMAFIVE_SYSTEM_WINDOW_HPP
+#define SIGMAFIVE_SYSTEM_WINDOW_HPP
 
 #include <sigmafive/config.hpp>
-
-#include <sigmafive/math/vec2.hpp>
+#include <sigmafive/object.hpp>
 
 namespace sigmafive {
-	namespace system {
-		class SIGMAFIVE_API window {
+    namespace system {
+        class SIGMAFIVE_API window : public object {
+            SIGMAFIVE_CLASS()
         public:
             virtual ~window() = default;
 
@@ -16,7 +16,7 @@ namespace sigmafive {
             virtual void close() = 0;
         private:
         };
-	}
+    }
 }
 
-#endif //SIGMAONE_SYSTEM_WINDOW_HPP
+#endif //SIGMAFIVE_SYSTEM_WINDOW_HPP

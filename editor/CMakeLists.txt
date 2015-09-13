@@ -16,8 +16,7 @@ set(SOURCES
 
     src/editor/widgets/MainWindow.cpp
     src/editor/widgets/GameView.cpp
-    src/editor/widgets/OpenGLWidget.cpp
-)
+    src/editor/widgets/OpenGLWidget.cpp)
 set(HEADERS
     include/editor/application.hpp
     include/editor/trackball_controller.hpp
@@ -27,20 +26,16 @@ set(HEADERS
 
     include/editor/widgets/MainWindow.hpp
     include/editor/widgets/GameView.hpp
-    include/editor/widgets/OpenGLWidget.hpp
-)
+    include/editor/widgets/OpenGLWidget.hpp)
 
 set(QML
-    resources/ui/main.qml
-)
+    resources/ui/main.qml)
 
 qt5_wrap_ui(UI_HEADERS
-    resources/ui/MainWindow.ui
-)
+    resources/ui/MainWindow.ui)
 
 qt5_add_resources(RESOURCES
-    resources/resources.qrc
-)
+    resources/resources.qrc)
 
 link_directories(${ASSIMP_LIBRARY_DIRS})
 
@@ -51,7 +46,6 @@ PUBLIC
     include
 PRIVATE
     ${ASSIMP_INCLUDE_DIRS}
-    ${CMAKE_CURRENT_BINARY_DIR}
-)
+    ${CMAKE_CURRENT_BINARY_DIR})
 
 target_link_libraries(editor Qt5::Core Qt5::OpenGL Qt5::Quick Qt5::Widgets engine ${ASSIMP_LIBRARIES})
