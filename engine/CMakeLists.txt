@@ -9,7 +9,7 @@ if(MINGW AND ${CMAKE_SIZEOF_VOID_P} STREQUAL "4")
 endif()
 
 if(MSVC)
-	set(Boost_USE_STATIC_LIBS OFF)
+	set(Boost_USE_STATIC_LIBS ON)
 	set(Boost_USE_MULTITHREADED ON)
 	set(Boost_USE_STATIC_RUNTIME OFF)
 endif()
