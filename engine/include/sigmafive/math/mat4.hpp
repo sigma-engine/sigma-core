@@ -228,11 +228,11 @@ public:
 		return *this;
 	}
 
-	static mat4x4_t<T> orthographic(T left, T right, T bottom, T top, T near, T far) {
+    static mat4x4_t<T> orthographic(T left, T right, T bottom, T top, T znear, T zfar) {
 
 		return {{ 2/(right - left), 0			    , 0				 , -(right + left)/(right - left) },
 				{ 0    		      , 2/(top - bottom), 0				 , -(top + bottom)/(top - bottom) },
-				{ 0               , 0			    , -2/(far - near), -(far + near)/(far - near)     },
+                { 0               , 0			    , -2/(zfar - znear), -(zfar + znear) / (zfar - znear)},
 				{ 0			      , 0			    , 0				 , 1                              }
 			   };
 	}
@@ -245,7 +245,7 @@ public:
                 { 0,        f, 				  0,                    0 },
                 { 0,        0, (zfar+znear)/clip, (2*zfar*znear)/clip },
                 { 0,        0,                -1,                   0 }};
-	};
+	}
 
 	static mat4x4_t<T> scale(vec3_t<T> scale) {
         return {{scale.x,0,0,0},

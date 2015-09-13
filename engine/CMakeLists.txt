@@ -4,6 +4,10 @@ project(engine)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 include(plugin_utils)
 
+if(MINGW AND ${CMAKE_SIZEOF_VOID_P} STREQUAL "4")
+	add_definitions(-march=i686)
+endif()
+
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON) 
 set(Boost_USE_STATIC_RUNTIME OFF)

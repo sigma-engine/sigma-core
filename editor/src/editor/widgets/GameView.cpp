@@ -68,21 +68,16 @@ namespace sigmafive {
                 }
             }
 
-            float2 GameView::convertp(QPoint p) const {
-                return float2( remap<float>(p.x(), 0.0f, width() , -1.0f, 1.0f),
-                               -remap<float>(p.y(), 0.0f, height(), -1.0f, 1.0f));
-            }
-
             void GameView::begin_rotate(QPoint pos) {
-                trackball_controller_.begin_rotate(convertp(pos));
+                trackball_controller_.begin_rotate(convert(pos));
             }
 
             void GameView::mouse_moved(QPoint pos) {
-                trackball_controller_.update(convertp(pos));
+                trackball_controller_.update(convert(pos));
             }
 
             void GameView::end_rotate(QPoint pos) {
-                trackball_controller_.end_rotate(convertp(pos));
+                trackball_controller_.end_rotate(convert(pos));
             }
 
             void GameView::wheel_scroll(int y) {
@@ -118,6 +113,11 @@ namespace sigmafive {
                 return QQuickFramebufferObject::updatePaintNode(node, nodeData);
             }
         #endif //T_VERSION < QT_VERSION_CHECK(5, 6, 0)
+
+            float2 GameView::convert(QPoint p) const {
+                return float2( remap<float>(p.x(), 0.0f, width() , -1.0f, 1.0f),
+                               -remap<float>(p.y(), 0.0f, height(), -1.0f, 1.0f));
+            }
         }
     }
 }

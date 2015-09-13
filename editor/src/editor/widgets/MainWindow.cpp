@@ -1,8 +1,6 @@
 #include <editor/widgets/MainWindow.hpp>
 #include "ui_MainWindow.h"
 
-#include <editor/widgets/OpenGLWidget.hpp>
-
 #include <QFileDialog>
 
 namespace sigmafive {

@@ -64,8 +64,6 @@ namespace sigmafive {
 
                 void setColor(QColor color);
 
-                float2 convertp(QPoint p) const;
-
                 Q_INVOKABLE void begin_rotate(QPoint pos);
 
                 Q_INVOKABLE void mouse_moved(QPoint pos);
@@ -90,6 +88,9 @@ namespace sigmafive {
 
             private:
                 friend class GameViewRenderer;
+
+                float2 convert(QPoint p) const;
+
                 engine &engine_;
 
                 entity_manager_model *entity_manager_model_;

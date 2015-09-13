@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 2.8.12)
 project(editor)
 
 set(CMAKE_AUTOMOC ON)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5 COMPONENTS Core OpenGL Quick Widgets)
 find_package(assimp REQUIRED)
@@ -52,6 +51,7 @@ PUBLIC
     include
 PRIVATE
     ${ASSIMP_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 target_link_libraries(editor Qt5::Core Qt5::OpenGL Qt5::Quick Qt5::Widgets engine ${ASSIMP_LIBRARIES})
