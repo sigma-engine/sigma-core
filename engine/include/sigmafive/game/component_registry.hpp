@@ -3,8 +3,8 @@
 
 #include <sigmafive/config.hpp>
 #include <sigmafive/object.hpp>
-
 #include <sigmafive/factory.hpp>
+
 #include <sigmafive/game/entity.hpp>
 #include <sigmafive/game/component.hpp>
 
@@ -14,7 +14,7 @@
 namespace sigmafive {
     namespace game {
         class SIGMAFIVE_API component_pool : public object {
-			SIGMAFIVE_CLASS()
+        SIGMAFIVE_CLASS()
         public:
             virtual ~component_pool() = default;
 
@@ -23,38 +23,40 @@ namespace sigmafive {
             virtual component *get_component(entity e) = 0;
 
             virtual void remove_component(entity e) = 0;
+
         private:
         };
 
         template<typename T>
         class simple_component_pool : public component_pool {
-			SIGMAFIVE_CLASS()
+        SIGMAFIVE_CLASS()
         public:
             component *add_component(entity e) override {
-                if(e.index >= components_.size())
-                    components_.resize(e.index+1);
+                if (e.index >= components_.size())
+                    components_.resize(e.index + 1);
                 //TODO what should happen when component already exists???
                 components_[e.index] = std::unique_ptr<T>(new T());
-                return static_cast<component*>(components_[e.index].get());
+                return static_cast<component *>(components_[e.index].get());
             }
 
             component *get_component(entity e) override {
-                if(e.index >= components_.size())
+                if (e.index >= components_.size())
                     return nullptr;
-                return static_cast<component*>(components_[e.index].get());
+                return static_cast<component *>(components_[e.index].get());
             }
 
             void remove_component(entity e) override {
-                if(e.index < components_.size())
+                if (e.index < components_.size())
                     components_[e.index] = nullptr;
                 //TODO should this be and error??
             }
+
         private:
             std::vector<std::unique_ptr<T>> components_; //TODO this thrashes cache
         };
 
         class SIGMAFIVE_API component_registry : public object {
-			SIGMAFIVE_CLASS()
+        SIGMAFIVE_CLASS()
         public:
             void register_component(class_uid uid, std::unique_ptr<factory<component_pool>> pool_factory);
 
@@ -70,7 +72,7 @@ namespace sigmafive {
                 std::unique_ptr<factory<component_pool>> pool_factory;
                 component_mask mask;
             };
-            std::unordered_map<class_uid,component_register> registered_components_;
+            std::unordered_map<class_uid, component_register> registered_components_;
         };
     }
 }

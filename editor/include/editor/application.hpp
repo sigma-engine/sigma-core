@@ -10,6 +10,7 @@ namespace sigmafive {
         class application : public QApplication, public engine {
         public:
             application(int &argc, char **argv);
+
         private:
         };
     }

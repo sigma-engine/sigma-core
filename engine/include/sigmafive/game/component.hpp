@@ -13,7 +13,7 @@ namespace sigmafive {
         typedef std::bitset<MAX_NUM_COMPONENTS> component_mask;
 
         class SIGMAFIVE_API component : public object {
-            SIGMAFIVE_CLASS()
+        SIGMAFIVE_CLASS()
         public:
             virtual ~component() = default;
         };

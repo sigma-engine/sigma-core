@@ -1,6 +1,12 @@
 #ifndef SIGMAFIVE_GRAPHICS_OPENGL_SCENE_RENDERER_HPP
 #define SIGMAFIVE_GRAPHICS_OPENGL_SCENE_RENDERER_HPP
 
+#if defined(_WIN32)
+#define OPENGL_PLUGIN_API __declspec(dllexport)
+#else
+#define OPENGL_PLUGIN_API
+#endif
+
 #include <sigmafive/engine.hpp>
 
 #include <shader.hpp>
@@ -17,31 +23,32 @@
 #include <memory>
 
 namespace sigmafive {
-	namespace graphics {
-		namespace opengl {
+    namespace graphics {
+        namespace opengl {
             struct static_mesh_instance {
                 float4x4 model_matrix;
                 boost::uuids::uuid static_mesh;
             };
 
             class context : public graphics::context {
-                SIGMAFIVE_CLASS()
-			public:
+            SIGMAFIVE_CLASS()
+            public:
                 context(system::resource_manager &resource_manager);
 
                 virtual void make_current() override;
 
-                virtual void add_static_mesh(float4x4 model_matrix,boost::uuids::uuid static_mesh) override;
+                virtual void add_static_mesh(float4x4 model_matrix, boost::uuids::uuid static_mesh) override;
 
-                virtual void render(float4x4 projection_matrix,float4x4 view_matrix) override;
+                virtual void render(float4x4 projection_matrix, float4x4 view_matrix) override;
 
                 virtual void swap_buffers() override;
-			private:
+
+            private:
                 std::queue<static_mesh_instance> static_meshes_;
                 opengl::material material_;
 
-				opengl::shader vertex_shader;
-				opengl::shader fragment_shader;
+                opengl::shader vertex_shader;
+                opengl::shader fragment_shader;
 
                 system::resource_manager &resource_manager_;
                 opengl::static_mesh_manager static_mesh_manager_;
@@ -52,11 +59,12 @@ namespace sigmafive {
                 context_factory(system::resource_manager &resource_manager);
 
                 virtual std::unique_ptr<graphics::context> create() override;
+
             private:
                 system::resource_manager &resource_manager_;
             };
-		}
-	}
+        }
+    }
 }
 
 #endif //SIGMAFIVE_GRAPHICS_OPENGL_SCENE_RENDERER_HPP

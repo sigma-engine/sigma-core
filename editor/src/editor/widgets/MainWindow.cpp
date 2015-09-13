@@ -6,7 +6,8 @@
 namespace sigmafive {
     namespace editor {
         namespace widgets {
-            MainWindow::MainWindow(entity_manager_model *entityManager, assimp_importer *assimpImporter, QWidget *parent) :
+            MainWindow::MainWindow(entity_manager_model *entityManager, assimp_importer *assimpImporter,
+                                   QWidget *parent) :
                     QMainWindow(parent),
                     ui(new Ui::MainWindow),
                     entityManager_(entityManager),
@@ -22,8 +23,10 @@ namespace sigmafive {
             }
 
             void MainWindow::on_actionImport_triggered() {
-                QString file = QUrl::fromLocalFile(QFileDialog::getOpenFileName(nullptr,"Import","/home/aaron/Desktop/sigma-five/resources","3D Models (*.blend *.dae)")).toString();
-                assimpImporter_->import_file(entityManager_,file);
+                QString file = QUrl::fromLocalFile(
+                        QFileDialog::getOpenFileName(nullptr, "Import", "/home/aaron/Desktop/sigma-five/resources",
+                                                     "3D Models (*.blend *.dae)")).toString();
+                assimpImporter_->import_file(entityManager_, file);
                 emit entityManager_->layoutChanged();
             }
         }

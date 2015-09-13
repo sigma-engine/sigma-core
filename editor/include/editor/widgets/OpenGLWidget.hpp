@@ -11,16 +11,17 @@
 #include <QWheelEvent>
 
 namespace sigmafive {
-	namespace editor {
+    namespace editor {
         namespace widgets {
-            class OpenGLWidget: public QOpenGLWidget {
-                Q_OBJECT
-			public:
-                static constexpr const class_uid CONTEXT_UID = sigmafive::compile_time_hash("sigmafive::graphics::opengl::context");
+            class OpenGLWidget : public QOpenGLWidget {
+            Q_OBJECT
+            public:
+                static constexpr const class_uid CONTEXT_UID = sigmafive::compile_time_hash(
+                        "sigmafive::graphics::opengl::context");
 
                 explicit OpenGLWidget(QWidget *parent = nullptr);
 
-				~OpenGLWidget();
+                ~OpenGLWidget();
 
                 entity_manager_model *entityManager() {
                     return entity_manager_model_;
@@ -31,25 +32,26 @@ namespace sigmafive {
                     emit entityManagerChanged();
                 }
 
-				void initializeGL() override;
+                void initializeGL() override;
 
-				void resizeGL(int w, int h) override;
+                void resizeGL(int w, int h) override;
 
-				void paintGL() override;
+                void paintGL() override;
 
-				void mousePressEvent(QMouseEvent *e) override;
+                void mousePressEvent(QMouseEvent *e) override;
 
-				void mouseMoveEvent(QMouseEvent *e) override;
+                void mouseMoveEvent(QMouseEvent *e) override;
 
-				void mouseReleaseEvent(QMouseEvent *e) override;
+                void mouseReleaseEvent(QMouseEvent *e) override;
 
-				void wheelEvent(QWheelEvent *e) override;
+                void wheelEvent(QWheelEvent *e) override;
 
-				void keyPressEvent(QKeyEvent *e) override;
+                void keyPressEvent(QKeyEvent *e) override;
 
                 void keyReleaseEvent(QKeyEvent *e) override;
 
             signals:
+
                 void entityManagerChanged();
 
             private:
@@ -61,9 +63,9 @@ namespace sigmafive {
 
                 entity_manager_model *entity_manager_model_;
                 std::unique_ptr<sigmafive::graphics::context> context_;
-			};
-		}
-	}
+            };
+        }
+    }
 }
 
 #endif //SIGMAFIVE_EDITOR_WIDGETS_OPENGLWIDGET_HPP

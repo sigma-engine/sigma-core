@@ -1,9 +1,5 @@
 #include <sigmafive/game/static_mesh_component_system.hpp>
 
-#include <sigmafive/graphics/context.hpp>
-
-#include <sigmafive/game/entity_manager.hpp>
-
 namespace sigmafive {
     namespace game {
 
@@ -14,13 +10,13 @@ namespace sigmafive {
         static_mesh_component_system::~static_mesh_component_system() {
         }
 
-        void static_mesh_component_system::process(entity_manager &em,component_manager &cm) {
+        void static_mesh_component_system::process(entity_manager &em, component_manager &cm) {
             sigmafive::graphics::context *context = context_manager_->current_context();
-            if(!context)
+            if (!context)
                 return;
             //TODO this is a mess
-            for(entity e:em) {
-                if(cm.has_component<transform_component>(e) &&  cm.has_component<static_mesh_component>(e)) {
+            for (entity e:em) {
+                if (cm.has_component<transform_component>(e) && cm.has_component<static_mesh_component>(e)) {
                     auto tcmp = cm.get_component<transform_component>(e);
                     auto scmp = cm.get_component<static_mesh_component>(e);
                     context->add_static_mesh(tcmp->matrix(),

@@ -3,9 +3,9 @@
 #include <boost/uuid/uuid_generators.hpp>
 
 namespace sigmafive {
-	namespace system {
+    namespace system {
         resource_manager::resource_manager(boost::filesystem::path path)
-            : path_(path) {
+                : path_(path) {
         }
 
         resource_manager::~resource_manager() {
@@ -16,14 +16,14 @@ namespace sigmafive {
             return generator();
         }
 
-        void resource_manager::insert(boost::uuids::uuid resource_key,boost::shared_ptr<resource> resource) {
+        void resource_manager::insert(boost::uuids::uuid resource_key, boost::shared_ptr<resource> resource) {
             resources_[resource_key] = resource;
             //TODO write to file
         }
 
         boost::shared_ptr<resource> resource_manager::get(boost::uuids::uuid resource_key) {
             auto it = resources_.find(resource_key);
-            if(it != resources_.end())
+            if (it != resources_.end())
                 return resources_[resource_key];
             //TODO read from file
             return nullptr;

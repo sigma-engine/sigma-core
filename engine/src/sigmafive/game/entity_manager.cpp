@@ -3,7 +3,7 @@
 namespace sigmafive {
     namespace game {
         entity entity_manager::create() {
-            if(free_entities_.empty()) {
+            if (free_entities_.empty()) {
                 entity e{std::uint32_t(entities_.size()), 0};
                 entities_.push_back(e);
                 return e;
@@ -18,35 +18,35 @@ namespace sigmafive {
         }
 
         bool entity_manager::is_alive(entity e) const {
-            if(!e.is_valid() || e.index >= entities_.size())
+            if (!e.is_valid() || e.index >= entities_.size())
                 return false;
             return entities_[e.index] == e;
         }
 
         void entity_manager::destroy(entity e) {
-            if(!e.is_valid() || e.index >= entities_.size())
+            if (!e.is_valid() || e.index >= entities_.size())
                 return;
             //only destroy the entity once
-            if(entities_[e.index].is_valid()) {
+            if (entities_[e.index].is_valid()) {
                 free_entities_.push_back(entities_[e.index].index);
                 entities_[e.index].index = std::uint32_t(-1);
             }
         }
 
         entity_manager::iterator entity_manager::begin() {
-            return boost::make_filter_iterator<is_entity_alive>(entities_.begin(),entities_.end());
+            return boost::make_filter_iterator<is_entity_alive>(entities_.begin(), entities_.end());
         }
 
         entity_manager::iterator entity_manager::end() {
-            return boost::make_filter_iterator<is_entity_alive>(entities_.end(),entities_.end());
+            return boost::make_filter_iterator<is_entity_alive>(entities_.end(), entities_.end());
         }
 
         entity_manager::const_iterator entity_manager::begin() const {
-            return boost::make_filter_iterator<is_entity_alive>(entities_.cbegin(),entities_.cend());
+            return boost::make_filter_iterator<is_entity_alive>(entities_.cbegin(), entities_.cend());
         }
 
         entity_manager::const_iterator entity_manager::end() const {
-            return boost::make_filter_iterator<is_entity_alive>(entities_.cend(),entities_.cend());
+            return boost::make_filter_iterator<is_entity_alive>(entities_.cend(), entities_.cend());
         }
 
         entity_manager::reverse_iterator entity_manager::rbegin() {
@@ -66,11 +66,11 @@ namespace sigmafive {
         }
 
         entity_manager::const_iterator entity_manager::cbegin() {
-            return boost::make_filter_iterator<is_entity_alive>(entities_.cbegin(),entities_.cend());
+            return boost::make_filter_iterator<is_entity_alive>(entities_.cbegin(), entities_.cend());
         }
 
         entity_manager::const_iterator entity_manager::cend() {
-            return boost::make_filter_iterator<is_entity_alive>(entities_.cend(),entities_.cend());
+            return boost::make_filter_iterator<is_entity_alive>(entities_.cend(), entities_.cend());
         }
 
         entity_manager::const_reverse_iterator entity_manager::crbegin() const {

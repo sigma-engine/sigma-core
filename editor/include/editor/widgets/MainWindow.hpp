@@ -18,11 +18,13 @@ namespace sigmafive {
             class MainWindow : public QMainWindow {
             Q_OBJECT
             public:
-                explicit MainWindow(entity_manager_model *entityManager,assimp_importer *assimpImporter,QWidget *parent = 0);
+                explicit MainWindow(entity_manager_model *entityManager, assimp_importer *assimpImporter,
+                                    QWidget *parent = 0);
 
                 ~MainWindow();
 
             private slots:
+
                 void on_actionImport_triggered();
 
             private:

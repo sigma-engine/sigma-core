@@ -19,26 +19,28 @@ namespace sigmafive {
     namespace editor {
         namespace widgets {
             class GameView : public QQuickFramebufferObject {
-                Q_OBJECT
+            Q_OBJECT
             public:
                 class GameViewRenderer : public QQuickFramebufferObject::Renderer {
                 public:
-                    static constexpr const class_uid CONTEXT_UID = sigmafive::compile_time_hash("sigmafive::graphics::opengl::context");
+                    static constexpr const class_uid CONTEXT_UID = sigmafive::compile_time_hash(
+                            "sigmafive::graphics::opengl::context");
 
-                    GameViewRenderer(GameView *item,graphics::context_manager &context_manager);
+                    GameViewRenderer(GameView *item, graphics::context_manager &context_manager);
 
                     void synchronize(QQuickFramebufferObject *item);
 
                     QOpenGLFramebufferObject *createFramebufferObject(const QSize &size);
 
                     void render();
+
                 private:
                     bool needs_redraw_;
 
                     GameView *item_;
 
                     graphics::context_manager &context_manager_;
-                    std::unique_ptr<sigmafive::graphics::context> context_;                    
+                    std::unique_ptr<sigmafive::graphics::context> context_;
 
                     QColor color_;
                     float4x4 view_matrix_;
@@ -46,8 +48,20 @@ namespace sigmafive {
                 };
 
             public:
-                Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
-                Q_PROPERTY(entity_manager_model* entityManager READ entityManager WRITE setEntityManager NOTIFY entityManagerChanged)
+                Q_PROPERTY(QColor color
+                                   READ
+                                           color
+                                   WRITE
+                                           setColor
+                                   NOTIFY
+                                   colorChanged)
+                Q_PROPERTY(entity_manager_model *entityManager
+                                   READ
+                                           entityManager
+                                   WRITE
+                                           setEntityManager
+                                   NOTIFY
+                                   entityManagerChanged)
 
                 entity_manager_model *entityManager() {
                     return entity_manager_model_;
@@ -78,10 +92,13 @@ namespace sigmafive {
 
                 QQuickFramebufferObject::Renderer *createRenderer() const;
 
-                #if QT_VERSION < QT_VERSION_CHECK(5, 6, 0)
-                QSGNode* updatePaintNode(QSGNode *node,QQuickItem::UpdatePaintNodeData *nodeData) override;
-                #endif
+#if QT_VERSION < QT_VERSION_CHECK(5, 6, 0)
+
+                QSGNode *updatePaintNode(QSGNode *node, QQuickItem::UpdatePaintNodeData *nodeData) override;
+
+#endif
             signals:
+
                 void colorChanged();
 
                 void entityManagerChanged();

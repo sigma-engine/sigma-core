@@ -7,13 +7,14 @@
 namespace sigmafive {
     namespace system {
         class SIGMAFIVE_API window : public object {
-            SIGMAFIVE_CLASS()
+        SIGMAFIVE_CLASS()
         public:
             virtual ~window() = default;
 
             virtual bool good() = 0;
 
             virtual void close() = 0;
+
         private:
         };
     }

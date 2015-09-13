@@ -1,6 +1,11 @@
 #ifndef SDL2_WINDOW_HPP
 #define SDL2_WINDOW_HPP
 
+#if defined(_WIN32)
+#define SDL2_PLUGIN_API __declspec(dllexport)
+#else
+#define SDL2_PLUGIN_API
+#endif
 
 #include <sigmafive/system/window.hpp>
 
@@ -38,6 +43,7 @@ namespace sigmafive {
                 bool good() override;
 
                 void close() override;
+
             private:
                 std::string title_;
                 int2 size_;

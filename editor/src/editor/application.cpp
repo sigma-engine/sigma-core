@@ -3,7 +3,7 @@
 namespace sigmafive {
     namespace editor {
         application::application(int &argc, char **argv)
-            : QApplication(argc,argv), engine(argc,argv) {
+                : QApplication(argc, argv), engine(argc, argv) {
         }
     }
 }

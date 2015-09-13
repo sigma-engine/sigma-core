@@ -10,7 +10,7 @@ namespace sigmafive {
     }
 
     meta_class::meta_class(class_uid uid, std::string name)
-        : uid_(uid),name_(name) {
+            : uid_(uid), name_(name) {
     }
 
     bool object::has_meta_class(class_uid uid) {

@@ -18,36 +18,38 @@
 #define GLSL_440(x) "#version 440\n" #x
 
 namespace sigmafive {
-	namespace graphics {
-		namespace opengl {
-			enum class shader_type {
-				vertex = gl::VERTEX_SHADER,
-				fragment = gl::FRAGMENT_SHADER
-			};
-			class shader {
-			public:
-				shader(shader_type type);
+    namespace graphics {
+        namespace opengl {
+            enum class shader_type {
+                vertex = gl::VERTEX_SHADER,
+                fragment = gl::FRAGMENT_SHADER
+            };
 
-				~shader();
+            class shader {
+            public:
+                shader(shader_type type);
 
-				bool operator==(const shader &other) const;
+                ~shader();
 
-				void set_source(std::string source);
+                bool operator==(const shader &other) const;
 
-				shader_type type() const;
+                void set_source(std::string source);
 
-				bool is_compiled() const;
+                shader_type type() const;
 
-				std::string compile();
+                bool is_compiled() const;
 
-				operator GLuint() const;
-			private:
-				shader_type type_;
-				GLuint gl_object_;
-				bool compiled_;
-			};
-		}
-	}
+                std::string compile();
+
+                operator GLuint() const;
+
+            private:
+                shader_type type_;
+                GLuint gl_object_;
+                bool compiled_;
+            };
+        }
+    }
 }
 
 #endif //SIGMAFIVE_GRAPHICS_OPENGL_SHADER_HPP

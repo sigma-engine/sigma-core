@@ -9,16 +9,16 @@
 namespace sigmafive {
     template<typename Interface>
     class factory : public object {
-		SIGMAFIVE_CLASS()
+    SIGMAFIVE_CLASS()
     public:
         virtual ~factory() = default;
 
         virtual std::unique_ptr<Interface> create() = 0;
     };
 
-    template<class Interface,class Concrete>
+    template<class Interface, class Concrete>
     class simple_factory : public factory<Interface> {
-		SIGMAFIVE_CLASS()
+    SIGMAFIVE_CLASS()
     public:
         virtual std::unique_ptr<Interface> create() override {
             return std::unique_ptr<Concrete>(new Concrete{});

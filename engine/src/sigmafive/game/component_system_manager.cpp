@@ -10,7 +10,7 @@ namespace sigmafive {
             return std::end(component_systems_);
         }
 
-        component_system_manager::const_iterator component_system_manager::begin() const  {
+        component_system_manager::const_iterator component_system_manager::begin() const {
             return std::begin(component_systems_);
         }
 

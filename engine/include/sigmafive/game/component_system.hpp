@@ -10,11 +10,12 @@
 namespace sigmafive {
     namespace game {
         class SIGMAFIVE_API component_system : public object {
-            SIGMAFIVE_CLASS()
+        SIGMAFIVE_CLASS()
         public:
             virtual ~component_system() = default;
 
-            virtual void process(entity_manager &em,component_manager &cm) = 0;
+            virtual void process(entity_manager &em, component_manager &cm) = 0;
+
         protected:
         };
 

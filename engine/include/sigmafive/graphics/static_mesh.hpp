@@ -16,32 +16,34 @@
 #include <boost/filesystem/path.hpp>
 
 namespace sigmafive {
-	namespace graphics {
-		class SIGMAFIVE_API static_mesh : public system::resource {
-            SIGMAFIVE_CLASS()
-		public:
-			struct vertex {
-				float3 position;
-				float3 normal;
-				float3 tangent;
-				float2 texcoord;
-			};
+    namespace graphics {
+        class SIGMAFIVE_API static_mesh : public system::resource {
+        SIGMAFIVE_CLASS()
+        public:
+            struct vertex {
+                float3 position;
+                float3 normal;
+                float3 tangent;
+                float2 texcoord;
+            };
 
-			typedef std::array<unsigned int,3> triangle;
+            typedef std::array<unsigned int, 3> triangle;
 
             static_mesh();
 
-			void set_data(const std::vector<vertex> &vertices, const std::vector<triangle> &triangles);
+            void set_data(const std::vector<vertex> &vertices, const std::vector<triangle> &triangles);
 
-			std::vector<vertex> vertices() const { return vertices_; }
-			std::vector<triangle> triangles() const { return triangles_; }
+            std::vector<vertex> vertices() const { return vertices_; }
 
-			~static_mesh();
-		private:
-			std::vector<vertex> vertices_;
-			std::vector<triangle> triangles_;
-		};
-	}
+            std::vector<triangle> triangles() const { return triangles_; }
+
+            ~static_mesh();
+
+        private:
+            std::vector<vertex> vertices_;
+            std::vector<triangle> triangles_;
+        };
+    }
 }
 
 #endif //SIGMAFIVE_GRAPHICS_STATIC_MESH_HPP

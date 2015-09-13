@@ -12,16 +12,18 @@
 namespace sigmafive {
     namespace game {
         class SIGMAFIVE_API entity_manager : public object {
-			SIGMAFIVE_CLASS()
+        SIGMAFIVE_CLASS()
+
             struct is_entity_alive {
                 inline bool operator()(entity e) { return e.index != std::uint32_t(-1); }
             };
-            typedef std::vector<entity> 											  container;
+
+            typedef std::vector<entity> container;
         public:
-            typedef boost::filter_iterator<is_entity_alive,container::iterator> 	  iterator;
-            typedef boost::filter_iterator<is_entity_alive,container::const_iterator> const_iterator;
-            typedef std::reverse_iterator<iterator>                     			  reverse_iterator;
-            typedef std::reverse_iterator<const_iterator>               			  const_reverse_iterator;
+            typedef boost::filter_iterator<is_entity_alive, container::iterator> iterator;
+            typedef boost::filter_iterator<is_entity_alive, container::const_iterator> const_iterator;
+            typedef std::reverse_iterator<iterator> reverse_iterator;
+            typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
             entity create();
 
@@ -54,6 +56,7 @@ namespace sigmafive {
             const_reverse_iterator crend() const;
 
             std::size_t size() const;
+
         private:
             container entities_;
             std::vector<std::uint32_t> free_entities_;

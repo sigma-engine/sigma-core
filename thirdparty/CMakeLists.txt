@@ -9,9 +9,10 @@ set(SDL_SHARED ON)
 set(SDL_STATIC OFF)
 set(VIDEO_OPENGLES OFF)
 
-if(MSVC)
+if (MSVC)
 	set(EXTRA_CFLAGS /arch:SSE)
-else()
+else ()
 	set(RENDER_D3D OFF)
-endif()
+endif ()
+
 add_subdirectory(SDL)

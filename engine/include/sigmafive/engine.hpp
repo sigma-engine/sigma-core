@@ -16,9 +16,9 @@
 
 namespace sigmafive {
     class SIGMAFIVE_API engine : public object {
-		SIGMAFIVE_CLASS()
+    SIGMAFIVE_CLASS()
     public:
-        engine(int &argc,char **argv);
+        engine(int &argc, char **argv);
 
         static boost::filesystem::path default_plugin_path();
 
@@ -29,6 +29,7 @@ namespace sigmafive {
         graphics::context_manager &graphics_context_manager();
 
         system::window_manager &window_manager();
+
     private:
         //TODO hack
         std::vector<boost::dll::shared_library> plugins_;

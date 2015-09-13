@@ -10,7 +10,7 @@ namespace sigmafive {
         struct SIGMAFIVE_API entity {
             entity();
 
-            entity(std::uint32_t index,std::uint32_t version);
+            entity(std::uint32_t index, std::uint32_t version);
 
             bool operator==(entity o) const;
 

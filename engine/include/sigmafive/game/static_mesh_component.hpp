@@ -11,13 +11,13 @@
 namespace sigmafive {
     namespace game {
         class SIGMAFIVE_API static_mesh_component : public game::component {
-            SIGMAFIVE_CLASS()
+        SIGMAFIVE_CLASS()
         public:
             boost::uuids::uuid static_mesh;
         };
 
         using static_mesh_component_pool = simple_component_pool<static_mesh_component>;
-        using static_mesh_component_pool_factory = simple_factory<component_pool,static_mesh_component_pool>;
+        using static_mesh_component_pool_factory = simple_factory<component_pool, static_mesh_component_pool>;
     }
 }
 

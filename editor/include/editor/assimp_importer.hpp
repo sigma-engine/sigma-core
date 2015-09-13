@@ -8,11 +8,12 @@
 namespace sigmafive {
     namespace editor {
         class assimp_importer : public QObject {
-            Q_OBJECT
+        Q_OBJECT
         public:
-            explicit assimp_importer(QObject* parent = nullptr);
+            explicit assimp_importer(QObject *parent = nullptr);
 
-            Q_INVOKABLE void import_file(entity_manager_model *model,QString filepath);
+            Q_INVOKABLE void import_file(entity_manager_model *model, QString filepath);
+
         private:
         };
     }

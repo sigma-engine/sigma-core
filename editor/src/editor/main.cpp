@@ -1,12 +1,9 @@
 #include <editor/application.hpp>
 
 #include <editor/assimp_importer.hpp>
-#include <editor/entity_manager_model.hpp>
 
 #include <editor/widgets/GameView.hpp>
 #include <editor/widgets/MainWindow.hpp>
-
-#include <sigmafive/game/static_mesh_component_system.hpp>
 
 #include <QQmlContext>
 #include <QQmlApplicationEngine>
@@ -33,8 +30,8 @@ int main(int argc, char *argv[]) {
     qmlRegisterType<sigmafive::editor::widgets::GameView>("sigmafive.editor.widgets", 1, 0, "GameView");
     QQmlApplicationEngine engine;
 
-    engine.rootContext()->setContextProperty("_entityManager",&entity_manager_model);
-    engine.rootContext()->setContextProperty("_assimpImporter",&assimp_importer);
+    engine.rootContext()->setContextProperty("_entityManager", &entity_manager_model);
+    engine.rootContext()->setContextProperty("_assimpImporter", &assimp_importer);
 
     engine.load(QUrl(QStringLiteral("qrc:/ui/main.qml")));
 #endif

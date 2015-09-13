@@ -5,14 +5,15 @@
 #include <sigmafive/object.hpp>
 
 namespace sigmafive {
-	namespace system {
+    namespace system {
         class SIGMAFIVE_API resource : public object {
-            SIGMAFIVE_CLASS()
-        public:	
+        SIGMAFIVE_CLASS()
+        public:
             virtual ~resource() = default;
+
         private:
-		};
-	}
+        };
+    }
 }
 
 #endif //SIGMAFIVE_SYSTEM_RESOURCE_HPP

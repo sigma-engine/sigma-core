@@ -30,6 +30,7 @@ namespace sigmafive {
             void end_pan();
 
             void zoom(int direction);
+
         private:
             float3 project_to_sphere(float2 point) const;
 

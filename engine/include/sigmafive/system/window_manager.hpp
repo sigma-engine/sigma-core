@@ -11,16 +11,17 @@ namespace sigmafive {
         using window_factory = factory<window>;
 
         class SIGMAFIVE_API window_manager : public object {
-            SIGMAFIVE_CLASS()
+        SIGMAFIVE_CLASS()
         public:
-            void register_window(class_uid uid,std::unique_ptr<window_factory> factory);
+            void register_window(class_uid uid, std::unique_ptr<window_factory> factory);
 
             //TODO share_ptr
             std::unique_ptr<window> create_window(class_uid uid);
 
             void unregister_context(class_uid uid);
+
         private:
-            std::unordered_map<class_uid,std::unique_ptr<window_factory>> window_factories_;
+            std::unordered_map<class_uid, std::unique_ptr<window_factory>> window_factories_;
         };
     }
 }

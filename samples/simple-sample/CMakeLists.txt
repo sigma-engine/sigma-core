@@ -1,7 +1,7 @@
 project(simple-sample)
 
 set(SOURCES
-    main.cpp)
+	main.cpp)
 set(HEADERS)
 
 add_executable(simple-sample ${SOURCES} ${HEADERS})

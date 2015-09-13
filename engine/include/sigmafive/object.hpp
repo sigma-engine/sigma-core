@@ -19,6 +19,7 @@ private:
 
 namespace sigmafive {
     class object;
+
     class meta_class;
 
     using class_uid = unsigned long long;
@@ -28,27 +29,29 @@ namespace sigmafive {
         return *input ? static_cast<class_uid>(*input) + 33 * compile_time_hash(input + 1) : 5381;
     }
 
-    class SIGMAFIVE_API meta_class {		
+    class SIGMAFIVE_API meta_class {
     public:
         std::string name() const;
 
         class_uid uid() const;
+
     private:
         friend class object;
-        meta_class(class_uid uid,std::string name);
+
+        meta_class(class_uid uid, std::string name);
 
         std::string name_;
         class_uid uid_;
     };
 
     class SIGMAFIVE_API object {
-        SIGMAFIVE_CLASS()
+    SIGMAFIVE_CLASS()
     public:
-		object() = default;
+        object() = default;
 
-		object(const object &) = delete;
+        object(const object &) = delete;
 
-		object &operator=(const object &) = delete;
+        object &operator=(const object &) = delete;
 
         virtual ~object() = default;
 
@@ -65,12 +68,14 @@ namespace sigmafive {
         static const meta_class &meta_class_for() {
             return meta_class_for(T::CLASS_ID);
         }
+
     protected:
         template<class T>
-        static meta_class &add_meta_class(std::string klass,class_uid uid) {
-            auto it = meta_classes().emplace(std::make_pair(uid,meta_class{uid,klass})).first;
+        static meta_class &add_meta_class(std::string klass, class_uid uid) {
+            auto it = meta_classes().emplace(std::make_pair(uid, meta_class{uid, klass})).first;
             return it->second;
         }
+
     private:
         static std::unordered_map<class_uid, meta_class> &meta_classes();
     };

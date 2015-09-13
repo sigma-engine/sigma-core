@@ -15,7 +15,7 @@ namespace sigmafive {
     namespace editor {
         //https://developer.ubuntu.com/api/apps/qml/sdk-14.10/QtQuick.qtquick-modelviewsdata-cppmodels/
         class entity_manager_model : public QAbstractListModel {
-            Q_OBJECT
+        Q_OBJECT
         public:
             enum AnimalRoles {
                 ID_ROLE = Qt::UserRole + 1
@@ -26,7 +26,7 @@ namespace sigmafive {
                                           game::component_system_manager &component_system_manager,
                                           system::resource_manager &resource_manager,
                                           graphics::context_manager &context_manager,
-                                          QObject* parent = nullptr);
+                                          QObject *parent = nullptr);
 
             int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
@@ -57,6 +57,7 @@ namespace sigmafive {
             graphics::context_manager *context_manager() {
                 return &context_manager_;
             }
+
         private:
             game::entity_manager &entity_manager_;
 

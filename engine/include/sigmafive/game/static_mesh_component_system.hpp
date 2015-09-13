@@ -14,13 +14,14 @@
 namespace sigmafive {
     namespace game {
         class SIGMAFIVE_API static_mesh_component_system : public component_system {
-			SIGMAFIVE_CLASS()
+        SIGMAFIVE_CLASS()
         public:
             void init(graphics::context_manager *context_manager);
 
             virtual ~static_mesh_component_system();
 
-            virtual void process(entity_manager &em,component_manager &cm) override;
+            virtual void process(entity_manager &em, component_manager &cm) override;
+
         private:
             graphics::context_manager *context_manager_;
         };
