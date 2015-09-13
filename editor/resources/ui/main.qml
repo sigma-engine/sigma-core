@@ -3,8 +3,10 @@ import QtQuick.Controls 1.4
 import QtQuick.Dialogs 1.2
 import sigmafive.editor.widgets 1.0
 import QtQuick.Layouts 1.0
+import Assimp 1.0
 
 ApplicationWindow {
+
     visible: true
     title: "sigmafive editor"
     minimumWidth: 800
@@ -15,12 +17,15 @@ ApplicationWindow {
             title: "File"
 
             Item {
+                AssimpImporter {
+                    id:importer
+                }
                 FileDialog {
                     id: importDialog
                     folder: shortcuts.desktop
                     nameFilters: [ "3D Models (*.blend *.dae)" ]
                     onAccepted: {
-                        _assimpImporter.import_file(_entityManager,fileUrl)
+                        importer.import_file(_entityManager,fileUrl)
                         _entityManager.layoutChanged()
                     }
                 }

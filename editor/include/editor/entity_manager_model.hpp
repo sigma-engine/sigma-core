@@ -1,6 +1,8 @@
 #ifndef SIGMAFIVE_EDITOR_ENTITY_MANAGER_MODEL_HPP
 #define SIGMAFIVE_EDITOR_ENTITY_MANAGER_MODEL_HPP
 
+#include <editor/config.hpp>
+
 #include <QAbstractListModel>
 
 #include <sigmafive/system/resource_manager.hpp>
@@ -14,7 +16,7 @@
 namespace sigmafive {
     namespace editor {
         //https://developer.ubuntu.com/api/apps/qml/sdk-14.10/QtQuick.qtquick-modelviewsdata-cppmodels/
-        class entity_manager_model : public QAbstractListModel {
+        class EDITOR_API entity_manager_model : public QAbstractListModel {
         Q_OBJECT
         public:
             enum AnimalRoles {

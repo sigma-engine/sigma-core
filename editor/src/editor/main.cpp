@@ -1,7 +1,5 @@
 #include <editor/application.hpp>
 
-#include <editor/assimp_importer.hpp>
-
 #include <editor/widgets/GameView.hpp>
 #include <editor/widgets/MainWindow.hpp>
 
@@ -21,7 +19,6 @@ int main(int argc, char *argv[]) {
                                                                  component_system_manager,
                                                                  app.resource_manager(),
                                                                  app.graphics_context_manager());
-    sigmafive::editor::assimp_importer assimp_importer;
 
 #if 0
     sigmafive::editor::widgets::MainWindow m(&entity_manager_model,&assimp_importer);
@@ -31,7 +28,6 @@ int main(int argc, char *argv[]) {
     QQmlApplicationEngine engine;
 
     engine.rootContext()->setContextProperty("_entityManager", &entity_manager_model);
-    engine.rootContext()->setContextProperty("_assimpImporter", &assimp_importer);
 
     engine.load(QUrl(QStringLiteral("qrc:/ui/main.qml")));
 #endif

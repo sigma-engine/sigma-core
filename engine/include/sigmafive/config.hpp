@@ -8,7 +8,7 @@
 #   define SIGMAFIVE_API   __declspec(dllimport)
 #endif  // SIGMAFIVE_EXPORT
 #else
-#define SIGMAFIVE_API
+#   define SIGMAFIVE_API
 #endif //_WIN32
 
 #endif //SIGMAFIVE_CONFIG_HPP

@@ -1,6 +1,8 @@
 #ifndef SIGMAFIVE_EDITOR_WIDGETS_OPENGLWIDGET_HPP
 #define SIGMAFIVE_EDITOR_WIDGETS_OPENGLWIDGET_HPP
 
+#include <editor/config.hpp>
+
 #include <QOpenGLWidget>
 
 #include <editor/trackball_controller.hpp>
@@ -13,7 +15,7 @@
 namespace sigmafive {
     namespace editor {
         namespace widgets {
-            class OpenGLWidget : public QOpenGLWidget {
+            class EDITOR_API OpenGLWidget : public QOpenGLWidget {
             Q_OBJECT
             public:
                 static constexpr const class_uid CONTEXT_UID = sigmafive::compile_time_hash(

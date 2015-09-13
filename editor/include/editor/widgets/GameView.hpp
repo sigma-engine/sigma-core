@@ -1,6 +1,7 @@
 #ifndef SIGMAFIVE_EDITOR_WIDGETS_GAME_VIEW_HPP
 #define SIGMAFIVE_EDITOR_WIDGETS_GAME_VIEW_HPP
 
+#include <editor/config.hpp>
 #include <QtQuick/QQuickFramebufferObject>
 
 #include <editor/entity_manager_model.hpp>
@@ -18,7 +19,7 @@
 namespace sigmafive {
     namespace editor {
         namespace widgets {
-            class GameView : public QQuickFramebufferObject {
+            class EDITOR_API GameView : public QQuickFramebufferObject {
             Q_OBJECT
             public:
                 class GameViewRenderer : public QQuickFramebufferObject::Renderer {

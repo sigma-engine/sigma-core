@@ -1,6 +1,8 @@
 #ifndef SIGMAFIVE_EDITOR_TRACKBALL_CONTROLLER_HPP
 #define SIGMAFIVE_EDITOR_TRACKBALL_CONTROLLER_HPP
 
+#include <editor/config.hpp>
+
 #include <sigmafive/math/vec2.hpp>
 #include <sigmafive/math/vec3.hpp>
 #include <sigmafive/math/mat4.hpp>
@@ -9,7 +11,7 @@
 namespace sigmafive {
     namespace editor {
 
-        class trackball_controller {
+        class EDITOR_API trackball_controller {
         public:
             trackball_controller(float radius);
 
