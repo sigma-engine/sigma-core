@@ -87,7 +87,7 @@ namespace sigmafive {
 }
 
 //TODO this is a hack
-void register_plugin(sigmafive::engine *engine) {
+extern "C" void register_plugin(sigmafive::engine *engine) {
     engine->graphics_context_manager().register_context(sigmafive::graphics::opengl::context::CLASS_ID,
                                                         std::unique_ptr<sigmafive::graphics::opengl::context_factory>{
                                                             new sigmafive::graphics::opengl::context_factory{engine->resource_manager()}

@@ -16,10 +16,6 @@
 #include <queue>
 #include <memory>
 
-extern "C" {
-    void __declspec(dllexport) register_plugin(sigmafive::engine *engine);
-}
-
 namespace sigmafive {
 	namespace graphics {
 		namespace opengl {

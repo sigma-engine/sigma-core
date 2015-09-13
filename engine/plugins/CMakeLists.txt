@@ -1,1 +1,2 @@
 add_subdirectory(OpenGL)
+add_subdirectory(SDL2Window)

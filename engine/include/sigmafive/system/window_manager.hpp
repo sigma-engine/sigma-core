@@ -10,7 +10,7 @@ namespace sigmafive {
     namespace system {
         using window_factory = factory<window>;
 
-        class window_manager : public object {
+        class SIGMAFIVE_API window_manager : public object {
             SIGMAFIVE_CLASS()
         public:
             void register_window(class_uid uid,std::unique_ptr<window_factory> factory);

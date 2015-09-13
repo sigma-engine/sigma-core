@@ -14,8 +14,14 @@ namespace sigmafive {
         //this is a hack just to get things working
         for(auto& entry : boost::make_iterator_range(boost::filesystem::directory_iterator(default_plugin_path()), {})) {
             if(boost::dll::shared_library::suffix() == entry.path().extension()) {
-                plugins_.emplace_back(entry.path());
-                plugins_.back().get<void(sigmafive::engine *)>("register_plugin")(this);
+                boost::dll::shared_library library{entry.path()};
+                if(library.has("register_plugin")) {
+                    plugins_.push_back(std::move(library));
+                    plugins_.back().get<void(sigmafive::engine *)>("register_plugin")(this);
+                }
+                else {
+                    std::cout << "warning: shared library in plugins folder that does not export a plugin." << std::endl;
+                }
             }
         }
 

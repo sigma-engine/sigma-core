@@ -1,5 +1,10 @@
 set_property(GLOBAL PROPERTY USE_FOLDERS On)
 
+#enable c++11 support
+if(NOT MSVC) #TODO others??
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+endif()
+
 function(source_group)
     foreach(file ${ARGN})
         #if file is an absolute path make it relitive to current source/build directory
@@ -37,11 +42,6 @@ function(source_group)
 endfunction()
 
 function(default_target_setup_ target)
-    #enable c++11 support
-    if(NOT MSVC) #TODO others??
-        target_compile_options(${target} PUBLIC -std=c++11)
-    endif()
-
     #mimic the source file folder structor in IDE virtual folders
     get_target_property(source_files ${target} SOURCES)
     source_group(${source_files})
