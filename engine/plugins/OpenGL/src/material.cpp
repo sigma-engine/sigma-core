@@ -22,6 +22,10 @@ namespace sigmafive {
 
                 program_.use();
             }
+
+            void material::set_uniform(std::string name, unsigned int unit, texture_2d &texture) {
+                program_.set_uniform(name,unit,texture);
+            }
         }
     }
 }

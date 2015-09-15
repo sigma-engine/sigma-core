@@ -23,19 +23,19 @@ namespace sigmafive {
 
             enum class buffer_type : GLenum {
                 array_buffer = gl::ARRAY_BUFFER,
-                //TODO atomic_counter_buffer = gl::ATOMIC_COUNTER_BUFFER,
-                        copy_read_buffer = gl::COPY_READ_BUFFER,
+                copy_read_buffer = gl::COPY_READ_BUFFER,
                 copy_write_buffer = gl::COPY_WRITE_BUFFER,
-                //TODO dispatch_indirect_buffer = gl::DISPATCH_INDIRECT_BUFFER,
-                        draw_indirect_buffer = gl::DRAW_INDIRECT_BUFFER,
+                draw_indirect_buffer = gl::DRAW_INDIRECT_BUFFER,
                 element_array_buffer = gl::ELEMENT_ARRAY_BUFFER,
                 pixel_pack_buffer = gl::PIXEL_PACK_BUFFER,
                 pixel_unpack_buffer = gl::PIXEL_UNPACK_BUFFER,
-                //TODO query_buffer = gl::QUERY_BUFFER,
-                //TODO shader_storage_buffer = gl::SHADER_STORAGE_BUFFER,
-                        texture_buffer = gl::TEXTURE_BUFFER,
+                texture_buffer = gl::TEXTURE_BUFFER,
                 transform_feedback_buffer = gl::TRANSFORM_FEEDBACK_BUFFER,
                 uniform_buffer = gl::UNIFORM_BUFFER
+                //TODO atomic_counter_buffer = gl::ATOMIC_COUNTER_BUFFER,
+                //TODO dispatch_indirect_buffer = gl::DISPATCH_INDIRECT_BUFFER,
+                //TODO query_buffer = gl::QUERY_BUFFER,
+                //TODO shader_storage_buffer = gl::SHADER_STORAGE_BUFFER,
             };
 
             class buffer {

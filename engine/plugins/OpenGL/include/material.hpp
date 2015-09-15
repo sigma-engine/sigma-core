@@ -15,11 +15,12 @@ namespace sigmafive {
 
                 void use();
 
+                void set_uniform(std::string name,unsigned int unit,texture_2d &texture);
+
                 template<typename T>
-                void set_uniform(const std::string &name, const T &value) {
+                void set_uniform(std::string name,T value) {
                     program_.set_uniform(name, value);
                 }
-
             private:
                 opengl::program program_;
             };

@@ -139,13 +139,13 @@ namespace sigmafive {
                 gl::UniformMatrix4fv(location, 1, gl::TRUE_, &value[0].x); //TODO GL_CHECK_ERROR;
             }
 
-            void program::set_uniform(GLint location, unsigned int texture_unit, const texture_2d &texture) {
+            void program::set_uniform(GLint location, unsigned int texture_unit,texture_2d &texture) {
                 gl::ActiveTexture(gl::TEXTURE0 + texture_unit); //TODO GL_CHECK_ERROR; this might not work right
                 texture.bind();
                 set_uniform(location, (GLint) texture_unit);
             }
 
-            void program::set_uniform(const std::string &name, unsigned int texture_unit, const texture_2d &texture) {
+            void program::set_uniform(std::string name,unsigned int texture_unit,texture_2d &texture) {
                 set_uniform(get_uniform_location(name), texture_unit, texture);
             }
 
