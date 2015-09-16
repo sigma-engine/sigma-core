@@ -34,6 +34,7 @@ namespace sigmafive {
             void OpenGLWidget::resizeGL(int w, int h) {
                 projection_matrix_ = float4x4::perspective(deg_to_rad(45.0f), float(width()) / float(height()), 0.01f,
                                                            1000.0f);
+                context_->resize(uint2{w,h});
                 QOpenGLWidget::resizeGL(w, h);
             }
 

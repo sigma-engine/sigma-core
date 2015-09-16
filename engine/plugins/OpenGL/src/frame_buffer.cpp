@@ -17,6 +17,7 @@ namespace sigmafive {
 
             bool frame_buffer::good() {
                 bind();
+                //TODO it would be better to use glCheckNamedFramebufferStatus from 4.5
                 return gl::CheckFramebufferStatus(gl::FRAMEBUFFER) == gl::FRAMEBUFFER_COMPLETE;
             }
 
@@ -30,7 +31,6 @@ namespace sigmafive {
                                               GLint level) {
                 //TODO it would be better to use glNamedFramebufferTexture from 4.5
                 bind(target);
-                texture.bind();
                 gl::FramebufferTexture2D(GLenum(target),GLenum(attachment),GLenum(textarget),texture,level);
             }
         }

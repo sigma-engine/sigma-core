@@ -246,7 +246,7 @@ void assimp_import_plugin::import_file(sigmafive::editor::entity_manager_model *
         }
 
         auto static_mesh_uuid = resource_manager_->generate_key();
-        boost::shared_ptr<sigmafive::graphics::static_mesh> static_mesh(new sigmafive::graphics::static_mesh());
+        std::shared_ptr<sigmafive::graphics::static_mesh> static_mesh(new sigmafive::graphics::static_mesh());
         static_mesh->set_data(vertices, triangles);
         resource_manager_->insert(static_mesh_uuid, std::move(static_mesh));
         meshuuids[i] = static_mesh_uuid;

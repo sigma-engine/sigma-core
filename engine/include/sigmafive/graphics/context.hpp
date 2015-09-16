@@ -4,6 +4,7 @@
 #include <sigmafive/config.hpp>
 #include <sigmafive/object.hpp>
 
+#include <sigmafive/math/vec2.hpp>
 #include <sigmafive/math/mat4.hpp>
 
 #include <boost/uuid/uuid.hpp>
@@ -15,15 +16,15 @@ namespace sigmafive {
         public:
             virtual ~context() = default;
 
+            virtual void resize(uint2 size) = 0;
+
             virtual void make_current() = 0;
 
             virtual void add_static_mesh(float4x4 model_matrix, boost::uuids::uuid static_mesh) = 0;
 
-            //TODO remove this???
             virtual void render(float4x4 projection_matrix, float4x4 view_matrix) = 0;
 
             virtual void swap_buffers() = 0;
-
         private:
         };
     }

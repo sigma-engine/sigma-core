@@ -28,6 +28,8 @@ namespace sigmafive {
                 //SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, context_attributes_.blue);
                 //SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, context_attributes_.alpha);
                 //SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, context_attributes_.depth);
+                SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+                SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
                 //SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, context_attributes_.stencil);
 
                 //if(context_attributes_.samples > 0) {

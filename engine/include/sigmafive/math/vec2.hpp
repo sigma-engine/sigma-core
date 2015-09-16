@@ -126,6 +126,8 @@ struct vec2_t {
 };
 
 typedef vec2_t<int> int2;
+typedef vec2_t<uint> uint2;
+
 typedef vec2_t<float> float2;
 typedef vec2_t<double> double2;
 

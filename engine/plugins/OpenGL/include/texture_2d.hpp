@@ -188,9 +188,9 @@ namespace sigmafive {
 
                 operator GLuint() const;
 
-                void bind();
+                void bind(unsigned int texture_unit);
 
-                void set_pixels(int2 size, const std::vector<vec4_t<unsigned char>> &pixels);
+                void set_pixels(uint2 size,const unsigned char *pixels);//const std::vector<vec4_t<unsigned char>> &pixels
 
             private:
                 GLuint gl_object_;

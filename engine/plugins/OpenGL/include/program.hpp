@@ -71,10 +71,6 @@ namespace sigmafive {
 
                 void set_uniform(GLint location, mat4x4_t<float> value);
 
-                void set_uniform(GLint location, unsigned int texture_unit, texture_2d &texture);
-
-                void set_uniform(std::string name, unsigned int texture_unit, texture_2d &texture);
-
                 void use() const;
 
                 operator GLuint() const;

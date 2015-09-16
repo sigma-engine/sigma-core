@@ -24,18 +24,18 @@ namespace sigmafive {
 
             boost::uuids::uuid generate_key() const;
 
-            void insert(boost::uuids::uuid resource_key, boost::shared_ptr<resource> resource);
+            void insert(boost::uuids::uuid resource_key, std::shared_ptr<resource> resource);
 
-            boost::shared_ptr<resource> get(boost::uuids::uuid resource_key);
+            std::shared_ptr<resource> get(boost::uuids::uuid resource_key);
 
             template<class T>
-            boost::shared_ptr<T> get(boost::uuids::uuid resource_key) {
-                return boost::dynamic_pointer_cast<T>(get(resource_key));
+            std::shared_ptr<T> get(boost::uuids::uuid resource_key) {
+                return std::dynamic_pointer_cast<T>(get(resource_key));
             }
 
         private:
             boost::filesystem::path path_;
-            std::unordered_map<boost::uuids::uuid, boost::shared_ptr<resource>, boost::hash<boost::uuids::uuid>> resources_;
+            std::unordered_map<boost::uuids::uuid, std::shared_ptr<resource>, boost::hash<boost::uuids::uuid>> resources_;
         };
     }
 }

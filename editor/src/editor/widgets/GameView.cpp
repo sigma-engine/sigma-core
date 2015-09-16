@@ -36,6 +36,7 @@ namespace sigmafive {
             }
 
             QOpenGLFramebufferObject *GameView::GameViewRenderer::createFramebufferObject(const QSize &size) {
+                context_->resize(uint2{size.width(),size.height()});
                 QOpenGLFramebufferObjectFormat format;
                 format.setSamples(8);
                 format.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);

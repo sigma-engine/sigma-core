@@ -18,6 +18,9 @@ int main(int argc, char *argv[]) {
     auto system = component_system_manager.add_component_system<sigmafive::game::static_mesh_component_system>();
     system->init(&engine.graphics_context_manager());
 
+    auto context = engine.graphics_context_manager().create_context(
+            sigmafive::compile_time_hash("sigmafive::graphics::opengl::context"));
+
     while (window->good()) {
     }
 

@@ -3,6 +3,7 @@ project(OpenGL)
 find_package(OpenGL REQUIRED)
 
 set(SOURCES
+	src/g_buffer.cpp
 	src/buffer.cpp
 	src/context.cpp
 	src/frame_buffer.cpp
@@ -18,6 +19,7 @@ set(SOURCES
 	src/vertex_buffer.cpp)
 
 set(HEADERS
+	include/g_buffer.hpp
 	include/buffer.hpp
 	include/frame_buffer.hpp
 	include/gl_core_4_0.hpp
@@ -31,7 +33,7 @@ set(HEADERS
 	include/util.hpp
 	include/vertex_array.hpp
 	include/vertex_buffer.hpp
-	
+
 	include/context.hpp)
 
 add_plugin(OpenGL ${SOURCES} ${HEADERS})
