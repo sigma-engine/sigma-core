@@ -1,5 +1,7 @@
 #include <program.hpp>
 
+#include <numeric>
+
 namespace sigmafive {
     namespace graphics {
         namespace opengl {
