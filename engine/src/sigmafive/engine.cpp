@@ -46,10 +46,6 @@ namespace sigmafive {
 #endif
     }
 
-    resource::resource_manager &engine::resource_manager() {
-        return resource_manager_;
-    }
-
     game::component_registry &engine::component_registry() {
         return component_registry_;
     }

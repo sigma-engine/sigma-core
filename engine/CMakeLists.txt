@@ -23,7 +23,6 @@ set(SOURCES
 	src/sigmafive/system/window_manager.cpp
 	src/sigmafive/system/window.cpp
 	src/sigmafive/resource/resource.cpp
-	src/sigmafive/resource/resource_manager.cpp
 
 	src/sigmafive/graphics/static_mesh.cpp
 	src/sigmafive/graphics/context.cpp
@@ -60,7 +59,6 @@ set(HEADERS
 	include/sigmafive/system/window_manager.hpp
 	include/sigmafive/system/window.hpp
 	include/sigmafive/resource/resource.hpp
-	include/sigmafive/resource/resource_manager.hpp
 
 	include/sigmafive/graphics/static_mesh.hpp
 	include/sigmafive/graphics/context.hpp

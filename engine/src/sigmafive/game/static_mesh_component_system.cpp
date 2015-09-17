@@ -19,8 +19,7 @@ namespace sigmafive {
                 if (cm.has_component<transform_component>(e) && cm.has_component<static_mesh_component>(e)) {
                     auto tcmp = cm.get_component<transform_component>(e);
                     auto scmp = cm.get_component<static_mesh_component>(e);
-                    context->add_static_mesh(tcmp->matrix(),
-                                             scmp->static_mesh);
+                    context->add_static_mesh(tcmp->matrix(),scmp->static_mesh());
                 }
             }
         }

@@ -18,8 +18,6 @@
 
 #include <sigmafive/factory.hpp>
 
-#include <sigmafive/resource/resource_manager.hpp>
-
 #include <queue>
 
 namespace sigmafive {
@@ -27,18 +25,18 @@ namespace sigmafive {
         namespace opengl {
             struct static_mesh_instance {
                 float4x4 model_matrix;
-                boost::uuids::uuid static_mesh;
+                opengl::static_mesh *static_mesh;
             };
             class context : public graphics::context {
             SIGMAFIVE_CLASS()
             public:
-                context(resource::resource_manager &resource_manager);
+                context();
 
                 virtual void make_current() override;
 
                 virtual void resize(uint2 size) override;
 
-                virtual void add_static_mesh(float4x4 model_matrix, boost::uuids::uuid static_mesh) override;
+                virtual void add_static_mesh(float4x4 model_matrix,std::weak_ptr<graphics::static_mesh> static_mesh) override;
 
                 virtual void render(float4x4 projection_matrix, float4x4 view_matrix) override;
 
@@ -68,20 +66,11 @@ namespace sigmafive {
                 opengl::shader plane_fragment_shader;
                 opengl::program plane_program;
 
-                resource::resource_manager &resource_manager_;
                 opengl::static_mesh_manager static_mesh_manager_;
 
             };
 
-            class context_factory : public factory<graphics::context> {
-            public:
-                context_factory(resource::resource_manager &resource_manager);
-
-                virtual std::unique_ptr<graphics::context> create() override;
-
-            private:
-                resource::resource_manager &resource_manager_;
-            };
+            using context_factory = sigmafive::simple_factory<sigmafive::graphics::context,context>;
         }
     }
 }

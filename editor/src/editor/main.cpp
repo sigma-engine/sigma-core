@@ -17,7 +17,6 @@ int main(int argc, char *argv[]) {
     sigmafive::editor::entity_manager_model entity_manager_model(entity_manager,
                                                                  component_manager,
                                                                  component_system_manager,
-                                                                 app.resource_manager(),
                                                                  app.graphics_context_manager());
 
 #if 0

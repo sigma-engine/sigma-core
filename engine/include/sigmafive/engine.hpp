@@ -7,7 +7,6 @@
 #include <sigmafive/game/component_registry.hpp>
 
 #include <sigmafive/system/window_manager.hpp>
-#include <sigmafive/resource/resource_manager.hpp>
 
 #include <sigmafive/graphics/context_manager.hpp>
 
@@ -22,8 +21,6 @@ namespace sigmafive {
 
         static boost::filesystem::path default_plugin_path();
 
-        resource::resource_manager &resource_manager();
-
         game::component_registry &component_registry();
 
         graphics::context_manager &graphics_context_manager();
@@ -34,7 +31,6 @@ namespace sigmafive {
         //TODO hack
         std::vector<boost::dll::shared_library> plugins_;
 
-        resource::resource_manager resource_manager_;
         game::component_registry component_registry_;
         graphics::context_manager graphics_context_manager_;
         system::window_manager window_manager_;

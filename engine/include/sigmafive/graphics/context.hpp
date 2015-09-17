@@ -8,6 +8,7 @@
 #include <sigmafive/math/mat4.hpp>
 
 #include <boost/uuid/uuid.hpp>
+#include "static_mesh.hpp"
 
 namespace sigmafive {
     namespace graphics {
@@ -20,7 +21,7 @@ namespace sigmafive {
 
             virtual void make_current() = 0;
 
-            virtual void add_static_mesh(float4x4 model_matrix, boost::uuids::uuid static_mesh) = 0;
+            virtual void add_static_mesh(float4x4 model_matrix,std::weak_ptr<graphics::static_mesh> static_mesh) = 0;
 
             virtual void render(float4x4 projection_matrix, float4x4 view_matrix) = 0;
 

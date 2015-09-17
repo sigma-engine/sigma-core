@@ -4,16 +4,17 @@
 
 #include <gl_core_4_0.hpp>
 
+#include <memory>
+
 #include <iostream>
 
 namespace sigmafive {
     namespace graphics {
         namespace opengl {
-            context::context(resource::resource_manager &resource_manager)
+            context::context()
                     : vertex_shader(shader_type::vertex), fragment_shader(shader_type::fragment),
                       plane_vertex_buffer(buffer_usage::static_draw),plane_index_buffer(buffer_usage::static_draw),
-                      plane_vertex_shader(shader_type::vertex), plane_fragment_shader(shader_type::fragment),
-                      resource_manager_(resource_manager),static_mesh_manager_(resource_manager_) {
+                      plane_vertex_shader(shader_type::vertex), plane_fragment_shader(shader_type::fragment) {
 
                 plane_vertex_buffer.set_data({
                                                  {{-1.0f,-1.0f,0.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f},{0.0f,1.0f}},
@@ -122,8 +123,9 @@ namespace sigmafive {
                 g_buffer_ = std::unique_ptr<g_buffer>{new g_buffer(size)};
             }
 
-            void context::add_static_mesh(float4x4 model_matrix, boost::uuids::uuid static_mesh) {
-                static_meshes_.push({model_matrix, static_mesh});
+            void context::add_static_mesh(float4x4 model_matrix,std::weak_ptr<graphics::static_mesh> static_mesh) {
+                auto gl_mesh = static_mesh_manager_.get(static_mesh.lock());
+                static_meshes_.push({model_matrix, gl_mesh});
             }
 
             void context::render(float4x4 projection_matrix, float4x4 view_matrix) {
@@ -144,7 +146,7 @@ namespace sigmafive {
 
                 while (!static_meshes_.empty()) {
                     auto instance = static_meshes_.front();
-                    auto static_mesh = static_mesh_manager_.get(instance.static_mesh);
+                    auto static_mesh = instance.static_mesh;
 
                     material_.use();
                     material_.set_uniform("projection_matrix", projection_matrix);
@@ -180,14 +182,6 @@ namespace sigmafive {
             void context::swap_buffers() {
 
             }
-
-            context_factory::context_factory(resource::resource_manager &resource_manager)
-                    : resource_manager_(resource_manager) {
-            }
-
-            std::unique_ptr<graphics::context> context_factory::create() {
-                return std::unique_ptr<context>(new context{resource_manager_});
-            }
         }
     }
 }
@@ -195,10 +189,7 @@ namespace sigmafive {
 //TODO this is a hack
 extern "C" void OPENGL_PLUGIN_API register_plugin(sigmafive::engine *engine) {
     engine->graphics_context_manager().register_context(sigmafive::graphics::opengl::context::CLASS_ID,
-                                                        std::unique_ptr<sigmafive::graphics::opengl::context_factory>{
-                                                                new sigmafive::graphics::opengl::context_factory{
-                                                                        engine->resource_manager()}
-                                                        });
+                                                        std::make_unique<sigmafive::graphics::opengl::context_factory>());
 }
 
 

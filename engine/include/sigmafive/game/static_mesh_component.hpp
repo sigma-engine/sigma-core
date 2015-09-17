@@ -13,7 +13,11 @@ namespace sigmafive {
         class SIGMAFIVE_API static_mesh_component : public game::component {
         SIGMAFIVE_CLASS()
         public:
-            boost::uuids::uuid static_mesh;
+            void set_static_mesh(std::shared_ptr<graphics::static_mesh> static_mesh);
+
+            std::weak_ptr<graphics::static_mesh> static_mesh();
+        private:
+            std::shared_ptr<graphics::static_mesh> static_mesh_;
         };
 
         using static_mesh_component_pool = simple_component_pool<static_mesh_component>;

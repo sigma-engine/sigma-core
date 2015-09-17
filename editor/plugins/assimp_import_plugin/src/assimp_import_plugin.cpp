@@ -168,7 +168,6 @@ assimp_import_plugin::assimp_import_plugin(QObject *parent)
 void assimp_import_plugin::import_file(sigmafive::editor::entity_manager_model *model, QString filepath) {
     auto entity_manager_ = model->entity_manager();
     auto component_manager_ = model->component_manager();
-    auto resource_manager_ = model->resource_manager();
 
     std::string filename = QUrl(filepath).toLocalFile().toStdString();
     Assimp::Importer importer;
@@ -204,7 +203,7 @@ void assimp_import_plugin::import_file(sigmafive::editor::entity_manager_model *
         return;
     }
 
-    std::unordered_map<int, boost::uuids::uuid> meshuuids;
+    std::unordered_map<int, std::shared_ptr<sigmafive::graphics::static_mesh>> static_meshes;
     for (unsigned int i = 0; i < scene->mNumMaterials; ++i) {
         auto aiMat = scene->mMaterials[i];
         convert(aiMat);
@@ -245,11 +244,8 @@ void assimp_import_plugin::import_file(sigmafive::editor::entity_manager_model *
             }
         }
 
-        auto static_mesh_uuid = resource_manager_->generate_key();
-        std::shared_ptr<sigmafive::graphics::static_mesh> static_mesh(new sigmafive::graphics::static_mesh());
-        static_mesh->set_data(vertices, triangles);
-        resource_manager_->insert(static_mesh_uuid, std::move(static_mesh));
-        meshuuids[i] = static_mesh_uuid;
+        static_meshes[i] = std::shared_ptr<sigmafive::graphics::static_mesh>(new sigmafive::graphics::static_mesh());
+        static_meshes[i]->set_data(vertices, triangles);
     }
 
     for (unsigned int i = 0; i < scene->mRootNode->mNumChildren; ++i) {
@@ -270,7 +266,7 @@ void assimp_import_plugin::import_file(sigmafive::editor::entity_manager_model *
         tc->scale = convert(scaling);
 
         auto smc = component_manager_->add_component<sigmafive::game::static_mesh_component>(e);
-        smc->static_mesh = meshuuids[node->mMeshes[0]];
+        smc->set_static_mesh(static_meshes[node->mMeshes[0]]);
     }
     emit model->layoutChanged();
 }
