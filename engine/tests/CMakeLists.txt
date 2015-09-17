@@ -11,9 +11,6 @@ set(SOURCES
 	math/vec4_tests.cpp
 	math/quaternion_tests.cpp
 
-	system/resource_tests.cpp
-	system/resource_manager_tests.cpp
-
 	game/entity_tests.cpp
 	game/component_tests.cpp
 	game/fake_components.cpp
