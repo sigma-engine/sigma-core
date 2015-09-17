@@ -3,7 +3,7 @@
 namespace sigmafive {
     namespace graphics {
         namespace opengl {
-            static_mesh_manager::static_mesh_manager(system::resource_manager &resource_manager)
+            static_mesh_manager::static_mesh_manager(resource::resource_manager &resource_manager)
                     : resource_manager_(resource_manager) {
             }
 

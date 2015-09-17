@@ -6,7 +6,7 @@ namespace sigmafive {
         entity_manager_model::entity_manager_model(game::entity_manager &entity_manager,
                                                    game::component_manager &component_manager,
                                                    game::component_system_manager &component_system_manager,
-                                                   system::resource_manager &resource_manager,
+                                                   resource::resource_manager &resource_manager,
                                                    graphics::context_manager &context_manager,
                                                    QObject *parent)
                 : QAbstractListModel(parent),

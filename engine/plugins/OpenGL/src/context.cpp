@@ -9,7 +9,7 @@
 namespace sigmafive {
     namespace graphics {
         namespace opengl {
-            context::context(system::resource_manager &resource_manager)
+            context::context(resource::resource_manager &resource_manager)
                     : vertex_shader(shader_type::vertex), fragment_shader(shader_type::fragment),
                       plane_vertex_buffer(buffer_usage::static_draw),plane_index_buffer(buffer_usage::static_draw),
                       plane_vertex_shader(shader_type::vertex), plane_fragment_shader(shader_type::fragment),
@@ -181,7 +181,7 @@ namespace sigmafive {
 
             }
 
-            context_factory::context_factory(system::resource_manager &resource_manager)
+            context_factory::context_factory(resource::resource_manager &resource_manager)
                     : resource_manager_(resource_manager) {
             }
 

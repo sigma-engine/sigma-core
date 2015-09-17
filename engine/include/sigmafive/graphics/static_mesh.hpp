@@ -8,7 +8,7 @@
 #include <sigmafive/math/vec3.hpp>
 #include <sigmafive/math/mat4.hpp>
 
-#include <sigmafive/system/resource.hpp>
+#include <sigmafive/resource/resource.hpp>
 
 #include <array>
 #include <vector>
@@ -17,7 +17,7 @@
 
 namespace sigmafive {
     namespace graphics {
-        class SIGMAFIVE_API static_mesh : public system::resource {
+        class SIGMAFIVE_API static_mesh : public resource::resource {
         SIGMAFIVE_CLASS()
         public:
             struct vertex {

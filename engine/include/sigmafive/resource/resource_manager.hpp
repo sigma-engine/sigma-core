@@ -4,7 +4,7 @@
 #include <sigmafive/config.hpp>
 #include <sigmafive/object.hpp>
 
-#include <sigmafive/system/resource.hpp>
+#include <sigmafive/resource/resource.hpp>
 
 #include <unordered_map>
 #include <boost/uuid/uuid.hpp>
@@ -14,7 +14,7 @@
 #include <boost/functional/hash.hpp>
 
 namespace sigmafive {
-    namespace system {
+    namespace resource {
         class SIGMAFIVE_API resource_manager : public object {
         SIGMAFIVE_CLASS()
         public:

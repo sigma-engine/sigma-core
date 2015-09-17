@@ -18,7 +18,7 @@
 
 #include <sigmafive/factory.hpp>
 
-#include <sigmafive/system/resource_manager.hpp>
+#include <sigmafive/resource/resource_manager.hpp>
 
 #include <queue>
 
@@ -32,7 +32,7 @@ namespace sigmafive {
             class context : public graphics::context {
             SIGMAFIVE_CLASS()
             public:
-                context(system::resource_manager &resource_manager);
+                context(resource::resource_manager &resource_manager);
 
                 virtual void make_current() override;
 
@@ -68,19 +68,19 @@ namespace sigmafive {
                 opengl::shader plane_fragment_shader;
                 opengl::program plane_program;
 
-                system::resource_manager &resource_manager_;
+                resource::resource_manager &resource_manager_;
                 opengl::static_mesh_manager static_mesh_manager_;
 
             };
 
             class context_factory : public factory<graphics::context> {
             public:
-                context_factory(system::resource_manager &resource_manager);
+                context_factory(resource::resource_manager &resource_manager);
 
                 virtual std::unique_ptr<graphics::context> create() override;
 
             private:
-                system::resource_manager &resource_manager_;
+                resource::resource_manager &resource_manager_;
             };
         }
     }

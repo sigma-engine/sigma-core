@@ -5,7 +5,7 @@
 
 #include <QAbstractListModel>
 
-#include <sigmafive/system/resource_manager.hpp>
+#include <sigmafive/resource/resource_manager.hpp>
 
 #include <sigmafive/graphics/context_manager.hpp>
 
@@ -26,7 +26,7 @@ namespace sigmafive {
             explicit entity_manager_model(game::entity_manager &entity_manager,
                                           game::component_manager &component_manager,
                                           game::component_system_manager &component_system_manager,
-                                          system::resource_manager &resource_manager,
+                                          resource::resource_manager &resource_manager,
                                           graphics::context_manager &context_manager,
                                           QObject *parent = nullptr);
 
@@ -52,7 +52,7 @@ namespace sigmafive {
                 return &component_system_manager_;
             }
 
-            system::resource_manager *resource_manager() {
+            resource::resource_manager *resource_manager() {
                 return &resource_manager_;
             }
 
@@ -68,7 +68,7 @@ namespace sigmafive {
             //TODO move to own model
             game::component_system_manager &component_system_manager_;
             //TODO move to own model
-            system::resource_manager &resource_manager_;
+            resource::resource_manager &resource_manager_;
             //TODO move to own model
             graphics::context_manager &context_manager_;
         };

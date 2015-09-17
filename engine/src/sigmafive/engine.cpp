@@ -46,7 +46,7 @@ namespace sigmafive {
 #endif
     }
 
-    system::resource_manager &engine::resource_manager() {
+    resource::resource_manager &engine::resource_manager() {
         return resource_manager_;
     }
 

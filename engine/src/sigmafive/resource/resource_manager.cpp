@@ -1,9 +1,9 @@
-#include <sigmafive/system/resource_manager.hpp>
+#include <sigmafive/resource/resource_manager.hpp>
 
 #include <boost/uuid/uuid_generators.hpp>
 
 namespace sigmafive {
-    namespace system {
+    namespace resource {
         resource_manager::resource_manager(boost::filesystem::path path)
                 : path_(path) {
         }
@@ -31,4 +31,4 @@ namespace sigmafive {
     }
 }
 
-EXPORT_SIGMAFIVE_CLASS(sigmafive::system::resource_manager)
+EXPORT_SIGMAFIVE_CLASS(sigmafive::resource::resource_manager)
