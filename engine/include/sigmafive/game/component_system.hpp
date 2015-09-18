@@ -4,11 +4,11 @@
 #include <sigmafive/config.hpp>
 #include <sigmafive/object.hpp>
 
-#include <sigmafive/game/entity_manager.hpp>
-#include <sigmafive/game/component_manager.hpp>
-
 namespace sigmafive {
     namespace game {
+        class entity_manager;
+        class component_manager;
+
         class SIGMAFIVE_API component_system : public object {
         SIGMAFIVE_CLASS()
         public:

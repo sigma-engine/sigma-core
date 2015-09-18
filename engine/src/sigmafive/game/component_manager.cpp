@@ -1,5 +1,7 @@
 #include <sigmafive/game/component_manager.hpp>
 
+#include <sigmafive/game/component_registry.hpp>
+
 namespace sigmafive {
     namespace game {
 

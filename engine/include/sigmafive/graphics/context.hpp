@@ -7,13 +7,10 @@
 #include <sigmafive/math/vec2.hpp>
 #include <sigmafive/math/mat4.hpp>
 
-#include <sigmafive/graphics/static_mesh.hpp>
-
-#include <boost/uuid/uuid.hpp>
-
 namespace sigmafive {
     namespace graphics {
         class context_manager;
+        class static_mesh;
 
         class SIGMAFIVE_API context : public object {
         SIGMAFIVE_CLASS()

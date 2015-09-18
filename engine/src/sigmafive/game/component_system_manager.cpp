@@ -1,5 +1,7 @@
 #include <sigmafive/game/component_system_manager.hpp>
 
+#include <sigmafive/game/component_system.hpp>
+
 namespace sigmafive {
     namespace game {
         component_system_manager::iterator component_system_manager::begin() {

@@ -1,5 +1,11 @@
 #include <sigmafive/game/static_mesh_component_system.hpp>
-#include <sigmafive/graphics/context.hpp>
+
+#include <sigmafive/game/entity_manager.hpp>
+#include <sigmafive/game/component_manager.hpp>
+#include <sigmafive/game/transform_component.hpp>
+#include <sigmafive/game/static_mesh_component.hpp>
+
+#include <sigmafive/graphics/context_manager.hpp>
 
 namespace sigmafive {
     namespace game {

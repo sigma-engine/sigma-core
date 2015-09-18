@@ -7,17 +7,12 @@
 #include <sigmafive/game/component_system.hpp>
 
 #include <memory>
-#include <vector>
+#include <unordered_map>
 
 namespace sigmafive {
     namespace game {
         class SIGMAFIVE_API component_system_manager : public object {
         SIGMAFIVE_CLASS()
-
-            struct is_entity_alive {
-                inline bool operator()(entity e) { return e.index != std::uint32_t(-1); }
-            };
-
         public:
             typedef std::unordered_map<class_uid, std::unique_ptr<component_system>> container;
             typedef container::reference reference;

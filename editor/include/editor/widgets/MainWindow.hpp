@@ -5,17 +5,16 @@
 
 #include <QMainWindow>
 
-#include <editor/component_manager.hpp>
-#include <editor/entity_manager.hpp>
-#include <editor/component_system_manager.hpp>
-
-#include <sigmafive/engine.hpp>
-#include <sigmafive/graphics/context_manager.hpp>
-#include <sigmafive/game/component_manager.hpp>
-#include <sigmafive/game/component_system_manager.hpp>
-
 namespace sigmafive {
+    namespace graphics {
+        class context_manager;
+    }
     namespace editor {
+
+        class entity_manager;
+        class component_manager;
+        class component_system_manager;
+
         namespace widgets {
             namespace Ui {
                 class MainWindow;
@@ -24,20 +23,20 @@ namespace sigmafive {
             class EDITOR_API MainWindow : public QMainWindow {
             Q_OBJECT
             public:
-                explicit MainWindow(entity_manager *entityManager,
+                explicit MainWindow(editor::entity_manager *entityManager,
                                     editor::component_manager *componentManager,
                                     editor::component_system_manager *componentSystemManager,
-                                    sigmafive::graphics::context_manager *contextManager,
+                                    graphics::context_manager *contextManager,
                                     QWidget *parent = 0);
 
                 ~MainWindow();
 
             private:
                 Ui::MainWindow *ui;
-                entity_manager *entityManager_;
+                editor::entity_manager *entityManager_;
                 editor::component_manager *componentManager_;
                 editor::component_system_manager *componentSystemManager_;
-                sigmafive::graphics::context_manager *contextManager_;
+                graphics::context_manager *contextManager_;
             };
         }
     }

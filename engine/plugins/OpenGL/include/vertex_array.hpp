@@ -22,6 +22,8 @@ namespace sigmafive {
                 triangles = gl::TRIANGLES
             };
 
+
+
             class vertex_array {
             public:
                 vertex_array();

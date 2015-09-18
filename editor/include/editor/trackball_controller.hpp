@@ -5,7 +5,6 @@
 
 #include <sigmafive/math/vec2.hpp>
 #include <sigmafive/math/vec3.hpp>
-#include <sigmafive/math/mat4.hpp>
 #include <sigmafive/math/quaternion.hpp>
 
 namespace sigmafive {

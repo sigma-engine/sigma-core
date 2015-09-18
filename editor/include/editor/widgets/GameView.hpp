@@ -4,15 +4,13 @@
 #include <editor/config.hpp>
 #include <QtQuick/QQuickFramebufferObject>
 
+#include <editor/entity_manager.hpp>
+#include <editor/component_manager.hpp>
 #include <editor/trackball_controller.hpp>
+#include <editor/component_system_manager.hpp>
 
 namespace sigmafive {
     namespace editor {
-
-        class entity_manager;
-        class component_manager;
-        class component_system_manager;
-
         namespace widgets {
             class EDITOR_API GameView : public QQuickFramebufferObject {
             Q_OBJECT

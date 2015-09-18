@@ -5,13 +5,11 @@
 #include <sigmafive/object.hpp>
 
 #include <sigmafive/game/component_system.hpp>
-#include <sigmafive/game/component_manager.hpp>
-#include <sigmafive/game/transform_component.hpp>
-#include <sigmafive/game/static_mesh_component.hpp>
-
-#include <sigmafive/graphics/context_manager.hpp>
 
 namespace sigmafive {
+    namespace graphics {
+        class context_manager;
+    }
     namespace game {
         class SIGMAFIVE_API static_mesh_component_system : public component_system {
         SIGMAFIVE_CLASS()

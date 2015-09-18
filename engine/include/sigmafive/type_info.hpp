@@ -10,7 +10,6 @@
 #include <sigmafive/math/quaternion.hpp>
 
 namespace sigmafive {
-
     template<class T, typename U>
     std::ptrdiff_t member_offset(U T::* member) {
         return reinterpret_cast<std::ptrdiff_t >(&(static_cast<T *>(nullptr)->*member));
@@ -62,12 +61,5 @@ namespace sigmafive {
         typedef T component_type;
     };
 }
-
-//http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n3911
-template<class...>
-struct voider {
-    using type = void;
-};
-template<class... T0toN> using void_t = typename voider<T0toN...>::type;
 
 #endif //SIGMAFIVE_TYPE_INFO_HPP

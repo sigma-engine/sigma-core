@@ -1,4 +1,5 @@
 #include <editor/trackball_controller.hpp>
+#include <sigmafive/math/mat4.hpp>
 
 namespace sigmafive {
     namespace editor {

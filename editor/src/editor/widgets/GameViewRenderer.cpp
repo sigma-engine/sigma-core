@@ -6,6 +6,9 @@
 
 #include <editor/widgets/GameView.hpp>
 
+#include <sigmafive/graphics/context.hpp>
+#include <sigmafive/graphics/context_manager.hpp>
+
 #include <sigmafive/game/static_mesh_component_system.hpp>
 
 #include <QtQuick/QQuickWindow>

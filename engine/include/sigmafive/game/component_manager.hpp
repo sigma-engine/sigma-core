@@ -6,14 +6,16 @@
 
 #include <sigmafive/game/entity.hpp>
 #include <sigmafive/game/component.hpp>
-#include <sigmafive/game/component_registry.hpp>
 
 #include <memory>
+#include <bitset>
 #include <vector>
 #include <unordered_map>
 
 namespace sigmafive {
     namespace game {
+        class component_registry;
+
         class SIGMAFIVE_API component_manager : public object {
         SIGMAFIVE_CLASS()
         public:
@@ -32,22 +34,22 @@ namespace sigmafive {
             virtual void remove_all_components(entity e);
 
             template<class T>
-            T *add_component(entity e) {
+            inline T *add_component(entity e) {
                 return static_cast<T *>(add_component(T::CLASS_ID, e));
             }
 
             template<class T>
-            bool has_component(entity e) {
+            inline bool has_component(entity e) {
                 return has_component(T::CLASS_ID, e);
             }
 
             template<class T>
-            T *get_component(entity e) {
+            inline T *get_component(entity e) {
                 return static_cast<T *>(get_component(T::CLASS_ID, e));
             }
 
             template<class T>
-            void remove_component(entity e) {
+            inline void remove_component(entity e) {
                 remove_component(T::CLASS_ID, e);
             }
 

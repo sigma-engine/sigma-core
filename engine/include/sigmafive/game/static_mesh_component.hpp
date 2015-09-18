@@ -5,10 +5,11 @@
 #include <sigmafive/object.hpp>
 
 #include <sigmafive/game/component.hpp>
-#include <sigmafive/graphics/static_mesh.hpp>
-#include <sigmafive/game/component_registry.hpp>
 
 namespace sigmafive {
+    namespace graphics {
+        class static_mesh;
+    }
     namespace game {
         class SIGMAFIVE_API static_mesh_component : public game::component {
         SIGMAFIVE_CLASS()

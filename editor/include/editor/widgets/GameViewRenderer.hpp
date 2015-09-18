@@ -3,12 +3,17 @@
 
 #include <editor/config.hpp>
 
-#include <sigmafive/graphics/context.hpp>
-#include <sigmafive/graphics/context_manager.hpp>
+#include <sigmafive/object.hpp>
+
+#include <sigmafive/math/mat4.hpp>
 
 #include <QtQuick/QQuickFramebufferObject>
 
 namespace sigmafive {
+    namespace graphics {
+        class context;
+        class context_manager;
+    }
     namespace editor {
         namespace widgets {
             class GameView;

@@ -1,5 +1,7 @@
 #include <sigmafive/game/static_mesh_component.hpp>
 
+#include <sigmafive/graphics/static_mesh.hpp>
+
 namespace sigmafive {
     namespace game {
         void static_mesh_component::set_static_mesh(std::shared_ptr<graphics::static_mesh> static_mesh) {

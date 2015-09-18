@@ -1,13 +1,19 @@
 #include <editor/widgets/MainWindow.hpp>
 #include "ui_MainWindow.h"
 
+#include <editor/entity_manager.hpp>
+#include <editor/component_manager.hpp>
+#include <editor/component_system_manager.hpp>
+
+#include <sigmafive/graphics/context_manager.hpp>
+
 namespace sigmafive {
     namespace editor {
         namespace widgets {
-            MainWindow::MainWindow(entity_manager *entityManager,
+            MainWindow::MainWindow(editor::entity_manager *entityManager,
                                    editor::component_manager *componentManager,
                                    editor::component_system_manager *componentSystemManager,
-                                   sigmafive::graphics::context_manager *contextManager,
+                                   graphics::context_manager *contextManager,
                                    QWidget *parent) :
                     QMainWindow(parent),
                     ui(new Ui::MainWindow),

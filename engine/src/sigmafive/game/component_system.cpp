@@ -8,10 +8,6 @@ namespace sigmafive {
                 return count++;
             }
         }
-
-        /*bool component_system::is_intrested(component_mask mask) const {
-            return (intrested_mask_ & mask) == intrested_mask_;
-        }*/
     }
 }
 

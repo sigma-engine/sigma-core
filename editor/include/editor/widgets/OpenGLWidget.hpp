@@ -2,22 +2,31 @@
 #define SIGMAFIVE_EDITOR_WIDGETS_OPENGLWIDGET_HPP
 
 #include <editor/config.hpp>
-
 #include <QOpenGLWidget>
 
-#include <editor/entity_manager.hpp>
-#include <editor/component_manager.hpp>
 #include <editor/trackball_controller.hpp>
-#include <editor/component_system_manager.hpp>
 
-#include <sigmafive/graphics/context_manager.hpp>
+#include <sigmafive/object.hpp>
 
-#include <memory>
+#include <sigmafive/math/vec2.hpp>
+#include <sigmafive/math/mat4.hpp>
+
 #include <QMouseEvent>
 #include <QWheelEvent>
 
+#include <memory>
+
 namespace sigmafive {
+    namespace graphics {
+        class context;
+        class context_manager;
+    }
     namespace editor {
+
+        class entity_manager;
+        class component_manager;
+        class component_system_manager;
+
         namespace widgets {
             class EDITOR_API OpenGLWidget : public QOpenGLWidget {
             Q_OBJECT
@@ -33,13 +42,13 @@ namespace sigmafive {
 
                 void setEntityManager(entity_manager *model);
 
-                game::component_manager *componentManager() const;
+                editor::component_manager *componentManager() const;
 
-                void setComponentManager(game::component_manager *component_manager);
+                void setComponentManager(editor::component_manager *component_manager);
 
-                game::component_system_manager *componentSystemManager() const;
+                editor::component_system_manager *componentSystemManager() const;
 
-                void setComponentSystemManager(game::component_system_manager *component_system_manager);
+                void setComponentSystemManager(editor::component_system_manager *component_system_manager);
 
                 graphics::context_manager * contextManager() const;
 
@@ -74,9 +83,9 @@ namespace sigmafive {
                 float4x4 projection_matrix_;
                 trackball_controller trackball_controller_;
 
-                entity_manager *managerModel_;
-                game::component_manager *component_manager_;
-                game::component_system_manager *component_system_manager_;
+                editor::entity_manager *managerModel_;
+                editor::component_manager *component_manager_;
+                editor::component_system_manager *component_system_manager_;
                 graphics::context_manager *context_manager_;
                 std::unique_ptr<sigmafive::graphics::context> context_;
             };

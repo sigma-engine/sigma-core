@@ -4,11 +4,10 @@
 #include <sigmafive/config.hpp>
 #include <sigmafive/object.hpp>
 
+#include <sigmafive/game/component.hpp>
+
 #include <sigmafive/math/vec3.hpp>
 #include <sigmafive/math/quaternion.hpp>
-
-#include <sigmafive/game/component.hpp>
-#include <sigmafive/game/component_registry.hpp>
 
 namespace sigmafive {
     namespace game {

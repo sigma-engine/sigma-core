@@ -1,8 +1,5 @@
 #include <editor/widgets/GameView.hpp>
 
-#include <editor/entity_manager.hpp>
-#include <editor/component_manager.hpp>
-#include <editor/component_system_manager.hpp>
 #include <editor/widgets/GameViewRenderer.hpp>
 
 #include <sigmafive/engine.hpp>

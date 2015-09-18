@@ -2,18 +2,14 @@
 #define SIGMAFIVE_GRAPHICS_STATIC_MESH_HPP
 
 #include <sigmafive/config.hpp>
-#include <sigmafive/object.hpp>
+#include <sigmafive/resource/resource.hpp>
 
 #include <sigmafive/math/vec2.hpp>
 #include <sigmafive/math/vec3.hpp>
 #include <sigmafive/math/mat4.hpp>
 
-#include <sigmafive/resource/resource.hpp>
-
 #include <array>
 #include <vector>
-#include <boost/uuid/uuid.hpp>
-#include <boost/filesystem/path.hpp>
 
 namespace sigmafive {
     namespace graphics {

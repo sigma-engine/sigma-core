@@ -1,6 +1,11 @@
 #include <editor/widgets/OpenGLWidget.hpp>
 
 #include <editor/application.hpp>
+#include <editor/entity_manager.hpp>
+#include <editor/component_manager.hpp>
+#include <editor/component_system_manager.hpp>
+
+#include <sigmafive/graphics/context_manager.hpp>
 
 #include <sigmafive/game/static_mesh_component_system.hpp>
 
@@ -34,19 +39,19 @@ namespace sigmafive {
                 emit entityManagerChanged();
             }
 
-            game::component_manager *OpenGLWidget::componentManager() const {
+            editor::component_manager *OpenGLWidget::componentManager() const {
                 return component_manager_;
             }
 
-            void OpenGLWidget::setComponentManager(game::component_manager *component_manager) {
+            void OpenGLWidget::setComponentManager(editor::component_manager *component_manager) {
                 component_manager_ = component_manager;
             }
 
-            game::component_system_manager *OpenGLWidget::componentSystemManager() const {
+            editor::component_system_manager *OpenGLWidget::componentSystemManager() const {
                 return component_system_manager_;
             }
 
-            void OpenGLWidget::setComponentSystemManager(game::component_system_manager *component_system_manager) {
+            void OpenGLWidget::setComponentSystemManager(editor::component_system_manager *component_system_manager) {
                 component_system_manager_ = component_system_manager;
             }
 
@@ -65,7 +70,7 @@ namespace sigmafive {
 
             void OpenGLWidget::resizeGL(int w, int h) {
                 projection_matrix_ = float4x4::perspective(deg_to_rad(45.0f), float(width()) / float(height()), 0.01f, 1000.0f);
-                context_->resize(uint2{w,h});
+                context_->resize(uint2{(unsigned int)w,(unsigned int)h});
                 QOpenGLWidget::resizeGL(w, h);
             }
 
