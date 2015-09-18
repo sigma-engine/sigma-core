@@ -4,10 +4,17 @@
 namespace sigmafive {
     namespace editor {
         namespace widgets {
-            MainWindow::MainWindow(entity_manager_model *entityManager, QWidget *parent) :
+            MainWindow::MainWindow(entity_manager *entityManager,
+                                   editor::component_manager *componentManager,
+                                   editor::component_system_manager *componentSystemManager,
+                                   sigmafive::graphics::context_manager *contextManager,
+                                   QWidget *parent) :
                     QMainWindow(parent),
                     ui(new Ui::MainWindow),
-                    entityManager_(entityManager) {
+                    entityManager_(entityManager),
+                    componentManager_(componentManager),
+                    componentSystemManager_(componentSystemManager),
+                    contextManager_(contextManager) {
                 ui->setupUi(this);
 
                 ui->openGLWidget->setEntityManager(entityManager_);

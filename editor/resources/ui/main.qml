@@ -25,8 +25,7 @@ ApplicationWindow {
                     folder: shortcuts.desktop
                     nameFilters: [ "3D Models (*.blend *.dae)" ]
                     onAccepted: {
-                        importer.import_file(_entityManager,fileUrl)
-                        _entityManager.layoutChanged()
+                        importer.import_file(_entityManager,_componentManager,_componentSystemManager,fileUrl)
                     }
                 }
                 MenuItem {
@@ -36,13 +35,6 @@ ApplicationWindow {
             }
         }
     }
-
-    /*statusBar: ProgressBar {
-        id: progressBar
-        visible: false
-        value: 0
-    }*/
-
 
     SplitView {
         anchors.fill: parent
@@ -73,9 +65,9 @@ ApplicationWindow {
 
         GameView {
             id: mainView
-            //anchors.fill: parent
-            color: "lightGrey"
             entityManager: _entityManager
+            componentManager: _componentManager
+            componentSystemManager: _componentSystemManager
 
             MouseArea {
                 anchors.fill: mainView

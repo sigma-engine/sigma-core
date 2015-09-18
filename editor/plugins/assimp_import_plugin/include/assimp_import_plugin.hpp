@@ -9,14 +9,19 @@
 
 #include <QObject>
 
-#include <editor/entity_manager_model.hpp>
+#include <editor/entity_manager.hpp>
+#include <editor/component_manager.hpp>
+#include <editor/component_system_manager.hpp>
 
 class assimp_import_plugin : public QObject {
 Q_OBJECT
 public:
     explicit assimp_import_plugin(QObject *parent = nullptr);
 
-    Q_INVOKABLE void import_file(sigmafive::editor::entity_manager_model *model, QString filepath);
+    Q_INVOKABLE void import_file(sigmafive::editor::entity_manager *entity_manager_,
+                                 sigmafive::editor::component_manager *component_manager_,
+                                 sigmafive::editor::component_system_manager *component_system_manager_,
+                                 QString filepath);
 
 private:
 };

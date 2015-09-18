@@ -10,7 +10,7 @@ namespace sigmafive {
         namespace widgets {
             OpenGLWidget::OpenGLWidget(QWidget *parent)
                     : QOpenGLWidget(parent),
-                      entity_manager_model_(nullptr),
+                      managerModel_(nullptr),
                       context_(nullptr),
                       trackball_controller_(.8f) {
 
@@ -25,15 +25,46 @@ namespace sigmafive {
             OpenGLWidget::~OpenGLWidget() {
             }
 
+            entity_manager *OpenGLWidget::entityManager() {
+                return managerModel_;
+            }
+
+            void OpenGLWidget::setEntityManager(entity_manager *model) {
+                managerModel_ = model;
+                emit entityManagerChanged();
+            }
+
+            game::component_manager *OpenGLWidget::componentManager() const {
+                return component_manager_;
+            }
+
+            void OpenGLWidget::setComponentManager(game::component_manager *component_manager) {
+                component_manager_ = component_manager;
+            }
+
+            game::component_system_manager *OpenGLWidget::componentSystemManager() const {
+                return component_system_manager_;
+            }
+
+            void OpenGLWidget::setComponentSystemManager(game::component_system_manager *component_system_manager) {
+                component_system_manager_ = component_system_manager;
+            }
+
+            graphics::context_manager *OpenGLWidget::contextManager() const {
+                return context_manager_;
+            }
+
+            void OpenGLWidget::setContextManager(graphics::context_manager *context_manager) {
+                OpenGLWidget::context_manager_ = context_manager;
+            }
+
             void OpenGLWidget::initializeGL() {
-                context_ = dynamic_cast<editor::application *>(qApp)->graphics_context_manager()->create_context(
-                        CONTEXT_UID);
+                context_ = dynamic_cast<editor::application *>(qApp)->graphics_context_manager()->create_context(CONTEXT_UID);
                 QOpenGLWidget::initializeGL();
             }
 
             void OpenGLWidget::resizeGL(int w, int h) {
-                projection_matrix_ = float4x4::perspective(deg_to_rad(45.0f), float(width()) / float(height()), 0.01f,
-                                                           1000.0f);
+                projection_matrix_ = float4x4::perspective(deg_to_rad(45.0f), float(width()) / float(height()), 0.01f, 1000.0f);
                 context_->resize(uint2{w,h});
                 QOpenGLWidget::resizeGL(w, h);
             }
@@ -41,17 +72,12 @@ namespace sigmafive {
             void OpenGLWidget::paintGL() {
                 view_matrix_ = trackball_controller_.matrix();
 
-                if (entity_manager_model_) {
-                    auto entity_manager = entity_manager_model_->entity_manager();
-                    auto component_manager = entity_manager_model_->component_manager();
-                    auto component_system_manager = entity_manager_model_->component_system_manager();
-                    auto context_manager = entity_manager_model_->context_manager();
+                if (managerModel_ && component_manager_ && component_system_manager_ && context_manager_) {
+                    auto static_mesh_system = component_system_manager_->get_component_system<game::static_mesh_component_system>();
 
-                    auto static_mesh_system = component_system_manager->get_component_system<game::static_mesh_component_system>();
-
-                    context_manager->make_current(context_.get());
-                    static_mesh_system->init(context_manager);
-                    static_mesh_system->process(*entity_manager, *component_manager);
+                    context_manager_->make_current(context_.get());
+                    static_mesh_system->init(context_manager_);
+                    static_mesh_system->process(managerModel_, component_manager_);
                 }
 
                 context_->render(projection_matrix_, view_matrix_);

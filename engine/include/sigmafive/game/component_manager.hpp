@@ -19,17 +19,17 @@ namespace sigmafive {
         public:
             component_manager(component_registry *registry);
 
-            component_mask get_component_mask(entity e) const;
+            virtual component_mask get_component_mask(entity e) const;
 
-            component *add_component(class_uid component_id, entity e);
+            virtual component *add_component(class_uid component_id, entity e);
 
-            bool has_component(class_uid component_id, entity e);
+            virtual bool has_component(class_uid component_id, entity e);
 
-            component *get_component(class_uid component_id, entity e);
+            virtual component *get_component(class_uid component_id, entity e);
 
-            void remove_component(class_uid component_id, entity e);
+            virtual void remove_component(class_uid component_id, entity e);
 
-            void remove_all_components(entity e);
+            virtual void remove_all_components(entity e);
 
             template<class T>
             T *add_component(entity e) {

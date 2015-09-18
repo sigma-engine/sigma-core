@@ -4,17 +4,13 @@
 #include <editor/config.hpp>
 #include <QtQuick/QQuickFramebufferObject>
 
-#include <editor/entity_manager_model.hpp>
+#include <editor/component_manager.hpp>
+#include <editor/entity_manager.hpp>
 #include <editor/trackball_controller.hpp>
+#include <editor/component_system_manager.hpp>
 
 #include <sigmafive/engine.hpp>
-
 #include <sigmafive/graphics/context.hpp>
-
-#include <sigmafive/game/entity_manager.hpp>
-#include <sigmafive/game/component_manager.hpp>
-#include <sigmafive/game/component_system_manager.hpp>
-#include <sigmafive/game/static_mesh_component_system.hpp>
 
 namespace sigmafive {
     namespace editor {
@@ -34,7 +30,6 @@ namespace sigmafive {
                     QOpenGLFramebufferObject *createFramebufferObject(const QSize &size);
 
                     void render();
-
                 private:
                     bool needs_redraw_;
 
@@ -43,41 +38,28 @@ namespace sigmafive {
                     graphics::context_manager *context_manager_;
                     std::unique_ptr<sigmafive::graphics::context> context_;
 
-                    QColor color_;
                     float4x4 view_matrix_;
                     float4x4 projection_matrix_;
                 };
 
             public:
-                Q_PROPERTY(QColor color
-                                   READ
-                                           color
-                                   WRITE
-                                           setColor
-                                   NOTIFY
-                                   colorChanged)
-                Q_PROPERTY(entity_manager_model *entityManager
-                                   READ
-                                           entityManager
-                                   WRITE
-                                           setEntityManager
-                                   NOTIFY
-                                   entityManagerChanged)
-
-                entity_manager_model *entityManager() {
-                    return entity_manager_model_;
-                }
-
-                void setEntityManager(entity_manager_model *model) {
-                    entity_manager_model_ = model;
-                    emit entityManagerChanged();
-                }
+                Q_PROPERTY(entity_manager *entityManager READ entityManager WRITE setEntityManager NOTIFY entityManagerChanged);
+                Q_PROPERTY(component_manager *componentManager READ componentManager WRITE setComponentManager NOTIFY componentManagerChanged);
+                Q_PROPERTY(component_system_manager *componentSystemManager READ componentSystemManager WRITE setComponentSystemManager NOTIFY componentSystemManagerChanged);
 
                 GameView(QQuickItem *parent = 0);
 
-                QColor color() const;
+                entity_manager *entityManager();
 
-                void setColor(QColor color);
+                void setEntityManager(entity_manager *model);
+
+                component_manager * componentManager() const;
+
+                void setComponentManager(component_manager *componentManager);
+
+                component_system_manager * componentSystemManager() const;
+
+                void setComponentSystemManager(component_system_manager *componentSystemManager);
 
                 Q_INVOKABLE void begin_rotate(QPoint pos);
 
@@ -94,15 +76,15 @@ namespace sigmafive {
                 QQuickFramebufferObject::Renderer *createRenderer() const;
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 6, 0)
-
                 QSGNode *updatePaintNode(QSGNode *node, QQuickItem::UpdatePaintNodeData *nodeData) override;
-
 #endif
             signals:
 
-                void colorChanged();
-
                 void entityManagerChanged();
+
+                void componentManagerChanged();
+
+                void componentSystemManagerChanged();
 
             private:
                 friend class GameViewRenderer;
@@ -111,9 +93,10 @@ namespace sigmafive {
 
                 engine &engine_;
 
-                entity_manager_model *entity_manager_model_;
+                entity_manager *entityManager_;
+                editor::component_manager *componentManager_;
+                editor::component_system_manager *componentSystemManager_;
 
-                QColor color_;
                 editor::trackball_controller trackball_controller_;
             };
         }

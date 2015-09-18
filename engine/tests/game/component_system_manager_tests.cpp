@@ -10,7 +10,7 @@ public:
     virtual ~fake_1_component_system() {
     }
 
-    virtual void process(sigmafive::game::entity_manager &em, sigmafive::game::component_manager &cm) override {
+    virtual void process(sigmafive::game::entity_manager *em, sigmafive::game::component_manager *cm) override {
 
     }
 };

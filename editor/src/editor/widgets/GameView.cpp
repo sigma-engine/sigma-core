@@ -1,5 +1,7 @@
 #include <editor/widgets/GameView.hpp>
 
+#include <sigmafive/game/static_mesh_component_system.hpp>
+
 #include <QMatrix>
 #include <QtQuick/QQuickWindow>
 #include <QSGSimpleTextureNode>
@@ -17,22 +19,20 @@ namespace sigmafive {
 
             void GameView::GameViewRenderer::synchronize(QQuickFramebufferObject *item) {
                 needs_redraw_ = true;
-
-                color_ = item_->color();
                 projection_matrix_ = float4x4::perspective(deg_to_rad(75.0f),
                                                            float(item_->width()) / float(item_->height()), 0.01f,
                                                            1000.0f);
                 view_matrix_ = item_->trackball_controller_.matrix();
 
-                auto entity_manager_ = item_->entityManager()->entity_manager();
-                auto component_manager_ = item_->entityManager()->component_manager();
-                auto component_system_manager_ = item_->entityManager()->component_system_manager();
+                auto entity_manager_ = item_->entityManager();
+                auto component_manager_ = item_->componentManager();
+                auto component_system_manager_ = item_->componentSystemManager();
 
                 auto static_mesh_system_ = component_system_manager_->get_component_system<game::static_mesh_component_system>();
 
                 context_manager_->make_current(context_.get());
                 static_mesh_system_->init(context_manager_);
-                static_mesh_system_->process(*entity_manager_, *component_manager_);
+                static_mesh_system_->process(entity_manager_, component_manager_);
             }
 
             QOpenGLFramebufferObject *GameView::GameViewRenderer::createFramebufferObject(const QSize &size) {
@@ -60,15 +60,31 @@ namespace sigmafive {
                       trackball_controller_(.8f) {
             }
 
-            QColor GameView::color() const {
-                return color_;
+            entity_manager *GameView::entityManager() {
+                return entityManager_;
             }
 
-            void GameView::setColor(QColor color) {
-                if (color_ != color) {
-                    color_ = color;
-                    emit colorChanged();
-                }
+            void GameView::setEntityManager(entity_manager *model) {
+                entityManager_ = model;
+                emit entityManagerChanged();
+            }
+
+            component_manager *GameView::componentManager() const {
+                return componentManager_;
+            }
+
+            void GameView::setComponentManager(component_manager *componentManager) {
+                componentManager_ = componentManager;
+                emit componentManagerChanged();
+            }
+
+            component_system_manager *GameView::componentSystemManager() const {
+                return componentSystemManager_;
+            }
+
+            void GameView::setComponentSystemManager(component_system_manager *componentSystemManager) {
+                componentSystemManager_ = componentSystemManager;
+                emit componentSystemManagerChanged();
             }
 
             void GameView::begin_rotate(QPoint pos) {
@@ -101,7 +117,6 @@ namespace sigmafive {
             }
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 6, 0)
-
             QSGNode *GameView::updatePaintNode(QSGNode *node, QQuickItem::UpdatePaintNodeData *nodeData) {
                 //This is a hack to fix the image being upside down because someone decided that was a nice
                 //feature this is fixed in Qt 5.6
@@ -116,7 +131,6 @@ namespace sigmafive {
 
                 return QQuickFramebufferObject::updatePaintNode(node, nodeData);
             }
-
 #endif //T_VERSION < QT_VERSION_CHECK(5, 6, 0)
 
             float2 GameView::convert(QPoint p) const {

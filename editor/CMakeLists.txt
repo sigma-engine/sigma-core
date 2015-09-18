@@ -9,7 +9,9 @@ set(SOURCES
 	src/editor/application.cpp
 	src/editor/trackball_controller.cpp
 
-	src/editor/entity_manager_model.cpp
+	src/editor/component_manager.cpp
+	src/editor/entity_manager.cpp
+	src/editor/component_system_manager.cpp
 
 	src/editor/widgets/MainWindow.cpp
 	src/editor/widgets/GameView.cpp
@@ -19,7 +21,9 @@ set(HEADERS
 	include/editor/application.hpp
 	include/editor/trackball_controller.hpp
 
-	include/editor/entity_manager_model.hpp
+	include/editor/component_manager.hpp
+	include/editor/entity_manager.hpp
+	include/editor/component_system_manager.hpp
 
 	include/editor/widgets/MainWindow.hpp
 	include/editor/widgets/GameView.hpp

@@ -25,11 +25,11 @@ namespace sigmafive {
             typedef std::reverse_iterator<iterator> reverse_iterator;
             typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-            entity create();
+            virtual entity create();
 
             bool is_alive(entity e) const;
 
-            void destroy(entity e);
+            virtual void destroy(entity e);
 
             iterator begin();
 

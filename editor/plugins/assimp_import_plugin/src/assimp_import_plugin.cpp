@@ -12,6 +12,7 @@
 #include <assimp/postprocess.h>
 
 #include <qqml.h>
+#include <editor/component_manager.hpp>
 
 float3 convert(aiVector3D v) {
     return float3(v.x, v.y, v.z);
@@ -165,10 +166,10 @@ assimp_import_plugin::assimp_import_plugin(QObject *parent)
 }
 
 
-void assimp_import_plugin::import_file(sigmafive::editor::entity_manager_model *model, QString filepath) {
-    auto entity_manager_ = model->entity_manager();
-    auto component_manager_ = model->component_manager();
-
+void assimp_import_plugin::import_file(sigmafive::editor::entity_manager *entity_manager_,
+                                       sigmafive::editor::component_manager *component_manager_,
+                                       sigmafive::editor::component_system_manager *component_system_manager_,
+                                       QString filepath) {
     std::string filename = QUrl(filepath).toLocalFile().toStdString();
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(filename.c_str(), aiProcess_CalcTangentSpace |
@@ -268,7 +269,6 @@ void assimp_import_plugin::import_file(sigmafive::editor::entity_manager_model *
         auto smc = component_manager_->add_component<sigmafive::game::static_mesh_component>(e);
         smc->set_static_mesh(static_meshes[node->mMeshes[0]]);
     }
-    emit model->layoutChanged();
 }
 
 extern "C" void ASSIMP_IMPORT_PLUGIN_API register_plugin(sigmafive::engine *engine) {

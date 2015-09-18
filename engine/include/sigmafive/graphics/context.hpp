@@ -19,6 +19,7 @@ namespace sigmafive {
 
             virtual void resize(uint2 size) = 0;
 
+            //TODO calling make current on context should make it current in the context manager
             virtual void make_current() = 0;
 
             virtual void add_static_mesh(float4x4 model_matrix,std::weak_ptr<graphics::static_mesh> static_mesh) = 0;

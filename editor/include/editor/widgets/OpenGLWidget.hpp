@@ -5,8 +5,12 @@
 
 #include <QOpenGLWidget>
 
+#include <editor/entity_manager.hpp>
+#include <editor/component_manager.hpp>
 #include <editor/trackball_controller.hpp>
-#include <editor/entity_manager_model.hpp>
+#include <editor/component_system_manager.hpp>
+
+#include <sigmafive/graphics/context_manager.hpp>
 
 #include <memory>
 #include <QMouseEvent>
@@ -25,14 +29,21 @@ namespace sigmafive {
 
                 ~OpenGLWidget();
 
-                entity_manager_model *entityManager() {
-                    return entity_manager_model_;
-                }
+                entity_manager *entityManager();
 
-                void setEntityManager(entity_manager_model *model) {
-                    entity_manager_model_ = model;
-                    emit entityManagerChanged();
-                }
+                void setEntityManager(entity_manager *model);
+
+                game::component_manager *componentManager() const;
+
+                void setComponentManager(game::component_manager *component_manager);
+
+                game::component_system_manager *componentSystemManager() const;
+
+                void setComponentSystemManager(game::component_system_manager *component_system_manager);
+
+                graphics::context_manager * contextManager() const;
+
+                void setContextManager(graphics::context_manager *context_manager);
 
                 void initializeGL() override;
 
@@ -63,7 +74,10 @@ namespace sigmafive {
                 float4x4 projection_matrix_;
                 trackball_controller trackball_controller_;
 
-                entity_manager_model *entity_manager_model_;
+                entity_manager *managerModel_;
+                game::component_manager *component_manager_;
+                game::component_system_manager *component_system_manager_;
+                graphics::context_manager *context_manager_;
                 std::unique_ptr<sigmafive::graphics::context> context_;
             };
         }

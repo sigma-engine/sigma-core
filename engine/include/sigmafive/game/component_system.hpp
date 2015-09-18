@@ -14,7 +14,7 @@ namespace sigmafive {
         public:
             virtual ~component_system() = default;
 
-            virtual void process(entity_manager &em, component_manager &cm) = 0;
+            virtual void process(entity_manager *em, component_manager *cm) = 0;
 
         protected:
         };
