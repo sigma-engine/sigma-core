@@ -77,21 +77,21 @@ ApplicationWindow {
                 onPressed: {
                     if(mouse.button == Qt.MiddleButton) {
                         mainView.begin_rotate(Qt.point(mouse.x,mouse.y));
-                        mainView.update();
+                        //mainView.update();
                     }
                 }
 
                 onReleased: {
                     if(mouse.button == Qt.MiddleButton) {
                         mainView.end_rotate(Qt.point(mouse.x,mouse.y));
-                        mainView.update();
+                        //mainView.update();
                     }
                 }
 
                 onPositionChanged: {
                     mainView.focus = true
                     mainView.mouse_moved(Qt.point(mouse.x,mouse.y));
-                    mainView.update();
+                    //mainView.update();
                 }
 
                 onWheel: {
@@ -102,13 +102,13 @@ ApplicationWindow {
             Keys.onPressed: {
                 if (event.key === Qt.Key_Shift) {
                     mainView.begin_pan();
-                    mainView.update();
+                    //mainView.update();
                 }
             }
             Keys.onReleased: {
                 if (event.key === Qt.Key_Shift) {
                     mainView.end_pan();
-                    mainView.update();
+                    //mainView.update();
                 }
             }
         }

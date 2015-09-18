@@ -32,8 +32,6 @@ namespace sigmafive {
             public:
                 context(graphics::context_manager *manager);
 
-                virtual void make_current() override;
-
                 virtual void resize(uint2 size) override;
 
                 virtual void add_static_mesh(float4x4 model_matrix,std::weak_ptr<graphics::static_mesh> static_mesh) override;

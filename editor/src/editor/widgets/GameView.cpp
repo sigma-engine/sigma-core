@@ -1,6 +1,11 @@
 #include <editor/widgets/GameView.hpp>
+
+#include <editor/entity_manager.hpp>
+#include <editor/component_manager.hpp>
+#include <editor/component_system_manager.hpp>
 #include <editor/widgets/GameViewRenderer.hpp>
 
+#include <sigmafive/engine.hpp>
 
 #include <QSGSimpleTextureNode>
 
@@ -9,7 +14,6 @@ namespace sigmafive {
         namespace widgets {
             GameView::GameView(QQuickItem *parent)
                     : QQuickFramebufferObject(parent),
-                      engine_(*dynamic_cast<engine *>(qApp)),
                       trackball_controller_(.8f) {
             }
 
@@ -40,12 +44,18 @@ namespace sigmafive {
                 emit componentSystemManagerChanged();
             }
 
+            float4x4 GameView::viewMatrix() const {
+                return trackball_controller_.matrix();
+            }
+
             void GameView::begin_rotate(QPoint pos) {
                 trackball_controller_.begin_rotate(convert(pos));
             }
 
             void GameView::mouse_moved(QPoint pos) {
                 trackball_controller_.update(convert(pos));
+                emit viewMatrixChanged();
+                this->update();
             }
 
             void GameView::end_rotate(QPoint pos) {
@@ -54,6 +64,7 @@ namespace sigmafive {
 
             void GameView::wheel_scroll(int y) {
                 trackball_controller_.zoom(y);
+                emit viewMatrixChanged();
                 this->update();
             }
 
@@ -66,7 +77,8 @@ namespace sigmafive {
             }
 
             QQuickFramebufferObject::Renderer *GameView::createRenderer() const {
-                return new GameViewRenderer{const_cast<GameView *>(this), engine_.graphics_context_manager()};
+                //TODO is there a better way to do this??
+                return new GameViewRenderer{dynamic_cast<engine *>(qApp)->graphics_context_manager()};
             }
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 6, 0)

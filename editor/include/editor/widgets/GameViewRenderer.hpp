@@ -15,27 +15,25 @@ namespace sigmafive {
 
             class EDITOR_API GameViewRenderer : public QQuickFramebufferObject::Renderer {
             public:
-            static constexpr const class_uid CONTEXT_UID = sigmafive::compile_time_hash(
-                    "sigmafive::graphics::opengl::context");
+                static constexpr const class_uid CONTEXT_UID = sigmafive::compile_time_hash(
+                "sigmafive::graphics::opengl::context");
 
-            GameViewRenderer(GameView *item, graphics::context_manager *context_manager);
+                GameViewRenderer(graphics::context_manager *context_manager);
 
-            void synchronize(QQuickFramebufferObject *item);
+                QOpenGLFramebufferObject *createFramebufferObject(const QSize &size);
 
-            QOpenGLFramebufferObject *createFramebufferObject(const QSize &size);
+                void synchronize(QQuickFramebufferObject *item);
 
-            void render();
+                void render();
+
             private:
-            bool needs_redraw_;
+                GameView *item_;
 
-            GameView *item_;
+                std::unique_ptr<sigmafive::graphics::context> context_;
 
-            graphics::context_manager *context_manager_;
-            std::unique_ptr<sigmafive::graphics::context> context_;
-
-            float4x4 view_matrix_;
-            float4x4 projection_matrix_;
-        };
+                float4x4 view_matrix_;
+                float4x4 projection_matrix_;
+            };
         }
     }
 }

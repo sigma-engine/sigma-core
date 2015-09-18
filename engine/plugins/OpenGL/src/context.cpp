@@ -52,7 +52,7 @@ namespace sigmafive {
                                                    ));
                 plane_fragment_shader.set_source(GLSL_440(
                                                    uniform sampler2D in_color;
-                                                   uniform vec2 screen_size;
+                                                   uniform ivec2 screen_size;
                                                    in vec3 position;
                                                    in vec3 normal;
                                                    in vec3 tangent;
@@ -116,9 +116,6 @@ namespace sigmafive {
                 material_.attach_shader(fragment_shader);
             }
 
-            void context::make_current() {
-            }
-
             void context::resize(uint2 size) {
                 size_ = size;
                 g_buffer_ = std::unique_ptr<g_buffer>{new g_buffer(size)};
@@ -176,7 +173,7 @@ namespace sigmafive {
                 plane_program.use();
 
                 plane_program.set_uniform("in_color",1);
-                plane_program.set_uniform("screen_size",float2{size_.x,size_.y});
+                plane_program.set_uniform("screen_size",int2{size_.x,size_.y});
                 plane_vertex_array.draw(primitive_type::triangles,plane_index_buffer,0,plane_index_buffer.size());
             }
 

@@ -4,16 +4,15 @@
 #include <editor/config.hpp>
 #include <QtQuick/QQuickFramebufferObject>
 
-#include <editor/component_manager.hpp>
-#include <editor/entity_manager.hpp>
 #include <editor/trackball_controller.hpp>
-#include <editor/component_system_manager.hpp>
-
-#include <sigmafive/engine.hpp>
-#include <sigmafive/graphics/context.hpp>
 
 namespace sigmafive {
     namespace editor {
+
+        class entity_manager;
+        class component_manager;
+        class component_system_manager;
+
         namespace widgets {
             class EDITOR_API GameView : public QQuickFramebufferObject {
             Q_OBJECT
@@ -21,6 +20,7 @@ namespace sigmafive {
                 Q_PROPERTY(entity_manager *entityManager READ entityManager WRITE setEntityManager NOTIFY entityManagerChanged);
                 Q_PROPERTY(component_manager *componentManager READ componentManager WRITE setComponentManager NOTIFY componentManagerChanged);
                 Q_PROPERTY(component_system_manager *componentSystemManager READ componentSystemManager WRITE setComponentSystemManager NOTIFY componentSystemManagerChanged);
+                Q_PROPERTY(float4x4 viewMatrix READ viewMatrix NOTIFY viewMatrixChanged)
 
                 GameView(QQuickItem *parent = 0);
 
@@ -35,6 +35,8 @@ namespace sigmafive {
                 component_system_manager * componentSystemManager() const;
 
                 void setComponentSystemManager(component_system_manager *componentSystemManager);
+
+                float4x4 viewMatrix() const;
 
                 Q_INVOKABLE void begin_rotate(QPoint pos);
 
@@ -61,18 +63,16 @@ namespace sigmafive {
 
                 void componentSystemManagerChanged();
 
-            private:
-                friend class GameViewRenderer;
+                void viewMatrixChanged();
 
+            private:
                 float2 convert(QPoint p) const;
 
-                engine &engine_;
+                editor::trackball_controller trackball_controller_;
 
                 entity_manager *entityManager_;
                 editor::component_manager *componentManager_;
                 editor::component_system_manager *componentSystemManager_;
-
-                editor::trackball_controller trackball_controller_;
             };
         }
     }
