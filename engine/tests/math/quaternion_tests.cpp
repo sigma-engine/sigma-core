@@ -15,16 +15,6 @@ TEST(quaternion_tests, constructor_four_values) {
     EXPECT_EQ(quaternioni(1, 2, 3, 4), a);
 }
 
-TEST(quaternion_tests, constructor_vec2_and_two_values) {
-    quaternioni a(int2(1, 2), 3, 4);
-    EXPECT_EQ(quaternioni(1, 2, 3, 4), a);
-}
-
-TEST(quaternion_tests, constructor_two_vec2s) {
-    quaternioni a(int2(1, 2), int2(3, 4));
-    EXPECT_EQ(quaternioni(1, 2, 3, 4), a);
-}
-
 TEST(quaternion_tests, constructor_vec3_and_a_value) {
     quaternioni a(int3(1, 2, 3), 4);
     EXPECT_EQ(quaternioni(1, 2, 3, 4), a);

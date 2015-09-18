@@ -15,9 +15,9 @@ namespace sigmafive {
             class EDITOR_API GameView : public QQuickFramebufferObject {
             Q_OBJECT
             public:
-                Q_PROPERTY(entity_manager *entityManager READ entityManager WRITE setEntityManager NOTIFY entityManagerChanged);
-                Q_PROPERTY(component_manager *componentManager READ componentManager WRITE setComponentManager NOTIFY componentManagerChanged);
-                Q_PROPERTY(component_system_manager *componentSystemManager READ componentSystemManager WRITE setComponentSystemManager NOTIFY componentSystemManagerChanged);
+                Q_PROPERTY(entity_manager *entityManager READ entityManager WRITE setEntityManager NOTIFY entityManagerChanged)
+                Q_PROPERTY(component_manager *componentManager READ componentManager WRITE setComponentManager NOTIFY componentManagerChanged)
+                Q_PROPERTY(component_system_manager *componentSystemManager READ componentSystemManager WRITE setComponentSystemManager NOTIFY componentSystemManagerChanged)
                 Q_PROPERTY(float4x4 viewMatrix READ viewMatrix NOTIFY viewMatrixChanged)
 
                 GameView(QQuickItem *parent = 0);

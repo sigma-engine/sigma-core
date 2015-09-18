@@ -15,26 +15,10 @@ struct vec4_t;
 
 template<typename T>
 struct quaternion_t {
-    union {
-        struct {
-            vec3_t<T> vector;
-            T real;
-        };
-        struct {
-            T x, y, z, w;
-        };
-    };
+    T w, x, y, z;
 
     quaternion_t(T x = 0, T y = 0, T z = 0, T w = 1)
             : x(x), y(y), z(z), w(w) {
-    }
-
-    quaternion_t(const vec2_t<T> &v, T z = 0, T w = 1)
-            : quaternion_t<T>(v.x, v.y, z, w) {
-    }
-
-    quaternion_t(const vec2_t<T> &v1, const vec2_t<T> &v2)
-            : quaternion_t<T>(v1, v2.x, v2.y) {
     }
 
     quaternion_t(const vec3_t<T> &v, T w = 1)
@@ -92,8 +76,10 @@ struct quaternion_t {
     }
 
     inline quaternion_t<T> operator*(const quaternion_t<T> &other) const {
-        return quaternion_t<T>(real * other.vector + other.real * vector + vector * other.vector,
-                               real * other.real - vector.dot(other.vector));
+        auto vector = vec3_t<T>{x,y,z};
+        auto other_vector = vec3_t<T>{other.x,other.y,other.z};
+        return quaternion_t<T>(w * other_vector + other.w * vector + vector * other_vector,
+                               w * other.w - vector.dot(other_vector));
     }
 
     inline quaternion_t<T> operator*(const T &s) const {
@@ -208,15 +194,12 @@ struct quaternion_t {
     }
 
     vec3_t<T> rotate(vec3_t<T> v) const {
-        return ((*this) * quaternion_t<T>{v, 0} * this->get_inverse()).vector;
+        auto q = ((*this) * quaternion_t<T>{v, 0} * this->get_inverse());
+        return {q.x,q.y,q.z};
     }
 
     static quaternion_t<T> from_axis_angle(vec3_t<T> axis, T angle) {
-        quaternion_t<T> q;
-        q.vector = axis.normalize();
-        q.vector *= std::sin(angle / T(2));
-        q.real = std::cos(angle / T(2));
-        return q;
+        return {axis.normalize() * std::sin(angle / T(2)),std::cos(angle / T(2))};
     }
 };
 
