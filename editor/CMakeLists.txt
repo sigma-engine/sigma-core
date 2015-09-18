@@ -15,6 +15,7 @@ set(SOURCES
 
 	src/editor/widgets/MainWindow.cpp
 	src/editor/widgets/GameView.cpp
+	src/editor/widgets/GameViewRenderer.cpp
 	src/editor/widgets/OpenGLWidget.cpp)
 set(HEADERS
 	include/editor/config.hpp
@@ -27,6 +28,7 @@ set(HEADERS
 
 	include/editor/widgets/MainWindow.hpp
 	include/editor/widgets/GameView.hpp
+	include/editor/widgets/GameViewRenderer.hpp
 	include/editor/widgets/OpenGLWidget.hpp)
 
 set(QML
