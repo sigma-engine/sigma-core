@@ -26,7 +26,7 @@ namespace sigmafive {
             }
 
             void OpenGLWidget::initializeGL() {
-                context_ = dynamic_cast<editor::application *>(qApp)->graphics_context_manager().create_context(
+                context_ = dynamic_cast<editor::application *>(qApp)->graphics_context_manager()->create_context(
                         CONTEXT_UID);
                 QOpenGLWidget::initializeGL();
             }

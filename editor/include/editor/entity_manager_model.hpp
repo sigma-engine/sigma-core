@@ -24,7 +24,7 @@ namespace sigmafive {
             explicit entity_manager_model(game::entity_manager &entity_manager,
                                           game::component_manager &component_manager,
                                           game::component_system_manager &component_system_manager,
-                                          graphics::context_manager &context_manager,
+                                          graphics::context_manager *context_manager,
                                           QObject *parent = nullptr);
 
             int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -50,7 +50,7 @@ namespace sigmafive {
             }
 
             graphics::context_manager *context_manager() {
-                return &context_manager_;
+                return context_manager_;
             }
 
         private:
@@ -61,7 +61,7 @@ namespace sigmafive {
             //TODO move to own model
             game::component_system_manager &component_system_manager_;
             //TODO move to own model
-            graphics::context_manager &context_manager_;
+            graphics::context_manager *context_manager_;
         };
     }
 }

@@ -109,7 +109,7 @@ EXPORT_SIGMAFIVE_CLASS(sigmafive::system::SDL2::window)
 
 //TODO this is a hack
 extern "C" void SDL2_PLUGIN_API register_plugin(sigmafive::engine *engine) {
-    engine->window_manager().register_window(sigmafive::system::SDL2::window::CLASS_ID,
+    engine->window_manager()->register_window(sigmafive::system::SDL2::window::CLASS_ID,
                                              std::unique_ptr<sigmafive::simple_factory<sigmafive::system::window, sigmafive::system::SDL2::window>>{
                                                      new sigmafive::simple_factory<sigmafive::system::window, sigmafive::system::SDL2::window>{}});
 }

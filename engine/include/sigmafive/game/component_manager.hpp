@@ -17,7 +17,7 @@ namespace sigmafive {
         class SIGMAFIVE_API component_manager : public object {
         SIGMAFIVE_CLASS()
         public:
-            component_manager(component_registry &registry);
+            component_manager(component_registry *registry);
 
             component_mask get_component_mask(entity e) const;
 
@@ -52,7 +52,7 @@ namespace sigmafive {
             }
 
         private:
-            component_registry &registry_;
+            component_registry *registry_;
             std::vector<component_mask> component_masks_;
             std::unordered_map<class_uid, std::unique_ptr<component_pool>> component_pools_;
         };

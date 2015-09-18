@@ -27,7 +27,7 @@ namespace sigmafive {
                     static constexpr const class_uid CONTEXT_UID = sigmafive::compile_time_hash(
                             "sigmafive::graphics::opengl::context");
 
-                    GameViewRenderer(GameView *item, graphics::context_manager &context_manager);
+                    GameViewRenderer(GameView *item, graphics::context_manager *context_manager);
 
                     void synchronize(QQuickFramebufferObject *item);
 
@@ -40,7 +40,7 @@ namespace sigmafive {
 
                     GameView *item_;
 
-                    graphics::context_manager &context_manager_;
+                    graphics::context_manager *context_manager_;
                     std::unique_ptr<sigmafive::graphics::context> context_;
 
                     QColor color_;

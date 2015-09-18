@@ -3,7 +3,7 @@
 namespace sigmafive {
     namespace game {
 
-        component_manager::component_manager(component_registry &registry)
+        component_manager::component_manager(component_registry *registry)
                 : registry_(registry) {
         }
 
@@ -17,12 +17,12 @@ namespace sigmafive {
             auto it = component_pools_.find(component_id);
             if (it == component_pools_.end())
                 it = component_pools_.emplace(
-                        std::make_pair(component_id, registry_.create_component_pool_for(component_id))).first;
+                        std::make_pair(component_id, registry_->create_component_pool_for(component_id))).first;
 
             if (e.index >= component_masks_.size())
                 component_masks_.resize(e.index + 1);
 
-            component_masks_[e.index] |= registry_.mask_for(component_id);
+            component_masks_[e.index] |= registry_->mask_for(component_id);
 
             return it->second.get()->add_component(e);
         }
@@ -30,7 +30,7 @@ namespace sigmafive {
         bool component_manager::has_component(class_uid component_id, entity e) {
             if (e.index >= component_masks_.size())
                 return false;
-            auto bs = registry_.mask_for(component_id);
+            auto bs = registry_->mask_for(component_id);
             return (component_masks_[e.index] & bs) == bs;
         }
 
@@ -47,7 +47,7 @@ namespace sigmafive {
             if (it == component_pools_.end() || e.index >= component_masks_.size())
                 return;
             it->second.get()->remove_component(e);
-            component_masks_[e.index] &= registry_.mask_for(component_id).flip();
+            component_masks_[e.index] &= registry_->mask_for(component_id).flip();
         }
 
         void component_manager::remove_all_components(entity e) {

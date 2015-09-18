@@ -8,11 +8,11 @@
 namespace sigmafive {
     namespace editor {
         namespace widgets {
-            GameView::GameViewRenderer::GameViewRenderer(GameView *item, graphics::context_manager &context_manager)
+            GameView::GameViewRenderer::GameViewRenderer(GameView *item, graphics::context_manager *context_manager)
                     : needs_redraw_(false),
                       item_(item),
                       context_manager_(context_manager),
-                      context_(context_manager_.create_context(CONTEXT_UID)) {
+                      context_(context_manager_->create_context(CONTEXT_UID)) {
             }
 
             void GameView::GameViewRenderer::synchronize(QQuickFramebufferObject *item) {
@@ -30,8 +30,8 @@ namespace sigmafive {
 
                 auto static_mesh_system_ = component_system_manager_->get_component_system<game::static_mesh_component_system>();
 
-                context_manager_.make_current(context_.get());
-                static_mesh_system_->init(&context_manager_);
+                context_manager_->make_current(context_.get());
+                static_mesh_system_->init(context_manager_);
                 static_mesh_system_->process(*entity_manager_, *component_manager_);
             }
 

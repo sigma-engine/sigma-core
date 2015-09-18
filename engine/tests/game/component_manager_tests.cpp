@@ -7,7 +7,7 @@
 
 class component_manager_tests : public ::testing::Test {
 protected:
-    component_manager_tests() : component_manager(registry) { }
+    component_manager_tests() : component_manager(&registry) { }
 
     virtual void SetUp() override {
         registry.register_component(fake_1_component::CLASS_ID,

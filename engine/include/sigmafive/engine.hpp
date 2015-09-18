@@ -21,11 +21,11 @@ namespace sigmafive {
 
         static boost::filesystem::path default_plugin_path();
 
-        game::component_registry &component_registry();
+        game::component_registry *component_registry();
 
-        graphics::context_manager &graphics_context_manager();
+        graphics::context_manager *graphics_context_manager();
 
-        system::window_manager &window_manager();
+        system::window_manager *window_manager();
 
     private:
         //TODO hack

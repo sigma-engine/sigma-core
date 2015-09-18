@@ -46,16 +46,16 @@ namespace sigmafive {
 #endif
     }
 
-    game::component_registry &engine::component_registry() {
-        return component_registry_;
+    game::component_registry *engine::component_registry() {
+        return &component_registry_;
     }
 
-    graphics::context_manager &engine::graphics_context_manager() {
-        return graphics_context_manager_;
+    graphics::context_manager *engine::graphics_context_manager() {
+        return &graphics_context_manager_;
     }
 
-    system::window_manager &engine::window_manager() {
-        return window_manager_;
+    system::window_manager *engine::window_manager() {
+        return &window_manager_;
     }
 }
 

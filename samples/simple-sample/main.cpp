@@ -12,13 +12,13 @@ int main(int argc, char *argv[]) {
     sigmafive::game::component_manager component_manager(engine.component_registry());
     sigmafive::game::component_system_manager component_system_manager;
 
-    auto window = engine.window_manager().create_window(
+    auto window = engine.window_manager()->create_window(
             sigmafive::compile_time_hash("sigmafive::system::SDL2::window"));
 
     auto system = component_system_manager.add_component_system<sigmafive::game::static_mesh_component_system>();
-    system->init(&engine.graphics_context_manager());
+    system->init(engine.graphics_context_manager());
 
-    auto context = engine.graphics_context_manager().create_context(
+    auto context = engine.graphics_context_manager()->create_context(
             sigmafive::compile_time_hash("sigmafive::graphics::opengl::context"));
 
     while (window->good()) {
