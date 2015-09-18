@@ -30,7 +30,7 @@ namespace sigmafive {
             class context : public graphics::context {
             SIGMAFIVE_CLASS()
             public:
-                context();
+                context(graphics::context_manager *manager);
 
                 virtual void make_current() override;
 

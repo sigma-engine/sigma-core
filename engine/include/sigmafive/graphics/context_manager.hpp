@@ -12,7 +12,15 @@
 
 namespace sigmafive {
     namespace graphics {
-        using context_factory = factory<context>;
+        class context_manager;
+        class context;
+
+        class SIGMAFIVE_API context_factory {
+        public:
+            virtual ~context_factory() = default;
+
+            virtual std::unique_ptr<context> create(context_manager *manager) = 0;
+        };
 
         class SIGMAFIVE_API context_manager : public object {
         SIGMAFIVE_CLASS()
@@ -36,6 +44,17 @@ namespace sigmafive {
             //TODO weak ptr
             context *current_context_;
             std::unordered_map<class_uid, std::unique_ptr<context_factory>> context_factories_;
+        };
+
+        template<class T>
+        class simple_context_factory : public context_factory {
+        public:
+            virtual ~simple_context_factory() = default;
+
+            virtual std::unique_ptr<context> create(context_manager *manager) override  {
+                return std::move(std::make_unique<T>(manager));
+            }
+        private:
         };
     }
 }

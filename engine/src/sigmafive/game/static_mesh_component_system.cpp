@@ -1,4 +1,5 @@
 #include <sigmafive/game/static_mesh_component_system.hpp>
+#include <sigmafive/graphics/context.hpp>
 
 namespace sigmafive {
     namespace game {

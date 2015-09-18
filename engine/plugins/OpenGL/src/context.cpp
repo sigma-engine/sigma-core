@@ -11,8 +11,9 @@
 namespace sigmafive {
     namespace graphics {
         namespace opengl {
-            context::context()
-                    : vertex_shader(shader_type::vertex), fragment_shader(shader_type::fragment),
+            context::context(graphics::context_manager *manager)
+                    : graphics::context(manager),
+                      vertex_shader(shader_type::vertex), fragment_shader(shader_type::fragment),
                       plane_vertex_buffer(buffer_usage::static_draw),plane_index_buffer(buffer_usage::static_draw),
                       plane_vertex_shader(shader_type::vertex), plane_fragment_shader(shader_type::fragment) {
 
@@ -188,8 +189,9 @@ namespace sigmafive {
 
 //TODO this is a hack
 extern "C" void OPENGL_PLUGIN_API register_plugin(sigmafive::engine *engine) {
-    engine->graphics_context_manager()->register_context(sigmafive::graphics::opengl::context::CLASS_ID,
-                                                        std::make_unique<sigmafive::graphics::opengl::context_factory>());
+    using namespace sigmafive::graphics;
+    engine->graphics_context_manager()->register_context(opengl::context::CLASS_ID,
+                                                         std::make_unique<simple_context_factory<opengl::context>>());
 }
 
 

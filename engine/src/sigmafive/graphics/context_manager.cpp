@@ -1,4 +1,5 @@
 #include <sigmafive/graphics/context_manager.hpp>
+#include <sigmafive/graphics/context.hpp>
 
 #include <stdexcept>
 
@@ -18,7 +19,7 @@ namespace sigmafive {
         std::unique_ptr<context> context_manager::create_context(class_uid uid) {
             if (context_factories_.count(uid) == 0)
                 throw std::runtime_error("graphics context with uid = " + std::to_string(uid) + " was not registered!");
-            return std::move(context_factories_.at(uid)->create());
+            return std::move(context_factories_.at(uid)->create(this));
         }
 
         void context_manager::make_current(context *ctx) {
