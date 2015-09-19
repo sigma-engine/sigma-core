@@ -1,4 +1,4 @@
-project(OpenGL)
+project(opengl_context)
 
 find_package(OpenGL REQUIRED)
 
@@ -36,10 +36,10 @@ set(HEADERS
 
 	include/context.hpp)
 
-add_plugin(OpenGL ${SOURCES} ${HEADERS})
-target_include_directories(OpenGL
+add_plugin(opengl_context ${SOURCES} ${HEADERS})
+target_include_directories(opengl_context
 	PUBLIC
 	include
 	PRIVATE
 	${OPENGL_INCLUDE_DIRS})
-target_link_libraries(OpenGL engine ${OPENGL_LIBRARIES})
+target_link_libraries(opengl_context engine ${OPENGL_LIBRARIES})
