@@ -20,6 +20,7 @@ namespace sigmafive {
                     break;
                 }
                 case Qt::DisplayRole: {
+                    //std::cout << index.row() << std::en
                     return QVariant("Entity: " + QString::number(index.row() + 1));
                     break;
                 }
@@ -37,7 +38,7 @@ namespace sigmafive {
         }
 
         game::entity entity_manager::create() {
-            beginInsertRows(QModelIndex(),size(),size()+1);
+            beginInsertRows(QModelIndex(),size(),size());
             auto e = game::entity_manager::create();
             endInsertRows();
             return e;
