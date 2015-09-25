@@ -2,11 +2,10 @@
 #define SIGMAFIVE_GRAPHICS_OPENGL_STATIC_MESH_MANAGER_HPP
 
 #include <static_mesh.hpp>
+#include <sigmafive/resource/resource.hpp>
 
 #include <memory>
 #include <unordered_map>
-#include <boost/uuid/uuid.hpp>
-#include <boost/functional/hash.hpp>
 
 namespace sigmafive {
     namespace graphics {
@@ -15,7 +14,7 @@ namespace sigmafive {
             public:
                 opengl::static_mesh *get(std::shared_ptr<graphics::static_mesh> mesh);
             private:
-                std::unordered_map<boost::uuids::uuid, std::unique_ptr<opengl::static_mesh>, boost::hash<boost::uuids::uuid>> static_meshes_;
+                std::unordered_map<resource::identifier, std::unique_ptr<opengl::static_mesh>> static_meshes_;
             };
         }
     }

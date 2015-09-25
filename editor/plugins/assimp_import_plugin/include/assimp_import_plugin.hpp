@@ -13,6 +13,8 @@
 #include <editor/component_manager.hpp>
 #include <editor/component_system_manager.hpp>
 
+#include <sigmafive/resource/resource.hpp>
+
 class assimp_import_plugin : public QObject {
 Q_OBJECT
 public:

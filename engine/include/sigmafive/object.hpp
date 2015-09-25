@@ -22,7 +22,7 @@ namespace sigmafive {
 
     class meta_class;
 
-    using class_uid = unsigned long long;
+    using class_uid = std::size_t;
 
     //http://www.cse.yorku.ca/~oz/hash.html
     constexpr const class_uid compile_time_hash(const char *input) {

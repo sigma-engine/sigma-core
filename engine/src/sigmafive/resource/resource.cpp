@@ -3,16 +3,31 @@
 
 namespace sigmafive {
     namespace resource {
-        boost::uuids::uuid resource::generate_key() {
-            static boost::uuids::random_generator generator;
-            return generator();
+        identifier::identifier(boost::filesystem::path path)
+            : path_(path), hash_(compile_time_hash(path.c_str())) {
         }
 
-        resource::resource() : uuid_(generate_key()) {
+        boost::filesystem::path identifier::path() const {
+            return path_;
         }
 
-        boost::uuids::uuid resource::uuid() const {
-            return uuid_;
+        std::size_t identifier::hash() const {
+            return hash_;
+        }
+
+        bool identifier::operator ==(const identifier &other) const {
+            return hash_ == other.hash_;
+        }
+
+        bool identifier::operator !=(const identifier &other) const {
+            return hash_ != other.hash_;
+        }
+
+        resource::resource(identifier id) : id_(id) {
+        }
+
+        identifier resource::id() const {
+            return id_;
         }
     }
 }

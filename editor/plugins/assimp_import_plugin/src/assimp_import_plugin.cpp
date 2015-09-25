@@ -14,6 +14,8 @@
 #include <qqml.h>
 #include <editor/component_manager.hpp>
 
+#include <iostream>
+
 float3 convert(aiVector3D v) {
     return float3(v.x, v.y, v.z);
 }
@@ -171,6 +173,10 @@ void assimp_import_plugin::import_file(sigmafive::editor::entity_manager *entity
                                        sigmafive::editor::component_system_manager *component_system_manager_,
                                        QString filepath) {
     std::string filename = QUrl(filepath).toLocalFile().toStdString();
+
+
+    auto path = boost::filesystem::path(filename).replace_extension("");
+
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(filename.c_str(), aiProcess_CalcTangentSpace |
                                                                aiProcess_JoinIdenticalVertices |
@@ -204,11 +210,14 @@ void assimp_import_plugin::import_file(sigmafive::editor::entity_manager *entity
         return;
     }
 
-    std::unordered_map<int, std::shared_ptr<sigmafive::graphics::static_mesh>> static_meshes;
+
     for (unsigned int i = 0; i < scene->mNumMaterials; ++i) {
         auto aiMat = scene->mMaterials[i];
         convert(aiMat);
     }
+
+    std::unordered_map<int, std::shared_ptr<sigmafive::graphics::static_mesh>> static_meshes;
+    std::unordered_map<std::string,int> names;
     for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
         auto mesh = scene->mMeshes[i];
         assert(mesh->HasPositions());
@@ -245,7 +254,13 @@ void assimp_import_plugin::import_file(sigmafive::editor::entity_manager *entity
             }
         }
 
-        static_meshes[i] = std::shared_ptr<sigmafive::graphics::static_mesh>(new sigmafive::graphics::static_mesh());
+        std::string name = mesh->mName.C_Str();
+        if(names[mesh->mName.C_Str()] != 0)
+            name += "_"+std::to_string(names[mesh->mName.C_Str()]);
+
+        names[mesh->mName.C_Str()]++;
+
+        static_meshes[i] = std::make_shared<sigmafive::graphics::static_mesh>(sigmafive::resource::identifier{path/name});
         static_meshes[i]->set_data(vertices, triangles);
     }
 

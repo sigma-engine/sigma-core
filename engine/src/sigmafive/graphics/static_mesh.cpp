@@ -2,7 +2,8 @@
 
 namespace sigmafive {
     namespace graphics {
-        static_mesh::static_mesh() {
+        static_mesh::static_mesh(sigmafive::resource::identifier id) : resource(id){
+
         }
 
         static_mesh::~static_mesh() {

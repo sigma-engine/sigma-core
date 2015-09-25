@@ -25,7 +25,7 @@ namespace sigmafive {
 
             typedef std::array<unsigned int, 3> triangle;
 
-            static_mesh();
+            static_mesh(sigmafive::resource::identifier id);
 
             void set_data(const std::vector<vertex> &vertices, const std::vector<triangle> &triangles);
 
