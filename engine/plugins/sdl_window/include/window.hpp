@@ -9,7 +9,7 @@
 
 #include <sigmafive/system/window.hpp>
 
-#include <sigmafive/math/vec2.hpp>
+#include <cppbr/math/vec2.hpp>
 
 #include <string>
 

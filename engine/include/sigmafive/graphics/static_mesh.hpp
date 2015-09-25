@@ -4,9 +4,9 @@
 #include <sigmafive/config.hpp>
 #include <sigmafive/resource/resource.hpp>
 
-#include <sigmafive/math/vec2.hpp>
-#include <sigmafive/math/vec3.hpp>
-#include <sigmafive/math/mat4.hpp>
+#include <cppbr/math/vec2.hpp>
+#include <cppbr/math/vec3.hpp>
+#include <cppbr/math/mat4.hpp>
 
 #include <array>
 #include <vector>

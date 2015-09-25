@@ -4,8 +4,8 @@
 #include <sigmafive/config.hpp>
 #include <sigmafive/object.hpp>
 
-#include <sigmafive/math/vec2.hpp>
-#include <sigmafive/math/mat4.hpp>
+#include <cppbr/math/vec2.hpp>
+#include <cppbr/math/mat4.hpp>
 
 namespace sigmafive {
     namespace graphics {

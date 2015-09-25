@@ -3,9 +3,9 @@
 
 #include <editor/config.hpp>
 
-#include <sigmafive/math/vec2.hpp>
-#include <sigmafive/math/vec3.hpp>
-#include <sigmafive/math/quaternion.hpp>
+#include <cppbr/math/vec2.hpp>
+#include <cppbr/math/vec3.hpp>
+#include <cppbr/math/quaternion.hpp>
 
 namespace sigmafive {
     namespace editor {

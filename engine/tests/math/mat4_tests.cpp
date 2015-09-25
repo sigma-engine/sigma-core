@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <sigmafive/math/mat4.hpp>
+#include <cppbr/math/mat4.hpp>
 
 TEST(mat4_tests, default_constructor) {
     int4x4 a;

@@ -4,8 +4,8 @@
 
 #include <gl_core_4_0.hpp>
 
-#include <sigmafive/math/vec2.hpp>
-#include <sigmafive/math/vec4.hpp>
+#include <cppbr/math/vec2.hpp>
+#include <cppbr/math/vec4.hpp>
 
 #include <vector>
 

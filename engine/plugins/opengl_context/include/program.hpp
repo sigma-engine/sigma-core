@@ -5,13 +5,13 @@
 #include <texture_2d.hpp>
 #include <gl_core_4_0.hpp>
 
-#include <sigmafive/math/vec2.hpp>
-#include <sigmafive/math/vec3.hpp>
-#include <sigmafive/math/vec4.hpp>
-#include <sigmafive/math/mat2.hpp>
-#include <sigmafive/math/mat3.hpp>
-#include <sigmafive/math/mat4.hpp>
-#include <sigmafive/math/quaternion.hpp>
+#include <cppbr/math/vec2.hpp>
+#include <cppbr/math/vec3.hpp>
+#include <cppbr/math/vec4.hpp>
+#include <cppbr/math/mat2.hpp>
+#include <cppbr/math/mat3.hpp>
+#include <cppbr/math/mat4.hpp>
+#include <cppbr/math/quaternion.hpp>
 
 #include <string>
 #include <vector>

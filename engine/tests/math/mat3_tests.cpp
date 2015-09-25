@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <sigmafive/math/mat3.hpp>
+#include <cppbr/math/mat3.hpp>
 
 TEST(mat3_tests, default_constructor) {
     int3x3 a;

@@ -48,15 +48,6 @@ set(HEADERS
 	include/sigmafive/type_info.hpp
 	include/sigmafive/engine.hpp
 
-	include/sigmafive/math/mat2.hpp
-	include/sigmafive/math/mat3.hpp
-	include/sigmafive/math/mat4.hpp
-	include/sigmafive/math/vec2.hpp
-	include/sigmafive/math/vec3.hpp
-	include/sigmafive/math/vec4.hpp
-	include/sigmafive/math/utils.hpp
-	include/sigmafive/math/quaternion.hpp
-
 	include/sigmafive/serialization/unique_ptr.hpp
 
 	include/sigmafive/system/window_manager.hpp
@@ -87,7 +78,7 @@ target_include_directories(engine
 	include
 	${Boost_INCLUDE_DIRS})
 
-target_link_libraries(engine ${Boost_LIBRARIES})
+target_link_libraries(engine cppbr-math ${Boost_LIBRARIES})
 
 if(UNIX)
 	target_link_libraries(engine dl)

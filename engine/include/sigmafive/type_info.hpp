@@ -1,13 +1,13 @@
 #ifndef SIGMAFIVE_TYPE_INFO_HPP
 #define SIGMAFIVE_TYPE_INFO_HPP
 
-#include <sigmafive/math/vec2.hpp>
-#include <sigmafive/math/vec3.hpp>
-#include <sigmafive/math/vec4.hpp>
-#include <sigmafive/math/mat2.hpp>
-#include <sigmafive/math/mat3.hpp>
-#include <sigmafive/math/mat4.hpp>
-#include <sigmafive/math/quaternion.hpp>
+#include <cppbr/math/vec2.hpp>
+#include <cppbr/math/vec3.hpp>
+#include <cppbr/math/vec4.hpp>
+#include <cppbr/math/mat2.hpp>
+#include <cppbr/math/mat3.hpp>
+#include <cppbr/math/mat4.hpp>
+#include <cppbr/math/quaternion.hpp>
 
 namespace sigmafive {
     template<class T, typename U>
