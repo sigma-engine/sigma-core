@@ -19,7 +19,6 @@ set(SOURCES
 set(HEADERS
 	include/editor/config.hpp
 	include/editor/application.hpp
-	include/editor/trackball_controller.hpp
 
 	include/editor/component_manager.hpp
 	include/editor/entity_manager.hpp

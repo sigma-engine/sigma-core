@@ -4,12 +4,12 @@
 #include <editor/config.hpp>
 #include <QOpenGLWidget>
 
-#include <editor/trackball_controller.hpp>
 
 #include <sigmafive/object.hpp>
 
 #include <cppbr/math/vec2.hpp>
 #include <cppbr/math/mat4.hpp>
+#include <cppbr/math/trackball_controller.hpp>
 
 #include <QMouseEvent>
 #include <QWheelEvent>
@@ -81,7 +81,7 @@ namespace sigmafive {
 
                 float4x4 view_matrix_;
                 float4x4 projection_matrix_;
-                trackball_controller trackball_controller_;
+                trackball_controller<float> trackball_controller_;
 
                 editor::entity_manager *managerModel_;
                 editor::component_manager *component_manager_;

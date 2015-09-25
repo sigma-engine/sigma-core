@@ -6,8 +6,9 @@
 
 #include <editor/entity_manager.hpp>
 #include <editor/component_manager.hpp>
-#include <editor/trackball_controller.hpp>
 #include <editor/component_system_manager.hpp>
+
+#include <cppbr/math/trackball_controller.hpp>
 
 namespace sigmafive {
     namespace editor {
@@ -66,7 +67,7 @@ namespace sigmafive {
             private:
                 float2 convert(QPoint p) const;
 
-                editor::trackball_controller trackball_controller_;
+                trackball_controller<float> trackball_controller_;
 
                 entity_manager *entityManager_;
                 editor::component_manager *componentManager_;
