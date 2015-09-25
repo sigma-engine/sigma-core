@@ -1,17 +1,17 @@
 #ifndef SIGMAFIVE_GRAPHICS_OPENGL_MATERIAL_HPP
 #define SIGMAFIVE_GRAPHICS_OPENGL_MATERIAL_HPP
 
-#include <shader.hpp>
-#include <program.hpp>
+#include <cppbr/opengl/shader.hpp>
+#include <cppbr/opengl/program.hpp>
 
 namespace sigmafive {
     namespace graphics {
         namespace opengl {
             class material {
             public:
-                void attach_shader(opengl::shader &shader);
+                void attach_shader(cppbr::opengl::shader &shader);
 
-                void dettach_shader(opengl::shader &shader);
+                void dettach_shader(cppbr::opengl::shader &shader);
 
                 void use();
 
@@ -20,7 +20,7 @@ namespace sigmafive {
                     program_.set_uniform(name, value);
                 }
             private:
-                opengl::program program_;
+                cppbr::opengl::program program_;
             };
         }
     }

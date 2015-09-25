@@ -2,11 +2,11 @@
 
 #include <sigmafive/engine.hpp>
 
-#include <gl_core_4_0.hpp>
-
 #include <memory>
 
 #include <iostream>
+
+using namespace cppbr::opengl;
 
 namespace sigmafive {
     namespace graphics {

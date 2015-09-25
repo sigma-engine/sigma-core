@@ -1,9 +1,9 @@
 #ifndef SIGMAFIVE_GRAPHICS_OPENGL_STATIC_MESH_HPP
 #define SIGMAFIVE_GRAPHICS_OPENGL_STATIC_MESH_HPP
 
-#include <vertex_array.hpp>
-#include <index_buffer.hpp>
-#include <vertex_buffer.hpp>
+#include <cppbr/opengl/vertex_array.hpp>
+#include <cppbr/opengl/index_buffer.hpp>
+#include <cppbr/opengl/vertex_buffer.hpp>
 
 #include <sigmafive/graphics/static_mesh.hpp>
 
@@ -11,12 +11,12 @@ namespace sigmafive {
     namespace graphics {
         namespace opengl {
             struct static_mesh {
-                opengl::vertex_array vertex_array;
-                opengl::index_buffer index_buffer;
-                opengl::vertex_buffer<graphics::static_mesh::vertex> vertex_buffer;
+                cppbr::opengl::vertex_array vertex_array;
+                cppbr::opengl::index_buffer index_buffer;
+                cppbr::opengl::vertex_buffer<graphics::static_mesh::vertex> vertex_buffer;
 
                 static_mesh(graphics::static_mesh *mesh_resource)
-                        : index_buffer(buffer_usage::static_draw), vertex_buffer(buffer_usage::static_draw) {
+                        : index_buffer(cppbr::opengl::buffer_usage::static_draw), vertex_buffer(cppbr::opengl::buffer_usage::static_draw) {
                     vertex_buffer.set_data(mesh_resource->vertices());
                     auto tris = mesh_resource->triangles();
                     std::vector<unsigned int> indices(tris.size() * 3);
@@ -33,7 +33,7 @@ namespace sigmafive {
                 }
 
                 void draw() {
-                    vertex_array.draw(sigmafive::graphics::opengl::primitive_type::triangles, index_buffer, 0,
+                    vertex_array.draw(cppbr::opengl::primitive_type::triangles, index_buffer, 0,
                                       index_buffer.size());
                 }
             };

@@ -2,6 +2,8 @@
 #include <stdexcept>
 #include <iostream>
 
+using namespace cppbr::opengl;
+
 namespace sigmafive {
     namespace graphics {
         namespace opengl {

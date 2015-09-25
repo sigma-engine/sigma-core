@@ -45,7 +45,6 @@ set(HEADERS
 	include/sigmafive/object.hpp
 	include/sigmafive/factory.hpp
 	include/sigmafive/sha1_hash.hpp
-	include/sigmafive/type_info.hpp
 	include/sigmafive/engine.hpp
 
 	include/sigmafive/serialization/unique_ptr.hpp

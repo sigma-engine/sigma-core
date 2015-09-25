@@ -4,11 +4,11 @@ namespace sigmafive {
     namespace graphics {
         namespace opengl {
 
-            void material::attach_shader(opengl::shader &shader) {
+            void material::attach_shader(cppbr::opengl::shader &shader) {
                 program_.attach(shader);
             }
 
-            void material::dettach_shader(opengl::shader &shader) {
+            void material::dettach_shader(cppbr::opengl::shader &shader) {
                 program_.detach(shader);
             }
 

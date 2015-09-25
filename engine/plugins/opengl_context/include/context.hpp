@@ -9,8 +9,9 @@
 
 #include <sigmafive/graphics/context.hpp>
 
-#include <shader.hpp>
-#include <program.hpp>
+#include <cppbr/opengl/shader.hpp>
+#include <cppbr/opengl/program.hpp>
+
 #include <g_buffer.hpp>
 #include <material.hpp>
 #include <static_mesh.hpp>
@@ -53,16 +54,16 @@ namespace sigmafive {
                 std::queue<static_mesh_instance> static_meshes_;
 
                 opengl::material material_;
-                opengl::shader vertex_shader;
-                opengl::shader fragment_shader;
+                cppbr::opengl::shader vertex_shader;
+                cppbr::opengl::shader fragment_shader;
 
-                opengl::vertex_array plane_vertex_array;
-                opengl::index_buffer plane_index_buffer;
-                opengl::vertex_buffer<graphics::static_mesh::vertex> plane_vertex_buffer;
+                cppbr::opengl::vertex_array plane_vertex_array;
+                cppbr::opengl::index_buffer plane_index_buffer;
+                cppbr::opengl::vertex_buffer<graphics::static_mesh::vertex> plane_vertex_buffer;
 
-                opengl::shader plane_vertex_shader;
-                opengl::shader plane_fragment_shader;
-                opengl::program plane_program;
+                cppbr::opengl::shader plane_vertex_shader;
+                cppbr::opengl::shader plane_fragment_shader;
+                cppbr::opengl::program plane_program;
 
                 opengl::static_mesh_manager static_mesh_manager_;
 
