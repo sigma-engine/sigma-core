@@ -7,7 +7,6 @@ find_package(Qt5 COMPONENTS Core Qml OpenGL Quick Widgets)
 
 set(SOURCES
 	src/editor/application.cpp
-	src/editor/trackball_controller.cpp
 
 	src/editor/component_manager.cpp
 	src/editor/entity_manager.cpp
