@@ -2,11 +2,11 @@
 #define SIGMAFIVE_EDITOR_CONFIG_HPP
 
 #if defined(_WIN32)
-#if defined(EDITOR_CORE_EXPORT) // inside DLL
+#if defined(editor_core_EXPORT) // inside DLL
 #    define EDITOR_API   __declspec(dllexport)
 #else // outside DLL
 #   define EDITOR_API   __declspec(dllimport)
-#endif  // EDITOR_CORE_EXPORT
+#endif  // editor_core_EXPORT
 #else
 #   define EDITOR_API
 #endif //_WIN32

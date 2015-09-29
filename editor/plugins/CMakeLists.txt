@@ -1,1 +1,0 @@
-add_subdirectory(assimp_import_plugin)
