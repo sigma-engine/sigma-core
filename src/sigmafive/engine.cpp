@@ -9,6 +9,7 @@
 namespace sigmafive {
 
     engine::engine(int &argc, char **argv) {
+        boost::filesystem::current_path(boost::filesystem::path{argv[0]}.parent_path());
         //TODO clean this up
         //this is a hack just to get things working
         for (auto &entry : boost::make_iterator_range(boost::filesystem::directory_iterator(default_plugin_path()),
@@ -37,12 +38,12 @@ namespace sigmafive {
     boost::filesystem::path engine::default_plugin_path() {
 #ifdef CMAKE_IDE_GENERATOR
 #ifdef ENGINE_DEBUG
-        return boost::filesystem::system_complete("plugins/Debug");
+        return boost::filesystem::current_path()/"plugins"/"Debug";
 #else
-        return boost::filesystem::system_complete("plugins/Release");
+        return boost::filesystem::current_path()/"plugins"/"Release";
 #endif
 #else
-        return boost::filesystem::system_complete("plugins");
+        return boost::filesystem::current_path()/"plugins";
 #endif
     }
 
