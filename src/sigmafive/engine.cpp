@@ -42,7 +42,7 @@ namespace sigmafive {
         return "plugins/Release";
 #endif
 #else
-        return boost::filesystem::path(plugins");
+        return boost::filesystem::path("plugins");
 #endif
     }
 
