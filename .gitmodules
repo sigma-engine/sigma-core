@@ -1,4 +1,0 @@
-[submodule "cppbr"]
-	path = cppbr
-	url = ../cppbr.git
-	branch = master
