@@ -2,7 +2,7 @@
 #define SIGMAFIVE_CONFIG_HPP
 
 #if defined(_WIN32)
-#if defined(engine_EXPORT) // inside DLL
+#if defined(SIGMA_FIVE_ENGINE_EXPORT) // inside DLL
 #    define SIGMAFIVE_API   __declspec(dllexport)
 #else // outside DLL
 #   define SIGMAFIVE_API   __declspec(dllimport)
