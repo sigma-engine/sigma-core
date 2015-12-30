@@ -74,9 +74,9 @@ add_library(sigma-five-engine SHARED ${SOURCES} ${HEADERS})
 target_include_directories(sigma-five-engine PUBLIC include)
 
 target_compile_definitions(sigma-five-engine
-PUBLIC 
+PUBLIC
     -D$<$<CONFIG:Debug>:SIGMA_FIVE_DEBUG>
-PRIVATE 
+PRIVATE
     -DSIGMA_FIVE_ENGINE_EXPORT
 )
 
