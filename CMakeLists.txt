@@ -89,6 +89,3 @@ target_link_libraries(sigma-five-engine cppbr-math ${Boost_LIBRARIES})
 if(UNIX)
     target_link_libraries(sigma-five-engine dl)
 endif()
-
-add_subdirectory(plugins/opengl_context)
-add_subdirectory(plugins/sdl_window)
