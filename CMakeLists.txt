@@ -17,7 +17,6 @@ find_package(Boost REQUIRED COMPONENTS system filesystem)
 
 set(SOURCES
     src/sigmafive/engine.cpp
-    src/sigmafive/sha1_hash.cpp
 
     src/sigmafive/game/static_mesh_component.cpp
     src/sigmafive/game/static_mesh_component_system.cpp
@@ -37,8 +36,6 @@ set(HEADERS
     include/sigmafive/config.hpp
     include/sigmafive/engine.hpp
 
-    include/sigmafive/sha1_hash.hpp
-
     include/sigmafive/game/static_mesh_component.hpp
     include/sigmafive/game/static_mesh_component_system.hpp
     include/sigmafive/game/transform_component.hpp
@@ -48,8 +45,6 @@ set(HEADERS
     include/sigmafive/graphics/static_mesh.hpp
 
     include/sigmafive/resource/resource.hpp
-
-    include/sigmafive/serialization/unique_ptr.hpp
 
     include/sigmafive/system/window.hpp
     include/sigmafive/system/window_manager.hpp
