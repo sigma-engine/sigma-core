@@ -75,7 +75,3 @@ target_link_libraries(sigma-five-engine sigma-five-entity cppbr-math cppbr-meta 
 if(UNIX)
     target_link_libraries(sigma-five-engine dl)
 endif()
-
-if(SIGMA_FIVE_ENGINE_BUILD_TESTS)
-    add_subdirectory(tests)
-endif()
