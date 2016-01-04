@@ -5,6 +5,7 @@ include(pack-cpp)
 
 add_package(cppbr-math)
 add_package(cppbr-meta)
+add_package(sigma-five-entity)
 
 if(MSVC)
     set(Boost_USE_STATIC_LIBS ON)
@@ -18,13 +19,6 @@ set(SOURCES
     src/sigmafive/engine.cpp
     src/sigmafive/sha1_hash.cpp
 
-    src/sigmafive/game/component.cpp
-    src/sigmafive/game/component_manager.cpp
-    src/sigmafive/game/component_registry.cpp
-    src/sigmafive/game/component_system.cpp
-    src/sigmafive/game/component_system_manager.cpp
-    src/sigmafive/game/entity.cpp
-    src/sigmafive/game/entity_manager.cpp
     src/sigmafive/game/static_mesh_component.cpp
     src/sigmafive/game/static_mesh_component_system.cpp
     src/sigmafive/game/transform_component.cpp
@@ -42,16 +36,9 @@ set(SOURCES
 set(HEADERS
     include/sigmafive/config.hpp
     include/sigmafive/engine.hpp
-    include/sigmafive/factory.hpp
+
     include/sigmafive/sha1_hash.hpp
 
-    include/sigmafive/game/component.hpp
-    include/sigmafive/game/component_manager.hpp
-    include/sigmafive/game/component_registry.hpp
-    include/sigmafive/game/component_system.hpp
-    include/sigmafive/game/component_system_manager.hpp
-    include/sigmafive/game/entity.hpp
-    include/sigmafive/game/entity_manager.hpp
     include/sigmafive/game/static_mesh_component.hpp
     include/sigmafive/game/static_mesh_component_system.hpp
     include/sigmafive/game/transform_component.hpp
@@ -83,7 +70,7 @@ if(NOT MSVC)
     target_compile_options(sigma-five-engine PUBLIC -std=c++14 -pedantic -fPIC)
 endif()
 
-target_link_libraries(sigma-five-engine cppbr-math cppbr-meta ${Boost_LIBRARIES})
+target_link_libraries(sigma-five-engine sigma-five-entity cppbr-math cppbr-meta ${Boost_LIBRARIES})
 
 if(UNIX)
     target_link_libraries(sigma-five-engine dl)

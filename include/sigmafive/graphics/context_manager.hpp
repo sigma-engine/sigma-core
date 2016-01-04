@@ -3,7 +3,7 @@
 
 #include <sigmafive/config.hpp>
 #include <cppbr/meta/object.hpp>
-#include <sigmafive/factory.hpp>
+#include <cppbr/meta/factory.hpp>
 
 #include <sigmafive/graphics/context.hpp>
 

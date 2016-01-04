@@ -3,15 +3,16 @@
 
 #include <sigmafive/config.hpp>
 #include <cppbr/meta/object.hpp>
+#include <cppbr/meta/factory.hpp>
 
-#include <sigmafive/game/component.hpp>
+#include <sigmafive/entity/component.hpp>
 
 #include <cppbr/math/vec3.hpp>
 #include <cppbr/math/quaternion.hpp>
 
 namespace sigmafive {
     namespace game {
-        class SIGMAFIVE_API transform_component : public game::component {
+        class SIGMAFIVE_API transform_component : public entity::component {
         CPPBR_META_CLASS()
         public:
             float3 position;
@@ -21,8 +22,8 @@ namespace sigmafive {
             float4x4 matrix();
         };
 
-        using transform_component_pool = simple_component_pool<transform_component>;
-        using transform_component_pool_factory = simple_factory<component_pool, transform_component_pool>;
+        using transform_component_pool = sigmafive::entity::simple_component_pool<transform_component>;
+        using transform_component_pool_factory = cppbr::meta::simple_factory<sigmafive::entity::component_pool, transform_component_pool>;
     }
 }
 

@@ -2,13 +2,13 @@
 #define SIGMAFIVE_SYSTEM_WINDOW_MANAGER_HPP
 
 #include <cppbr/meta/object.hpp>
-#include <sigmafive/factory.hpp>
+#include <cppbr/meta/factory.hpp>
 
 #include <sigmafive/system/window.hpp>
 
 namespace sigmafive {
     namespace system {
-        using window_factory = factory<window>;
+        using window_factory = cppbr::meta::factory<window>;
 
         class SIGMAFIVE_API window_manager : public cppbr::meta::object {
         CPPBR_META_CLASS()

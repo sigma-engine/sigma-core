@@ -11,18 +11,9 @@ set(SOURCES
     math/vec3_tests.cpp
     math/vec4_tests.cpp
     math/quaternion_tests.cpp
-
-    game/entity_tests.cpp
-    game/component_tests.cpp
-    game/fake_components.cpp
-    game/component_system_tests.cpp
-    game/component_manager_tests.cpp
-    game/entity_manager_tests.cpp
-    game/component_system_manager_tests.cpp
 )
 
 set(HEADERS
-    game/fake_components.hpp
 )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
