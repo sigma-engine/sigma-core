@@ -2,7 +2,7 @@
 #define SIGMAFIVE_GRAPHICS_CONTEXT_MANGER_HPP
 
 #include <sigmafive/config.hpp>
-#include <sigmafive/object.hpp>
+#include <cppbr/meta/object.hpp>
 #include <sigmafive/factory.hpp>
 
 #include <sigmafive/graphics/context.hpp>
@@ -22,15 +22,15 @@ namespace sigmafive {
             virtual std::unique_ptr<context> create(context_manager *manager) = 0;
         };
 
-        class SIGMAFIVE_API context_manager : public object {
-        SIGMAFIVE_CLASS()
+        class SIGMAFIVE_API context_manager : public cppbr::meta::object {
+        CPPBR_META_CLASS()
         public:
             context_manager();
 
-            void register_context(class_uid uid, std::unique_ptr<context_factory> factory);
+            void register_context(cppbr::meta::class_uid uid, std::unique_ptr<context_factory> factory);
 
             //TODO share_ptr
-            std::unique_ptr<context> create_context(class_uid uid);
+            std::unique_ptr<context> create_context(cppbr::meta::class_uid uid);
 
             //TODO weak_ptr
             void make_current(context *ctx);
@@ -38,12 +38,12 @@ namespace sigmafive {
             //TODO weak_ptr
             context *current_context();
 
-            void unregister_context(class_uid uid);
+            void unregister_context(cppbr::meta::class_uid uid);
 
         private:
             //TODO weak ptr
             context *current_context_;
-            std::unordered_map<class_uid, std::unique_ptr<context_factory>> context_factories_;
+            std::unordered_map<cppbr::meta::class_uid, std::unique_ptr<context_factory>> context_factories_;
         };
 
         template<class T>

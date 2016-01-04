@@ -2,7 +2,6 @@ add_package(googletest)
 
 set(SOURCES
     main.cpp
-    object_tests.cpp
 
     math/mat2_tests.cpp
     math/mat3_tests.cpp

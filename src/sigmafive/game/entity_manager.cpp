@@ -87,4 +87,4 @@ namespace sigmafive {
     }
 }
 
-EXPORT_SIGMAFIVE_CLASS(sigmafive::game::entity_manager)
+EXPORT_CPPBR_META_CLASS(sigmafive::game::entity_manager)

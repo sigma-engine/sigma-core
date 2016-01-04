@@ -31,4 +31,4 @@ namespace sigmafive {
     }
 }
 
-EXPORT_SIGMAFIVE_CLASS(sigmafive::game::component_system_manager)
+EXPORT_CPPBR_META_CLASS(sigmafive::game::component_system_manager)

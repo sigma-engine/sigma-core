@@ -11,4 +11,4 @@ namespace sigmafive {
     }
 }
 
-EXPORT_SIGMAFIVE_CLASS(sigmafive::game::transform_component)
+EXPORT_CPPBR_META_CLASS(sigmafive::game::transform_component)

@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <sigmafive/object.hpp>
+#include <cppbr/meta/object.hpp>
 #include <sigmafive/game/entity_manager.hpp>
 
 TEST(entity_manager_tests, default_constructor) {

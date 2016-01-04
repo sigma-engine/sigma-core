@@ -2,7 +2,7 @@
 #define SIGMAFIVE_GAME_ENTITY_MANAGER_HPP
 
 #include <sigmafive/config.hpp>
-#include <sigmafive/object.hpp>
+#include <cppbr/meta/object.hpp>
 
 #include <sigmafive/game/entity.hpp>
 
@@ -11,8 +11,8 @@
 
 namespace sigmafive {
     namespace game {
-        class SIGMAFIVE_API entity_manager : public object {
-        SIGMAFIVE_CLASS()
+        class SIGMAFIVE_API entity_manager : public cppbr::meta::object {
+        CPPBR_META_CLASS()
 
             struct is_entity_alive {
                 inline bool operator()(entity e) { return e.index != std::uint32_t(-1); }

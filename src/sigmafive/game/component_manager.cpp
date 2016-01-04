@@ -15,7 +15,7 @@ namespace sigmafive {
             return component_masks_[e.index];
         }
 
-        component *component_manager::add_component(class_uid component_id, entity e) {
+        component *component_manager::add_component(cppbr::meta::class_uid component_id, entity e) {
             auto it = component_pools_.find(component_id);
             if (it == component_pools_.end())
                 it = component_pools_.emplace(
@@ -29,14 +29,14 @@ namespace sigmafive {
             return it->second.get()->add_component(e);
         }
 
-        bool component_manager::has_component(class_uid component_id, entity e) {
+        bool component_manager::has_component(cppbr::meta::class_uid component_id, entity e) {
             if (e.index >= component_masks_.size())
                 return false;
             auto bs = registry_->mask_for(component_id);
             return (component_masks_[e.index] & bs) == bs;
         }
 
-        component *component_manager::get_component(class_uid component_id, entity e) {
+        component *component_manager::get_component(cppbr::meta::class_uid component_id, entity e) {
             auto it = component_pools_.find(component_id);
             if (it == component_pools_.end())
                 return nullptr;
@@ -44,7 +44,7 @@ namespace sigmafive {
             return it->second.get()->get_component(e);
         }
 
-        void component_manager::remove_component(class_uid component_id, entity e) {
+        void component_manager::remove_component(cppbr::meta::class_uid component_id, entity e) {
             auto it = component_pools_.find(component_id);
             if (it == component_pools_.end() || e.index >= component_masks_.size())
                 return;
@@ -64,4 +64,4 @@ namespace sigmafive {
     }
 }
 
-EXPORT_SIGMAFIVE_CLASS(sigmafive::game::component_manager)
+EXPORT_CPPBR_META_CLASS(sigmafive::game::component_manager)

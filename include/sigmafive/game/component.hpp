@@ -2,7 +2,7 @@
 #define SIGMAFIVE_GAME_COMPONENT_HPP
 
 #include <sigmafive/config.hpp>
-#include <sigmafive/object.hpp>
+#include <cppbr/meta/object.hpp>
 
 #include <sigmafive/factory.hpp>
 
@@ -17,14 +17,14 @@ namespace sigmafive {
         static constexpr const std::uint32_t MAX_NUM_COMPONENTS = 64;
         typedef std::bitset<MAX_NUM_COMPONENTS> component_mask;
 
-        class SIGMAFIVE_API component : public object {
-        SIGMAFIVE_CLASS()
+        class SIGMAFIVE_API component : public cppbr::meta::object {
+        CPPBR_META_CLASS()
         public:
             virtual ~component() = default;
         };
 
-        class SIGMAFIVE_API component_pool : public object {
-        SIGMAFIVE_CLASS()
+        class SIGMAFIVE_API component_pool : public cppbr::meta::object {
+        CPPBR_META_CLASS()
         public:
             virtual ~component_pool() = default;
 
@@ -38,7 +38,7 @@ namespace sigmafive {
 
         template<typename T>
         class simple_component_pool : public component_pool {
-        SIGMAFIVE_CLASS()
+        CPPBR_META_CLASS()
         public:
             component *add_component(entity e) override {
                 if (e.index >= components_.size())

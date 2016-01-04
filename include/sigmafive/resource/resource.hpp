@@ -2,7 +2,7 @@
 #define SIGMAFIVE_RESOURCE_RESOURCE_HPP
 
 #include <sigmafive/config.hpp>
-#include <sigmafive/object.hpp>
+#include <cppbr/meta/object.hpp>
 
 #include <boost/filesystem/path.hpp>
 
@@ -25,8 +25,8 @@ namespace sigmafive {
             std::size_t hash_;
         };
 
-        class SIGMAFIVE_API resource : public object {
-        SIGMAFIVE_CLASS()
+        class SIGMAFIVE_API resource : public cppbr::meta::object {
+        CPPBR_META_CLASS()
         public:
             resource(identifier id);
 

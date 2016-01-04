@@ -4,7 +4,7 @@
 namespace sigmafive {
     namespace resource {
         identifier::identifier(boost::filesystem::path path)
-            : path_(path), hash_(compile_time_hash(path.c_str())) {
+            : path_(path), hash_(cppbr::meta::compile_time_hash(path.c_str())) {
         }
 
         boost::filesystem::path identifier::path() const {
@@ -32,4 +32,4 @@ namespace sigmafive {
     }
 }
 
-EXPORT_SIGMAFIVE_CLASS(sigmafive::resource::resource)
+EXPORT_CPPBR_META_CLASS(sigmafive::resource::resource)

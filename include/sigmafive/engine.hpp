@@ -2,7 +2,7 @@
 #define SIGMAFIVE_ENGINE_HPP
 
 #include <sigmafive/config.hpp>
-#include <sigmafive/object.hpp>
+#include <cppbr/meta/object.hpp>
 
 #include <sigmafive/game/component_registry.hpp>
 
@@ -14,8 +14,8 @@
 #include <boost/dll/shared_library.hpp>
 
 namespace sigmafive {
-    class SIGMAFIVE_API engine : public object {
-    SIGMAFIVE_CLASS()
+    class SIGMAFIVE_API engine : public cppbr::meta::object {
+    CPPBR_META_CLASS()
     public:
         engine(int &argc, char **argv);
 

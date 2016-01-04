@@ -2,7 +2,7 @@
 #define SIGMAFIVE_GAME_COMPONENT_MANAGER_HPP
 
 #include <sigmafive/config.hpp>
-#include <sigmafive/object.hpp>
+#include <cppbr/meta/object.hpp>
 
 #include <sigmafive/game/entity.hpp>
 #include <sigmafive/game/component.hpp>
@@ -16,20 +16,20 @@ namespace sigmafive {
     namespace game {
         class component_registry;
 
-        class SIGMAFIVE_API component_manager : public object {
-        SIGMAFIVE_CLASS()
+        class SIGMAFIVE_API component_manager : public cppbr::meta::object {
+        CPPBR_META_CLASS()
         public:
             component_manager(component_registry *registry);
 
             virtual component_mask get_component_mask(entity e) const;
 
-            virtual component *add_component(class_uid component_id, entity e);
+            virtual component *add_component(cppbr::meta::class_uid component_id, entity e);
 
-            virtual bool has_component(class_uid component_id, entity e);
+            virtual bool has_component(cppbr::meta::class_uid component_id, entity e);
 
-            virtual component *get_component(class_uid component_id, entity e);
+            virtual component *get_component(cppbr::meta::class_uid component_id, entity e);
 
-            virtual void remove_component(class_uid component_id, entity e);
+            virtual void remove_component(cppbr::meta::class_uid component_id, entity e);
 
             virtual void remove_all_components(entity e);
 
@@ -56,7 +56,7 @@ namespace sigmafive {
         private:
             component_registry *registry_;
             std::vector<component_mask> component_masks_;
-            std::unordered_map<class_uid, std::unique_ptr<component_pool>> component_pools_;
+            std::unordered_map<cppbr::meta::class_uid, std::unique_ptr<component_pool>> component_pools_;
         };
     }
 }

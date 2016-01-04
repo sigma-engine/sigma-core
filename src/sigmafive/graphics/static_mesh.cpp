@@ -18,4 +18,4 @@ namespace sigmafive {
     }
 }
 
-EXPORT_SIGMAFIVE_CLASS(sigmafive::graphics::static_mesh)
+EXPORT_CPPBR_META_CLASS(sigmafive::graphics::static_mesh)

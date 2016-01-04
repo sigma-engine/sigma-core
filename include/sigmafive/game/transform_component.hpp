@@ -2,7 +2,7 @@
 #define SIGMAFIVE_GAME_TRANSFORM_COMPONENT_HPP
 
 #include <sigmafive/config.hpp>
-#include <sigmafive/object.hpp>
+#include <cppbr/meta/object.hpp>
 
 #include <sigmafive/game/component.hpp>
 
@@ -12,7 +12,7 @@
 namespace sigmafive {
     namespace game {
         class SIGMAFIVE_API transform_component : public game::component {
-        SIGMAFIVE_CLASS()
+        CPPBR_META_CLASS()
         public:
             float3 position;
             float3 scale;

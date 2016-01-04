@@ -2,7 +2,7 @@
 #define SIGMAFIVE_GRAPHICS_CONTEXT_HPP
 
 #include <sigmafive/config.hpp>
-#include <sigmafive/object.hpp>
+#include <cppbr/meta/object.hpp>
 
 #include <cppbr/math/vec2.hpp>
 #include <cppbr/math/mat4.hpp>
@@ -12,8 +12,8 @@ namespace sigmafive {
         class context_manager;
         class static_mesh;
 
-        class SIGMAFIVE_API context : public object {
-        SIGMAFIVE_CLASS()
+        class SIGMAFIVE_API context : public cppbr::meta::object {
+        CPPBR_META_CLASS()
         public:
             context(graphics::context_manager *manager);
 

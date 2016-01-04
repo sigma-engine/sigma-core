@@ -7,7 +7,7 @@
 #include <sigmafive/game/component_system_manager.hpp>
 
 class fake_1_component_system : public sigmafive::game::component_system {
-SIGMAFIVE_CLASS()
+CPPBR_META_CLASS()
 public:
     virtual ~fake_1_component_system() {
     }
@@ -17,7 +17,7 @@ public:
     }
 };
 
-EXPORT_SIGMAFIVE_CLASS(fake_1_component_system)
+EXPORT_CPPBR_META_CLASS(fake_1_component_system)
 
 TEST(component_system_manager_tests, add_component_system) {
     sigmafive::game::component_system_manager component_system_manager;

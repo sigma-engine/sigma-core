@@ -2,7 +2,7 @@
 #define SIGMAFIVE_GAME_COMPONENT_SYSTEM_MANAGER_HPP
 
 #include <sigmafive/config.hpp>
-#include <sigmafive/object.hpp>
+#include <cppbr/meta/object.hpp>
 
 #include <sigmafive/game/component_system.hpp>
 
@@ -11,10 +11,10 @@
 
 namespace sigmafive {
     namespace game {
-        class SIGMAFIVE_API component_system_manager : public object {
-        SIGMAFIVE_CLASS()
+        class SIGMAFIVE_API component_system_manager : public cppbr::meta::object {
+        CPPBR_META_CLASS()
         public:
-            typedef std::unordered_map<class_uid, std::unique_ptr<component_system>> container;
+            typedef std::unordered_map<cppbr::meta::class_uid, std::unique_ptr<component_system>> container;
             typedef container::reference reference;
             typedef container::const_reference const_reference;
             typedef container::iterator iterator;

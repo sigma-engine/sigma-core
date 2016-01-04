@@ -5,4 +5,4 @@ namespace sigmafive {
     }
 }
 
-EXPORT_SIGMAFIVE_CLASS(sigmafive::system::window)
+EXPORT_CPPBR_META_CLASS(sigmafive::system::window)

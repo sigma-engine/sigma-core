@@ -4,6 +4,7 @@ project(sigma-five-engine)
 include(pack-cpp)
 
 add_package(cppbr-math)
+add_package(cppbr-meta)
 
 if(MSVC)
     set(Boost_USE_STATIC_LIBS ON)
@@ -15,7 +16,6 @@ find_package(Boost REQUIRED COMPONENTS system filesystem)
 
 set(SOURCES
     src/sigmafive/engine.cpp
-    src/sigmafive/object.cpp
     src/sigmafive/sha1_hash.cpp
 
     src/sigmafive/game/component.cpp
@@ -43,7 +43,6 @@ set(HEADERS
     include/sigmafive/config.hpp
     include/sigmafive/engine.hpp
     include/sigmafive/factory.hpp
-    include/sigmafive/object.hpp
     include/sigmafive/sha1_hash.hpp
 
     include/sigmafive/game/component.hpp
@@ -84,7 +83,7 @@ if(NOT MSVC)
     target_compile_options(sigma-five-engine PUBLIC -std=c++14 -pedantic -fPIC)
 endif()
 
-target_link_libraries(sigma-five-engine cppbr-math ${Boost_LIBRARIES})
+target_link_libraries(sigma-five-engine cppbr-math cppbr-meta ${Boost_LIBRARIES})
 
 if(UNIX)
     target_link_libraries(sigma-five-engine dl)
