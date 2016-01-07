@@ -22,7 +22,7 @@ namespace sigmafive {
             float4x4 matrix();
         };
 
-        using transform_component_pool = sigmafive::entity::component_pool<transform_component>;
+        using transform_component_pool = sigmafive::entity::default_component_pool<transform_component>;
         using transform_component_pool_factory = cppbr::meta::simple_factory<sigmafive::entity::base_component_pool, transform_component_pool>;
     }
 }
