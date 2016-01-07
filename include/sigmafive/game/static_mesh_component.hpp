@@ -12,7 +12,7 @@ namespace sigmafive {
         class static_mesh;
     }
     namespace game {
-        class SIGMAFIVE_API static_mesh_component : public entity::component {
+        class SIGMAFIVE_API static_mesh_component : public cppbr::meta::object {
         CPPBR_META_CLASS()
         public:
             void set_static_mesh(std::shared_ptr<graphics::static_mesh> static_mesh);
@@ -22,8 +22,8 @@ namespace sigmafive {
             std::shared_ptr<graphics::static_mesh> static_mesh_;
         };
 
-        using static_mesh_component_pool = sigmafive::entity::simple_component_pool<static_mesh_component>;
-        using static_mesh_component_pool_factory = cppbr::meta::simple_factory<sigmafive::entity::component_pool, static_mesh_component_pool>;
+        using static_mesh_component_pool = sigmafive::entity::component_pool<static_mesh_component>;
+        using static_mesh_component_pool_factory = cppbr::meta::simple_factory<sigmafive::entity::base_component_pool, static_mesh_component_pool>;
     }
 }
 

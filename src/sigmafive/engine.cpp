@@ -47,7 +47,7 @@ namespace sigmafive {
 #endif
     }
 
-    entity::component_registry *engine::component_registry() {
+    sigmafive::entity::component_registry *engine::component_registry() {
         return &component_registry_;
     }
 

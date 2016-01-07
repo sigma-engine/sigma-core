@@ -21,7 +21,7 @@ namespace sigmafive {
 
         static boost::filesystem::path default_plugin_path();
 
-        entity::component_registry *component_registry();
+        sigmafive::entity::component_registry *component_registry();
 
         graphics::context_manager *graphics_context_manager();
 
@@ -31,7 +31,7 @@ namespace sigmafive {
         //TODO hack
         std::vector<boost::dll::shared_library> plugins_;
 
-        entity::component_registry component_registry_;
+        sigmafive::entity::component_registry component_registry_;
         graphics::context_manager graphics_context_manager_;
         system::window_manager window_manager_;
     };

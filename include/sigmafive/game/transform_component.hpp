@@ -12,7 +12,7 @@
 
 namespace sigmafive {
     namespace game {
-        class SIGMAFIVE_API transform_component : public entity::component {
+        class SIGMAFIVE_API transform_component : public cppbr::meta::object {
         CPPBR_META_CLASS()
         public:
             float3 position;
@@ -22,8 +22,8 @@ namespace sigmafive {
             float4x4 matrix();
         };
 
-        using transform_component_pool = sigmafive::entity::simple_component_pool<transform_component>;
-        using transform_component_pool_factory = cppbr::meta::simple_factory<sigmafive::entity::component_pool, transform_component_pool>;
+        using transform_component_pool = sigmafive::entity::component_pool<transform_component>;
+        using transform_component_pool_factory = cppbr::meta::simple_factory<sigmafive::entity::base_component_pool, transform_component_pool>;
     }
 }
 
