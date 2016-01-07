@@ -22,7 +22,7 @@ namespace sigmafive {
             std::shared_ptr<graphics::static_mesh> static_mesh_;
         };
 
-        using static_mesh_component_pool = sigmafive::entity::component_pool<static_mesh_component>;
+        using static_mesh_component_pool = sigmafive::entity::default_component_pool<static_mesh_component>;
         using static_mesh_component_pool_factory = cppbr::meta::simple_factory<sigmafive::entity::base_component_pool, static_mesh_component_pool>;
     }
 }
