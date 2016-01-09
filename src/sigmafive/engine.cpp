@@ -2,48 +2,27 @@
 
 #include <sigmafive/game/transform_component.hpp>
 #include <sigmafive/game/static_mesh_component.hpp>
-
-#include <iostream>
-#include <boost/range/iterator_range.hpp>
+#include <sigmafive/entity/default_component_pool.hpp>
 
 namespace sigmafive {
 
-    engine::engine(int &argc, char **argv) {
+    engine::engine(int &argc, char **argv) : plugin_manger(default_plugin_path()) {
         boost::filesystem::current_path(boost::filesystem::path{argv[0]}.parent_path());
-        //TODO clean this up
-        //this is a hack just to get things working
-        for (auto &entry : boost::make_iterator_range(boost::filesystem::directory_iterator(default_plugin_path()),
-                                                      {})) {
-            if (boost::dll::shared_library::suffix() == entry.path().extension()) {
-                boost::dll::shared_library library{entry.path()};
-                if (library.has("register_plugin")) {
-                    plugins_.push_back(std::move(library));
-                    plugins_.back().get<void(sigmafive::engine *)>("register_plugin")(this);
-                }
-                else {
-                    std::cout << "warning: shared library in plugins folder that does not export a plugin." <<
-                    std::endl;
-                }
-            }
-        }
 
-        component_registry_.register_component(game::transform_component::CLASS_ID,
-                                               std::unique_ptr<game::transform_component_pool_factory>(
-                                                       new game::transform_component_pool_factory{}));
-        component_registry_.register_component(game::static_mesh_component::CLASS_ID,
-                                               std::unique_ptr<game::static_mesh_component_pool_factory>(
-                                                       new game::static_mesh_component_pool_factory{}));
+
+        component_registry_.register_component<game::transform_component>(entity::default_component_pool<game::transform_component>::factory);
+        component_registry_.register_component<game::static_mesh_component>(entity::default_component_pool<game::static_mesh_component>::factory);
     }
 
     boost::filesystem::path engine::default_plugin_path() {
 #ifdef CMAKE_IDE_GENERATOR
 #ifdef ENGINE_DEBUG
-        return boost::filesystem::current_path()/"plugins"/"Debug";
+        return boost::filesystem::path("..")/"plugins"/"Debug";
 #else
-        return boost::filesystem::current_path()/"plugins"/"Release";
+        return boost::filesystem::path("..")/"plugins"/"Release";
 #endif
 #else
-        return boost::filesystem::current_path()/"plugins";
+        return boost::filesystem::path("..")/"plugins";
 #endif
     }
 

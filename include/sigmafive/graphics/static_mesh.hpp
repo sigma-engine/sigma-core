@@ -13,8 +13,7 @@
 
 namespace sigmafive {
     namespace graphics {
-        class SIGMAFIVE_API static_mesh : public resource::resource {
-        CPPBR_META_CLASS()
+        class SIGMAFIVE_API static_mesh {
         public:
             struct vertex {
                 float3 position;
@@ -25,7 +24,7 @@ namespace sigmafive {
 
             typedef std::array<unsigned int, 3> triangle;
 
-            static_mesh(sigmafive::resource::identifier id);
+            static_mesh();
 
             void set_data(const std::vector<vertex> &vertices, const std::vector<triangle> &triangles);
 

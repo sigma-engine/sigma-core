@@ -13,5 +13,3 @@ namespace sigmafive {
         }
     }
 }
-
-EXPORT_CPPBR_META_CLASS(sigmafive::game::static_mesh_component)

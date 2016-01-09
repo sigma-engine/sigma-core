@@ -10,8 +10,7 @@
 
 #include <sigmafive/graphics/context_manager.hpp>
 
-#include <vector>
-#include <boost/dll/shared_library.hpp>
+#include <sigmafive/plugin_manager.hpp>
 
 namespace sigmafive {
     class SIGMAFIVE_API engine : public cppbr::meta::object {
@@ -28,8 +27,7 @@ namespace sigmafive {
         system::window_manager *window_manager();
 
     private:
-        //TODO hack
-        std::vector<boost::dll::shared_library> plugins_;
+        plugin_manager plugin_manger;
 
         sigmafive::entity::component_registry component_registry_;
         graphics::context_manager graphics_context_manager_;

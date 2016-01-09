@@ -17,6 +17,7 @@ find_package(Boost REQUIRED COMPONENTS system filesystem)
 
 set(SOURCES
     src/sigmafive/engine.cpp
+	src/sigmafive/plugin_manager.cpp
 
     src/sigmafive/game/static_mesh_component.cpp
     src/sigmafive/game/static_mesh_component_system.cpp
@@ -35,6 +36,7 @@ set(SOURCES
 set(HEADERS
     include/sigmafive/config.hpp
     include/sigmafive/engine.hpp
+	include/sigmafive/plugin_manager.hpp
 
     include/sigmafive/game/static_mesh_component.hpp
     include/sigmafive/game/static_mesh_component_system.hpp
@@ -45,6 +47,7 @@ set(HEADERS
     include/sigmafive/graphics/static_mesh.hpp
 
     include/sigmafive/resource/resource.hpp
+	include/sigmafive/resource/resource_cache.hpp
 
     include/sigmafive/system/window.hpp
     include/sigmafive/system/window_manager.hpp
@@ -70,3 +73,5 @@ target_link_libraries(sigma-five-engine sigma-five-entity cppbr-math cppbr-meta 
 if(UNIX)
     target_link_libraries(sigma-five-engine dl)
 endif()
+
+add_subdirectory(tests)

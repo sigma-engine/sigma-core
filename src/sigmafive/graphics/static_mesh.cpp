@@ -2,7 +2,7 @@
 
 namespace sigmafive {
     namespace graphics {
-        static_mesh::static_mesh(sigmafive::resource::identifier id) : resource(id){
+        static_mesh::static_mesh() {
 
         }
 
@@ -17,5 +17,3 @@ namespace sigmafive {
         }
     }
 }
-
-EXPORT_CPPBR_META_CLASS(sigmafive::graphics::static_mesh)
