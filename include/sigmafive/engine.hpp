@@ -4,7 +4,7 @@
 #include <sigmafive/config.hpp>
 #include <cppbr/meta/object.hpp>
 
-#include <sigmafive/entity/component_registry.hpp>
+#include <sigmafive/entity/component_cache_factory.hpp>
 
 #include <sigmafive/system/window_manager.hpp>
 
@@ -20,7 +20,7 @@ namespace sigmafive {
 
         static boost::filesystem::path default_plugin_path();
 
-        sigmafive::entity::component_registry *component_registry();
+        sigmafive::entity::component_cache_factory *component_cache_factory();
 
         graphics::context_manager *graphics_context_manager();
 
@@ -29,7 +29,7 @@ namespace sigmafive {
     private:
         plugin_manager plugin_manger;
 
-        sigmafive::entity::component_registry component_registry_;
+        sigmafive::entity::component_cache_factory component_cache_factory_;
         graphics::context_manager graphics_context_manager_;
         system::window_manager window_manager_;
     };

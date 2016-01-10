@@ -47,10 +47,13 @@ set(HEADERS
     include/sigmafive/graphics/static_mesh.hpp
 
     include/sigmafive/resource/resource.hpp
-	include/sigmafive/resource/resource_cache.hpp
 
     include/sigmafive/system/window.hpp
     include/sigmafive/system/window_manager.hpp
+
+
+
+	include/sigmafive/resource2/resource_cache.hpp
 )
 
 add_library(sigma-five-engine SHARED ${SOURCES} ${HEADERS})

@@ -2,7 +2,6 @@ add_package(googletest)
 
 set(SOURCES
     main.cpp
-    resource/resource_tests.cpp
 )
 
 set(HEADERS

@@ -13,6 +13,8 @@ namespace sigmafive {
 	class SIGMAFIVE_API plugin_manager {
 	public:
 		plugin_manager(boost::filesystem::path plugins_path);
+
+		void load_plugins(engine *e);
 	private:
 		boost::filesystem::path plugins_path;
 		std::vector<boost::dll::shared_library> plugins_;

@@ -5,7 +5,8 @@
 
 namespace sigmafive {
     plugin_manager::plugin_manager(boost::filesystem::path plugins_path) : plugins_path(plugins_path) {}
-    /*void plugin_manager::load_plugins(boost::filesystem::path plugins_path, engine *e) {
+
+    void plugin_manager::load_plugins(engine *e) {
         //TODO clean this up
         //this is a hack just to get things working
         for (auto &entry : boost::make_iterator_range(boost::filesystem::directory_iterator(plugins_path),{})) {
@@ -20,6 +21,6 @@ namespace sigmafive {
                 }
             }
         }
-    }*/
+    }
 }
 

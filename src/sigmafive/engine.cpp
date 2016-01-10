@@ -2,16 +2,17 @@
 
 #include <sigmafive/game/transform_component.hpp>
 #include <sigmafive/game/static_mesh_component.hpp>
-#include <sigmafive/entity/default_component_pool.hpp>
+#include <sigmafive/entity/default_component_cache.hpp>
 
 namespace sigmafive {
 
     engine::engine(int &argc, char **argv) : plugin_manger(default_plugin_path()) {
         boost::filesystem::current_path(boost::filesystem::path{argv[0]}.parent_path());
 
+        plugin_manger.load_plugins(this);
 
-        component_registry_.register_component<game::transform_component>(entity::default_component_pool<game::transform_component>::factory);
-        component_registry_.register_component<game::static_mesh_component>(entity::default_component_pool<game::static_mesh_component>::factory);
+        component_cache_factory_.register_cache<game::transform_component>(entity::default_component_cache<game::transform_component>::factory);
+        component_cache_factory_.register_cache<game::static_mesh_component>(entity::default_component_cache<game::static_mesh_component>::factory);
     }
 
     boost::filesystem::path engine::default_plugin_path() {
@@ -26,8 +27,8 @@ namespace sigmafive {
 #endif
     }
 
-    sigmafive::entity::component_registry *engine::component_registry() {
-        return &component_registry_;
+    sigmafive::entity::component_cache_factory *engine::component_cache_factory() {
+        return &component_cache_factory_;
     }
 
     graphics::context_manager *engine::graphics_context_manager() {

@@ -2,84 +2,50 @@
 #define SIGMAFIVE_RESOURCE_RESOURCE_HPP
 
 #include <sigmafive/config.hpp>
+#include <cppbr/meta/object.hpp>
 
-#include <string>
-#include <limits>
-#include <cstdint>
+#include <boost/filesystem/path.hpp>
 
 namespace sigmafive {
     namespace resource {
-        struct SIGMAFIVE_API identifier {
-            explicit identifier(std::uint64_t id = std::numeric_limits<std::uint64_t>::max()) noexcept;
 
-            identifier(const std::string &name) noexcept;
-
-            bool operator==(const identifier &o) const noexcept;
-
-            bool operator!=(const identifier &o) const noexcept;
-
-            bool is_valid() const noexcept;
-
-            std::uint64_t value;
-        };
-
-        template<class>
-        class resource_cache;
-
-        template<class T>
-        class resource { // TODO this is basically entity::component!
+        class identifier {
         public:
-            resource(std::nullptr_t = nullptr) : cache(nullptr) {}
+            identifier(boost::filesystem::path path);
 
-            explicit resource(identifier id,resource_cache<T> *cache) : id(id), cache(cache) {}
+            boost::filesystem::path path() const;
 
-            bool operator==(const resource<T> &y) const noexcept {
-                return cache == y.cache && id == y.id;
-            }
+            std::size_t hash() const;
 
-            bool operator==(std::nullptr_t) const noexcept {
-                return cache == nullptr || !id.is_valid() || get() == nullptr;
-            }
+            bool operator ==(const identifier &other) const;
 
-            bool operator!=(const resource<T> &y) const {
-                return !(*this == y);
-            }
-
-            bool operator!=(std::nullptr_t) const {
-                return !(*this == nullptr);
-            }
-
-            T *operator->() {
-                return cache->acquire(id);
-            }
-
-            const T *operator->() const {
-                return cache->acquire(id);
-            }
-
-            T *get() {
-                return (cache != nullptr) ? cache->acquire(id) : nullptr;
-            }
-
-            const T *get() const {
-                return (cache != nullptr) ? cache->acquire(id) : nullptr;
-            }
-
+            bool operator !=(const identifier &other) const;
         private:
-            identifier id;
-            resource_cache<T> *cache;
+            boost::filesystem::path path_;
+            std::size_t hash_;
         };
 
-        template<class T>
-        bool operator==(std::nullptr_t, const resource<T>& x) noexcept {
-            return x == nullptr;
-        }
+        class SIGMAFIVE_API resource : public cppbr::meta::object {
+        CPPBR_META_CLASS()
+        public:
+            resource(identifier id);
 
-        template<class T>
-        bool operator!=(std::nullptr_t, const resource<T>& x) noexcept {
-            return x != nullptr;
-        }
+            virtual ~resource() = default;
+
+            identifier id() const;
+        private:
+            identifier id_;
+        };
     }
+}
+
+namespace std {
+    template<>
+    struct hash<sigmafive::resource::identifier> {
+        std::size_t operator ()(const sigmafive::resource::identifier &id) const noexcept {
+            return id.hash();
+        }
+    };
 }
 
 #endif //SIGMAFIVE_RESOURCE_RESOURCE_HPP
