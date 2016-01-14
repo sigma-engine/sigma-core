@@ -31,6 +31,11 @@ set(SOURCES
 
     src/sigmafive/system/window.cpp
     src/sigmafive/system/window_manager.cpp
+
+    src/sigmafive/resource2/identifier.cpp
+    src/sigmafive/resource2/loader_manager.cpp
+    src/sigmafive/resource2/package_manager.cpp
+    src/sigmafive/resource2/resource_manager.cpp
 )
 
 set(HEADERS
@@ -52,8 +57,13 @@ set(HEADERS
     include/sigmafive/system/window_manager.hpp
 
 
-
-	include/sigmafive/resource2/resource_cache.hpp
+    include/sigmafive/resource2/cache.hpp
+    include/sigmafive/resource2/identifier.hpp
+    include/sigmafive/resource2/loader.hpp
+    include/sigmafive/resource2/loader_manager.hpp
+    include/sigmafive/resource2/package.hpp
+    include/sigmafive/resource2/package_manager.hpp
+    include/sigmafive/resource2/resource_manager.hpp
 )
 
 add_library(sigma-five-engine SHARED ${SOURCES} ${HEADERS})

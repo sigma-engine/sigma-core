@@ -12,12 +12,13 @@ namespace sigmafive {
 
 	class SIGMAFIVE_API plugin_manager {
 	public:
-		plugin_manager(boost::filesystem::path plugins_path);
+		plugin_manager(engine *eng,boost::filesystem::path plugins_path);
 
-		void load_plugins(engine *e);
+		~plugin_manager();
 	private:
+		engine *engine_;
 		boost::filesystem::path plugins_path;
-		std::vector<boost::dll::shared_library> plugins_;
+		std::vector<boost::dll::shared_library> plugins;
 	};
 }
 

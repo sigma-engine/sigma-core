@@ -4,12 +4,13 @@
 #include <sigmafive/game/static_mesh_component.hpp>
 #include <sigmafive/entity/default_component_cache.hpp>
 
+#include <boost/filesystem/operations.hpp>
+
 namespace sigmafive {
 
-    engine::engine(int &argc, char **argv) : plugin_manger(default_plugin_path()) {
+    engine::engine(int &argc, char **argv)
+        : resource_manager_(package_manager_,loader_manager_) {
         boost::filesystem::current_path(boost::filesystem::path{argv[0]}.parent_path());
-
-        plugin_manger.load_plugins(this);
 
         component_cache_factory_.register_cache<game::transform_component>(entity::default_component_cache<game::transform_component>::factory);
         component_cache_factory_.register_cache<game::static_mesh_component>(entity::default_component_cache<game::static_mesh_component>::factory);
@@ -27,16 +28,28 @@ namespace sigmafive {
 #endif
     }
 
-    sigmafive::entity::component_cache_factory *engine::component_cache_factory() {
-        return &component_cache_factory_;
+    system::window_manager &engine::window_manager() {
+        return window_manager_;
     }
 
-    graphics::context_manager *engine::graphics_context_manager() {
-        return &graphics_context_manager_;
+    graphics::context_manager &engine::graphics_context_manager() {
+        return graphics_context_manager_;
     }
 
-    system::window_manager *engine::window_manager() {
-        return &window_manager_;
+    resource2::loader_manager &engine::loader_manager() {
+        return loader_manager_;
+    }
+
+    resource2::package_manager &engine::package_manager() {
+        return package_manager_;
+    }
+
+    resource2::resource_manager &engine::resource_manager() {
+        return resource_manager_;
+    }
+
+    entity::component_cache_factory &engine::component_cache_factory() {
+        return component_cache_factory_;
     }
 }
 
