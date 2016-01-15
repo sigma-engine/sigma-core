@@ -19,7 +19,7 @@ namespace sigmafive {
 
             virtual ~context() = default;
 
-            graphics::context_manager *context_manager();
+            context_manager *get_context_manager();
 
             virtual void make_current();
 

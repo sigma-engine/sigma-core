@@ -3,7 +3,7 @@
 
 namespace sigmafive {
     namespace graphics {
-        context::context(graphics::context_manager *manager)
+        context::context(context_manager *manager)
             : context_manager_(manager) {
         }
 
@@ -11,7 +11,7 @@ namespace sigmafive {
             context_manager_->make_current(this);
         }
 
-        graphics::context_manager *context::context_manager() {
+        graphics::context_manager *context::get_context_manager() {
             return context_manager_;
         }
     }

@@ -8,7 +8,6 @@
 
 #include <sigmafive/system/window_manager.hpp>
 
-#include <sigmafive/resource2/loader_manager.hpp>
 #include <sigmafive/resource2/package_manager.hpp>
 #include <sigmafive/resource2/resource_manager.hpp>
 
@@ -28,8 +27,6 @@ namespace sigmafive {
 
         graphics::context_manager &graphics_context_manager();
 
-        resource2::loader_manager &loader_manager();
-
         resource2::package_manager &package_manager();
 
         resource2::resource_manager &resource_manager();
@@ -39,7 +36,6 @@ namespace sigmafive {
         system::window_manager window_manager_;
         graphics::context_manager graphics_context_manager_;
 
-        resource2::loader_manager loader_manager_;
         resource2::package_manager package_manager_;
         resource2::resource_manager resource_manager_;
 

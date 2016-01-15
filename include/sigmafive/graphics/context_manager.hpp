@@ -11,6 +11,7 @@
 #include <unordered_map>
 
 namespace sigmafive {
+    class engine;
     namespace graphics {
         class context_manager;
         class context;

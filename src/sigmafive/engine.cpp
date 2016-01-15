@@ -1,5 +1,7 @@
 #include <sigmafive/engine.hpp>
 
+#include <sigmafive/resource2/filesystem_package.hpp>
+
 #include <sigmafive/game/transform_component.hpp>
 #include <sigmafive/game/static_mesh_component.hpp>
 #include <sigmafive/entity/default_component_cache.hpp>
@@ -9,8 +11,10 @@
 namespace sigmafive {
 
     engine::engine(int &argc, char **argv)
-        : resource_manager_(package_manager_,loader_manager_) {
+        : resource_manager_(package_manager_) {
         boost::filesystem::current_path(boost::filesystem::path{argv[0]}.parent_path());
+
+        package_manager_.add_package("filesystem",std::make_unique<resource2::filesystem_package>());
 
         component_cache_factory_.register_cache<game::transform_component>(entity::default_component_cache<game::transform_component>::factory);
         component_cache_factory_.register_cache<game::static_mesh_component>(entity::default_component_cache<game::static_mesh_component>::factory);
@@ -34,10 +38,6 @@ namespace sigmafive {
 
     graphics::context_manager &engine::graphics_context_manager() {
         return graphics_context_manager_;
-    }
-
-    resource2::loader_manager &engine::loader_manager() {
-        return loader_manager_;
     }
 
     resource2::package_manager &engine::package_manager() {
