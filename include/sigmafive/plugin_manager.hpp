@@ -1,25 +1,29 @@
-#ifndef SIGMA_FIVE_ENGINE_PLUGIN_MANAGER_HPP
-#define SIGMA_FIVE_ENGINE_PLUGIN_MANAGER_HPP
+#pragma once
 
 #include <sigmafive/config.hpp>
 
-#include <vector>
+#include <unordered_map>
 #include <boost/filesystem/path.hpp>
 #include <boost/dll/shared_library.hpp>
 
+
 namespace sigmafive {
-	class engine;
+    class engine;
 
-	class SIGMAFIVE_API plugin_manager {
-	public:
-		plugin_manager(engine *eng,boost::filesystem::path plugins_path);
+    class SIGMAFIVE_API plugin_manager {
+    public:
+        plugin_manager(sigmafive::engine *engine);
 
-		~plugin_manager();
-	private:
-		engine *engine_;
-		boost::filesystem::path plugins_path;
-		std::vector<boost::dll::shared_library> plugins;
-	};
+        ~plugin_manager();
+
+        bool load_plugin(boost::filesystem::path plugin_path);
+
+        bool is_loaded(boost::filesystem::path plugin_path) const;
+
+        bool unload_plugin(boost::filesystem::path plugin_path);
+    private:
+        sigmafive::engine *engine_;
+        std::list<std::pair<boost::filesystem::path,boost::dll::shared_library>> plugins;
+    };
 }
 
-#endif // SIGMA_FIVE_ENGINE_PLUGIN_MANAGER_HPP

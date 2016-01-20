@@ -2,6 +2,7 @@
 
 #include <sigmafive/resource2/filesystem_package.hpp>
 
+#include <sigmafive/game/game.hpp>
 #include <sigmafive/game/transform_component.hpp>
 #include <sigmafive/game/static_mesh_component.hpp>
 #include <sigmafive/entity/default_component_cache.hpp>
@@ -15,9 +16,6 @@ namespace sigmafive {
         boost::filesystem::current_path(boost::filesystem::path{argv[0]}.parent_path());
 
         package_manager_.add_package("filesystem",std::make_unique<resource2::filesystem_package>());
-
-        component_cache_factory_.register_cache<game::transform_component>(entity::default_component_cache<game::transform_component>::factory);
-        component_cache_factory_.register_cache<game::static_mesh_component>(entity::default_component_cache<game::static_mesh_component>::factory);
     }
 
     boost::filesystem::path engine::default_plugin_path() {
@@ -48,9 +46,11 @@ namespace sigmafive {
         return resource_manager_;
     }
 
-    entity::component_cache_factory &engine::component_cache_factory() {
-        return component_cache_factory_;
+    void engine::set_game(std::shared_ptr<game::game> game) {
+        game_ = game;
+    }
+
+    std::shared_ptr<game::game> engine::game() {
+        return game_;
     }
 }
-
-EXPORT_CPPBR_META_CLASS(sigmafive::engine)

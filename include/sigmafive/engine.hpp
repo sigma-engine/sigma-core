@@ -2,22 +2,19 @@
 #define SIGMAFIVE_ENGINE_HPP
 
 #include <sigmafive/config.hpp>
-#include <cppbr/meta/object.hpp>
-
-#include <sigmafive/graphics/context_manager.hpp>
 
 #include <sigmafive/system/window_manager.hpp>
+#include <sigmafive/graphics/context_manager.hpp>
 
 #include <sigmafive/resource2/package_manager.hpp>
 #include <sigmafive/resource2/resource_manager.hpp>
 
-#include <sigmafive/entity/component_cache_factory.hpp>
-
 #include <boost/filesystem/path.hpp>
 
 namespace sigmafive {
-    class SIGMAFIVE_API engine : public cppbr::meta::object {
-    CPPBR_META_CLASS()
+    namespace game { class game; }
+    
+    class SIGMAFIVE_API engine {
     public:
         engine(int &argc, char **argv);
 
@@ -31,7 +28,9 @@ namespace sigmafive {
 
         resource2::resource_manager &resource_manager();
 
-        sigmafive::entity::component_cache_factory &component_cache_factory();
+        void set_game(std::shared_ptr<game::game> game);
+
+		std::shared_ptr<game::game> game();
     private:
         system::window_manager window_manager_;
         graphics::context_manager graphics_context_manager_;
@@ -39,7 +38,7 @@ namespace sigmafive {
         resource2::package_manager package_manager_;
         resource2::resource_manager resource_manager_;
 
-        sigmafive::entity::component_cache_factory component_cache_factory_;
+        std::shared_ptr<game::game> game_;
     };
 }
 

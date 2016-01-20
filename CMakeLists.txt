@@ -19,6 +19,7 @@ set(SOURCES
     src/sigmafive/engine.cpp
 	src/sigmafive/plugin_manager.cpp
 
+    src/sigmafive/game/game.cpp
     src/sigmafive/game/static_mesh_component.cpp
     src/sigmafive/game/static_mesh_component_system.cpp
     src/sigmafive/game/transform_component.cpp
@@ -43,6 +44,7 @@ set(HEADERS
     include/sigmafive/engine.hpp
 	include/sigmafive/plugin_manager.hpp
 
+    include/sigmafive/game/game.hpp
     include/sigmafive/game/static_mesh_component.hpp
     include/sigmafive/game/static_mesh_component_system.hpp
     include/sigmafive/game/transform_component.hpp
@@ -78,13 +80,13 @@ PRIVATE
 )
 
 if(NOT MSVC)
-    target_compile_options(sigma-five-engine PUBLIC -std=c++14 -pedantic -fPIC)
+	target_compile_options(sigma-five-engine PUBLIC -std=c++14 -pedantic -fvisibility=hidden)
 endif()
 
 target_link_libraries(sigma-five-engine sigma-five-entity cppbr-math cppbr-meta ${Boost_LIBRARIES})
 
 if(UNIX)
-    target_link_libraries(sigma-five-engine dl)
+	target_link_libraries(sigma-five-engine dl)
 endif()
 
-add_subdirectory(tests)
+#add_subdirectory(tests)

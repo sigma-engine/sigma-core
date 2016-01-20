@@ -1,35 +1,47 @@
 #include <sigmafive/plugin_manager.hpp>
 
 #include <iostream>
-#include <boost/range/iterator_range.hpp>
-
 namespace sigmafive {
-    plugin_manager::plugin_manager(engine *eng, boost::filesystem::path plugins_path)
-        : engine_(eng), plugins_path(plugins_path) {
-        //TODO clean this up
-        //this is a hack just to get things working
-        for (auto &entry : boost::make_iterator_range(boost::filesystem::directory_iterator(plugins_path),{})) {
-            if (boost::dll::shared_library::suffix() == entry.path().extension()) {
-                boost::dll::shared_library library{entry.path()};
-                if (library.has("register_plugin")) {
-                    plugins.push_back(std::move(library));
-                    plugins.back().get<void(engine *)>("register_plugin")(engine_);
-                }
-                else {
-                    std::cout << "warning: shared library in plugins folder that does not export a plugin." << std::endl;
-                }
-            }
-        }
+    plugin_manager::plugin_manager(engine *engine)
+        : engine_(engine) {
     }
 
     plugin_manager::~plugin_manager() {
-        for(auto &plugin: plugins) {
-            try {
-                plugin.get<void(engine *)>("unregister_plugin")(engine_);
-            } catch(...) {
-
-            }
+        for(auto &plugin:plugins) {
+            plugin.second.get<void(sigmafive::engine *)>("unregister_plugin")(engine_); // TODO add more error checking!
         }
     }
-}
 
+    bool plugin_manager::load_plugin(boost::filesystem::path plugin_path) {
+        if(is_loaded(plugin_path))
+            return false;
+
+        auto plugin = std::make_pair(plugin_path,boost::dll::shared_library{plugin_path});
+        if(plugin.second.has("register_plugin") && plugin.second.has("unregister_plugin")) {
+            plugin.second.get<void(sigmafive::engine *)>("register_plugin")(engine_); // TODO add more error checking!
+            plugins.emplace_back(std::move(plugin));
+            return true;
+        }
+
+        return false;
+    }
+
+    bool plugin_manager::is_loaded(boost::filesystem::path plugin_path) const {
+        return std::find_if(plugins.begin(),plugins.end(),[plugin_path](const auto &plugin){
+            return boost::filesystem::equivalent(plugin.first,plugin_path);
+        }) != plugins.end();
+    }
+
+    bool plugin_manager::unload_plugin(boost::filesystem::path plugin_path) {
+        auto it = std::find_if(plugins.begin(),plugins.end(),[plugin_path](auto &plugin){
+            return boost::filesystem::equivalent(plugin.first,plugin_path);
+        });
+        if(it==plugins.end())
+            return false;
+
+        it->second.get<void(sigmafive::engine *)>("unregister_plugin")(engine_); // TODO add more error checking!
+        plugins.erase(it);
+
+        return true;
+    }
+}

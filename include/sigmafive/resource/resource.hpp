@@ -9,7 +9,7 @@
 namespace sigmafive {
     namespace resource {
 
-        class identifier {
+        class SIGMAFIVE_API identifier {
         public:
             identifier(boost::filesystem::path path);
 

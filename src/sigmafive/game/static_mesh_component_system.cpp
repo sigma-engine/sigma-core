@@ -7,6 +7,9 @@
 
 #include <sigmafive/graphics/context_manager.hpp>
 
+
+#include <iostream>
+
 namespace sigmafive {
     namespace game {
 
@@ -21,6 +24,7 @@ namespace sigmafive {
             sigmafive::graphics::context *context = context_manager_->current_context();
             if (!context)
                 return;
+
             //TODO this is a mess
             for (entity::entity e:*em) {
                 if (cm->has_component<transform_component>(e) && cm->has_component<static_mesh_component>(e)) {
