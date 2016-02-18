@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(sigma-five-engine)
 
-include(pack-cpp)
+include(cmake/pack-cpp.cmake)
+pack_cpp_setup()
 
 add_package(cppbr-math)
 add_package(cppbr-meta)
