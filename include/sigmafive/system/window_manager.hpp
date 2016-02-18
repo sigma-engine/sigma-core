@@ -13,6 +13,12 @@ namespace sigmafive {
         class SIGMAFIVE_API window_manager : public cppbr::meta::object {
         CPPBR_META_CLASS()
         public:
+            window_manager() = default;
+
+            window_manager(const window_manager &) = delete;
+
+            window_manager &operator=(const window_manager &) = delete;
+
             void register_window(cppbr::meta::class_uid uid, std::unique_ptr<window_factory> factory);
 
             //TODO share_ptr

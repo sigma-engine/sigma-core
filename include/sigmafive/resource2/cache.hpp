@@ -11,6 +11,10 @@ namespace sigmafive {
     namespace resource2 {
         class SIGMAFIVE_API base_resource_cache {
         public:
+            base_resource_cache(const base_resource_cache &) = delete;
+
+            base_resource_cache &operator=(const base_resource_cache &) = delete;
+
             virtual ~base_resource_cache() {}
         };
 

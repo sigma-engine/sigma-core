@@ -28,6 +28,10 @@ namespace sigmafive {
         public:
             context_manager();
 
+            context_manager(const context_manager &) = delete;
+
+            context_manager &operator=(const context_manager &) = delete;
+
             void register_context(cppbr::meta::class_uid uid, std::unique_ptr<context_factory> factory);
 
             //TODO share_ptr

@@ -4,7 +4,7 @@
 namespace sigmafive {
     namespace resource {
         identifier::identifier(boost::filesystem::path path)
-            : path_(path), hash_(cppbr::meta::compile_time_hash(path.c_str())) {
+            : path_(path), hash_(cppbr::meta::compile_time_hash(path.string().c_str())) {
         }
 
         boost::filesystem::path identifier::path() const {

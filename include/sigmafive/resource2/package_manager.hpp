@@ -11,6 +11,12 @@ namespace sigmafive {
     namespace resource2 {
         class SIGMAFIVE_API package_manager : public package {
         public:
+            package_manager() = default;
+
+            package_manager(const package_manager &) = delete;
+
+            package_manager &operator=(const package_manager &) = delete;
+
             void add_package(std::string name,std::unique_ptr<package> pack);
 
             virtual bool contains(identifier id) const override;

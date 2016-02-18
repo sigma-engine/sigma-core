@@ -8,6 +8,7 @@ add_package(cppbr-meta)
 add_package(sigma-five-entity)
 add_package(boost-filesystem)
 add_package(boost-dll)
+add_package(boost-uuid)
 
 set(SOURCES
     src/sigmafive/engine.cpp
@@ -77,7 +78,7 @@ if(NOT MSVC)
 	target_compile_options(sigma-five-engine PUBLIC -std=c++14 -pedantic -fvisibility=hidden)
 endif()
 
-target_link_libraries(sigma-five-engine sigma-five-entity cppbr-math cppbr-meta boost-filesystem boost-dll)
+target_link_libraries(sigma-five-engine sigma-five-entity cppbr-math cppbr-meta boost-filesystem boost-dll boost-uuid)
 
 if(UNIX)
 	target_link_libraries(sigma-five-engine dl)
