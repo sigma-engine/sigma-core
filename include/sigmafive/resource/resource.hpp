@@ -25,8 +25,7 @@ namespace sigmafive {
             std::size_t hash_;
         };
 
-        class SIGMAFIVE_API resource : public cppbr::meta::object {
-        CPPBR_META_CLASS()
+        class SIGMAFIVE_API resource {
         public:
             resource(identifier id);
 

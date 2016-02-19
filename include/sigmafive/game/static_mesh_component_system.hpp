@@ -12,7 +12,6 @@ namespace sigmafive {
     }
     namespace game {
         class SIGMAFIVE_API static_mesh_component_system : public entity::component_system {
-        CPPBR_META_CLASS()
         public:
             void init(graphics::context_manager *context_manager);
 

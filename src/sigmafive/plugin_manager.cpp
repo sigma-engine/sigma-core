@@ -1,4 +1,5 @@
 #include <sigmafive/plugin_manager.hpp>
+#include <boost/filesystem/operations.hpp>
 
 #include <iostream>
 namespace sigmafive {

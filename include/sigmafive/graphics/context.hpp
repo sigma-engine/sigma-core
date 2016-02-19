@@ -12,8 +12,7 @@ namespace sigmafive {
         class context_manager;
         class static_mesh;
 
-        class SIGMAFIVE_API context : public cppbr::meta::object {
-        CPPBR_META_CLASS()
+        class SIGMAFIVE_API context {
         public:
             context(graphics::context_manager *manager);
 

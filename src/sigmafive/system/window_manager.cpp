@@ -23,5 +23,3 @@ namespace sigmafive {
         }
     }
 }
-
-EXPORT_CPPBR_META_CLASS(sigmafive::system::window_manager)

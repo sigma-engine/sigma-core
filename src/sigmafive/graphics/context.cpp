@@ -16,5 +16,3 @@ namespace sigmafive {
         }
     }
 }
-
-EXPORT_CPPBR_META_CLASS(sigmafive::graphics::context)

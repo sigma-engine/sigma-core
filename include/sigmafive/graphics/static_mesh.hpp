@@ -14,7 +14,6 @@
 namespace sigmafive {
     namespace graphics {
         class SIGMAFIVE_API static_mesh : public sigmafive::resource::resource {
-        CPPBR_META_CLASS()
         public:
             struct vertex {
                 float3 position;

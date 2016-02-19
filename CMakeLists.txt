@@ -1,14 +1,3 @@
-cmake_minimum_required(VERSION 2.8.12)
-project(sigma-five-engine)
-
-include(cmake/pack-cpp.cmake)
-
-add_package(cppbr-math)
-add_package(cppbr-meta)
-add_package(sigma-five-entity)
-add_package(boost_system)
-add_package(boost_filesystem)
-
 set(SOURCES
     src/sigmafive/engine.cpp
 	src/sigmafive/plugin_manager.cpp
@@ -77,7 +66,7 @@ if(NOT MSVC)
 	target_compile_options(sigma-five-engine PUBLIC -std=c++14 -pedantic -fvisibility=hidden)
 endif()
 
-target_link_libraries(sigma-five-engine sigma-five-entity cppbr-math cppbr-meta boost_system boost_filesystem)
+target_link_libraries(sigma-five-engine sigma-five-entity cppbr-math cppbr-meta ${Boost_system_LIBRARY} ${Boost_filsystem_LIBRARY})
 
 if(UNIX)
 	target_link_libraries(sigma-five-engine dl)

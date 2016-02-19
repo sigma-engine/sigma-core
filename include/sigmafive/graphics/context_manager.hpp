@@ -23,8 +23,7 @@ namespace sigmafive {
             virtual std::unique_ptr<context> create(context_manager *manager) = 0;
         };
 
-        class SIGMAFIVE_API context_manager : public cppbr::meta::object {
-        CPPBR_META_CLASS()
+        class SIGMAFIVE_API context_manager {
         public:
             context_manager();
 

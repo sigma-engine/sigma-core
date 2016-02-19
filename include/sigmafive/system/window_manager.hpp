@@ -10,8 +10,7 @@ namespace sigmafive {
     namespace system {
         using window_factory = cppbr::meta::factory<window>;
 
-        class SIGMAFIVE_API window_manager : public cppbr::meta::object {
-        CPPBR_META_CLASS()
+        class SIGMAFIVE_API window_manager {
         public:
             window_manager() = default;
 
