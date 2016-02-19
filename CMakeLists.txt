@@ -20,6 +20,13 @@ set(SOURCES
     src/sigmafive/resource2/package_manager.cpp
     src/sigmafive/resource2/resource_manager.cpp
 	src/sigmafive/resource2/filesystem_package.cpp
+
+    src/sigmafive/entity/entity.cpp
+	src/sigmafive/entity/entity_manager.cpp
+	src/sigmafive/entity/component_manager.cpp
+
+	src/sigmafive/entity/component_system.cpp
+	src/sigmafive/entity/component_system_manager.cpp
 )
 
 set(HEADERS
@@ -49,6 +56,19 @@ set(HEADERS
     include/sigmafive/resource2/resource_manager.hpp
 	include/sigmafive/resource2/filesystem_package.hpp
 
+    include/sigmafive/entity/entity.hpp
+	include/sigmafive/entity/entity_manager.hpp
+
+	include/sigmafive/entity/component.hpp
+	include/sigmafive/entity/component_cache.hpp
+	include/sigmafive/entity/default_component_cache.hpp
+	include/sigmafive/entity/component_cache_factory.hpp
+
+	include/sigmafive/entity/component_manager.hpp
+
+	include/sigmafive/entity/component_system.hpp
+	include/sigmafive/entity/component_system_manager.hpp
+
 )
 
 add_library(sigma-five-engine SHARED ${SOURCES} ${HEADERS})
@@ -66,7 +86,7 @@ if(NOT MSVC)
 	target_compile_options(sigma-five-engine PUBLIC -std=c++14 -pedantic -fvisibility=hidden)
 endif()
 
-target_link_libraries(sigma-five-engine sigma-five-entity cppbr-math cppbr-meta ${Boost_system_LIBRARY} ${Boost_filsystem_LIBRARY})
+target_link_libraries(sigma-five-engine cppbr-math cppbr-meta cppbr-cache ${Boost_system_LIBRARY} ${Boost_filsystem_LIBRARY})
 
 if(UNIX)
 	target_link_libraries(sigma-five-engine dl)

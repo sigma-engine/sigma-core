@@ -2,6 +2,14 @@ add_package(googletest)
 
 set(SOURCES
     main.cpp
+    
+    entity/component_manager_tests.cpp
+    entity/component_system_manager_tests.cpp
+    entity/component_system_tests.cpp
+    entity/component_tests.cpp
+	entity/default_component_cache_tests.cpp
+    entity/entity_manager_tests.cpp
+    entity/entity_tests.cpp
 )
 
 set(HEADERS
