@@ -1,3 +1,6 @@
+cmake_minimum_required(VERSION 3.2)
+project(sigma-five-engine)
+
 set(SOURCES
     src/sigmafive/engine.cpp
 	src/sigmafive/plugin_manager.cpp
@@ -86,7 +89,7 @@ if(NOT MSVC)
 	target_compile_options(sigma-five-engine PUBLIC -std=c++14 -pedantic -fvisibility=hidden)
 endif()
 
-target_link_libraries(sigma-five-engine cppbr-math cppbr-meta cppbr-cache ${Boost_system_LIBRARY} ${Boost_filsystem_LIBRARY})
+target_link_libraries(sigma-five-engine cppbr-math cppbr-meta cppbr-cache ${Boost_LIBRARIES})
 
 if(UNIX)
 	target_link_libraries(sigma-five-engine dl)

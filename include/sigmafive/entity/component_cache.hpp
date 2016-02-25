@@ -11,6 +11,8 @@ namespace sigmafive {
     namespace entity {
         class SIGMAFIVE_API base_component_cache {
         public:
+            base_component_cache() = default;
+
             base_component_cache(const base_component_cache &) = delete;
 
             base_component_cache &operator=(const base_component_cache &) = delete;

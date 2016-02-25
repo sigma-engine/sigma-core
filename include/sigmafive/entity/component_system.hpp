@@ -10,6 +10,8 @@ namespace sigmafive {
 
         class component_system {
         public:
+            component_system() = default;
+
             component_system(const component_system &) = delete;
 
             component_system &operator=(const component_system &) = delete;

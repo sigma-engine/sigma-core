@@ -19,6 +19,8 @@ namespace sigmafive {
 				return std::make_unique<default_component_cache<T>>();
             }
 
+            default_component_cache() = default;
+
             default_component_cache(const default_component_cache<T,Container> &) = delete;
 
             default_component_cache<T,Container> &operator=(const default_component_cache<T,Container> &) = delete;

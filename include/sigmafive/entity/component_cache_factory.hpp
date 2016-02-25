@@ -13,6 +13,8 @@ namespace sigmafive {
         class component_cache_factory : public cppbr::cache::cache_factory<sigmafive::entity::component_type,sigmafive::entity::component_mask_type,base_component_cache> {
             typedef cppbr::cache::cache_factory<sigmafive::entity::component_type,sigmafive::entity::component_mask_type,base_component_cache> base;
         public:
+            component_cache_factory() = default;
+
             // TODO move these to cppbr::cache::cache_factory?
             component_cache_factory(const component_cache_factory &) = delete;
 
