@@ -1,48 +1,47 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <cppbr/meta/object.hpp>
-#include <sigmafive/entity/entity_manager.hpp>
+#include <sigmafive/entity_manager.hpp>
 
 TEST(entity_manager_tests, default_constructor) {
-    sigmafive::entity::entity_manager entity_manager;
+    sigmafive::entity_manager entity_manager;
     (void) entity_manager;
 }
 
 TEST(entity_manager_tests, create_is_valid) {
-    sigmafive::entity::entity_manager entity_manager;
+    sigmafive::entity_manager entity_manager;
     auto e = entity_manager.create();
     EXPECT_TRUE(e.is_valid());
 }
 
 TEST(entity_manager_tests, create_is_valid_and_new) {
-    sigmafive::entity::entity_manager entity_manager;
+    sigmafive::entity_manager entity_manager;
     auto e1 = entity_manager.create();
     auto e2 = entity_manager.create();
     EXPECT_NE(e1, e2);
 }
 
 TEST(entity_manager_tests, is_alive_false) {
-    sigmafive::entity::entity_manager entity_manager;
-    sigmafive::entity::entity e{1, 8};
+    sigmafive::entity_manager entity_manager;
+    sigmafive::entity e{1, 8};
     EXPECT_FALSE(entity_manager.is_alive(e));
 }
 
 TEST(entity_manager_tests, is_alive_true) {
-    sigmafive::entity::entity_manager entity_manager;
+    sigmafive::entity_manager entity_manager;
     auto e = entity_manager.create();
     EXPECT_TRUE(entity_manager.is_alive(e));
 }
 
 TEST(entity_manager_tests, destroy_not_alive) {
-    sigmafive::entity::entity_manager entity_manager;
+    sigmafive::entity_manager entity_manager;
     auto e = entity_manager.create();
     entity_manager.destroy(e);
     EXPECT_FALSE(entity_manager.is_alive(e));
 }
 
 TEST(entity_manager_tests, create_from_destroyed_must_have_same_index) {
-    sigmafive::entity::entity_manager entity_manager;
+    sigmafive::entity_manager entity_manager;
     auto e1 = entity_manager.create();
     entity_manager.destroy(e1);
     auto e2 = entity_manager.create();
@@ -50,7 +49,7 @@ TEST(entity_manager_tests, create_from_destroyed_must_have_same_index) {
 }
 
 TEST(entity_manager_tests, create_from_destroyed_must_have_new_version) {
-    sigmafive::entity::entity_manager entity_manager;
+    sigmafive::entity_manager entity_manager;
     auto e1 = entity_manager.create();
     entity_manager.destroy(e1);
     auto e2 = entity_manager.create();
@@ -58,12 +57,12 @@ TEST(entity_manager_tests, create_from_destroyed_must_have_new_version) {
 }
 
 TEST(entity_manager_tests, iterate_over_alive_entities) {
-    sigmafive::entity::entity_manager entity_manager;
-    std::vector<sigmafive::entity::entity> created_entities;
+    sigmafive::entity_manager entity_manager;
+    std::vector<sigmafive::entity> created_entities;
     for (int i = 0; i < 50; ++i) {
         created_entities.push_back(entity_manager.create());
     }
-    std::vector<sigmafive::entity::entity> still_alive;
+    std::vector<sigmafive::entity> still_alive;
     for (auto e:created_entities) {
         if (e.index % 7 == 0)
             entity_manager.destroy(e);
