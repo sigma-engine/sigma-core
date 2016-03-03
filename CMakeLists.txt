@@ -27,7 +27,14 @@ set(HEADERS
     include/sigmafive/resource/basic_resource_cache.hpp
 
     include/sigmafive/graphics/context.hpp
+    include/sigmafive/graphics/texture.hpp
+    include/sigmafive/graphics/shader.hpp
+    include/sigmafive/graphics/material.hpp
+    include/sigmafive/graphics/directional_light.hpp
+    include/sigmafive/graphics/point_light.hpp
+    include/sigmafive/graphics/spot_light.hpp
     include/sigmafive/graphics/static_mesh.hpp
+    include/sigmafive/graphics/static_mesh_instance.hpp
 )
 
 add_library(sigma-five-engine SHARED ${SOURCES} ${HEADERS})

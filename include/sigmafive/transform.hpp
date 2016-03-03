@@ -13,6 +13,8 @@ namespace sigmafive {
         glm::vec3 scale;
         glm::quat rotation;
     };
+
+    using transform_manager = basic_component_manager<transform>;
 }
 
 SIGMAFIVE_COMPONENT(sigmafive::transform)

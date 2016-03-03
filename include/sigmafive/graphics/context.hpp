@@ -14,6 +14,8 @@ namespace sigmafive {
 
             virtual ~context();
 
+            virtual void initialize() = 0;
+
             virtual void resize(glm::uvec2 size) = 0;
 
             virtual void render(glm::mat4 projection,glm::mat4 view) = 0;

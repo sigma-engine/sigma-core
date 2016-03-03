@@ -9,6 +9,7 @@
 namespace sigmafive {
     namespace resource {
         struct identifier {
+            identifier() : value(-1) {}
             identifier(const char *name) : value(util::compile_time_hash(name)) {
             }
 

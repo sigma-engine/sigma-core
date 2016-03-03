@@ -6,7 +6,7 @@
 
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
-#include <glm/mat4x4.hpp>
+#include <sigmafive/util/glm_serialize.hpp>
 
 #include <array>
 #include <vector>
@@ -22,7 +22,7 @@ namespace sigmafive {
                 glm::vec3 position;
                 glm::vec3 normal;
                 glm::vec3 tangent;
-                glm::vec3 texcoord;
+                glm::vec2 texcoord;
             };
 
             typedef std::array<unsigned int, 3> triangle;
@@ -44,6 +44,11 @@ namespace sigmafive {
             std::vector<vertex> vertices_;
             std::vector<triangle> triangles_;
         };
+
+        class static_mesh_cache {
+        public:
+        private:
+        };
     }
 }
 
@@ -58,7 +63,5 @@ namespace boost {
         }
     }
 }
-
-SIGMAFIVE_COMPONENT(sigmafive::graphics::static_mesh)
 
 #endif //SIGMAFIVE_ENGINE_GRAPHICS_STATIC_MESH_HPP
