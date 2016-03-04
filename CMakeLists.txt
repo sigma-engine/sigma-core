@@ -20,7 +20,7 @@ set(HEADERS
     include/sigmafive/entity_manager.hpp
 
     include/sigmafive/transform.hpp
-    
+
     include/sigmafive/util/compile_time_hash.hpp
 
     include/sigmafive/resource/identifier.hpp
@@ -49,4 +49,6 @@ endif()
 
 target_link_libraries(sigma-five-engine glm ${Boost_LIBRARIES})
 
-add_subdirectory(tests)
+if(gtest)
+	add_subdirectory(tests)
+endif()
