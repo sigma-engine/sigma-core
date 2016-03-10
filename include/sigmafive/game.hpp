@@ -3,19 +3,17 @@
 
 #include <sigmafive/config.hpp>
 
+#include <chrono>
 #include <sigmafive/entity_manager.hpp>
 #include <sigmafive/graphics/directional_light.hpp>
 #include <sigmafive/graphics/material.hpp>
 #include <sigmafive/graphics/point_light.hpp>
 #include <sigmafive/graphics/shader.hpp>
 #include <sigmafive/graphics/spot_light.hpp>
-#include <sigmafive/graphics/static_mesh.hpp>
 #include <sigmafive/graphics/static_mesh_instance.hpp>
+#include <sigmafive/graphics/static_mesh.hpp>
 #include <sigmafive/graphics/texture.hpp>
 #include <sigmafive/transform.hpp>
-#include <sigmafive/transform.hpp>
-
-#include <chrono>
 
 namespace sigmafive {
 class SIGMAFIVE_API game {

@@ -10,36 +10,48 @@ namespace sigmafive {
 namespace resource {
     struct identifier {
         identifier()
-            : value(-1)
+            : value_(-1)
         {
         }
         identifier(const char* name)
-            : value(util::compile_time_hash(name))
+            : value_(util::compile_time_hash(name))
         {
         }
 
         identifier(const identifier& other)
-            : value(other.value)
+            : value_(other.value_)
         {
         }
 
         bool operator==(const identifier& other) const noexcept
         {
-            return value == other.value;
+            return value_ == other.value_;
         }
 
         bool operator!=(const identifier& other) const noexcept
         {
-            return value != other.value;
+            return value_ != other.value_;
+        }
+
+        std::size_t value() const noexcept
+        {
+            return value_;
         }
 
         explicit operator std::size_t() const noexcept
         {
-            return value;
+            return value_;
         }
-
     private:
-        std::size_t value;
+        std::size_t value_;
+
+        friend class boost::serialization::access;
+
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version)
+        {
+            ar& value_;
+        }
     };
 }
 }

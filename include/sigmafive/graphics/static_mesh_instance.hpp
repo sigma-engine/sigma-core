@@ -4,16 +4,34 @@
 #include <sigmafive/config.hpp>
 
 #include <sigmafive/component.hpp>
-#include <sigmafive/resource/identifier.hpp>
+
+#include <sigmafive/graphics/static_mesh.hpp>
+#include <unordered_map>
 
 namespace sigmafive {
 namespace graphics {
     struct SIGMAFIVE_API static_mesh_instance {
-        bool visible; // TODO check the odering on this
         resource::identifier static_mesh;
     };
 
-    using static_mesh_instance_manager = basic_component_manager<static_mesh_instance>;
+    class SIGMAFIVE_API static_mesh_instance_manager {
+    public:
+        static_mesh_instance_manager(graphics::static_mesh_cache& cache);
+
+        static_mesh_instance_manager(const static_mesh_instance_manager&) = delete;
+
+        virtual ~static_mesh_instance_manager();
+
+        static_mesh_instance_manager& operator=(const static_mesh_instance_manager&) = delete;
+
+        virtual void add(entity e, resource::identifier mesh);
+
+        virtual void remove(entity e);
+
+    private:
+        graphics::static_mesh_cache& cache_;
+        std::unordered_map<entity, resource::identifier> instances_;
+    };
 }
 }
 

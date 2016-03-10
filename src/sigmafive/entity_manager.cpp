@@ -7,7 +7,8 @@ entity entity_manager::create()
         entity e{ std::uint32_t(entities_.size()), 0 };
         entities_.push_back(e);
         return e;
-    } else {
+    }
+    else {
         auto index = free_entities_.back();
         free_entities_.pop_back();
         entities_[index].index = index;

@@ -10,6 +10,7 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <sigmafive/component.hpp>
+#include <sigmafive/resource/identifier.hpp>
 #include <sigmafive/util/glm_serialize.hpp>
 #include <vector>
 
@@ -47,7 +48,48 @@ namespace graphics {
 
     class static_mesh_cache {
     public:
-    private:
+        static_mesh_cache() = default;
+
+        static_mesh_cache(const static_mesh_cache&) = delete;
+
+        virtual ~static_mesh_cache() = default;
+
+        static_mesh_cache& operator=(const static_mesh_cache&) = delete;
+
+        /**
+        * @brief Returns if mesh is loaded in this cache.
+        *
+        * @param mesh the mesh to check if cached.
+        * @return true if the mesh is cache.
+        */
+        virtual bool is_cached(resource::identifier mesh) const = 0;
+
+        /**
+        * @brief Increases the reference count associated with the mesh.
+        *
+        * NOTE calling this method will not invalidate any references to other meshes
+        * in this cache.
+        *
+        * @param mesh the mesh to increase the reference count of.
+        * @return true if the mesh exists and is valid.
+        */
+        virtual bool increment_reference(resource::identifier mesh) = 0;
+
+        /**
+        * @brief Decreases the reference count associated with
+        * the mesh.
+        *
+        * NOTE calling this method wiil not invalidate any references to other meshes
+        * in this cache.
+        *
+        * @param mesh the mesh to decrease the reference count of.
+        * @returns true if the mesh reference count is zero.
+        */
+        virtual bool decrement_reference(resource::identifier mesh) = 0;
+
+        //virtual static_mesh& get(resource::identifier mesh) = 0;
+
+        //virtual const static_mesh& add(resource::identifier mesh) const = 0;
     };
 }
 }

@@ -10,8 +10,7 @@
 
 #define SIGMAFIVE_COMPONENT(T)                                                    \
     namespace sigmafive {                                                         \
-    template <>                                                                   \
-    struct component_type_info<T> {                                               \
+    template <> struct component_type_info<T> {                                   \
         static constexpr const std::size_t type_id = util::compile_time_hash(#T); \
     };                                                                            \
     }
