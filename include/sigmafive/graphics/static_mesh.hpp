@@ -33,6 +33,10 @@ namespace graphics {
 
         const std::vector<triangle>& triangles() const;
 
+        resource::identifier get_material() const;
+
+        void set_material(resource::identifier material);
+
     private:
         friend class boost::serialization::access;
         template <class Archive>
@@ -40,10 +44,12 @@ namespace graphics {
         {
             ar& vertices_;
             ar& triangles_;
+            ar& material_;
         }
 
         std::vector<vertex> vertices_;
         std::vector<triangle> triangles_;
+        resource::identifier material_;
     };
 
     class static_mesh_cache {

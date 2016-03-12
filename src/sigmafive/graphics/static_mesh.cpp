@@ -14,5 +14,14 @@ namespace graphics {
     const std::vector<static_mesh::vertex>& static_mesh::vertices() const { return vertices_; }
 
     const std::vector<static_mesh::triangle>& static_mesh::triangles() const { return triangles_; }
+
+    resource::identifier static_mesh::get_material() const
+    {
+        return material_;
+    }
+
+    void static_mesh::set_material(resource::identifier material) {
+        material_ = material;
+    }
 }
 }
