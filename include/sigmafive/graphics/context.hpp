@@ -6,6 +6,7 @@
 #include <glm/mat4x4.hpp>
 #include <glm/vec2.hpp>
 #include <sigmafive/transform.hpp>
+#include <sigmafive/entity_manager.hpp>
 #include <sigmafive/graphics/static_mesh_instance.hpp>
 
 namespace sigmafive {
@@ -17,6 +18,7 @@ namespace graphics {
 //    }
 
     struct view_port {
+        entity_manager &entities;
         transform_manager &transforms;
         static_mesh_instance_manager &static_mesh_instances;
         glm::mat4 projection_matrix;
