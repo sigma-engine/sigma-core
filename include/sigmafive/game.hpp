@@ -30,9 +30,9 @@ public:
 
     virtual ~game();
 
-    sigmafive::entity_manager& entity_manager();
+    sigmafive::entity_manager& entities();
 
-    const sigmafive::entity_manager& entity_manager() const;
+    const sigmafive::entity_manager& entities() const;
 
     graphics::texture_cache& textures();
 
@@ -73,7 +73,7 @@ public:
     virtual void update(std::chrono::duration<float> dt) = 0;
 
 private:
-    sigmafive::entity_manager entity_manager_;
+    sigmafive::entity_manager entities_;
 
     graphics::texture_cache& textures_;
     graphics::shader_cache& shaders_;

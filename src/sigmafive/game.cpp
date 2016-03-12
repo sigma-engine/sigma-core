@@ -27,14 +27,14 @@ game::~game()
 {
 }
 
-sigmafive::entity_manager& game::entity_manager()
+sigmafive::entity_manager& game::entities()
 {
-    return entity_manager_;
+    return entities_;
 }
 
-const sigmafive::entity_manager& game::entity_manager() const
+const sigmafive::entity_manager& game::entities() const
 {
-    return entity_manager_;
+    return entities_;
 }
 
 graphics::texture_cache& game::textures()
