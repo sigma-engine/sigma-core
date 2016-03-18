@@ -10,7 +10,7 @@
 namespace sigmafive {
 struct SIGMAFIVE_API transform {
     glm::vec3 position;
-    glm::vec3 scale;
+    glm::vec3 scale{1.0f};
     glm::quat rotation;
 };
 

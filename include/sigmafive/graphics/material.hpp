@@ -3,11 +3,7 @@
 
 #include <sigmafive/config.hpp>
 
-#include <array>
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/vector.hpp>
 #include <sigmafive/resource/identifier.hpp>
-#include <vector>
 
 namespace sigmafive {
 namespace graphics {
@@ -21,20 +17,7 @@ namespace graphics {
 
         material& operator=(material&&) = default;
 
-        const std::vector<resource::identifier>& get_shaders() const;
-
-        void add_shader(resource::identifier shader);
-
-        void remove_shader(resource::identifier shader);
-
     private:
-        friend class boost::serialization::access;
-        template <class Archive>
-        void serialize(Archive& ar, const unsigned int version)
-        {
-            ar& shaders_;
-        }
-        std::vector<resource::identifier> shaders_;
     };
 
     class material_cache {
@@ -53,7 +36,8 @@ namespace graphics {
         * @param material the material to check if cached.
         * @return true if the material is cache.
         */
-        virtual bool is_cached(resource::identifier material) const = 0;
+        virtual bool
+        is_cached(resource::identifier material) const = 0;
 
         /**
         * @brief Increases the reference count associated with the material.
@@ -77,10 +61,6 @@ namespace graphics {
         * @returns true if the material reference count is zero.
         */
         virtual bool decrement_reference(resource::identifier material) = 0;
-
-        //virtual material& get(resource::identifier material) = 0;
-
-        //virtual const material& add(resource::identifier material) const = 0;
     };
 }
 }

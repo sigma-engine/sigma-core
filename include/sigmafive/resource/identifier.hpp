@@ -4,6 +4,7 @@
 #include <sigmafive/config.hpp>
 
 #include <functional>
+#include <boost/serialization/access.hpp>
 #include <sigmafive/util/compile_time_hash.hpp>
 
 namespace sigmafive {
@@ -13,6 +14,11 @@ namespace resource {
             : value_(-1)
         {
         }
+        identifier(const std::string& name)
+            : value_(util::compile_time_hash(name.c_str()))
+        {
+        }
+
         identifier(const char* name)
             : value_(util::compile_time_hash(name))
         {
@@ -42,6 +48,7 @@ namespace resource {
         {
             return value_;
         }
+
     private:
         std::size_t value_;
 

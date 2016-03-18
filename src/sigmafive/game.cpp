@@ -32,17 +32,7 @@ sigmafive::entity_manager& game::entities()
     return entities_;
 }
 
-const sigmafive::entity_manager& game::entities() const
-{
-    return entities_;
-}
-
 graphics::texture_cache& game::textures()
-{
-    return textures_;
-}
-
-const graphics::texture_cache& game::textures() const
 {
     return textures_;
 }
@@ -52,17 +42,7 @@ graphics::shader_cache& game::shaders()
     return shaders_;
 }
 
-const graphics::shader_cache& game::shaders() const
-{
-    return shaders_;
-}
-
 graphics::material_cache& game::materials()
-{
-    return materials_;
-}
-
-const graphics::material_cache& game::materials() const
 {
     return materials_;
 }
@@ -72,17 +52,7 @@ graphics::static_mesh_cache& game::static_meshes()
     return static_meshes_;
 }
 
-const graphics::static_mesh_cache& game::static_meshes() const
-{
-    return static_meshes_;
-}
-
 transform_manager& game::transforms()
-{
-    return transforms_;
-}
-
-const transform_manager& game::transforms() const
 {
     return transforms_;
 }
@@ -92,17 +62,7 @@ graphics::directional_light_manager& game::directional_lights()
     return directional_lights_;
 }
 
-const graphics::directional_light_manager& game::directional_lights() const
-{
-    return directional_lights_;
-}
-
 graphics::point_light_manager& game::point_lights()
-{
-    return point_lights_;
-}
-
-const graphics::point_light_manager& game::point_lights() const
 {
     return point_lights_;
 }
@@ -112,17 +72,7 @@ graphics::spot_light_manager& game::spot_lights()
     return spot_lights_;
 }
 
-const graphics::spot_light_manager& game::spot_lights() const
-{
-    return spot_lights_;
-}
-
 graphics::static_mesh_instance_manager& game::static_mesh_instances()
-{
-    return static_mesh_instances_;
-}
-
-const graphics::static_mesh_instance_manager& game::static_mesh_instances() const
 {
     return static_mesh_instances_;
 }

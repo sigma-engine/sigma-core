@@ -32,43 +32,23 @@ public:
 
     sigmafive::entity_manager& entities();
 
-    const sigmafive::entity_manager& entities() const;
-
     graphics::texture_cache& textures();
-
-    const graphics::texture_cache& textures() const;
 
     graphics::shader_cache& shaders();
 
-    const graphics::shader_cache& shaders() const;
-
     graphics::material_cache& materials();
-
-    const graphics::material_cache& materials() const;
 
     graphics::static_mesh_cache& static_meshes();
 
-    const graphics::static_mesh_cache& static_meshes() const;
-
     transform_manager& transforms();
-
-    const transform_manager& transforms() const;
 
     graphics::directional_light_manager& directional_lights();
 
-    const graphics::directional_light_manager& directional_lights() const;
-
     graphics::point_light_manager& point_lights();
-
-    const graphics::point_light_manager& point_lights() const;
 
     graphics::spot_light_manager& spot_lights();
 
-    const graphics::spot_light_manager& spot_lights() const;
-
     graphics::static_mesh_instance_manager& static_mesh_instances();
-
-    const graphics::static_mesh_instance_manager& static_mesh_instances() const;
 
     virtual void update(std::chrono::duration<float> dt) = 0;
 
