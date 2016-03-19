@@ -20,7 +20,8 @@ namespace graphics {
         return material_;
     }
 
-    void static_mesh::set_material(resource::identifier material) {
+    void static_mesh::set_material(resource::identifier material)
+    {
         material_ = material;
     }
 }

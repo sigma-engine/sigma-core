@@ -31,6 +31,7 @@ namespace graphics {
         virtual resource::identifier get(entity e) const;
 
         virtual void remove(entity e);
+
     private:
         graphics::static_mesh_cache& cache_;
         std::unordered_map<entity, resource::identifier> instances_;

@@ -25,7 +25,8 @@ namespace graphics {
         cache_.increment_reference(mesh);
     }
 
-    resource::identifier static_mesh_instance_manager::get(entity e) const {
+    resource::identifier static_mesh_instance_manager::get(entity e) const
+    {
         return instances_.at(e);
     }
 
