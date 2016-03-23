@@ -1,11 +1,13 @@
 cmake_minimum_required(VERSION 3.2)
-project(sigma-five-engine)
+project(engine)
 
 set(SOURCES
     src/sigmafive/entity.cpp
 
     src/sigmafive/game.cpp
     src/sigmafive/entity_manager.cpp
+
+    src/sigmafive/util/filesystem.cpp
 
     src/sigmafive/graphics/context.cpp
     src/sigmafive/graphics/shader.cpp
@@ -26,6 +28,7 @@ set(HEADERS
 
     include/sigmafive/util/compile_time_hash.hpp
     include/sigmafive/util/glm_serialize.hpp
+    include/sigmafive/util/filesystem.hpp
 
     include/sigmafive/resource/identifier.hpp
     include/sigmafive/resource/basic_resource_cache.hpp
@@ -41,16 +44,16 @@ set(HEADERS
     include/sigmafive/graphics/static_mesh_instance.hpp
 )
 
-add_library(sigma-five-engine SHARED ${SOURCES} ${HEADERS})
+add_library(engine SHARED ${SOURCES} ${HEADERS})
 
-target_include_directories(sigma-five-engine PUBLIC include)
+target_include_directories(engine PUBLIC include)
 
-target_compile_options(sigma-five-engine PRIVATE -DSIGMA_FIVE_ENGINE_EXPORT)
+target_compile_options(engine PRIVATE -DSIGMA_FIVE_ENGINE_EXPORT)
 
-target_link_libraries(sigma-five-engine glm ${Boost_LIBRARIES})
+target_link_libraries(engine glm ${Boost_LIBRARIES})
 
 if(NOT MSVC)
-    target_compile_options(sigma-five-engine PUBLIC -std=c++14 -pedantic -fvisibility=hidden)
+    target_compile_options(engine PUBLIC -std=c++14 -pedantic -fvisibility=hidden)
 endif()
 
 add_subdirectory(tests)
