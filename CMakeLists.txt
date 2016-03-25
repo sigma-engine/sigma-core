@@ -9,6 +9,8 @@ set(SOURCES
 
     src/sigmafive/util/filesystem.cpp
 
+    src/sigmafive/resource/identifier.cpp
+
     src/sigmafive/graphics/context.cpp
     src/sigmafive/graphics/shader.cpp
     src/sigmafive/graphics/material.cpp
@@ -56,4 +58,4 @@ if(NOT MSVC)
     target_compile_options(engine PUBLIC -std=c++14 -pedantic -fvisibility=hidden)
 endif()
 
-add_subdirectory(tests)
+#add_subdirectory(tests)

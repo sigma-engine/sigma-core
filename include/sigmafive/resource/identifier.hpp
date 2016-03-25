@@ -3,54 +3,42 @@
 
 #include <sigmafive/config.hpp>
 
-#include <functional>
+#include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/serialization/access.hpp>
+#include <functional>
+#include <iostream>
 #include <sigmafive/util/compile_time_hash.hpp>
+#include <sigmafive/util/filesystem.hpp>
 
 namespace sigmafive {
 namespace resource {
-    struct identifier {
-        identifier()
-            : value_(-1)
-        {
-        }
-        identifier(const std::string& name)
-            : value_(util::compile_time_hash(name.c_str()))
-        {
-        }
+    struct SIGMAFIVE_API identifier {
+        identifier();
 
-        identifier(const char* name)
-            : value_(util::compile_time_hash(name))
-        {
-        }
+        identifier(boost::filesystem::path path, boost::filesystem::path root_directroy = boost::filesystem::current_path());
 
-        identifier(const identifier& other)
-            : value_(other.value_)
-        {
-        }
+        identifier(boost::filesystem::path path, std::string sub_name, boost::filesystem::path root_directroy = boost::filesystem::current_path());
 
-        bool operator==(const identifier& other) const noexcept
-        {
-            return value_ == other.value_;
-        }
+        identifier(const std::string& name);
 
-        bool operator!=(const identifier& other) const noexcept
-        {
-            return value_ != other.value_;
-        }
+        identifier(const char* name);
 
-        std::size_t value() const noexcept
-        {
-            return value_;
-        }
+        identifier(const identifier& other);
 
-        explicit operator std::size_t() const noexcept
-        {
-            return value_;
-        }
+        bool operator==(const identifier& other) const noexcept;
+
+        bool operator!=(const identifier& other) const noexcept;
+
+        util::hash_type value() const noexcept;
+
+        std::string name() const;
+
+        explicit operator util::hash_type() const noexcept;
 
     private:
-        std::size_t value_;
+        util::hash_type value_;
+        std::string name_;
 
         friend class boost::serialization::access;
 
@@ -58,15 +46,19 @@ namespace resource {
         void serialize(Archive& ar, const unsigned int version)
         {
             ar& value_;
+            ar& name_;
         }
     };
+
+	SIGMAFIVE_API std::ostream& operator<<(std::ostream& os, const identifier& id);
 }
 }
+
 
 namespace std {
 template <>
 struct hash<sigmafive::resource::identifier> {
-    size_t operator()(const sigmafive::resource::identifier& id) const { return static_cast<size_t>(id); }
+    sigmafive::util::hash_type operator()(const sigmafive::resource::identifier& id) const { return static_cast<sigmafive::util::hash_type>(id); }
 };
 }
 

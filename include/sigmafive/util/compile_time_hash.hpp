@@ -5,10 +5,12 @@
 
 namespace sigmafive {
 namespace util {
+    using hash_type = unsigned long long;
+
     //http://www.cse.yorku.ca/~oz/hash.html
-    constexpr std::size_t compile_time_hash(const char* input)
+    constexpr hash_type compile_time_hash(const char* input)
     {
-        return std::size_t(*input) ? static_cast<std::size_t>(*input) + std::size_t(33) * compile_time_hash(input + 1) : std::size_t(5381);
+        return hash_type(*input) ? static_cast<hash_type>(*input) + hash_type(33) * compile_time_hash(input + 1) : hash_type(5381);
     }
 }
 }
