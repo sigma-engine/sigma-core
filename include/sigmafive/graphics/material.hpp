@@ -20,7 +20,7 @@ namespace graphics {
     private:
     };
 
-    class material_cache {
+    class SIGMAFIVE_API material_cache {
     public:
         material_cache() = default;
 
@@ -36,14 +36,11 @@ namespace graphics {
         * @param material the material to check if cached.
         * @return true if the material is cache.
         */
-        virtual bool
-        is_cached(resource::identifier material) const = 0;
+        virtual bool is_cached(resource::identifier material) const = 0;
 
         /**
         * @brief Increases the reference count associated with the material.
         *
-        * NOTE calling this method will not invalidate any references to other materiales
-        * in this cache.
         *
         * @param material the material to increase the reference count of.
         * @return true if the material exists and is valid.
@@ -54,8 +51,6 @@ namespace graphics {
         * @brief Decreases the reference count associated with
         * the material.
         *
-        * NOTE calling this method wiil not invalidate any references to other materiales
-        * in this cache.
         *
         * @param material the material to decrease the reference count of.
         * @returns true if the material reference count is zero.

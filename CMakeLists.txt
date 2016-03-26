@@ -12,6 +12,7 @@ set(SOURCES
     src/sigmafive/resource/identifier.cpp
 
     src/sigmafive/graphics/context.cpp
+    src/sigmafive/graphics/texture.cpp
     src/sigmafive/graphics/shader.cpp
     src/sigmafive/graphics/material.cpp
     src/sigmafive/graphics/static_mesh.cpp

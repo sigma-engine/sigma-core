@@ -17,7 +17,7 @@ namespace graphics {
     //        return std::stable_partition(instances_begin,instances_end,cpu_render(depthbuff,_1));
     //    }
 
-    struct view_port {
+    struct SIGMAFIVE_API view_port {
         entity_manager& entities;
         transform_manager& transforms;
         static_mesh_instance_manager& static_mesh_instances;

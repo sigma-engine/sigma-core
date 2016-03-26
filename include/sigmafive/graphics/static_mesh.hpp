@@ -52,7 +52,7 @@ namespace graphics {
         resource::identifier material_;
     };
 
-    class static_mesh_cache {
+    class SIGMAFIVE_API static_mesh_cache {
     public:
         static_mesh_cache() = default;
 
@@ -73,8 +73,6 @@ namespace graphics {
         /**
         * @brief Increases the reference count associated with the mesh.
         *
-        * NOTE calling this method will not invalidate any references to other meshes
-        * in this cache.
         *
         * @param mesh the mesh to increase the reference count of.
         * @return true if the mesh exists and is valid.
@@ -85,8 +83,6 @@ namespace graphics {
         * @brief Decreases the reference count associated with
         * the mesh.
         *
-        * NOTE calling this method wiil not invalidate any references to other meshes
-        * in this cache.
         *
         * @param mesh the mesh to decrease the reference count of.
         * @returns true if the mesh reference count is zero.

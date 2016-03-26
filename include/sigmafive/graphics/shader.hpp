@@ -53,7 +53,7 @@ namespace graphics {
         std::string source_;
     };
 
-    class shader_cache {
+    class SIGMAFIVE_API shader_cache {
     public:
         shader_cache() = default;
 
@@ -74,8 +74,6 @@ namespace graphics {
         /**
         * @brief Increases the reference count associated with the shader.
         *
-        * NOTE calling this method will not invalidate any references to other shaderes
-        * in this cache.
         *
         * @param shader the shader to increase the reference count of.
         * @return true if the shader exists and is valid.
@@ -86,8 +84,6 @@ namespace graphics {
         * @brief Decreases the reference count associated with
         * the shader.
         *
-        * NOTE calling this method wiil not invalidate any references to other shaderes
-        * in this cache.
         *
         * @param shader the shader to decrease the reference count of.
         * @returns true if the shader reference count is zero.

@@ -3,36 +3,73 @@
 
 #include <sigmafive/config.hpp>
 
-#include <array>
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/array.hpp>
-#include <boost/serialization/vector.hpp>
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
-#include <sigmafive/component.hpp>
-#include <sigmafive/util/glm_serialize.hpp>
 #include <vector>
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/vector.hpp>
+#include <sigmafive/resource/identifier.hpp>
 
 namespace sigmafive {
 namespace graphics {
     class SIGMAFIVE_API texture {
     public:
-        // TODO fill this out
+        unsigned int width() const;
+
+        unsigned int height() const;
+
+        const std::vector<unsigned char> &data() const;
+
+        void set_data(unsigned int width,unsigned int height,const std::vector<unsigned char> &data);
     private:
         friend class boost::serialization::access;
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
         {
-            // TODO fill this out
+            ar & width_;
+            ar & height_;
+            ar & data_;
         }
 
-        // TODO fill this out
+        unsigned int width_;
+        unsigned int height_;
+        std::vector<unsigned char> data_;
     };
 
-    class texture_cache {
+    class SIGMAFIVE_API texture_cache {
     public:
-        // TODO fill this out
-    private:
+        texture_cache() = default;
+
+        texture_cache(const texture_cache&) = delete;
+
+        virtual ~texture_cache() = default;
+
+        texture_cache& operator=(const texture_cache&) = delete;
+
+        /**
+        * @brief Returns if texture is loaded in this cache.
+        *
+        * @param texture the texture to check if cached.
+        * @return true if the texture is cache.
+        */
+        virtual bool is_cached(resource::identifier texture) const = 0;
+
+        /**
+        * @brief Increases the reference count associated with the texture.
+        *
+        *
+        * @param texture the texture to increase the reference count of.
+        * @return true if the texture exists and is valid.
+        */
+        virtual bool increment_reference(resource::identifier texture) = 0;
+
+        /**
+        * @brief Decreases the reference count associated with
+        * the texture.
+        *
+        *
+        * @param texture the texture to decrease the reference count of.
+        * @returns true if the texture reference count is zero.
+        */
+        virtual bool decrement_reference(resource::identifier texture) = 0;
     };
 }
 }
