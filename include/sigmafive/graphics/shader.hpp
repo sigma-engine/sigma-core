@@ -27,13 +27,15 @@ namespace graphics {
     public:
         shader(shader_type type = shader_type::none, std::string code = "");
 
+        shader(const shader&) = delete;
+
         shader(shader&&) = default;
 
-        shader(const shader&) = delete;
+        shader& operator=(const shader&) = delete;
 
         shader& operator=(shader&&) = default;
 
-        shader& operator=(const shader&) = delete;
+        ~shader() = default;
 
         shader_type type() const;
 
@@ -57,11 +59,15 @@ namespace graphics {
     public:
         shader_cache() = default;
 
+        shader_cache(shader_cache&&) noexcept = default;
+
         shader_cache(const shader_cache&) = delete;
 
-        virtual ~shader_cache() = default;
+        shader_cache& operator=(shader_cache&&) noexcept = default;
 
         shader_cache& operator=(const shader_cache&) = delete;
+
+        virtual ~shader_cache() = default;
 
         /**
         * @brief Returns if shader is loaded in this cache.

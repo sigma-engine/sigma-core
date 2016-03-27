@@ -7,39 +7,45 @@ namespace resource {
     {
     }
 
-    identifier::identifier(boost::filesystem::path path, boost::filesystem::path root_directroy)
+    identifier::identifier(std::string type, boost::filesystem::path path, boost::filesystem::path root_directroy)
     {
         // TODO error if path is not in root_directroy
         path = boost::filesystem::absolute(path, root_directroy);
+        path = path.replace_extension("");
         auto resource_path = util::path_divergence(root_directroy, path);
         name_ = resource_path.string();
         boost::algorithm::replace_all(name_, "\\", "/");
+        name_ = type + "://" + name_;
         value_ = util::compile_time_hash(name_.c_str());
+        std::cout << name_ << std::endl;
     }
 
-    identifier::identifier(boost::filesystem::path path, std::string sub_name, boost::filesystem::path root_directroy)
+    identifier::identifier(std::string type, boost::filesystem::path path, std::string sub_name, boost::filesystem::path root_directroy)
     {
         // TODO error if path is not in root_directroy
         path = boost::filesystem::absolute(path, root_directroy);
+        path = path.replace_extension("");
         auto resource_path = util::path_divergence(root_directroy, path);
         name_ = resource_path.string() + ":" + sub_name;
         boost::algorithm::replace_all(name_, "\\", "/");
+        name_ = type + "://" + name_;
         value_ = util::compile_time_hash(name_.c_str());
+        std::cout << name_ << std::endl;
     }
 
-	identifier::identifier(const std::string& name)
+    identifier::identifier(const std::string& name)
         : value_(util::compile_time_hash(name.c_str()))
         , name_(name)
     {
     }
 
-	identifier::identifier(const char* name)
+    identifier::identifier(const char* name)
         : value_(util::compile_time_hash(name))
         , name_(name)
     {
     }
 
-	identifier::identifier(const identifier& other)
+    identifier::identifier(const identifier& other)
         : value_(other.value_)
         , name_(other.name_)
     {

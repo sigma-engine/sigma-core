@@ -11,11 +11,15 @@ namespace graphics {
     public:
         material() = default;
 
+        material(const material&) = delete;
+
         material(material&&) = default;
 
         material& operator=(const material&) = delete;
 
         material& operator=(material&&) = default;
+
+        ~material() = default;
 
     private:
     };
@@ -24,11 +28,15 @@ namespace graphics {
     public:
         material_cache() = default;
 
+        material_cache(material_cache&&) noexcept = default;
+
         material_cache(const material_cache&) = delete;
 
-        virtual ~material_cache() = default;
+        material_cache& operator=(material_cache&&) noexcept = default;
 
         material_cache& operator=(const material_cache&) = delete;
+
+        virtual ~material_cache() = default;
 
         /**
         * @brief Returns if material is loaded in this cache.

@@ -27,6 +27,18 @@ namespace graphics {
 
         typedef std::array<unsigned int, 3> triangle;
 
+        static_mesh() = default;
+
+        static_mesh(const static_mesh&) = delete;
+
+        static_mesh(static_mesh&&) = default;
+
+        static_mesh& operator=(const static_mesh&) = delete;
+
+        static_mesh& operator=(static_mesh&&) = default;
+
+        ~static_mesh() = default;
+
         void set_data(std::vector<vertex> vertices, std::vector<triangle> triangles);
 
         const std::vector<vertex>& vertices() const;
@@ -56,11 +68,15 @@ namespace graphics {
     public:
         static_mesh_cache() = default;
 
+        static_mesh_cache(static_mesh_cache&&) noexcept = default;
+
         static_mesh_cache(const static_mesh_cache&) = delete;
 
-        virtual ~static_mesh_cache() = default;
+        static_mesh_cache& operator=(static_mesh_cache&&) noexcept = default;
 
         static_mesh_cache& operator=(const static_mesh_cache&) = delete;
+
+        virtual ~static_mesh_cache() = default;
 
         /**
         * @brief Returns if mesh is loaded in this cache.
@@ -88,10 +104,6 @@ namespace graphics {
         * @returns true if the mesh reference count is zero.
         */
         virtual bool decrement_reference(resource::identifier mesh) = 0;
-
-        //virtual static_mesh& get(resource::identifier mesh) = 0;
-
-        //virtual const static_mesh& add(resource::identifier mesh) const = 0;
     };
 }
 }

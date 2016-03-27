@@ -16,9 +16,9 @@ namespace resource {
     struct SIGMAFIVE_API identifier {
         identifier();
 
-        identifier(boost::filesystem::path path, boost::filesystem::path root_directroy = boost::filesystem::current_path());
+        identifier(std::string type, boost::filesystem::path path, boost::filesystem::path root_directroy = boost::filesystem::current_path());
 
-        identifier(boost::filesystem::path path, std::string sub_name, boost::filesystem::path root_directroy = boost::filesystem::current_path());
+        identifier(std::string type, boost::filesystem::path path, std::string sub_name, boost::filesystem::path root_directroy = boost::filesystem::current_path());
 
         identifier(const std::string& name);
 
@@ -50,10 +50,9 @@ namespace resource {
         }
     };
 
-	SIGMAFIVE_API std::ostream& operator<<(std::ostream& os, const identifier& id);
+    SIGMAFIVE_API std::ostream& operator<<(std::ostream& os, const identifier& id);
 }
 }
-
 
 namespace std {
 template <>
