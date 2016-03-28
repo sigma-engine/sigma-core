@@ -30,7 +30,8 @@ namespace graphics {
 
         const std::vector<unsigned char>& data() const;
 
-        void set_data(unsigned int width, unsigned int height, const std::vector<unsigned char>& data);
+        void set_data(unsigned int width, unsigned int height,
+            const std::vector<unsigned char>& data);
 
     private:
         friend class boost::serialization::access;
@@ -91,4 +92,4 @@ namespace graphics {
 }
 }
 
-#endif //SIGMAFIVE_ENGINE_GRAPHICS_TEXTURE_HPP
+#endif // SIGMAFIVE_ENGINE_GRAPHICS_TEXTURE_HPP

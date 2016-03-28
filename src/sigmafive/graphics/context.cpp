@@ -2,12 +2,8 @@
 
 namespace sigmafive {
 namespace graphics {
-    context::context()
-    {
-    }
+    context::context() {}
 
-    context::~context()
-    {
-    }
+    context::~context() {}
 }
 }

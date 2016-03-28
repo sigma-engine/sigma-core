@@ -17,4 +17,4 @@ namespace graphics {
 
 SIGMAFIVE_COMPONENT(sigmafive::graphics::directional_light)
 
-#endif //SIGMAFIVE_ENGINE_GRAPHICS_DIRECTIONAL_LIGHT_HPP
+#endif // SIGMAFIVE_ENGINE_GRAPHICS_DIRECTIONAL_LIGHT_HPP

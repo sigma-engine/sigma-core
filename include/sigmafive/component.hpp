@@ -53,10 +53,7 @@ public:
         return components_.back();
     }
 
-    virtual T& get(entity e) override
-    {
-        return components_.at(entities_.at(e));
-    }
+    virtual T& get(entity e) override { return components_.at(entities_.at(e)); }
 
     virtual const T& get(entity e) const override
     {
@@ -69,4 +66,4 @@ protected:
 };
 }
 
-#endif //SIGMAFIVE_ENGINE_COMPONENT_HPP
+#endif // SIGMAFIVE_ENGINE_COMPONENT_HPP

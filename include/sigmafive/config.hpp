@@ -15,4 +15,4 @@
 #endif
 #endif //_WIN32
 
-#endif //SIGMAFIVE_CONFIG_HPP
+#endif // SIGMAFIVE_CONFIG_HPP

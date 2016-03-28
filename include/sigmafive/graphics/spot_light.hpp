@@ -17,4 +17,4 @@ namespace graphics {
 
 SIGMAFIVE_COMPONENT(sigmafive::graphics::spot_light)
 
-#endif //SIGMAFIVE_ENGINE_GRAPHICS_SPOT_LIGHT_HPP
+#endif // SIGMAFIVE_ENGINE_GRAPHICS_SPOT_LIGHT_HPP

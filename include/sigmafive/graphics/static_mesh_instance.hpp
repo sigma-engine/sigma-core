@@ -22,7 +22,8 @@ namespace graphics {
 
         virtual ~static_mesh_instance_manager();
 
-        static_mesh_instance_manager& operator=(const static_mesh_instance_manager&) = delete;
+        static_mesh_instance_manager&
+        operator=(const static_mesh_instance_manager&) = delete;
 
         virtual bool has(entity e) const;
 
@@ -41,4 +42,4 @@ namespace graphics {
 
 SIGMAFIVE_COMPONENT(sigmafive::graphics::static_mesh_instance)
 
-#endif //SIGMAFIVE_ENGINE_GRAPHICS_STATIC_MESH_INSTANCE_HPP
+#endif // SIGMAFIVE_ENGINE_GRAPHICS_STATIC_MESH_INSTANCE_HPP

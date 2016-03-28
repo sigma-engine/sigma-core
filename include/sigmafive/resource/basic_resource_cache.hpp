@@ -29,7 +29,8 @@ namespace resource {
         {
             if (is_loaded(resource))
                 return true;
-            return boost::filesystem::exists(data_dir_ / std::to_string(static_cast<std::size_t>(resource)));
+            return boost::filesystem::exists(
+                data_dir_ / std::to_string(static_cast<std::size_t>(resource)));
         }
 
         bool load(resource::identifier resource)
@@ -71,4 +72,4 @@ namespace resource {
 }
 }
 
-#endif //SIGMAFIVE_ENGINE_RESOURCE_BASIC_RESOURCE_CACHE_HPP
+#endif // SIGMAFIVE_ENGINE_RESOURCE_BASIC_RESOURCE_CACHE_HPP

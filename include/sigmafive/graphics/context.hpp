@@ -12,9 +12,12 @@
 namespace sigmafive {
 namespace graphics {
     //    // PSEUDO code for occlusion query culling
-    //    auto software_occlusion_cull(depthbuff,occluders_begin,occluders_end,instances_begin,instances_end) {
+    //    auto
+    //    software_occlusion_cull(depthbuff,occluders_begin,occluders_end,instances_begin,instances_end)
+    //    {
     //        std::for_each(occluders_begin,occluders_end,cpu_render(depthbuff,_1));
-    //        return std::stable_partition(instances_begin,instances_end,cpu_render(depthbuff,_1));
+    //        return
+    //        std::stable_partition(instances_begin,instances_end,cpu_render(depthbuff,_1));
     //    }
 
     struct SIGMAFIVE_API view_port {
@@ -43,7 +46,8 @@ namespace graphics {
         //            sorted.resize(octree.visable_size());
         //            std::copy(octree.visable_begin(),octree.visable_end());
         //            std::stable_sort(sorted.begin(),sorted.end(),...);
-        //            auto end = graphics::software_occlusion_cull(occuders.begin(),occuders.end(),sorted.begin(),sorted.end());
+        //            auto end =
+        //            graphics::software_occlusion_cull(occuders.begin(),occuders.end(),sorted.begin(),sorted.end());
         //            render(viewport,sorted.begin(),sorted.end());
         //        }
 
@@ -54,4 +58,4 @@ namespace graphics {
 }
 }
 
-#endif //SIGMAFIVE_ENGINE_GRAPHICS_CONTEXT_HPP
+#endif // SIGMAFIVE_ENGINE_GRAPHICS_CONTEXT_HPP

@@ -18,8 +18,7 @@
 namespace sigmafive {
 class SIGMAFIVE_API game {
 public:
-    game(graphics::texture_cache& textures,
-        graphics::shader_cache& shaders,
+    game(graphics::texture_cache& textures, graphics::shader_cache& shaders,
         graphics::material_cache& materials,
         graphics::static_mesh_cache& static_meshes,
         transform_manager& transforms,
@@ -67,4 +66,4 @@ private:
 };
 }
 
-#endif //SIGMAFIVE_ENGINE_GAME_HPP
+#endif // SIGMAFIVE_ENGINE_GAME_HPP

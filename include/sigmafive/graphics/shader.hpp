@@ -3,8 +3,6 @@
 
 #include <sigmafive/config.hpp>
 
-#include <sigmafive/component.hpp>
-
 #include <array>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/array.hpp>
@@ -17,11 +15,9 @@
 
 namespace sigmafive {
 namespace graphics {
-    enum class shader_type {
-        none,
+    enum class shader_type { none,
         vertex,
-        fragment
-    };
+        fragment };
 
     class SIGMAFIVE_API shader {
     public:
@@ -95,12 +91,8 @@ namespace graphics {
         * @returns true if the shader reference count is zero.
         */
         virtual bool decrement_reference(resource::identifier shader) = 0;
-
-        //virtual shader& get(resource::identifier shader) = 0;
-
-        //virtual const shader& add(resource::identifier shader) const = 0;
     };
 }
 }
 
-#endif //SIGMAFIVE_ENGINE_GRAPHICS_SHADER_HPP
+#endif // SIGMAFIVE_ENGINE_GRAPHICS_SHADER_HPP

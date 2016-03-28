@@ -9,14 +9,8 @@ namespace graphics {
     {
     }
 
-    shader_type shader::type() const
-    {
-        return type_;
-    }
+    shader_type shader::type() const { return type_; }
 
-    const std::string& shader::source() const
-    {
-        return source_;
-    }
+    const std::string& shader::source() const { return source_; }
 }
 }

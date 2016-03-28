@@ -3,6 +3,9 @@
 
 #include <sigmafive/config.hpp>
 
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/vector.hpp>
+#include <boost/serialization/utility.hpp>
 #include <sigmafive/resource/identifier.hpp>
 
 namespace sigmafive {
@@ -21,7 +24,17 @@ namespace graphics {
 
         ~material() = default;
 
-    private:
+        resource::identifier vertex_shader;
+        resource::identifier fragment_shader;
+        std::vector<std::pair<std::string, resource::identifier> > textures;
+
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version)
+        {
+            ar& vertex_shader;
+            ar& fragment_shader;
+            ar& textures;
+        }
     };
 
     class SIGMAFIVE_API material_cache {
@@ -68,4 +81,4 @@ namespace graphics {
 }
 }
 
-#endif //SIGMAFIVE_ENGINE_GRAPHICS_MATERIAL_HPP
+#endif // SIGMAFIVE_ENGINE_GRAPHICS_MATERIAL_HPP

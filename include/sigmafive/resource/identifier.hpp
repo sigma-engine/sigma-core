@@ -3,41 +3,76 @@
 
 #include <sigmafive/config.hpp>
 
-#include <boost/algorithm/string.hpp>
-#include <boost/filesystem.hpp>
+#include <string>
 #include <boost/serialization/access.hpp>
-#include <functional>
-#include <iostream>
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/operations.hpp>
 #include <sigmafive/util/compile_time_hash.hpp>
-#include <sigmafive/util/filesystem.hpp>
 
 namespace sigmafive {
 namespace resource {
-    struct SIGMAFIVE_API identifier {
-        identifier();
+    struct SIGMAFIVE_API constexpr_identifier {
+        constexpr constexpr_identifier()
+            : value_(-1)
+        {
+        }
 
-        identifier(std::string type, boost::filesystem::path path, boost::filesystem::path root_directroy = boost::filesystem::current_path());
+        constexpr constexpr_identifier(util::hash_type value)
+            : value_(value)
+        {
+        }
 
-        identifier(std::string type, boost::filesystem::path path, std::string sub_name, boost::filesystem::path root_directroy = boost::filesystem::current_path());
+        template <std::size_t N>
+        constexpr constexpr_identifier(const char(&name)[N])
+            : value_(util::compile_time_hash(name))
+        {
+        }
 
-        identifier(const std::string& name);
+        constexpr constexpr_identifier(const constexpr_identifier&) = default;
 
-        identifier(const char* name);
+        constexpr constexpr_identifier(constexpr_identifier&&) noexcept = default;
 
-        identifier(const identifier& other);
+        constexpr_identifier& operator=(const constexpr_identifier&) = default;
 
-        bool operator==(const identifier& other) const noexcept;
+        constexpr_identifier& operator=(constexpr_identifier&&) noexcept = default;
 
-        bool operator!=(const identifier& other) const noexcept;
+        ~constexpr_identifier() = default;
+
+        bool operator==(const constexpr_identifier& other) const noexcept;
+
+        bool operator!=(const constexpr_identifier& other) const noexcept;
 
         util::hash_type value() const noexcept;
 
-        std::string name() const;
-
         explicit operator util::hash_type() const noexcept;
 
-    private:
+    protected:
         util::hash_type value_;
+
+        friend class boost::serialization::access;
+
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version)
+        {
+            ar& value_;
+        }
+    };
+
+    struct SIGMAFIVE_API development_identifier : public constexpr_identifier {
+    public:
+        development_identifier() = default;
+
+        development_identifier(const char* name);
+
+        development_identifier(std::string type, boost::filesystem::path path, boost::filesystem::path root_directroy = boost::filesystem::current_path());
+
+        development_identifier(std::string type, boost::filesystem::path path, std::string sub_name, boost::filesystem::path root_directroy = boost::filesystem::current_path());
+
+        development_identifier(const std::string& name);
+
+        std::string name() const;
+
+    protected:
         std::string name_;
 
         friend class boost::serialization::access;
@@ -50,15 +85,30 @@ namespace resource {
         }
     };
 
-    SIGMAFIVE_API std::ostream& operator<<(std::ostream& os, const identifier& id);
+    SIGMAFIVE_API std::ostream& operator<<(std::ostream& os, const constexpr_identifier& id);
+
+    SIGMAFIVE_API std::ostream& operator<<(std::ostream& os, const development_identifier& id);
+
+    using identifier = development_identifier;
 }
 }
 
 namespace std {
 template <>
-struct hash<sigmafive::resource::identifier> {
-    sigmafive::util::hash_type operator()(const sigmafive::resource::identifier& id) const { return static_cast<sigmafive::util::hash_type>(id); }
+struct hash<sigmafive::resource::constexpr_identifier> {
+    sigmafive::util::hash_type operator()(const sigmafive::resource::constexpr_identifier& id) const
+    {
+        return static_cast<sigmafive::util::hash_type>(id);
+    }
+};
+
+template <>
+struct hash<sigmafive::resource::development_identifier> {
+    sigmafive::util::hash_type operator()(const sigmafive::resource::development_identifier& id) const
+    {
+        return static_cast<sigmafive::util::hash_type>(id);
+    }
 };
 }
 
-#endif //SIGMAFIVE_ENGINE_RESOURCE_IDENTIFIER_HPP
+#endif // SIGMAFIVE_ENGINE_RESOURCE_IDENTIFIER_HPP

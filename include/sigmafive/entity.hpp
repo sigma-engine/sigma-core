@@ -30,4 +30,4 @@ struct SIGMAFIVE_API hash<sigmafive::entity> {
 };
 }
 
-#endif //SIGMAFIVE_ENGINE_ENTITY_HPP
+#endif // SIGMAFIVE_ENGINE_ENTITY_HPP

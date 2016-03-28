@@ -2,8 +2,7 @@
 
 namespace sigmafive {
 
-game::game(graphics::texture_cache& textures,
-    graphics::shader_cache& shaders,
+game::game(graphics::texture_cache& textures, graphics::shader_cache& shaders,
     graphics::material_cache& materials,
     graphics::static_mesh_cache& static_meshes,
     transform_manager& transforms,
@@ -23,54 +22,28 @@ game::game(graphics::texture_cache& textures,
 {
 }
 
-game::~game()
-{
-}
+game::~game() {}
 
-sigmafive::entity_manager& game::entities()
-{
-    return entities_;
-}
+sigmafive::entity_manager& game::entities() { return entities_; }
 
-graphics::texture_cache& game::textures()
-{
-    return textures_;
-}
+graphics::texture_cache& game::textures() { return textures_; }
 
-graphics::shader_cache& game::shaders()
-{
-    return shaders_;
-}
+graphics::shader_cache& game::shaders() { return shaders_; }
 
-graphics::material_cache& game::materials()
-{
-    return materials_;
-}
+graphics::material_cache& game::materials() { return materials_; }
 
-graphics::static_mesh_cache& game::static_meshes()
-{
-    return static_meshes_;
-}
+graphics::static_mesh_cache& game::static_meshes() { return static_meshes_; }
 
-transform_manager& game::transforms()
-{
-    return transforms_;
-}
+transform_manager& game::transforms() { return transforms_; }
 
 graphics::directional_light_manager& game::directional_lights()
 {
     return directional_lights_;
 }
 
-graphics::point_light_manager& game::point_lights()
-{
-    return point_lights_;
-}
+graphics::point_light_manager& game::point_lights() { return point_lights_; }
 
-graphics::spot_light_manager& game::spot_lights()
-{
-    return spot_lights_;
-}
+graphics::spot_light_manager& game::spot_lights() { return spot_lights_; }
 
 graphics::static_mesh_instance_manager& game::static_mesh_instances()
 {

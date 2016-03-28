@@ -111,7 +111,8 @@ namespace graphics {
 namespace boost {
 namespace serialization {
     template <class Archive>
-    void serialize(Archive& ar, sigmafive::graphics::static_mesh::vertex& vertex, const unsigned int version)
+    void serialize(Archive& ar, sigmafive::graphics::static_mesh::vertex& vertex,
+        const unsigned int version)
     {
         ar& vertex.position;
         ar& vertex.normal;
@@ -121,4 +122,4 @@ namespace serialization {
 }
 }
 
-#endif //SIGMAFIVE_ENGINE_GRAPHICS_STATIC_MESH_HPP
+#endif // SIGMAFIVE_ENGINE_GRAPHICS_STATIC_MESH_HPP

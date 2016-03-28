@@ -3,16 +3,11 @@
 #include <boost/functional/hash.hpp>
 
 namespace sigmafive {
-entity::entity() noexcept
-    : entity(std::uint32_t(-1), std::uint32_t(-1))
-{
-}
+entity::entity() noexcept : entity(std::uint32_t(-1), std::uint32_t(-1)) {}
 
 entity::entity(std::uint32_t index, std::uint32_t version) noexcept
     : index(index),
-      version(version)
-{
-}
+      version(version) {}
 
 bool entity::is_valid() const noexcept
 {
@@ -24,13 +19,11 @@ bool entity::operator==(entity e) const noexcept
     return index == e.index && version == e.version;
 }
 
-bool entity::operator!=(entity e) const noexcept
-{
-    return !(*this == e);
-}
+bool entity::operator!=(entity e) const noexcept { return !(*this == e); }
 }
 
-std::size_t std::hash<sigmafive::entity>::operator()(const sigmafive::entity& e) const
+std::size_t std::hash<sigmafive::entity>::
+operator()(const sigmafive::entity& e) const
 {
     std::size_t seed = 0;
     boost::hash_combine(seed, e.index);

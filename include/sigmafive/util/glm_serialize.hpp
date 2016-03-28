@@ -114,4 +114,4 @@ namespace serialization {
 }
 }
 
-#endif //SIGMA_FIVE_ENGINE_UTIL_GLM_SERIALIZE_HPP
+#endif // SIGMA_FIVE_ENGINE_UTIL_GLM_SERIALIZE_HPP

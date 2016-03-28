@@ -61,4 +61,4 @@ private:
 };
 }
 
-#endif //SIGMAFIVE_ENTITY_MANAGER_HPP
+#endif // SIGMAFIVE_ENTITY_MANAGER_HPP

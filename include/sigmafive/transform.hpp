@@ -19,4 +19,4 @@ using transform_manager = basic_component_manager<transform>;
 
 SIGMAFIVE_COMPONENT(sigmafive::transform)
 
-#endif //SIGMAFIVE_ENGINE_TRANSFORM_HPP
+#endif // SIGMAFIVE_ENGINE_TRANSFORM_HPP
