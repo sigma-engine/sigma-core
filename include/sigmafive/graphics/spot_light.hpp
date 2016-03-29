@@ -8,7 +8,6 @@
 namespace sigmafive {
 namespace graphics {
     struct SIGMAFIVE_API spot_light {
-        bool visible; // TODO check the odering on this
     };
 
     using spot_light_manager = basic_component_manager<spot_light>;

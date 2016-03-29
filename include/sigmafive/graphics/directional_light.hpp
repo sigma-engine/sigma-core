@@ -8,7 +8,6 @@
 namespace sigmafive {
 namespace graphics {
     struct SIGMAFIVE_API directional_light {
-        bool visible; // TODO check the odering on this
     };
 
     using directional_light_manager = basic_component_manager<directional_light>;

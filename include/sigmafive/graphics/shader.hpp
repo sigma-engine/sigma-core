@@ -15,9 +15,11 @@
 
 namespace sigmafive {
 namespace graphics {
-    enum class shader_type { none,
+    enum class shader_type {
+        none,
         vertex,
-        fragment };
+        fragment
+    };
 
     class SIGMAFIVE_API shader {
     public:
@@ -33,22 +35,15 @@ namespace graphics {
 
         ~shader() = default;
 
-        shader_type type() const;
-
-        const std::string& source() const;
-
-    protected:
-        friend class boost::serialization::access;
-
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
         {
-            ar& type_;
-            ar& source_;
+            ar& type;
+            ar& source;
         }
 
-        shader_type type_ = shader_type::none;
-        std::string source_;
+        shader_type type = shader_type::none;
+        std::string source;
     };
 
     class SIGMAFIVE_API shader_cache {

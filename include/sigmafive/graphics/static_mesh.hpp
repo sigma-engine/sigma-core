@@ -39,29 +39,17 @@ namespace graphics {
 
         ~static_mesh() = default;
 
-        void set_data(std::vector<vertex> vertices, std::vector<triangle> triangles);
-
-        const std::vector<vertex>& vertices() const;
-
-        const std::vector<triangle>& triangles() const;
-
-        resource::identifier get_material() const;
-
-        void set_material(resource::identifier material);
-
-    private:
-        friend class boost::serialization::access;
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
         {
-            ar& vertices_;
-            ar& triangles_;
-            ar& material_;
+            ar& vertices;
+            ar& triangles;
+            ar& material;
         }
 
-        std::vector<vertex> vertices_;
-        std::vector<triangle> triangles_;
-        resource::identifier material_;
+        std::vector<vertex> vertices;
+        std::vector<triangle> triangles;
+        resource::identifier material;
     };
 
     class SIGMAFIVE_API static_mesh_cache {
