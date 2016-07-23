@@ -6,7 +6,11 @@
 #include <cinttypes>
 #include <functional>
 
+#include <sigmafive/reflect/reflect.hpp>
+
 namespace sigmafive {
+
+RCLASS()
 struct SIGMAFIVE_API entity {
     entity() noexcept;
 

@@ -3,13 +3,15 @@
 
 #include <sigmafive/config.hpp>
 
-#include <sigmafive/component.hpp>
-
-#include <sigmafive/graphics/static_mesh.hpp>
 #include <unordered_map>
+
+#include <sigmafive/component.hpp>
+#include <sigmafive/graphics/static_mesh.hpp>
+#include <sigmafive/reflect/reflect.hpp>
 
 namespace sigmafive {
 namespace graphics {
+    RCLASS()
     struct SIGMAFIVE_API static_mesh_instance {
         resource::identifier static_mesh;
     };

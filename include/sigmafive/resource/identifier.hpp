@@ -4,9 +4,11 @@
 #include <sigmafive/config.hpp>
 
 #include <string>
-#include <boost/serialization/access.hpp>
-#include <boost/filesystem/path.hpp>
+
 #include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
+#include <boost/serialization/access.hpp>
+
 #include <sigmafive/util/compile_time_hash.hpp>
 
 namespace sigmafive {
@@ -23,7 +25,7 @@ namespace resource {
         }
 
         template <std::size_t N>
-        constexpr constexpr_identifier(const char(&name)[N])
+        constexpr constexpr_identifier(const char (&name)[N])
             : value_(util::compile_time_hash(name))
         {
         }

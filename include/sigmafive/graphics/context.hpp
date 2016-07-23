@@ -5,9 +5,10 @@
 
 #include <glm/mat4x4.hpp>
 #include <glm/vec2.hpp>
-#include <sigmafive/transform.hpp>
+
 #include <sigmafive/entity_manager.hpp>
 #include <sigmafive/graphics/static_mesh_instance.hpp>
+#include <sigmafive/transform.hpp>
 
 namespace sigmafive {
 namespace graphics {

@@ -4,12 +4,17 @@
 #include <sigmafive/config.hpp>
 
 #include <vector>
+
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/vector.hpp>
+
+#include <sigmafive/reflect/reflect.hpp>
 #include <sigmafive/resource/identifier.hpp>
 
 namespace sigmafive {
 namespace graphics {
+
+    RCLASS()
     class SIGMAFIVE_API texture {
     public:
         texture() = default;

@@ -4,12 +4,16 @@
 #include <sigmafive/config.hpp>
 
 #include <boost/serialization/access.hpp>
-#include <boost/serialization/vector.hpp>
 #include <boost/serialization/utility.hpp>
+#include <boost/serialization/vector.hpp>
+
+#include <sigmafive/reflect/reflect.hpp>
 #include <sigmafive/resource/identifier.hpp>
 
 namespace sigmafive {
 namespace graphics {
+
+    RCLASS()
     class SIGMAFIVE_API material {
     public:
         material() = default;

@@ -5,12 +5,22 @@
 
 #include <glm/gtc/quaternion.hpp>
 #include <glm/vec3.hpp>
+
 #include <sigmafive/component.hpp>
+#include <sigmafive/reflect/reflect.hpp>
 
 namespace sigmafive {
+
+RCLASS()
 struct SIGMAFIVE_API transform {
+
+    RPROPERTY()
     glm::vec3 position;
+
+    RPROPERTY()
     glm::vec3 scale{ 1.0f };
+
+    RPROPERTY()
     glm::quat rotation;
 };
 

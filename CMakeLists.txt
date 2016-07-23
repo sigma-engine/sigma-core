@@ -1,6 +1,13 @@
 cmake_minimum_required(VERSION 3.2)
 project(engine)
 
+add_subdirectory(tools/reflector)
+add_subdirectory(tools/texture-compiler)
+add_subdirectory(tools/shader-compiler)
+add_subdirectory(tools/material-compiler)
+add_subdirectory(tools/model-compiler)
+add_subdirectory(tools/editor)
+
 set(SOURCES
     src/sigmafive/entity.cpp
 
@@ -21,6 +28,8 @@ set(SOURCES
 
 set(HEADERS
     include/sigmafive/config.hpp
+
+    include/sigmafive/reflect/reflect.hpp
 
     include/sigmafive/game.hpp
     include/sigmafive/entity.hpp
@@ -47,16 +56,17 @@ set(HEADERS
     include/sigmafive/graphics/static_mesh_instance.hpp
 )
 
-add_library(engine SHARED ${SOURCES} ${HEADERS})
+add_library(engine STATIC ${SOURCES} ${HEADERS})
+add_dependencies(engine reflector)
 
 target_include_directories(engine PUBLIC include)
 
 target_compile_options(engine PRIVATE -DSIGMA_FIVE_ENGINE_EXPORT)
 
-target_link_libraries(engine glm ${Boost_LIBRARIES})
+target_link_libraries(engine pthread ${CONAN_LIBS})
 
 if(NOT MSVC)
-    target_compile_options(engine PUBLIC -std=c++14 -pedantic -fvisibility=hidden)
+    target_compile_options(engine PUBLIC -std=c++14 -pedantic)
 endif()
 
 #add_subdirectory(tests)

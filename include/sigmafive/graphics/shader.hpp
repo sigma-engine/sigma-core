@@ -4,14 +4,18 @@
 #include <sigmafive/config.hpp>
 
 #include <array>
+#include <string>
+
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/array.hpp>
 #include <boost/serialization/vector.hpp>
+
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
+
+#include <sigmafive/reflect/reflect.hpp>
 #include <sigmafive/resource/identifier.hpp>
 #include <sigmafive/util/glm_serialize.hpp>
-#include <string>
 
 namespace sigmafive {
 namespace graphics {
@@ -21,6 +25,7 @@ namespace graphics {
         fragment
     };
 
+    RCLASS()
     class SIGMAFIVE_API shader {
     public:
         shader(shader_type type = shader_type::none, std::string code = "");

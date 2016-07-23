@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>ui/main.qml</file>
+        <file>error.svg</file>
+        <file>info.svg</file>
+        <file>warning.svg</file>
+    </qresource>
+</RCC>

@@ -3,14 +3,16 @@
 
 #include <sigmafive/config.hpp>
 
-#include <sigmafive/entity.hpp>
-#include <sigmafive/util/compile_time_hash.hpp>
 #include <unordered_map>
 #include <vector>
 
+#include <sigmafive/entity.hpp>
+#include <sigmafive/util/compile_time_hash.hpp>
+
 #define SIGMAFIVE_COMPONENT(T)                                                    \
     namespace sigmafive {                                                         \
-    template <> struct component_type_info<T> {                                   \
+    template <>                                                                   \
+    struct component_type_info<T> {                                               \
         static constexpr const std::size_t type_id = util::compile_time_hash(#T); \
     };                                                                            \
     }

@@ -3,12 +3,13 @@
 
 #include <sigmafive/resource/identifier.hpp>
 
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/path.hpp>
 #include <fstream>
 #include <unordered_map>
 #include <vector>
+
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
 
 namespace sigmafive {
 namespace resource {

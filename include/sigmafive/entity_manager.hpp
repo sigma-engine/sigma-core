@@ -3,11 +3,16 @@
 
 #include <sigmafive/config.hpp>
 
-#include <boost/iterator/filter_iterator.hpp>
-#include <sigmafive/entity.hpp>
 #include <vector>
 
+#include <boost/iterator/filter_iterator.hpp>
+
+#include <sigmafive/entity.hpp>
+#include <sigmafive/reflect/reflect.hpp>
+
 namespace sigmafive {
+
+RCLASS()
 class SIGMAFIVE_API entity_manager {
     struct is_entity_alive {
         inline bool operator()(entity e) { return e.index != std::uint32_t(-1); }

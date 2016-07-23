@@ -1,10 +1,12 @@
 #include <sigmafive/resource/identifier.hpp>
 
+#include <functional>
+#include <iostream>
+
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/serialization/access.hpp>
-#include <functional>
-#include <iostream>
+
 #include <sigmafive/util/compile_time_hash.hpp>
 #include <sigmafive/util/filesystem.hpp>
 

@@ -4,18 +4,24 @@
 #include <sigmafive/config.hpp>
 
 #include <array>
+#include <vector>
+
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/array.hpp>
 #include <boost/serialization/vector.hpp>
+
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
+
 #include <sigmafive/component.hpp>
+#include <sigmafive/reflect/reflect.hpp>
 #include <sigmafive/resource/identifier.hpp>
 #include <sigmafive/util/glm_serialize.hpp>
-#include <vector>
 
 namespace sigmafive {
 namespace graphics {
+
+    RCLASS()
     class SIGMAFIVE_API static_mesh {
     public:
         struct vertex {

@@ -4,9 +4,12 @@
 #include <sigmafive/config.hpp>
 
 #include <sigmafive/component.hpp>
+#include <sigmafive/reflect/reflect.hpp>
 
 namespace sigmafive {
 namespace graphics {
+
+    RCLASS()
     struct SIGMAFIVE_API spot_light {
     };
 
