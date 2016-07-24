@@ -8,8 +8,7 @@
 #include <QWheelEvent>
 
 #include <sigmafive/editor/opengl_widget.hpp>
-
-#include <test_game.hpp>
+#include <sigmafive/game.hpp>
 
 namespace sigmafive {
 namespace editor {
@@ -36,6 +35,8 @@ namespace editor {
         void tick();
 
     private:
+        void create_game();
+
         glm::vec2 convert(QPoint p) const;
 
         QTimer timer_;
@@ -47,8 +48,9 @@ namespace editor {
         graphics::directional_light_manager directional_lights_;
         graphics::point_light_manager point_lights_;
         graphics::spot_light_manager spot_lights_;
-        test_game game_;
-        graphics::view_port viewport_;
+
+        std::unique_ptr<game> game_;
+        std::unique_ptr<graphics::view_port> viewport_;
     };
 }
 }

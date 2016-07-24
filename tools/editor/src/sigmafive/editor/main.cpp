@@ -10,7 +10,5 @@ int main(int argc, char* argv[])
 
     m.show();
 
-    std::cout << __cplusplus << std::endl;
-
     return app.exec();
 }
