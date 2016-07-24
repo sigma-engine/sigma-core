@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.2)
-project(engine)
+project(sigma-engine)
 
 include(conanbuildinfo.cmake)
 conan_basic_setup()
 
-include(sigma_five_setup.cmake)
+include(sigma_setup.cmake)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -18,68 +18,65 @@ foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/lib)
 endforeach(OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES)
 
-add_subdirectory(tools/reflector)
-add_subdirectory(tools/texture-compiler)
-add_subdirectory(tools/shader-compiler)
-add_subdirectory(tools/material-compiler)
-add_subdirectory(tools/model-compiler)
-add_subdirectory(backends/graphics/opengl)
-add_subdirectory(tools/editor)
+add_subdirectory(tools/screflect)
+add_subdirectory(tools/sctexture)
+add_subdirectory(tools/scshader)
+add_subdirectory(tools/scmaterial)
+add_subdirectory(tools/scmodel)
+add_subdirectory(backends/graphics/sopengl)
+add_subdirectory(tools/seditor)
 
 set(SOURCES
-    src/sigmafive/entity.cpp
+    src/sigma/entity.cpp
 
-    src/sigmafive/game.cpp
-    src/sigmafive/entity_manager.cpp
+    src/sigma/game.cpp
+    src/sigma/entity_manager.cpp
 
-    src/sigmafive/util/filesystem.cpp
+    src/sigma/util/filesystem.cpp
 
-    src/sigmafive/resource/identifier.cpp
+    src/sigma/resource/identifier.cpp
 
-    src/sigmafive/graphics/context.cpp
-    src/sigmafive/graphics/texture.cpp
-    src/sigmafive/graphics/shader.cpp
-    src/sigmafive/graphics/material.cpp
-    src/sigmafive/graphics/static_mesh.cpp
-    src/sigmafive/graphics/static_mesh_instance.cpp
+    src/sigma/graphics/context.cpp
+    src/sigma/graphics/texture.cpp
+    src/sigma/graphics/shader.cpp
+    src/sigma/graphics/material.cpp
+    src/sigma/graphics/static_mesh.cpp
+    src/sigma/graphics/static_mesh_instance.cpp
 )
 
 set(HEADERS
-    include/sigmafive/config.hpp
+    include/sigma/config.hpp
 
-    include/sigmafive/reflect/reflect.hpp
+    include/sigma/reflect/reflect.hpp
 
-    include/sigmafive/game.hpp
-    include/sigmafive/entity.hpp
-    include/sigmafive/component.hpp
-    include/sigmafive/entity_manager.hpp
+    include/sigma/game.hpp
+    include/sigma/entity.hpp
+    include/sigma/component.hpp
+    include/sigma/entity_manager.hpp
 
-    include/sigmafive/transform.hpp
+    include/sigma/transform.hpp
 
-    include/sigmafive/util/compile_time_hash.hpp
-    include/sigmafive/util/glm_serialize.hpp
-    include/sigmafive/util/filesystem.hpp
+    include/sigma/util/compile_time_hash.hpp
+    include/sigma/util/glm_serialize.hpp
+    include/sigma/util/filesystem.hpp
 
-    include/sigmafive/resource/identifier.hpp
-    include/sigmafive/resource/basic_resource_cache.hpp
+    include/sigma/resource/identifier.hpp
+    include/sigma/resource/basic_resource_cache.hpp
 
-    include/sigmafive/graphics/context.hpp
-    include/sigmafive/graphics/texture.hpp
-    include/sigmafive/graphics/shader.hpp
-    include/sigmafive/graphics/material.hpp
-    include/sigmafive/graphics/directional_light.hpp
-    include/sigmafive/graphics/point_light.hpp
-    include/sigmafive/graphics/spot_light.hpp
-    include/sigmafive/graphics/static_mesh.hpp
-    include/sigmafive/graphics/static_mesh_instance.hpp
+    include/sigma/graphics/context.hpp
+    include/sigma/graphics/texture.hpp
+    include/sigma/graphics/shader.hpp
+    include/sigma/graphics/material.hpp
+    include/sigma/graphics/directional_light.hpp
+    include/sigma/graphics/point_light.hpp
+    include/sigma/graphics/spot_light.hpp
+    include/sigma/graphics/static_mesh.hpp
+    include/sigma/graphics/static_mesh_instance.hpp
 )
 
-add_library(engine SHARED ${SOURCES} ${HEADERS})
-
-target_include_directories(engine PUBLIC include)
-
-target_compile_options(engine PRIVATE -DSIGMA_FIVE_ENGINE_EXPORT)
-
-target_link_libraries(engine PUBLIC pthread ${CONAN_LIBS})
+add_library(sigma-engine SHARED ${SOURCES} ${HEADERS})
+target_include_directories(sigma-engine PUBLIC include)
+target_compile_options(sigma-engine PRIVATE -DSIGMA_ENGINE_EXPORT)
+target_link_libraries(sigma-engine PUBLIC pthread ${CONAN_LIBS})
 
 #add_subdirectory(tests)
