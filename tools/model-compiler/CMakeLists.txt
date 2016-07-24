@@ -15,7 +15,3 @@ add_executable(model-compiler ${SOURCES} ${HEADERS})
 target_include_directories(model-compiler PUBLIC include)
 
 target_link_libraries(model-compiler engine assimp pthread ${CONAN_LIBS})
-
-if(NOT MSVC)
-    target_compile_options(model-compiler PUBLIC -std=c++14 -pedantic)
-endif()

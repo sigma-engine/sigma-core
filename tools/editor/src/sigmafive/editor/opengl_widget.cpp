@@ -44,7 +44,7 @@ namespace editor {
 
     void opengl_widget::initializeGL()
     {
-        context_ = std::unique_ptr<opengl::context>(new opengl::context{}); // TODO what the GCC? std::make_unique<opengl::context>();
+        context_ = std::make_unique<opengl::context>();
         emit initialized(this);
         QOpenGLWidget::initializeGL();
     }

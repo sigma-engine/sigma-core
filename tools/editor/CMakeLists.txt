@@ -58,10 +58,8 @@ PUBLIC
     -DCMAKE_BINARY_DIR=boost::filesystem::path{\"${CMAKE_BINARY_DIR}\"}
 )
 
-if(NOT MSVC)
-    target_compile_options(editor PUBLIC -std=c++14 -pedantic)
-endif()
-
 target_link_libraries(editor opengl test-game gizmo Qt5::Core Qt5::Qml Qt5::Quick Qt5::Widgets pthread ${CONAN_LIBS})
+
+target_compile_options(editor PUBLIC -std=c++14)
 
 add_dependencies(editor editor-resources)

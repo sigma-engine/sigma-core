@@ -65,8 +65,4 @@ target_compile_options(engine PRIVATE -DSIGMA_FIVE_ENGINE_EXPORT)
 
 target_link_libraries(engine pthread ${CONAN_LIBS})
 
-if(NOT MSVC)
-    target_compile_options(engine PUBLIC -std=c++14 -pedantic)
-endif()
-
 #add_subdirectory(tests)

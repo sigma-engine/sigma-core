@@ -14,6 +14,3 @@ target_include_directories(shader-compiler PUBLIC include)
 
 target_link_libraries(shader-compiler engine pthread ${CONAN_LIBS})
 
-if(NOT MSVC)
-    target_compile_options(shader-compiler PUBLIC -std=c++14 -pedantic)
-endif()
