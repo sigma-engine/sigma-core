@@ -81,7 +81,7 @@ namespace editor {
         if ((e->modifiers() & Qt::ShiftModifier) == e->modifiers())
             trackball_controller_.begin_pan();
 
-        if(viewport_)
+        if (viewport_)
             viewport_->view_matrix = trackball_controller_.matrix();
 
         gl_widget_->update();
@@ -101,7 +101,7 @@ namespace editor {
 
     void editor_game::tick()
     {
-        if(game_) {
+        if (game_) {
             static auto start = std::chrono::high_resolution_clock::now();
             auto end = std::chrono::high_resolution_clock::now();
             auto dt = std::chrono::duration_cast<std::chrono::duration<float> >(end - start);
@@ -111,24 +111,24 @@ namespace editor {
         }
     }
 
-    void editor_game::create_game() {
+    void editor_game::create_game()
+    {
         game_ = std::make_unique<test_game>(gl_widget_->textures(),
-                                            gl_widget_->shaders(),
-                                            gl_widget_->materials(),
-                                            gl_widget_->static_meshes(),
-                                            transforms_,
-                                            directional_lights_,
-                                            point_lights_,
-                                            spot_lights_,
-                                            static_mesh_instances_);
+            gl_widget_->shaders(),
+            gl_widget_->materials(),
+            gl_widget_->static_meshes(),
+            transforms_,
+            directional_lights_,
+            point_lights_,
+            spot_lights_,
+            static_mesh_instances_);
 
         viewport_ = std::unique_ptr<graphics::view_port>(new graphics::view_port{
-                                                             game_->entities,
-                                                             transforms_,
-                                                             static_mesh_instances_,
-                                                             glm::mat4(1.0f),
-                                                             trackball_controller_.matrix()
-                                                          });
+            game_->entities,
+            transforms_,
+            static_mesh_instances_,
+            glm::mat4(1.0f),
+            trackball_controller_.matrix() });
 
         gl_widget_->set_viewport(viewport_.get());
 
