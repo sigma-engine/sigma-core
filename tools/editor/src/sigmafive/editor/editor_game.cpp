@@ -1,6 +1,6 @@
 #include <sigmafive/editor/editor_game.hpp>
 
-#include <test_game.hpp>
+//#include <test_game.hpp>
 
 // TODO is this something that glm has?
 template <class T>
@@ -113,7 +113,7 @@ namespace editor {
 
     void editor_game::create_game()
     {
-        game_ = std::make_unique<test_game>(gl_widget_->textures(),
+        /*game_ = std::make_unique<test_game>(gl_widget_->textures(),
             gl_widget_->shaders(),
             gl_widget_->materials(),
             gl_widget_->static_meshes(),
@@ -134,7 +134,7 @@ namespace editor {
 
         auto grid_floor = game_->entities.create();
         game_->transforms.add(grid_floor);
-        game_->static_mesh_instances.add(grid_floor, GRID_FLOOR_MESH);
+        game_->static_mesh_instances.add(grid_floor, GRID_FLOOR_MESH);*/
     }
 
     glm::vec2 editor_game::convert(QPoint p) const

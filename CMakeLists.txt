@@ -1,6 +1,22 @@
 cmake_minimum_required(VERSION 3.2)
 project(engine)
 
+include(conanbuildinfo.cmake)
+conan_basic_setup()
+
+set(CMAKE_CXX_STANDARD 14)
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
+    string(TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/bin)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/bin)
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/lib)
+endforeach(OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES)
+
+add_subdirectory(backends/graphics/opengl)
 add_subdirectory(tools/reflector)
 add_subdirectory(tools/texture-compiler)
 add_subdirectory(tools/shader-compiler)
@@ -63,6 +79,6 @@ target_include_directories(engine PUBLIC include)
 
 target_compile_options(engine PRIVATE -DSIGMA_FIVE_ENGINE_EXPORT)
 
-target_link_libraries(engine pthread ${CONAN_LIBS})
+target_link_libraries(engine PUBLIC pthread ${CONAN_LIBS})
 
 #add_subdirectory(tests)

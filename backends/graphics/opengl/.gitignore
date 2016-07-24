@@ -3,9 +3,6 @@
 !/thirdparty/CMakeLists.txt
 !/thirdparty/licences.txt
 
-conanbuildinfo.cmake
-conaninfo.txt
-
 # Ide Generated files
 *.txt.user
 .idea/
@@ -44,3 +41,8 @@ generated
 
 # pack-cpp
 .pack-cpp/
+
+#Blender back up
+*.blend*
+!*.blend
+dna.txt
