@@ -31,8 +31,8 @@ int main(int argc, char const* argv[])
     }
 
     if (vm.count("input-files") <= 0) {
-        std::cerr << "texture-compiler: fatal error: no input files." << std::endl;
-        return -1;
+        //std::cerr << "texture-compiler: fatal error: no input files." << std::endl;
+        return 0;
     }
 
     FreeImage_Initialise(); // TODO use RAII

@@ -3,8 +3,12 @@
 !/thirdparty/CMakeLists.txt
 !/thirdparty/licences.txt
 
+.ycm_extra_conf*
+
 conanbuildinfo.cmake
 conaninfo.txt
+
+__pycache__/
 
 # Ide Generated files
 *.txt.user

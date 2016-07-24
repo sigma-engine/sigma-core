@@ -3,8 +3,6 @@ project(opengl)
 
 find_package(OpenGL REQUIRED)
 
-add_subdirectory(resources)
-
 set(SOURCES
     src/sigmafive/opengl/buffer.cpp
     src/sigmafive/opengl/context.cpp
@@ -48,4 +46,5 @@ target_compile_definitions(opengl PRIVATE -DSIGMA_FIVE_OPENGL_EXPORT)
 
 target_link_libraries(opengl engine ${OPENGL_LIBRARIES} pthread ${CONAN_LIBS})
 
+add_resource_package(opengl-resources resources)
 add_dependencies(opengl opengl-resources)

@@ -4,24 +4,26 @@ project(engine)
 include(conanbuildinfo.cmake)
 conan_basic_setup()
 
+include(sigma_five_setup.cmake)
+
 set(CMAKE_CXX_STANDARD 14)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
     string(TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/bin)
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/bin)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/lib)
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/lib)
 endforeach(OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES)
 
-add_subdirectory(backends/graphics/opengl)
 add_subdirectory(tools/reflector)
 add_subdirectory(tools/texture-compiler)
 add_subdirectory(tools/shader-compiler)
 add_subdirectory(tools/material-compiler)
 add_subdirectory(tools/model-compiler)
+add_subdirectory(backends/graphics/opengl)
 add_subdirectory(tools/editor)
 
 set(SOURCES
@@ -72,8 +74,7 @@ set(HEADERS
     include/sigmafive/graphics/static_mesh_instance.hpp
 )
 
-add_library(engine STATIC ${SOURCES} ${HEADERS})
-add_dependencies(engine reflector)
+add_library(engine SHARED ${SOURCES} ${HEADERS})
 
 target_include_directories(engine PUBLIC include)
 

@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.2)
 project(editor)
 
-add_subdirectory(resources)
-
 set(CMAKE_AUTOMOC ON)
 find_package(Qt5 COMPONENTS Core Qml Quick Widgets)
 
@@ -60,6 +58,5 @@ PUBLIC
 
 target_link_libraries(editor opengl gizmo Qt5::Core Qt5::Qml Qt5::Quick Qt5::Widgets pthread ${CONAN_LIBS})
 
-target_compile_options(editor PUBLIC -std=c++14)
-
+add_resource_package(editor-resources resources)
 add_dependencies(editor editor-resources)

@@ -67,8 +67,8 @@ int main(int argc, char const* argv[])
     }
 
     if (vm.count("input-files") <= 0) {
-        std::cerr << "shader-compiler: fatal error: no input files." << std::endl;
-        return -1;
+        //std::cerr << "shader-compiler: fatal error: no input files." << std::endl;
+        return 0;
     }
 
     auto outputdir = vm["output"].as<boost::filesystem::path>() / "opengl";
