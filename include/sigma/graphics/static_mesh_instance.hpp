@@ -41,6 +41,6 @@ namespace graphics {
 }
 }
 
-sigma_COMPONENT(sigma::graphics::static_mesh_instance)
+SIGMA_COMPONENT(sigma::graphics::static_mesh_instance)
 
 #endif // SIGMA_ENGINE_GRAPHICS_STATIC_MESH_INSTANCE_HPP

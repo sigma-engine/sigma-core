@@ -17,6 +17,6 @@ namespace graphics {
 }
 }
 
-sigma_COMPONENT(sigma::graphics::directional_light)
+SIGMA_COMPONENT(sigma::graphics::directional_light)
 
 #endif // SIGMA_ENGINE_GRAPHICS_DIRECTIONAL_LIGHT_HPP
