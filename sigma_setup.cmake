@@ -2,6 +2,7 @@ set(SHADER_COMPILER scshader)
 set(TEXTURE_COMPILER sctexture)
 set(MATERIAL_COMPILER scmaterial)
 set(MODEL_COMPILER scmodel)
+set(REFLECTION_COMPILER screflect)
 
 macro(sigma_setup)
     file(COPY ${CONAN_SIGMA-ENGINE_ROOT}/data DESTINATION ${CMAKE_BINARY_DIR})
@@ -10,6 +11,7 @@ macro(sigma_setup)
         set(TEXTURE_COMPILER "${CONAN_BIN_DIRS_SIGMA-ENGINE}/${TEXTURE_COMPILER}")
         set(MATERIAL_COMPILER "${CONAN_BIN_DIRS_SIGMA-ENGINE}/${MATERIAL_COMPILER}")
         set(MODEL_COMPILER "${CONAN_BIN_DIRS_SIGMA-ENGINE}/${MODEL_COMPILER}")
+        set(REFLECTION_COMPILER "${CONAN_BIN_DIRS_SIGMA-ENGINE}/${REFLECTION_COMPILER}")
     endif()
 endmacro(sigma_setup)
 
@@ -31,3 +33,12 @@ function(add_resource_package package_name package_root_path)
         add_dependencies(${package_name} scshader sctexture scmaterial scmodel)
     endif()
 endfunction(add_resource_package)
+
+function(add_reflection_sources target)
+    get_target_property(target_sources ${target} SOURCES)
+    add_custom_target(${target}_reflection
+        COMMAND ${REFLECTION_COMPILER} ${target_sources}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+        SOURCES ${target_sources})
+    add_dependencies(${target} ${target}_reflection)
+endfunction(add_reflection_sources)

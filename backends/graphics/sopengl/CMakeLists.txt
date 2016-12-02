@@ -38,7 +38,7 @@ set(HEADERS
     include/sigma/opengl/vertex_buffer.hpp
 )
 
-add_library(sopengl STATIC ${SOURCES} ${HEADERS})
+add_library(sopengl SHARED ${SOURCES} ${HEADERS})
 
 target_include_directories(sopengl PUBLIC include PRIVATE ${OPENGL_INCLUDE_DIR})
 

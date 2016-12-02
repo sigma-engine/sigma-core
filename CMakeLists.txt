@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
 project(sigma-engine)
 
+set(CONAN_SYSTEM_INCLUDES TRUE)
 include(conanbuildinfo.cmake)
 conan_basic_setup()
 
@@ -24,6 +25,7 @@ add_subdirectory(tools/scshader)
 add_subdirectory(tools/scmaterial)
 add_subdirectory(tools/scmodel)
 add_subdirectory(backends/graphics/sopengl)
+add_subdirectory(backends/platform/SDL2)
 add_subdirectory(tools/seditor)
 
 set(SOURCES
@@ -75,6 +77,8 @@ set(HEADERS
 )
 
 add_library(sigma-engine SHARED ${SOURCES} ${HEADERS})
+add_reflection_sources(sigma-engine)
+
 target_include_directories(sigma-engine PUBLIC include)
 target_compile_options(sigma-engine PRIVATE -DSIGMA_ENGINE_EXPORT)
 target_link_libraries(sigma-engine PUBLIC pthread ${CONAN_LIBS})
