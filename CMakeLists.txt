@@ -67,6 +67,7 @@ add_subdirectory(tools/scmodel)
 add_subdirectory(tools/screflect)
 add_subdirectory(tools/scshader)
 add_subdirectory(tools/sctexture)
+add_subdirectory(tools/seditor)
 add_subdirectory(backends/graphics/sopengl)
 
 
