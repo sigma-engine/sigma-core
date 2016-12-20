@@ -13,8 +13,7 @@ int main(int argc, char const* argv[])
     ctx.load_plugin(argv[3]);
     ctx.set_game_class(argv[4]);
 
-    ctx.loop();
-    /*std::chrono::duration<float> dt(1 / 60.0f);
-    ctx.update(dt);*/
+    std::chrono::duration<float> dt(1 / 60.0f);
+    ctx.update(dt);
     return 0;
 }
