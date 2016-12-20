@@ -8,17 +8,14 @@
 namespace sigma {
 namespace util {
     /**
- * Returns true if file is in the directory
- * @param directory the directory to check in MUST be absolute.
- * @param file the file to check for MUST be absolute.
- * @return
- */
-    bool sigma_API directory_contains_file(boost::filesystem::path directory,
-        boost::filesystem::path file);
+     * Returns true if file is in the directory
+     * @param directory the directory to check in MUST be absolute.
+     * @param file the file to check for MUST be absolute.
+     * @return
+     */
+    bool SIGMA_API directory_contains_file(boost::filesystem::path directory, boost::filesystem::path file);
 
-    boost::filesystem::path sigma_API
-    path_divergence(boost::filesystem::path directory,
-        boost::filesystem::path file);
+    boost::filesystem::path SIGMA_API path_divergence(boost::filesystem::path directory, boost::filesystem::path file);
 }
 }
 

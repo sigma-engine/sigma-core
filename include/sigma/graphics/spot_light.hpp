@@ -1,5 +1,5 @@
-#ifndef SIGMA_ENGINE_GRAPHICS_SPOT_LIGHT_HPP
-#define SIGMA_ENGINE_GRAPHICS_SPOT_LIGHT_HPP
+#ifndef SIGMA_GRAPHICS_SPOT_LIGHT_HPP
+#define SIGMA_GRAPHICS_SPOT_LIGHT_HPP
 
 #include <sigma/config.hpp>
 
@@ -10,7 +10,7 @@ namespace sigma {
 namespace graphics {
 
     RCLASS()
-    struct sigma_API spot_light {
+    struct SIGMA_API spot_light {
     };
 
     using spot_light_manager = basic_component_manager<spot_light>;
@@ -19,4 +19,4 @@ namespace graphics {
 
 SIGMA_COMPONENT(sigma::graphics::spot_light)
 
-#endif // SIGMA_ENGINE_GRAPHICS_SPOT_LIGHT_HPP
+#endif // SIGMA_GRAPHICS_SPOT_LIGHT_HPP

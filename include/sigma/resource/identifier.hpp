@@ -1,5 +1,5 @@
-#ifndef SIGMA_ENGINE_RESOURCE_IDENTIFIER_HPP
-#define SIGMA_ENGINE_RESOURCE_IDENTIFIER_HPP
+#ifndef SIGMA_RESOURCE_IDENTIFIER_HPP
+#define SIGMA_RESOURCE_IDENTIFIER_HPP
 
 #include <sigma/config.hpp>
 
@@ -13,7 +13,7 @@
 
 namespace sigma {
 namespace resource {
-    struct sigma_API constexpr_identifier {
+    struct SIGMA_API constexpr_identifier {
         constexpr constexpr_identifier()
             : value_(-1)
         {
@@ -60,7 +60,7 @@ namespace resource {
         }
     };
 
-    struct sigma_API development_identifier : public constexpr_identifier {
+    struct SIGMA_API development_identifier : public constexpr_identifier {
     public:
         development_identifier() = default;
 
@@ -87,9 +87,9 @@ namespace resource {
         }
     };
 
-    sigma_API std::ostream& operator<<(std::ostream& os, const constexpr_identifier& id);
+    SIGMA_API std::ostream& operator<<(std::ostream& os, const constexpr_identifier& id);
 
-    sigma_API std::ostream& operator<<(std::ostream& os, const development_identifier& id);
+    SIGMA_API std::ostream& operator<<(std::ostream& os, const development_identifier& id);
 
     using identifier = development_identifier;
 }
@@ -113,4 +113,4 @@ struct hash<sigma::resource::development_identifier> {
 };
 }
 
-#endif // SIGMA_ENGINE_RESOURCE_IDENTIFIER_HPP
+#endif // SIGMA_RESOURCE_IDENTIFIER_HPP

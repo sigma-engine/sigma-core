@@ -1,5 +1,5 @@
-#ifndef SIGMA_ENGINE_COMPONENT_HPP
-#define SIGMA_ENGINE_COMPONENT_HPP
+#ifndef SIGMA_COMPONENT_HPP
+#define SIGMA_COMPONENT_HPP
 
 #include <sigma/config.hpp>
 
@@ -68,4 +68,4 @@ protected:
 };
 }
 
-#endif // SIGMA_ENGINE_COMPONENT_HPP
+#endif // SIGMA_COMPONENT_HPP

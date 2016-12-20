@@ -1,5 +1,5 @@
-#ifndef SIGMA_ENGINE_GRAPHICS_TEXTURE_HPP
-#define SIGMA_ENGINE_GRAPHICS_TEXTURE_HPP
+#ifndef SIGMA_GRAPHICS_TEXTURE_HPP
+#define SIGMA_GRAPHICS_TEXTURE_HPP
 
 #include <sigma/config.hpp>
 
@@ -15,7 +15,7 @@ namespace sigma {
 namespace graphics {
 
     RCLASS()
-    class sigma_API texture {
+    class SIGMA_API texture {
     public:
         texture() = default;
 
@@ -53,7 +53,7 @@ namespace graphics {
         std::vector<unsigned char> data_;
     };
 
-    class sigma_API texture_cache {
+    class SIGMA_API texture_cache {
     public:
         texture_cache() = default;
 
@@ -97,4 +97,4 @@ namespace graphics {
 }
 }
 
-#endif // SIGMA_ENGINE_GRAPHICS_TEXTURE_HPP
+#endif // SIGMA_GRAPHICS_TEXTURE_HPP

@@ -1,5 +1,5 @@
-#ifndef SIGMA_ENGINE_GRAPHICS_STATIC_MESH_HPP
-#define SIGMA_ENGINE_GRAPHICS_STATIC_MESH_HPP
+#ifndef SIGMA_GRAPHICS_STATIC_MESH_HPP
+#define SIGMA_GRAPHICS_STATIC_MESH_HPP
 
 #include <sigma/config.hpp>
 
@@ -22,7 +22,7 @@ namespace sigma {
 namespace graphics {
 
     RCLASS()
-    class sigma_API static_mesh {
+    class SIGMA_API static_mesh {
     public:
         struct vertex {
             glm::vec3 position;
@@ -58,7 +58,7 @@ namespace graphics {
         resource::identifier material;
     };
 
-    class sigma_API static_mesh_cache {
+    class SIGMA_API static_mesh_cache {
     public:
         static_mesh_cache() = default;
 
@@ -116,4 +116,4 @@ namespace serialization {
 }
 }
 
-#endif // SIGMA_ENGINE_GRAPHICS_STATIC_MESH_HPP
+#endif // SIGMA_GRAPHICS_STATIC_MESH_HPP

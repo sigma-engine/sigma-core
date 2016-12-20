@@ -1,5 +1,5 @@
-#ifndef SIGMA_ENGINE_GRAPHICS_SHADER_HPP
-#define SIGMA_ENGINE_GRAPHICS_SHADER_HPP
+#ifndef SIGMA_GRAPHICS_SHADER_HPP
+#define SIGMA_GRAPHICS_SHADER_HPP
 
 #include <sigma/config.hpp>
 
@@ -26,7 +26,7 @@ namespace graphics {
     };
 
     RCLASS()
-    class sigma_API shader {
+    class SIGMA_API shader {
     public:
         shader(shader_type type = shader_type::none, std::string code = "");
 
@@ -51,7 +51,7 @@ namespace graphics {
         std::string source;
     };
 
-    class sigma_API shader_cache {
+    class SIGMA_API shader_cache {
     public:
         shader_cache() = default;
 
@@ -95,4 +95,4 @@ namespace graphics {
 }
 }
 
-#endif // SIGMA_ENGINE_GRAPHICS_SHADER_HPP
+#endif // SIGMA_GRAPHICS_SHADER_HPP

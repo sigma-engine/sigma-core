@@ -5,7 +5,7 @@ find_package(OpenGL REQUIRED)
 
 set(SOURCES
     src/sigma/opengl/buffer.cpp
-    src/sigma/opengl/context.cpp
+    src/sigma/opengl/renderer.cpp
     src/sigma/opengl/frame_buffer.cpp
     src/sigma/opengl/gl_core_4_0.c
     src/sigma/opengl/index_buffer.cpp
@@ -22,7 +22,7 @@ set(SOURCES
 set(HEADERS
     include/sigma/opengl/buffer.hpp
     include/sigma/opengl/config.hpp
-    include/sigma/opengl/context.hpp
+    include/sigma/opengl/renderer.hpp
     include/sigma/opengl/frame_buffer.hpp
     include/sigma/opengl/gl_core_4_0.h
     include/sigma/opengl/index_buffer.hpp
@@ -44,7 +44,7 @@ target_include_directories(sopengl PUBLIC include PRIVATE ${OPENGL_INCLUDE_DIR})
 
 target_compile_definitions(sopengl PRIVATE -DSIGMA_FIVE_OPENGL_EXPORT)
 
-target_link_libraries(sopengl sigma-engine ${OPENGL_LIBRARIES} pthread ${CONAN_LIBS})
+target_link_libraries(sopengl sigma-core ${OPENGL_LIBRARIES})
 
 add_resource_package(sopengl-resources resources)
 add_dependencies(sopengl sopengl-resources)

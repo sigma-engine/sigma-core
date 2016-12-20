@@ -1,5 +1,5 @@
-#ifndef SIGMA_ENGINE_GRAPHICS_STATIC_MESH_INSTANCE_HPP
-#define SIGMA_ENGINE_GRAPHICS_STATIC_MESH_INSTANCE_HPP
+#ifndef SIGMA_GRAPHICS_STATIC_MESH_INSTANCE_HPP
+#define SIGMA_GRAPHICS_STATIC_MESH_INSTANCE_HPP
 
 #include <sigma/config.hpp>
 
@@ -12,11 +12,11 @@
 namespace sigma {
 namespace graphics {
     RCLASS()
-    struct sigma_API static_mesh_instance {
+    struct SIGMA_API static_mesh_instance {
         resource::identifier static_mesh;
     };
 
-    class sigma_API static_mesh_instance_manager {
+    class SIGMA_API static_mesh_instance_manager {
     public:
         static_mesh_instance_manager(graphics::static_mesh_cache& cache);
 
@@ -43,4 +43,4 @@ namespace graphics {
 
 SIGMA_COMPONENT(sigma::graphics::static_mesh_instance)
 
-#endif // SIGMA_ENGINE_GRAPHICS_STATIC_MESH_INSTANCE_HPP
+#endif // SIGMA_GRAPHICS_STATIC_MESH_INSTANCE_HPP

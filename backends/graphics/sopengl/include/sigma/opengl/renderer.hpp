@@ -3,7 +3,7 @@
 
 #include <sigma/opengl/config.hpp>
 
-#include <sigma/graphics/context.hpp>
+#include <sigma/graphics/renderer.hpp>
 #include <sigma/graphics/static_mesh_instance.hpp>
 #include <sigma/opengl/material.hpp>
 #include <sigma/opengl/shader.hpp>
@@ -12,23 +12,23 @@
 
 namespace sigma {
 namespace opengl {
-    class SIGMA_FIVE_OPENGL_API context : public graphics::context {
+    class SIGMA_FIVE_OPENGL_API renderer : public graphics::renderer {
     public:
         static const resource::identifier PLANE_STATIC_MESH;
         static const resource::identifier FULLSCREEN_MATERIAL1;
         static const resource::identifier FULLSCREEN_MATERIAL2;
 
-        context();
+        renderer();
 
-        virtual ~context();
+        virtual ~renderer();
 
-        graphics::texture_cache& textures();
+        graphics::texture_cache& textures() override;
 
-        graphics::shader_cache& shaders();
+        graphics::shader_cache& shaders() override;
 
-        graphics::material_cache& materials();
+        graphics::material_cache& materials() override;
 
-        static_mesh_cache& static_meshes();
+        static_mesh_cache& static_meshes() override;
 
         virtual void resize(glm::uvec2 size) override;
 

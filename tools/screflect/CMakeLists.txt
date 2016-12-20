@@ -14,4 +14,4 @@ set(HEADERS
 
 add_executable(screflect ${SOURCES} ${HEADERS})
 target_include_directories(screflect PUBLIC include ../../include)
-target_link_libraries(screflect pthread ${CONAN_LIBS})
+target_link_libraries(screflect ${CONAN_LIBS})

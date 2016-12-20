@@ -10,7 +10,7 @@
 
 #include <boost/filesystem/path.hpp>
 
-#include <sigma/graphics/context.hpp>
+#include <sigma/graphics/renderer.hpp>
 #include <sigma/opengl/index_buffer.hpp>
 #include <sigma/opengl/material.hpp>
 #include <sigma/opengl/vertex_array.hpp>

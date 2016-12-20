@@ -12,4 +12,4 @@ add_executable(scmaterial ${SOURCES} ${HEADERS})
 
 target_include_directories(scmaterial PUBLIC include)
 
-target_link_libraries(scmaterial sigma-engine pthread ${CONAN_LIBS})
+target_link_libraries(scmaterial sigma-core ${CONAN_LIBS})

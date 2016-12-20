@@ -7,5 +7,5 @@ set(HEADERS
 )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-add_executable(engine-tests ${HEADERS} ${SOURCES})
-target_link_libraries(engine-tests gtest gtest_main gmock gmock_main engine)
+add_executable(sigma-core-tests ${HEADERS} ${SOURCES})
+target_link_libraries(sigma-core-tests sigma-core)

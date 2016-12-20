@@ -8,12 +8,10 @@
 #include <boost/iterator/filter_iterator.hpp>
 
 #include <sigma/entity.hpp>
-#include <sigma/reflect/reflect.hpp>
 
 namespace sigma {
 
-RCLASS()
-class sigma_API entity_manager {
+class SIGMA_API entity_manager {
     struct is_entity_alive {
         inline bool operator()(entity e) { return e.index != std::uint32_t(-1); }
     };

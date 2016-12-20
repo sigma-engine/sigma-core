@@ -2,8 +2,7 @@
 
 namespace sigma {
 namespace util {
-    bool directory_contains_file(boost::filesystem::path directory,
-        boost::filesystem::path file)
+    bool directory_contains_file(boost::filesystem::path directory, boost::filesystem::path file)
     {
         auto dbegin = directory.begin();
         auto dend = directory.end();
@@ -18,8 +17,7 @@ namespace util {
         return std::equal(dbegin, dend, fbegin);
     }
 
-    boost::filesystem::path path_divergence(boost::filesystem::path directory,
-        boost::filesystem::path file)
+    boost::filesystem::path path_divergence(boost::filesystem::path directory, boost::filesystem::path file)
     {
         auto dbegin = directory.begin();
         auto fbegin = file.begin();

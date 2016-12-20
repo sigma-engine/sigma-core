@@ -1,4 +1,4 @@
-#include <sigma/opengl/context.hpp>
+#include <sigma/opengl/renderer.hpp>
 
 #include <boost/filesystem.hpp>
 
@@ -8,11 +8,11 @@
 
 namespace sigma {
 namespace opengl {
-    const resource::identifier context::PLANE_STATIC_MESH{ "static_mesh://plane:Plane" };
-    const resource::identifier context::FULLSCREEN_MATERIAL1{ "material://fullscreen_quad" };
-    const resource::identifier context::FULLSCREEN_MATERIAL2{ "material://fullscreen_quad2" };
+    const resource::identifier renderer::PLANE_STATIC_MESH{ "static_mesh://plane:Plane" };
+    const resource::identifier renderer::FULLSCREEN_MATERIAL1{ "material://fullscreen_quad" };
+    const resource::identifier renderer::FULLSCREEN_MATERIAL2{ "material://fullscreen_quad2" };
 
-    context::context()
+    renderer::renderer()
         : materials_(shaders_, textures_)
         , static_meshes_(materials_)
     {
@@ -27,39 +27,39 @@ namespace opengl {
         static_meshes_.increment_reference(PLANE_STATIC_MESH);
     }
 
-    context::~context()
+    renderer::~renderer()
     {
         static_meshes_.decrement_reference(PLANE_STATIC_MESH);
         materials_.decrement_reference(FULLSCREEN_MATERIAL2);
         materials_.decrement_reference(FULLSCREEN_MATERIAL1);
     }
 
-    graphics::texture_cache& context::textures()
+    graphics::texture_cache& renderer::textures()
     {
         return textures_;
     }
 
-    graphics::shader_cache& context::shaders()
+    graphics::shader_cache& renderer::shaders()
     {
         return shaders_;
     }
 
-    graphics::material_cache& context::materials()
+    graphics::material_cache& renderer::materials()
     {
         return materials_;
     }
 
-    static_mesh_cache& context::static_meshes()
+    static_mesh_cache& renderer::static_meshes()
     {
         return static_meshes_;
     }
 
-    void context::resize(glm::uvec2 size)
+    void renderer::resize(glm::uvec2 size)
     {
         // TODO resize
     }
 
-    void context::render(const graphics::view_port& viewport)
+    void renderer::render(const graphics::view_port& viewport)
     {
         GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
@@ -83,3 +83,5 @@ namespace opengl {
     }
 }
 }
+
+SIGMA_EXPORT_RENDERER_CLASSES(sigma::opengl::renderer)

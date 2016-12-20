@@ -1,5 +1,5 @@
-#ifndef SIGMA_ENGINE_GRAPHICS_MATERIAL_HPP
-#define SIGMA_ENGINE_GRAPHICS_MATERIAL_HPP
+#ifndef SIGMA_GRAPHICS_MATERIAL_HPP
+#define SIGMA_GRAPHICS_MATERIAL_HPP
 
 #include <sigma/config.hpp>
 
@@ -14,7 +14,7 @@ namespace sigma {
 namespace graphics {
 
     RCLASS()
-    class sigma_API material {
+    class SIGMA_API material {
     public:
         material() = default;
 
@@ -41,7 +41,7 @@ namespace graphics {
         }
     };
 
-    class sigma_API material_cache {
+    class SIGMA_API material_cache {
     public:
         material_cache() = default;
 
@@ -85,4 +85,4 @@ namespace graphics {
 }
 }
 
-#endif // SIGMA_ENGINE_GRAPHICS_MATERIAL_HPP
+#endif // SIGMA_GRAPHICS_MATERIAL_HPP

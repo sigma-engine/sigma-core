@@ -5,6 +5,8 @@
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/program_options.hpp>
 
+#include <string>
+
 #include <json/json.h>
 
 #include <sigma/graphics/material.hpp>

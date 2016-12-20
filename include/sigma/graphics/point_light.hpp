@@ -1,5 +1,5 @@
-#ifndef SIGMA_ENGINE_GRAPHICS_POINT_LIGHT_HPP
-#define SIGMA_ENGINE_GRAPHICS_POINT_LIGHT_HPP
+#ifndef SIGMA_GRAPHICS_POINT_LIGHT_HPP
+#define SIGMA_GRAPHICS_POINT_LIGHT_HPP
 
 #include <sigma/config.hpp>
 
@@ -10,7 +10,7 @@ namespace sigma {
 namespace graphics {
 
     RCLASS()
-    struct sigma_API point_light {
+    struct SIGMA_API point_light {
     };
 
     using point_light_manager = basic_component_manager<point_light>;
@@ -19,4 +19,4 @@ namespace graphics {
 
 SIGMA_COMPONENT(sigma::graphics::point_light)
 
-#endif // SIGMA_ENGINE_GRAPHICS_POINT_LIGHT_HPP
+#endif // SIGMA_GRAPHICS_POINT_LIGHT_HPP

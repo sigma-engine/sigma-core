@@ -1,5 +1,5 @@
-#ifndef SIGMA_ENGINE_TRANSFORM_HPP
-#define SIGMA_ENGINE_TRANSFORM_HPP
+#ifndef SIGMA_TRANSFORM_HPP
+#define SIGMA_TRANSFORM_HPP
 
 #include <sigma/config.hpp>
 
@@ -12,7 +12,7 @@
 namespace sigma {
 
 RCLASS()
-struct sigma_API transform {
+struct SIGMA_API transform {
 
     RPROPERTY()
     glm::vec3 position;
@@ -29,4 +29,4 @@ using transform_manager = basic_component_manager<transform>;
 
 SIGMA_COMPONENT(sigma::transform)
 
-#endif // SIGMA_ENGINE_TRANSFORM_HPP
+#endif // SIGMA_TRANSFORM_HPP
