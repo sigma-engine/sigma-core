@@ -16,12 +16,6 @@ namespace opengl {
         : materials_(shaders_, textures_)
         , static_meshes_(materials_)
     {
-        GL_CHECK(glClearColor(0.8, 0.8, 0.8, 1.0));
-        GL_CHECK(glEnable(GL_DEPTH_TEST));
-        GL_CHECK(glEnable(GL_BLEND));
-        GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-        GL_CHECK(glCullFace(GL_BACK));
-        GL_CHECK(glEnable(GL_CULL_FACE));
         materials_.increment_reference(FULLSCREEN_MATERIAL1);
         materials_.increment_reference(FULLSCREEN_MATERIAL2);
         static_meshes_.increment_reference(PLANE_STATIC_MESH);
@@ -61,6 +55,12 @@ namespace opengl {
 
     void renderer::render(const graphics::view_port& viewport)
     {
+        GL_CHECK(glClearColor(0.8, 0.8, 0.8, 1.0));
+        GL_CHECK(glEnable(GL_DEPTH_TEST));
+        GL_CHECK(glEnable(GL_BLEND));
+        GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+        GL_CHECK(glCullFace(GL_BACK));
+        GL_CHECK(glEnable(GL_CULL_FACE));
         GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
         textures_.update();

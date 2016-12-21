@@ -1,8 +1,10 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
 #include <QQuickStyle>
 
-#include <iostream>
+#include <game_view.hpp>
+#include <qt_context.hpp>
 
 int main(int argc, char* argv[])
 {
@@ -11,8 +13,13 @@ int main(int argc, char* argv[])
 
     QQuickStyle::setStyle("Material");
 
-    QQmlApplicationEngine engine;
-    engine.load(QUrl(QLatin1String("qrc:/ui/main.qml")));
+    qmlRegisterType<sigma::game_view>("sigma", 1, 0, "GameView");
+    qmlRegisterType<sigma::qt_context>("sigma", 1, 0, "Context");
 
+    QQmlApplicationEngine engine;
+    sigma::qt_context ctx;
+    engine.rootContext()->setContextProperty("context", &ctx);
+
+    engine.load(QUrl(QLatin1String("qrc:/ui/main.qml")));
     return app.exec();
 }

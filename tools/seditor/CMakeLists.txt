@@ -6,9 +6,15 @@ find_package(Qt5 COMPONENTS Core Qml Quick QuickControls2)
 
 set(SOURCES
     src/main.cpp
+    src/qt_context.cpp
+    src/game_view.cpp
+    src/game_view_renderer.cpp
 )
 
 set(HEADERS
+    include/qt_context.hpp
+    include/game_view.hpp
+    include/game_view_renderer.hpp
 )
 
 set(QML
@@ -29,3 +35,5 @@ target_link_libraries(seditor sigma-core Qt5::Core Qt5::Qml Qt5::Quick Qt5::Quic
 
 add_resource_package(seditor-resources resources)
 add_dependencies(seditor seditor-resources)
+
+add_dependencies(seditor simple-game sopengl)

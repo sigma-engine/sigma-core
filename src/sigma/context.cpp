@@ -6,6 +6,14 @@
 #include <boost/dll/import.hpp>
 
 namespace sigma {
+context::~context()
+{
+    current_game = nullptr;
+    current_renderer = nullptr;
+    game_classes.clear();
+    renderer_classes.clear();
+}
+
 graphics::texture_cache& context::textures()
 {
     return current_renderer->textures();
@@ -66,6 +74,22 @@ void context::set_renderer_class(std::string renderer_class)
 
 void context::update(std::chrono::duration<float> dt)
 {
-    current_game->update(dt);
+    if (current_game)
+        current_game->update(dt);
+}
+
+void context::render()
+{
+    if (current_renderer && current_game) {
+        graphics::view_port vp{
+            current_game->entities,
+            current_game->transforms,
+            current_game->static_mesh_instances,
+            glm::mat4(1),
+            glm::mat4(1)
+        };
+        // TODO projection matrix and view matrix
+        current_renderer->render(vp);
+    }
 }
 }

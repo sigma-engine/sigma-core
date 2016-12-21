@@ -2,8 +2,8 @@ import QtQuick 2.7
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Material 2.0
-import QtQuick.Window 2.2
-
+import sigma 1.0
+import QtQuick.Window 2.0
 
 ApplicationWindow {
     visible: true
@@ -20,10 +20,11 @@ ApplicationWindow {
         anchors.fill: parent
         currentIndex: tabBar.currentIndex
 
-        Page1 {
+        GameView {
+            activeContext: context
         }
 
-        Page {
+        Page1 {
         }
     }
 

@@ -21,6 +21,8 @@ namespace graphics {
 }
 class SIGMA_API context {
 public:
+    virtual ~context();
+
     graphics::texture_cache& textures();
 
     graphics::shader_cache& shaders();
@@ -37,12 +39,16 @@ public:
 
     void update(std::chrono::duration<float> dt);
 
+    virtual void render();
+
+protected:
+    // TODO custom pointer that works better with dynamic libs
+    std::shared_ptr<game> current_game;
+    std::shared_ptr<graphics::renderer> current_renderer;
+
 private:
     std::unordered_map<std::string, boost::shared_ptr<game_class> > game_classes;
     std::unordered_map<std::string, boost::shared_ptr<graphics::renderer_class> > renderer_classes;
-
-    std::shared_ptr<graphics::renderer> current_renderer;
-    std::shared_ptr<game> current_game;
 };
 }
 
