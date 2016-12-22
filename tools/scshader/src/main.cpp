@@ -79,6 +79,7 @@ int main(int argc, char const* argv[])
         file_path = boost::filesystem::absolute(file_path);
         if (sigma::util::directory_contains_file(boost::filesystem::current_path(), file_path)) {
             if (boost::filesystem::exists(file_path)) {
+                std::cout <<"Compiling shader: " << file_path << std::endl;
                 boost::wave::util::file_position_type current_position;
                 try {
                     std::ifstream source_file{ file_path.string() };

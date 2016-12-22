@@ -44,6 +44,8 @@ int main(int argc, char const* argv[])
         file_path = boost::filesystem::absolute(file_path);
         if (sigma::util::directory_contains_file(boost::filesystem::current_path(), file_path)) {
             if (boost::filesystem::exists(file_path)) {
+                std::cout <<"Compiling material: " << file_path << std::endl;
+
                 sigma::resource::development_identifier rid("material", file_path);
                 auto final_path = outputdir / std::to_string(rid.value());
 

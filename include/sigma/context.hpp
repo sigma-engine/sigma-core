@@ -4,6 +4,8 @@
 #include <sigma/config.hpp>
 
 #include <boost/filesystem/path.hpp>
+#include <glm/vec2.hpp>
+#include <glm/mat4x4.hpp>
 
 #include <memory>
 #include <unordered_map>
@@ -13,7 +15,7 @@ class game;
 struct game_class;
 namespace graphics {
     class renderer;
-    class renderer_class;
+    struct renderer_class;
     class texture_cache;
     class shader_cache;
     class material_cache;
@@ -21,6 +23,8 @@ namespace graphics {
 }
 class SIGMA_API context {
 public:
+    context();
+
     virtual ~context();
 
     graphics::texture_cache& textures();
@@ -39,7 +43,7 @@ public:
 
     void update(std::chrono::duration<float> dt);
 
-    virtual void render();
+    virtual void render(glm::ivec2 size);
 
 protected:
     // TODO custom pointer that works better with dynamic libs
@@ -47,6 +51,7 @@ protected:
     std::shared_ptr<graphics::renderer> current_renderer;
 
 private:
+    float z = 0;
     std::unordered_map<std::string, boost::shared_ptr<game_class> > game_classes;
     std::unordered_map<std::string, boost::shared_ptr<graphics::renderer_class> > renderer_classes;
 };

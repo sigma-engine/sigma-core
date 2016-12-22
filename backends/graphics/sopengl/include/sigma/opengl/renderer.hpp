@@ -12,7 +12,7 @@
 
 namespace sigma {
 namespace opengl {
-    class SIGMA_FIVE_OPENGL_API renderer : public graphics::renderer {
+    class renderer : public graphics::renderer {
     public:
         static const resource::identifier PLANE_STATIC_MESH;
         static const resource::identifier FULLSCREEN_MATERIAL1;

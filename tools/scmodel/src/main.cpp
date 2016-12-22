@@ -43,6 +43,8 @@ int main(int argc, char const* argv[])
         file_path = boost::filesystem::absolute(file_path);
         if (sigma::util::directory_contains_file(boost::filesystem::current_path(), file_path)) {
             if (boost::filesystem::exists(file_path)) {
+                std::cout <<"Compiling model: " << file_path << std::endl;
+
                 sigma::convert::assimp_converter imported{ file_path };
                 for (auto mesh_name : imported.static_mesh_names()) {
                     sigma::resource::development_identifier rid("static_mesh", file_path, mesh_name);

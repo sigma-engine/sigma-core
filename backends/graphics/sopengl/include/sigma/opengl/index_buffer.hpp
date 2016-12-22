@@ -10,7 +10,7 @@
 
 namespace sigma {
 namespace opengl {
-    class SIGMA_FIVE_OPENGL_API index_buffer : public buffer {
+    class index_buffer : public buffer {
     public:
         index_buffer(buffer_usage usage);
 

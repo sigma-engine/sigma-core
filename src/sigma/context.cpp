@@ -1,11 +1,18 @@
 #include <sigma/context.hpp>
 
+#include <glm/gtc/matrix_transform.hpp>
 #include <sigma/game.hpp>
 #include <sigma/graphics/renderer.hpp>
 
 #include <boost/dll/import.hpp>
 
 namespace sigma {
+context::context()
+    : current_game(nullptr)
+    , current_renderer(nullptr)
+{
+}
+
 context::~context()
 {
     current_game = nullptr;
@@ -78,17 +85,22 @@ void context::update(std::chrono::duration<float> dt)
         current_game->update(dt);
 }
 
-void context::render()
+void context::render(glm::ivec2 size)
 {
-    if (current_renderer && current_game) {
+    if (current_renderer != nullptr && current_game != nullptr) {
+        glm::mat4 m = glm::mat4(1);
+        /*m = glm::translate(m,glm::vec3(0.0f,0.0f,z));
+		    z = 0;*/
+        //z-=.05;
         graphics::view_port vp{
             current_game->entities,
             current_game->transforms,
             current_game->static_mesh_instances,
-            glm::mat4(1),
-            glm::mat4(1)
+            glm::perspective(0.785398f,(float)size.x/(float)size.y,0.01f,1000.0f),
+            m
         };
         // TODO projection matrix and view matrix
+		current_renderer->resize(size);
         current_renderer->render(vp);
     }
 }

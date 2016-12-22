@@ -2,7 +2,7 @@
 
 namespace sigma {
 namespace opengl {
-    /*void frame_buffer::bind_default(frame_buffer_target target)
+/*void frame_buffer::bind_default(frame_buffer_target target)
 {
     glBindFramebuffer(GLenum(target), 0);
 }

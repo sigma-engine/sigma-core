@@ -20,7 +20,7 @@ namespace opengl {
         triangles = GL_TRIANGLES
     };
 
-    class SIGMA_FIVE_OPENGL_API vertex_array {
+    class vertex_array {
     public:
         vertex_array();
 

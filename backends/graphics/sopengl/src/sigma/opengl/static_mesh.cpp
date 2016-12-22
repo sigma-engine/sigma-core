@@ -118,26 +118,14 @@ namespace opengl {
         // TODO free any meshes that have a reference count of zero
     }
 
-    void sigma::opengl::static_mesh_cache::render(
-        sigma::resource::identifier mesh_id,
-        sigma::resource::identifier material_id,
-        const glm::mat4 projection_matrix, const glm::mat4 view_matrix,
-        const glm::mat4 model_matrix) const
-    {
-        if (resource_map_.count(mesh_id) != 0) {
-            const auto& mesh = static_meshes_[resource_map_.at(mesh_id)];
-            materials_.apply(material_id, projection_matrix, view_matrix, model_matrix);
-            GL_CHECK(glBindVertexArray(mesh.vertex_array));
-            GL_CHECK(glDrawElements(GL_TRIANGLES, 3 * mesh.triangles.size(), GL_UNSIGNED_INT, nullptr));
-        }
-    }
-
     void static_mesh_cache::render(resource::identifier mesh_id, const glm::mat4 projection_matrix, const glm::mat4 view_matrix, const glm::mat4 model_matrix) const
     {
         if (resource_map_.count(mesh_id) != 0) {
-            const auto& mesh = static_meshes_[resource_map_.at(mesh_id)];
+            const auto& mesh = static_meshes_.at(resource_map_.at(mesh_id));
             materials_.apply(mesh.material, projection_matrix, view_matrix, model_matrix);
-            GL_CHECK(glBindVertexArray(mesh.vertex_array));
+
+			GL_CHECK(glBindVertexArray(mesh.vertex_array));
+			GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.index_buffer));
             GL_CHECK(glDrawElements(GL_TRIANGLES, 3 * mesh.triangles.size(), GL_UNSIGNED_INT, nullptr));
         }
     }

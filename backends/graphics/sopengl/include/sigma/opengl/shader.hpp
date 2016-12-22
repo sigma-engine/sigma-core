@@ -20,7 +20,7 @@ namespace opengl {
         std::size_t reference_count = 0;
     };
 
-    class SIGMA_FIVE_OPENGL_API shader_cache : public graphics::shader_cache {
+    class shader_cache : public graphics::shader_cache {
     public:
         shader_cache();
 

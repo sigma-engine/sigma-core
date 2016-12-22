@@ -13,6 +13,10 @@ public:
 
     game_view(QQuickItem* parent = 0);
 
+	~game_view();
+
+	void releaseResources() Q_DECL_OVERRIDE;
+
     qt_context* activeContext();
 
     void setActiveContext(qt_context* ctx);

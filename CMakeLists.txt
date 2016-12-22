@@ -2,8 +2,10 @@ cmake_minimum_required(VERSION 3.1)
 project(sigma-engine)
 
 include(${CMAKE_SOURCE_DIR}/sigma_setup.cmake)
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
+if(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+    include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+    conan_basic_setup()
+endif()
 
 set (CMAKE_CXX_STANDARD 14)
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES ".*[cC][lL][aA][nN][gG]")
@@ -62,6 +64,8 @@ set(LIBRARY_HEADERS
 add_library(sigma-core STATIC ${LIBRARY_SOURCES} ${LIBRARY_HEADERS})
 target_include_directories(sigma-core PUBLIC include)
 target_link_libraries(sigma-core PUBLIC ${CMAKE_DL_LIBS} ${CONAN_LIBS})
+#target_compile_definitions(sigma-core PUBLIC -DSIGMA_SHARED)
+#target_compile_options(sigma-core PRIVATE -DSIGMA_EXPORT)
 
 set(MAIN_SOURCES
     src/sigma/main.cpp
@@ -81,6 +85,6 @@ add_subdirectory(tools/seditor)
 add_subdirectory(backends/graphics/sopengl)
 
 
-add_subdirectory(tests)
+#add_subdirectory(tests)
 
 add_subdirectory(simple_game)

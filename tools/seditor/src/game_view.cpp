@@ -4,11 +4,22 @@
 
 #include <QSGSimpleTextureNode>
 
+#include <iostream>
+
 namespace sigma {
 game_view::game_view(QQuickItem* parent)
     : QQuickFramebufferObject(parent)
     , activeContext_(nullptr)
 {
+}
+
+game_view::~game_view() {
+	activeContext_->release_renderer();
+}
+
+void game_view::releaseResources() {
+	activeContext_->release_renderer();
+	QQuickFramebufferObject::releaseResources();
 }
 
 qt_context* game_view::activeContext()

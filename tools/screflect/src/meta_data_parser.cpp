@@ -1,6 +1,7 @@
 #include <meta_data_parser.hpp>
 
 #include <iomanip>
+#include <sstream>
 
 template <typename PositionT>
 inline std::ostream& operator<<(std::ostream& stream, boost::wave::cpplexer::lex_token<PositionT> const& t)

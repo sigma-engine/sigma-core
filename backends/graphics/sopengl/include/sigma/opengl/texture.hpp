@@ -46,7 +46,7 @@ namespace opengl {
         std::size_t reference_count = 0;
     };
 
-    class SIGMA_FIVE_OPENGL_API texture_cache : public graphics::texture_cache {
+    class texture_cache : public graphics::texture_cache {
     public:
         texture_cache();
 

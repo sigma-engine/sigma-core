@@ -9,7 +9,7 @@
 
 namespace sigma {
 namespace opengl {
-    class SIGMA_FIVE_OPENGL_API vertex_buffer_base : public buffer {
+    class vertex_buffer_base : public buffer {
     public:
         vertex_buffer_base(buffer_usage usage)
             : buffer(buffer_type::array_buffer, usage)

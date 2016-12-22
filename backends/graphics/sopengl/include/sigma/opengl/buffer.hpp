@@ -39,7 +39,7 @@ namespace opengl {
         // TODO shader_storage_buffer = GL_SHADER_STORAGE_BUFFER,
     };
 
-    class SIGMA_FIVE_OPENGL_API buffer {
+    class buffer {
     public:
         buffer(buffer_type type, buffer_usage usage);
 

@@ -3,9 +3,10 @@
 
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/gil/extension/io/jpeg_dynamic_io.hpp>
+#include <boost/gil/extension/io/png_dynamic_io.hpp>
+#include <boost/gil/extension/io/tiff_dynamic_io.hpp>
 #include <boost/program_options.hpp>
-
-#include <FreeImage.h>
 
 #include <sigma/graphics/texture.hpp>
 #include <sigma/resource/identifier.hpp>
@@ -16,8 +17,13 @@ namespace po = boost::program_options;
 
 int main(int argc, char const* argv[])
 {
+
     po::options_description global_options("Options");
-    global_options.add_options()("help,h", "Show this help message")("output,o", po::value<boost::filesystem::path>()->default_value(boost::filesystem::current_path()), "output directory")("input-files", po::value<std::vector<boost::filesystem::path> >(), "input textures files");
+
+    global_options.add_options()("help,h", "Show this help message")
+    ("output,o", po::value<boost::filesystem::path>()->default_value(boost::filesystem::current_path()), "output directory")
+    ("input-files", po::value<std::vector<boost::filesystem::path> >(), "input textures files");
+
 
     po::positional_options_description positional_options;
     positional_options.add("input-files", -1);
@@ -35,7 +41,6 @@ int main(int argc, char const* argv[])
         return 0;
     }
 
-    FreeImage_Initialise(); // TODO use RAII
 
     auto outputdir = vm["output"].as<boost::filesystem::path>() / "opengl";
     boost::filesystem::create_directories(outputdir);
@@ -44,30 +49,40 @@ int main(int argc, char const* argv[])
         file_path = boost::filesystem::absolute(file_path);
         if (sigma::util::directory_contains_file(boost::filesystem::current_path(), file_path)) {
             if (boost::filesystem::exists(file_path)) {
+                std::cout <<"Compiling texture: " << file_path << std::endl;
+
                 sigma::resource::development_identifier rid("texture", file_path);
                 auto final_path = outputdir / std::to_string(rid.value());
 
                 std::string file_path_string = file_path.string();
-                FREE_IMAGE_FORMAT format = FreeImage_GetFileType(file_path_string.c_str()); //Automatocally detects the format(from over 20 formats!)
-                FIBITMAP* image = FreeImage_Load(format, file_path_string.c_str());
+                boost::gil::rgba8_image_t image;
 
-                FIBITMAP* temp = image;
-                image = FreeImage_ConvertTo32Bits(image);
-                FreeImage_Unload(temp);
-
-                auto w = FreeImage_GetWidth(image);
-                auto h = FreeImage_GetHeight(image);
-
-                std::vector<unsigned char> data(4 * w * h);
-                char* pixels = (char*)FreeImage_GetBits(image); // TODO use FreeImage_ConvertToRawBits
-                //FreeImage loads in BGR format, so you need to swap some bytes(Or use GL_BGR).
-
-                for (int j = 0; j < w * h; j++) {
-                    data[j * 4 + 0] = pixels[j * 4 + 2];
-                    data[j * 4 + 1] = pixels[j * 4 + 1];
-                    data[j * 4 + 2] = pixels[j * 4 + 0];
-                    data[j * 4 + 3] = pixels[j * 4 + 3];
+                auto ext = file_path.extension();
+                if (ext == ".tiff" || ext == ".tif") {
+                    boost::gil::tiff_read_and_convert_image(file_path_string, image);
+                } else if (ext == ".jpg" || ext == ".jpeg" || ext == ".jpe" || ext == ".jif" || ext == ".jfif" || ext == ".jfi") {
+                    boost::gil::jpeg_read_and_convert_image(file_path_string, image);
+                } else if (ext == ".png") {
+                    boost::gil::png_read_and_convert_image(file_path_string, image);
+                } else {
+                    std::cerr << "sctexture: error: input file \'" << file_path << "\' is not supported." << std::endl;
+                    break;
                 }
+
+                auto w = image.width();
+                auto h = image.height();
+
+                std::vector<uint8_t> data;
+                data.reserve(w * h * 4);
+
+                auto f = [&data](boost::gil::rgba8_pixel_t p) {
+                    data.push_back(boost::gil::at_c<0>(p));
+                    data.push_back(boost::gil::at_c<1>(p));
+                    data.push_back(boost::gil::at_c<2>(p));
+                    data.push_back(boost::gil::at_c<3>(p));
+                };
+
+                boost::gil::for_each_pixel(boost::gil::const_view(image), std::function<void(boost::gil::rgba8_pixel_t)>(f));
 
                 sigma::graphics::texture texture;
                 texture.set_data(w, h, data);
@@ -77,7 +92,6 @@ int main(int argc, char const* argv[])
 
                 oa << texture;
 
-                FreeImage_Unload(image);
             } else {
                 std::cerr << "sctexture: error: file '" << file_path << "' does not exist!" << std::endl;
             }
@@ -85,8 +99,6 @@ int main(int argc, char const* argv[])
             std::cerr << "sctexture: error: file '" << file_path << "' is not contained in '" << boost::filesystem::current_path() << "'!" << std::endl;
         }
     }
-
-    //FreeImage_DeInitialise();
 
     return 0;
 }

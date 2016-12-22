@@ -10,7 +10,9 @@ class qt_context : public QObject, public sigma::context {
 public:
     Q_INVOKABLE explicit qt_context(QObject* parent = nullptr);
 
-    void render() override;
+    virtual void render(glm::ivec2 size) override;
+
+    void release_renderer();
 };
 }
 

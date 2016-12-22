@@ -26,7 +26,7 @@ namespace opengl {
     material_cache::~material_cache()
     {
         for (auto& material : materials_)
-            glDeleteProgram(material.object);
+          glDeleteProgram(material.object);
     }
 
     bool material_cache::is_cached(resource::identifier material_id) const

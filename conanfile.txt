@@ -1,14 +1,29 @@
 [requires]
-Boost/1.60.0@lucteo/stable
-gtest/master@smspillaz/gtest
+#Boost/1.60.0@lasote/stable
+Boost/1.61.0@eliaskousk/stable
 glm/0.9.7.6@dlarudgus20/stable
-jsoncpp/1.8.0@siegelaaron94/develop
 assimp/3.3.1@siegelaaron94/develop
-FreeImage/3.13.1@siegelaaron94/develop
-SDL2/2.0.4@lasote/stable
+jsoncpp/1.8.0@siegelaaron94/develop
+libpng/1.6.21@lasote/stable
+libtiff/4.0.6@bilke/stable
+#libjpeg-turbo/1.4.2@lasote/stable
+libjpeg/9a@Kaosumaru/stable
+
+#gtest/master@smspillaz/gtest
+#SDL2/2.0.4@lasote/stable
+
+
+
 
 [options]
-Boost:fPIC=True
+#Boost:fPIC=True
+Boost:shared=True
+jsoncpp:shared=True
 
 [generators]
 cmake
+
+
+[imports]
+bin, *.dll -> ./bin
+lib, *.dylib* -> ./bin

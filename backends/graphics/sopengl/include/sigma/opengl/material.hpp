@@ -58,7 +58,7 @@ namespace opengl {
         void set_uniform(GLint location, const glm::mat4& value) const;
     };
 
-    class SIGMA_FIVE_OPENGL_API material_cache : public graphics::material_cache {
+    class material_cache : public graphics::material_cache {
     public:
         static constexpr const char* PROJECTION_MATRIX_NAME = "projectionMatrix";
         static constexpr const char* VIEW_MATRIX_NAME = "viewMatrix";

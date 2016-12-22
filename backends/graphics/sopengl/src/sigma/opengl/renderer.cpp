@@ -5,7 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <sigma/opengl/gl_core_4_0.h>
-
+#include <iostream>
 namespace sigma {
 namespace opengl {
     const resource::identifier renderer::PLANE_STATIC_MESH{ "static_mesh://plane:Plane" };
@@ -19,6 +19,7 @@ namespace opengl {
         materials_.increment_reference(FULLSCREEN_MATERIAL1);
         materials_.increment_reference(FULLSCREEN_MATERIAL2);
         static_meshes_.increment_reference(PLANE_STATIC_MESH);
+        std::cout << glGetString(GL_VERSION) << std::endl;;
     }
 
     renderer::~renderer()
@@ -51,11 +52,12 @@ namespace opengl {
     void renderer::resize(glm::uvec2 size)
     {
         // TODO resize
+        glViewport(0,0,size.x,size.y);
     }
 
     void renderer::render(const graphics::view_port& viewport)
     {
-        GL_CHECK(glClearColor(0.8, 0.8, 0.8, 1.0));
+        GL_CHECK(glClearColor(0.8f, 0.8f, 0.8f, 1.0f));
         GL_CHECK(glEnable(GL_DEPTH_TEST));
         GL_CHECK(glEnable(GL_BLEND));
         GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));

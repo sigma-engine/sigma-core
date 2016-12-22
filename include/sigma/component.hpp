@@ -9,13 +9,7 @@
 #include <sigma/entity.hpp>
 #include <sigma/util/compile_time_hash.hpp>
 
-#define SIGMA_COMPONENT(T)                                                        \
-    namespace sigma {                                                             \
-    template <>                                                                   \
-    struct component_type_info<T> {                                               \
-        static constexpr const std::size_t type_id = util::compile_time_hash(#T); \
-    };                                                                            \
-    }
+#define SIGMA_COMPONENT(T)                                                        
 
 namespace sigma {
 template <typename T>

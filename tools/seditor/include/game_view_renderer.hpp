@@ -2,6 +2,7 @@
 #define SIGMA_GAME_VIEW_RENDERER_HPP
 
 #include <QtQuick/QQuickFramebufferObject>
+#include <glm/vec2.hpp>
 
 namespace sigma {
 class game_view;
@@ -19,6 +20,7 @@ public:
 private:
     game_view* item_;
     qt_context* ctx_;
+    glm::ivec2 size_;
 };
 }
 

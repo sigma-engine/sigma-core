@@ -9,7 +9,7 @@
 #include <sigma/reflect/reflect.hpp>
 #include <sigma/transform.hpp>
 
-#include <boost/dll/alias.hpp>
+//#include <boost/dll/alias.hpp>
 
 #include <chrono>
 #include <memory>
@@ -34,7 +34,7 @@ namespace graphics {
     class material_cache;
     class static_mesh_cache;
 }
-class game {
+class SIGMA_API game {
 public:
     RPROPERTY()
     graphics::texture_cache& textures;

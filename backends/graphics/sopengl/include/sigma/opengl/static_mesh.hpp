@@ -38,7 +38,7 @@ namespace opengl {
         std::size_t reference_count = 0;
     };
 
-    class SIGMA_FIVE_OPENGL_API static_mesh_cache
+    class static_mesh_cache
         : public graphics::static_mesh_cache {
     public:
         static_mesh_cache(material_cache& materials);

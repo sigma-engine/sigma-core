@@ -7,8 +7,8 @@ import QtQuick.Window 2.0
 
 ApplicationWindow {
     visible: true
-    width: Screen.desktopAvailableWidth
-    height: Screen.desktopAvailableHeight
+    width: Screen.desktopAvailableWidth/2
+    height: Screen.desktopAvailableHeight/2
     title: qsTr("seditor")
 
     Material.theme: Material.Light
@@ -18,5 +18,10 @@ ApplicationWindow {
     GameView {
         anchors.fill: parent
         activeContext: context
+        id: t
+        /*Timer {
+                interval: 18; running: true; repeat: true
+                onTriggered:t.update()
+            }*/
     }
 }
