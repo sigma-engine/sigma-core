@@ -9,7 +9,7 @@
 #include <sigma/entity.hpp>
 #include <sigma/util/compile_time_hash.hpp>
 
-#define SIGMA_COMPONENT(T)                                                        
+#define SIGMA_COMPONENT(T)
 
 namespace sigma {
 template <typename T>

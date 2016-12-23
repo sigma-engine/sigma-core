@@ -5,7 +5,7 @@
 
 namespace sigma {
 namespace opengl {
-/*program::program()
+    /*program::program()
     : gl_object_(2)
     , linked_(false)
 {

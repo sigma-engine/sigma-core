@@ -96,11 +96,11 @@ void context::render(glm::ivec2 size)
             current_game->entities,
             current_game->transforms,
             current_game->static_mesh_instances,
-            glm::perspective(0.785398f,(float)size.x/(float)size.y,0.01f,1000.0f),
+            glm::perspective(0.785398f, (float)size.x / (float)size.y, 0.01f, 1000.0f),
             m
         };
         // TODO projection matrix and view matrix
-		current_renderer->resize(size);
+        current_renderer->resize(size);
         current_renderer->render(vp);
     }
 }

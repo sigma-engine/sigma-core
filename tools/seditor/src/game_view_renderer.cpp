@@ -12,7 +12,7 @@ namespace sigma {
 game_view_renderer::game_view_renderer()
     : item_(nullptr)
     , ctx_(nullptr)
-    , size_(0,0)
+    , size_(0, 0)
 {
 }
 
@@ -29,16 +29,16 @@ void game_view_renderer::synchronize(QQuickFramebufferObject* item)
     item_ = dynamic_cast<game_view*>(item);
     if (item_) {
         ctx_ = item_->activeContext();
-        size_ = glm::ivec2{item_->width(),item_->height()};
+        size_ = glm::ivec2{ item_->width(), item_->height() };
     }
 }
 
 void game_view_renderer::render()
 {
     if (item_) {
-		if(ctx_)
-			ctx_->render(size_);
-		item_->window()->resetOpenGLState();
-	}
+        if (ctx_)
+            ctx_->render(size_);
+        item_->window()->resetOpenGLState();
+    }
 }
 }

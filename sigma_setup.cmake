@@ -26,6 +26,10 @@ function(add_resource_package package_name package_root_path)
     foreach(texture ${TEXTURE_SOURCES})
         file(RELATIVE_PATH texture_time_stamp ${package_root_path} ${texture})
         set(texture_time_stamp "${CMAKE_BINARY_DIR}/data/${texture_time_stamp}.stamp")
+
+        get_filename_component(directory ${texture_time_stamp} DIRECTORY)
+        file(MAKE_DIRECTORY ${directory})
+
         add_custom_command(
             OUTPUT ${texture_time_stamp}
             COMMAND ${TEXTURE_COMPILER} --output="${CMAKE_BINARY_DIR}/data" ${texture}
@@ -40,6 +44,10 @@ function(add_resource_package package_name package_root_path)
     foreach(shader ${SHADER_SOURCES})
         file(RELATIVE_PATH shader_time_stamp ${package_root_path} ${shader})
         set(shader_time_stamp "${CMAKE_BINARY_DIR}/data/${shader_time_stamp}.stamp")
+
+        get_filename_component(directory ${shader_time_stamp} DIRECTORY)
+        file(MAKE_DIRECTORY ${directory})
+
         add_custom_command(
             OUTPUT ${shader_time_stamp}
             COMMAND ${SHADER_COMPILER} --output="${CMAKE_BINARY_DIR}/data" ${shader}
@@ -54,6 +62,10 @@ function(add_resource_package package_name package_root_path)
     foreach(material ${MATERIAL_SOURCES})
         file(RELATIVE_PATH material_time_stamp ${package_root_path} ${material})
         set(material_time_stamp "${CMAKE_BINARY_DIR}/data/${material_time_stamp}.stamp")
+
+        get_filename_component(directory ${material_time_stamp} DIRECTORY)
+        file(MAKE_DIRECTORY ${directory})
+
         add_custom_command(
             OUTPUT ${material_time_stamp}
             COMMAND ${MATERIAL_COMPILER} --output="${CMAKE_BINARY_DIR}/data" ${material}
@@ -68,6 +80,10 @@ function(add_resource_package package_name package_root_path)
     foreach(model ${MODEL_SOURCES})
         file(RELATIVE_PATH model_time_stamp ${package_root_path} ${model})
         set(model_time_stamp "${CMAKE_BINARY_DIR}/data/${model_time_stamp}.stamp")
+
+        get_filename_component(directory ${model_time_stamp} DIRECTORY)
+        file(MAKE_DIRECTORY ${directory})
+        
         add_custom_command(
             OUTPUT ${model_time_stamp}
             COMMAND ${MODEL_COMPILER} --output="${CMAKE_BINARY_DIR}/data" ${model}
@@ -80,7 +96,7 @@ function(add_resource_package package_name package_root_path)
     endforeach()
 
     add_custom_target(${package_name} ALL DEPENDS ${TIME_STAMPS})
-    
+
     if(NOT DEFINED CONAN_BIN_DIRS_SIGMA-ENGINE)
         add_dependencies(${package_name} sctexture scshader scmaterial scmodel)
     endif()

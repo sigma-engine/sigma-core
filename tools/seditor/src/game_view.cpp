@@ -13,13 +13,15 @@ game_view::game_view(QQuickItem* parent)
 {
 }
 
-game_view::~game_view() {
-	activeContext_->release_renderer();
+game_view::~game_view()
+{
+    activeContext_->release_renderer();
 }
 
-void game_view::releaseResources() {
-	activeContext_->release_renderer();
-	QQuickFramebufferObject::releaseResources();
+void game_view::releaseResources()
+{
+    activeContext_->release_renderer();
+    QQuickFramebufferObject::releaseResources();
 }
 
 qt_context* game_view::activeContext()

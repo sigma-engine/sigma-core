@@ -124,8 +124,8 @@ namespace opengl {
             const auto& mesh = static_meshes_.at(resource_map_.at(mesh_id));
             materials_.apply(mesh.material, projection_matrix, view_matrix, model_matrix);
 
-			GL_CHECK(glBindVertexArray(mesh.vertex_array));
-			GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.index_buffer));
+            GL_CHECK(glBindVertexArray(mesh.vertex_array));
+            GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.index_buffer));
             GL_CHECK(glDrawElements(GL_TRIANGLES, 3 * mesh.triangles.size(), GL_UNSIGNED_INT, nullptr));
         }
     }

@@ -21,7 +21,7 @@ namespace opengl {
         case graphics::shader_type::none:
             return GL_NONE;
         }
-		return GL_NONE;
+        return GL_NONE;
     }
 
     shader_cache::shader_cache()
@@ -33,7 +33,7 @@ namespace opengl {
     shader_cache::~shader_cache()
     {
         for (auto& shader : shaders_)
-          glDeleteShader(shader.object);
+            glDeleteShader(shader.object);
     }
 
     bool shader_cache::is_cached(resource::identifier shader_id) const
