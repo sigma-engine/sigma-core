@@ -5,7 +5,6 @@
 
 #include <glm/gtc/quaternion.hpp>
 #include <glm/vec3.hpp>
-
 #include <sigma/component.hpp>
 #include <sigma/reflect/reflect.hpp>
 

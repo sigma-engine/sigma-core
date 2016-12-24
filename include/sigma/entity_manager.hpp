@@ -3,11 +3,9 @@
 
 #include <sigma/config.hpp>
 
-#include <vector>
-
 #include <boost/iterator/filter_iterator.hpp>
-
 #include <sigma/entity.hpp>
+#include <vector>
 
 namespace sigma {
 

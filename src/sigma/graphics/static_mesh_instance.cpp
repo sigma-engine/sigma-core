@@ -2,7 +2,6 @@
 
 namespace sigma {
 namespace graphics {
-
     static_mesh_instance_manager::static_mesh_instance_manager(
         static_mesh_cache& cache)
         : cache_(cache)

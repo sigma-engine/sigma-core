@@ -3,7 +3,6 @@
 #include <QQmlContext>
 #include <QQuickStyle>
 #include <QQuickWindow>
-
 #include <game_view.hpp>
 #include <qt_context.hpp>
 
@@ -19,8 +18,8 @@ int main(int argc, char* argv[])
 
     sigma::qt_context ctx;
     QQmlApplicationEngine engine;
-	engine.rootContext()->setContextProperty("context", &ctx);
-	engine.load(QUrl(QLatin1String("qrc:/ui/main.qml")));
+    engine.rootContext()->setContextProperty("context", &ctx);
+    engine.load(QUrl(QLatin1String("qrc:/ui/main.qml")));
 
     return app.exec();
 }

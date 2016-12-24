@@ -3,13 +3,11 @@
 
 #include <sigma/config.hpp>
 
-#include <string>
-
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/serialization/access.hpp>
-
 #include <sigma/util/compile_time_hash.hpp>
+#include <string>
 
 namespace sigma {
 namespace resource {

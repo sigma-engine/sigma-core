@@ -1,37 +1,36 @@
 #include <sigma/context.hpp>
 
+#include <boost/dll/import.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <sigma/game.hpp>
 #include <sigma/graphics/renderer.hpp>
 
-#include <boost/dll/import.hpp>
-
 namespace sigma {
 context::context()
     : textures_(boost::filesystem::current_path() / ".." / "data")
-	, shaders_(boost::filesystem::current_path() / ".." / "data")
-	, materials_(boost::filesystem::current_path() / ".." / "data",textures_,shaders_)
-	, static_meshes_(boost::filesystem::current_path() / ".." / "data", materials_)
-	, current_game_(nullptr)
+    , shaders_(boost::filesystem::current_path() / ".." / "data")
+    , materials_(boost::filesystem::current_path() / ".." / "data", textures_, shaders_)
+    , static_meshes_(boost::filesystem::current_path() / ".." / "data", materials_)
+    , current_game_(nullptr)
 {
 }
 
-graphics::texture_cache &context::textures()
+graphics::texture_cache& context::textures()
 {
     return textures_;
 }
 
-graphics::shader_cache &context::shaders()
+graphics::shader_cache& context::shaders()
 {
     return shaders_;
 }
 
-graphics::material_cache &context::materials()
+graphics::material_cache& context::materials()
 {
     return materials_;
 }
 
-graphics::static_mesh_cache &context::static_meshes()
+graphics::static_mesh_cache& context::static_meshes()
 {
     return static_meshes_;
 }

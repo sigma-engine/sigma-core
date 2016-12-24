@@ -3,7 +3,6 @@
 
 #include <boost/wave/cpplexer/cpp_lex_iterator.hpp>
 #include <boost/wave/cpplexer/cpp_lex_token.hpp>
-
 #include <sigma/reflect/reflect.hpp>
 
 typedef boost::wave::cpplexer::lex_token<> token_type;

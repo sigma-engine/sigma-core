@@ -3,11 +3,10 @@
 
 #include <sigma/config.hpp>
 
-#include <unordered_map>
-
 #include <sigma/component.hpp>
 #include <sigma/graphics/static_mesh.hpp>
 #include <sigma/reflect/reflect.hpp>
+#include <unordered_map>
 
 namespace sigma {
 namespace graphics {

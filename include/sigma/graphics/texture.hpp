@@ -1,13 +1,12 @@
 #ifndef SIGMA_GRAPHICS_TEXTURE_HPP
 #define SIGMA_GRAPHICS_TEXTURE_HPP
 
-#include <sigma/config.hpp>
-#include <sigma/reflect/reflect.hpp>
-#include <sigma/resource/resource_cache.hpp>
-#include <sigma/resource/identifier.hpp>
-
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/vector.hpp>
+#include <sigma/config.hpp>
+#include <sigma/reflect/reflect.hpp>
+#include <sigma/resource/identifier.hpp>
+#include <sigma/resource/resource_cache.hpp>
 
 namespace sigma {
 namespace graphics {
@@ -33,7 +32,7 @@ namespace graphics {
 
         const std::vector<unsigned char>& data() const;
 
-        void set_data(unsigned int width, unsigned int height,const std::vector<unsigned char>& data);
+        void set_data(unsigned int width, unsigned int height, const std::vector<unsigned char>& data);
 
     private:
         friend class boost::serialization::access;
@@ -49,11 +48,11 @@ namespace graphics {
         unsigned int height_;
         std::vector<unsigned char> data_;
 
-		friend class resource::resource_cache<texture>;
-		std::size_t reference_count = 0;
+        friend class resource::resource_cache<texture>;
+        std::size_t reference_count = 0;
     };
 
-	using texture_cache = resource::resource_cache<texture>;
+    using texture_cache = resource::resource_cache<texture>;
 }
 }
 

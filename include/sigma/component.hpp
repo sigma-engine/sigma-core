@@ -3,13 +3,12 @@
 
 #include <sigma/config.hpp>
 
+#include <sigma/entity.hpp>
+#include <sigma/util/compile_time_hash.hpp>
 #include <unordered_map>
 #include <vector>
 
-#include <sigma/entity.hpp>
-#include <sigma/util/compile_time_hash.hpp>
-
-#define SIGMA_COMPONENT(T)                                                        
+#define SIGMA_COMPONENT(T)
 
 namespace sigma {
 template <typename T>

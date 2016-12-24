@@ -3,18 +3,15 @@
 
 #include <sigma/opengl/config.hpp>
 
-#include <sigma/graphics/static_mesh.hpp>
-
-#include <unordered_map>
-#include <vector>
-
 #include <boost/filesystem/path.hpp>
-
 #include <sigma/graphics/renderer.hpp>
+#include <sigma/graphics/static_mesh.hpp>
 #include <sigma/opengl/index_buffer.hpp>
 #include <sigma/opengl/material.hpp>
 #include <sigma/opengl/vertex_array.hpp>
 #include <sigma/opengl/vertex_buffer.hpp>
+#include <unordered_map>
+#include <vector>
 
 namespace sigma {
 namespace opengl {
@@ -22,7 +19,7 @@ namespace opengl {
         GLuint vertex_array = 0;
         GLuint vertex_buffer = 0;
         GLuint index_buffer = 0;
-		GLuint index_count = 0;
+        GLuint index_count = 0;
         resource::identifier material;
     };
 }

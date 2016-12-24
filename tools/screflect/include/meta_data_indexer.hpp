@@ -3,7 +3,6 @@
 #define SIGMA_ENGINE_META_DATA_INDEXER
 
 #include <boost/filesystem/path.hpp>
-
 #include <sigma/reflect/reflect.hpp>
 
 void print(const enum_delecration& parent, std::size_t level = 0);

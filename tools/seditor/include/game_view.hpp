@@ -13,7 +13,7 @@ public:
 
     game_view(QQuickItem* parent = 0);
 
-	~game_view();
+    ~game_view();
 
     qt_context* activeContext();
 

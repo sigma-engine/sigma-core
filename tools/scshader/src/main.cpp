@@ -1,12 +1,10 @@
-#include <fstream>
-#include <iostream>
-
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/program_options.hpp>
 #include <boost/wave.hpp>
 #include <boost/wave/cpplexer/cpp_lex_iterator.hpp>
 #include <boost/wave/cpplexer/cpp_lex_token.hpp>
-
+#include <fstream>
+#include <iostream>
 #include <sigma/graphics/shader.hpp>
 #include <sigma/util/compile_time_hash.hpp>
 #include <sigma/util/filesystem.hpp>
@@ -79,7 +77,7 @@ int main(int argc, char const* argv[])
         file_path = boost::filesystem::absolute(file_path);
         if (sigma::util::directory_contains_file(boost::filesystem::current_path(), file_path)) {
             if (boost::filesystem::exists(file_path)) {
-                std::cout <<"Compiling shader: " << file_path << std::endl;
+                std::cout << "Compiling shader: " << file_path << std::endl;
                 boost::wave::util::file_position_type current_position;
                 try {
                     std::ifstream source_file{ file_path.string() };

@@ -3,13 +3,8 @@
 
 #include <sigma/opengl/config.hpp>
 
-#include <unordered_map>
-#include <vector>
-
-#include <sigma/graphics/shader.hpp>
-
 #include <boost/filesystem/path.hpp>
-
+#include <sigma/graphics/shader.hpp>
 #include <sigma/opengl/gl_core_4_0.h>
 
 namespace sigma {

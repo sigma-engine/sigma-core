@@ -1,16 +1,13 @@
 #include <sigma/opengl/material.hpp>
 
-#include <fstream>
-#include <iostream>
-#include <string>
-
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/filesystem/operations.hpp>
-
+#include <fstream>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/matrix.hpp>
-
+#include <iostream>
 #include <sigma/opengl/util.hpp>
+#include <string>
 
 namespace sigma {
 namespace opengl {

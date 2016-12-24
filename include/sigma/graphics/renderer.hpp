@@ -2,23 +2,21 @@
 #define SIGMA_GRAPHICS_RENDERER_HPP
 
 #include <sigma/config.hpp>
-#include <sigma/context.hpp>
 
+#include <boost/preprocessor/seq/for_each_i.hpp>
+#include <boost/preprocessor/variadic/to_seq.hpp>
 #include <glm/mat4x4.hpp>
 #include <glm/vec2.hpp>
-
+#include <sigma/context.hpp>
 #include <sigma/entity_manager.hpp>
 #include <sigma/graphics/static_mesh_instance.hpp>
 #include <sigma/transform.hpp>
 
-#include <boost/preprocessor/seq/for_each_i.hpp>
-#include <boost/preprocessor/variadic/to_seq.hpp>
-
-#define SIGMA_EXPORT_RENDERER_CLASS_I(r, data, i, elem)                                         \
-    extern "C" BOOST_SYMBOL_EXPORT sigma::graphics::renderer_class renderer_class_##i;          \
-    sigma::graphics::renderer_class renderer_class_##i = {                                      \
-        BOOST_PP_STRINGIZE(elem),                                                               \
-        [](sigma::context *ctx) -> std::shared_ptr<sigma::graphics::renderer> { return std::make_shared<elem>(ctx); } \
+#define SIGMA_EXPORT_RENDERER_CLASS_I(r, data, i, elem)                                                               \
+    extern "C" BOOST_SYMBOL_EXPORT sigma::graphics::renderer_class renderer_class_##i;                                \
+    sigma::graphics::renderer_class renderer_class_##i = {                                                            \
+        BOOST_PP_STRINGIZE(elem),                                                                                     \
+        [](sigma::context* ctx) -> std::shared_ptr<sigma::graphics::renderer> { return std::make_shared<elem>(ctx); } \
     };
 
 #define SIGMA_EXPORT_RENDERER_CLASSES(...) BOOST_PP_SEQ_FOR_EACH_I(SIGMA_EXPORT_RENDERER_CLASS_I, _, BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__))
@@ -44,7 +42,7 @@ namespace graphics {
 
     class SIGMA_API renderer {
     public:
-        renderer(context *ctx);
+        renderer(context* ctx);
 
         virtual ~renderer();
 
@@ -70,7 +68,7 @@ namespace graphics {
 
     struct renderer_class {
         const char* name;
-        std::shared_ptr<renderer> (*create)(sigma::context *ctx);
+        std::shared_ptr<renderer> (*create)(sigma::context* ctx);
     };
 }
 }

@@ -1,13 +1,11 @@
 #include <sigma/opengl/static_mesh.hpp>
 
-#include <fstream>
-#include <iostream>
-#include <string>
-
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/filesystem/operations.hpp>
-
+#include <fstream>
 #include <glm/gtc/type_ptr.hpp>
+#include <iostream>
+#include <string>
 
 namespace sigma {
 namespace opengl {
@@ -64,7 +62,7 @@ namespace opengl {
         if (resource_map_.count(mesh_id) != 0) {
             const auto& mesh = static_meshes_.at(resource_map_.at(mesh_id));
 			// TODO this needs to be done.
-           
+
 			materials_.apply(mesh.material, projection_matrix, view_matrix, model_matrix);
 
 			GL_CHECK(glBindVertexArray(mesh.vertex_array));

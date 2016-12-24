@@ -5,7 +5,6 @@
 
 #include <cstdint>
 #include <cstdlib>
-
 #include <sigma/opengl/gl_core_4_0.h>
 
 namespace sigma {

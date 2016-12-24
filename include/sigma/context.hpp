@@ -1,17 +1,15 @@
 #ifndef SIGMA_CONTEXT_HPP
 #define SIGMA_CONTEXT_HPP
 
-#include <sigma/config.hpp>
-#include <sigma/graphics/texture.hpp>
-#include <sigma/graphics/shader.hpp>
-#include <sigma/graphics/material.hpp>
-#include <sigma/graphics/static_mesh.hpp>
-
 #include <boost/filesystem/path.hpp>
-#include <glm/vec2.hpp>
 #include <glm/mat4x4.hpp>
-
+#include <glm/vec2.hpp>
 #include <memory>
+#include <sigma/config.hpp>
+#include <sigma/graphics/material.hpp>
+#include <sigma/graphics/shader.hpp>
+#include <sigma/graphics/static_mesh.hpp>
+#include <sigma/graphics/texture.hpp>
 #include <unordered_map>
 
 namespace sigma {
@@ -27,13 +25,13 @@ public:
 
     virtual ~context() = default;
 
-    graphics::texture_cache &textures();
+    graphics::texture_cache& textures();
 
-	graphics::shader_cache &shaders();
+    graphics::shader_cache& shaders();
 
-	graphics::material_cache &materials();
+    graphics::material_cache& materials();
 
-	graphics::static_mesh_cache &static_meshes();
+    graphics::static_mesh_cache& static_meshes();
 
     bool load_plugin(boost::filesystem::path path);
 
@@ -46,10 +44,10 @@ public:
     void update(std::chrono::duration<float> dt);
 
 protected:
-	graphics::texture_cache textures_;
-	graphics::shader_cache shaders_;
-	graphics::material_cache materials_;
-	graphics::static_mesh_cache static_meshes_;
+    graphics::texture_cache textures_;
+    graphics::shader_cache shaders_;
+    graphics::material_cache materials_;
+    graphics::static_mesh_cache static_meshes_;
 
     float z = -10;
     std::unordered_map<std::string, boost::shared_ptr<game_class> > game_classes;

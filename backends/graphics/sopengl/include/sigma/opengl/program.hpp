@@ -2,9 +2,6 @@
 #define SIGMA_FIVE_OPENGL_PROGRAM_HPP
 
 #include <functional>
-#include <string>
-#include <vector>
-
 #include <glm/gtc/quaternion.hpp>
 #include <glm/mat2x2.hpp>
 #include <glm/mat3x3.hpp>
@@ -12,10 +9,11 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
-
 #include <sigma/opengl/gl_core_4_0.h>
 #include <sigma/opengl/shader.hpp>
 #include <sigma/opengl/texture_2d.hpp>
+#include <string>
+#include <vector>
 
 namespace sigma {
 namespace opengl {

@@ -48,3 +48,5 @@ generated
 
 # pack-cpp
 .pack-cpp/
+
+CMakeLists.txt.*

@@ -3,22 +3,18 @@
 
 #include <sigma/config.hpp>
 
-#include <sigma/graphics/material.hpp>
-
 #include <array>
-#include <vector>
-
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/array.hpp>
 #include <boost/serialization/vector.hpp>
-
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
-
 #include <sigma/component.hpp>
+#include <sigma/graphics/material.hpp>
 #include <sigma/reflect/reflect.hpp>
 #include <sigma/resource/identifier.hpp>
 #include <sigma/util/glm_serialize.hpp>
+#include <vector>
 
 namespace sigma {
 namespace graphics {
@@ -59,20 +55,21 @@ namespace graphics {
         std::vector<triangle> triangles;
         resource::identifier material;
 
-		friend class static_mesh_cache;
-		std::size_t reference_count = 0;
+        friend class static_mesh_cache;
+        std::size_t reference_count = 0;
     };
 
-	class SIGMA_API static_mesh_cache : public resource::resource_cache<static_mesh> {
-	public:
-		static_mesh_cache(boost::filesystem::path cache_directory, material_cache &materials);
+    class SIGMA_API static_mesh_cache : public resource::resource_cache<static_mesh> {
+    public:
+        static_mesh_cache(boost::filesystem::path cache_directory, material_cache& materials);
 
-		virtual bool increment_reference(resource::identifier resource_id) override;
+        virtual bool increment_reference(resource::identifier resource_id) override;
 
-		virtual bool decrement_reference(resource::identifier resource_id) override;
-	private:
-		material_cache &materials_;
-	};
+        virtual bool decrement_reference(resource::identifier resource_id) override;
+
+    private:
+        material_cache& materials_;
+    };
 }
 }
 

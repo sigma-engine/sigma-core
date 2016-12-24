@@ -1,7 +1,6 @@
 #include <chrono>
 
 #include <boost/algorithm/string.hpp>
-
 #include <meta_data_indexer.hpp>
 #include <meta_data_parser.hpp>
 

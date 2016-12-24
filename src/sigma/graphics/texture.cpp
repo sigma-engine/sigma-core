@@ -1,12 +1,11 @@
 #include <sigma/graphics/texture.hpp>
 
+#include <algorithm>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/filesystem/operations.hpp>
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <algorithm>
-
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/filesystem/operations.hpp>
 
 namespace sigma {
 namespace graphics {

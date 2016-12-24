@@ -1,14 +1,12 @@
 #include "assimp_converter.hpp"
 
-#include <fstream>
-#include <iostream>
-
 #include <boost/algorithm/string.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/program_options.hpp>
-
+#include <fstream>
+#include <iostream>
 #include <sigma/graphics/static_mesh.hpp>
 #include <sigma/util/filesystem.hpp>
 
@@ -43,7 +41,7 @@ int main(int argc, char const* argv[])
         file_path = boost::filesystem::absolute(file_path);
         if (sigma::util::directory_contains_file(boost::filesystem::current_path(), file_path)) {
             if (boost::filesystem::exists(file_path)) {
-                std::cout <<"Compiling model: " << file_path << std::endl;
+                std::cout << "Compiling model: " << file_path << std::endl;
 
                 sigma::convert::assimp_converter imported{ file_path };
                 for (auto mesh_name : imported.static_mesh_names()) {

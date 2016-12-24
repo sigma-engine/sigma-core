@@ -3,10 +3,9 @@
 
 #include <sigma/opengl/gl_core_4_0.h>
 
-#include <vector>
-
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
+#include <vector>
 
 namespace sigma {
 namespace opengl {

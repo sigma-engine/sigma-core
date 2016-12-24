@@ -1,8 +1,7 @@
 #include <sigma/opengl/vertex_array.hpp>
 
-#include <sigma/opengl/util.hpp>
-
 #include <iostream>
+#include <sigma/opengl/util.hpp>
 
 namespace sigma {
 namespace opengl {

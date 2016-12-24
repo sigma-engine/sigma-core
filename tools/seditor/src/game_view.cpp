@@ -1,11 +1,9 @@
 #include <game_view.hpp>
 
-#include <game_view_renderer.hpp>
-
 #include <QQuickWindow>
 #include <QRunnable>
 #include <QSGSimpleTextureNode>
-
+#include <game_view_renderer.hpp>
 #include <iostream>
 
 namespace sigma {
@@ -13,10 +11,11 @@ game_view::game_view(QQuickItem* parent)
     : QQuickFramebufferObject(parent)
     , activeContext_(nullptr)
 {
-	this->setMirrorVertically(true);
+    this->setMirrorVertically(true);
 }
 
-game_view::~game_view() {
+game_view::~game_view()
+{
 }
 
 qt_context* game_view::activeContext()
@@ -34,7 +33,6 @@ void game_view::setActiveContext(qt_context* ctx)
 
 QQuickFramebufferObject::Renderer* game_view::createRenderer() const
 {
-    return new game_view_renderer{activeContext_};
+    return new game_view_renderer{ activeContext_ };
 }
-
 }

@@ -1,7 +1,7 @@
 #include <sigma/context.hpp>
-#include <sigma/game.hpp>
 
 #include <iostream>
+#include <sigma/game.hpp>
 
 int main(int argc, char const* argv[])
 {

@@ -4,7 +4,6 @@
 #include <sigma/opengl/config.hpp>
 
 #include <sigma/opengl/buffer.hpp>
-
 #include <vector>
 
 namespace sigma {

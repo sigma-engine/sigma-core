@@ -1,17 +1,14 @@
 #include <sigma/opengl/shader.hpp>
 
-#include <fstream>
-#include <iostream>
-#include <string>
-
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/filesystem/operations.hpp>
-
+#include <fstream>
+#include <iostream>
 #include <sigma/opengl/util.hpp>
+#include <string>
 
 namespace sigma {
 namespace opengl {
-
 
     /*shader_cache::~shader_cache()
     {

@@ -1,13 +1,11 @@
-#include <fstream>
-#include <iostream>
-
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/gil/extension/io/jpeg_dynamic_io.hpp>
 #include <boost/gil/extension/io/png_dynamic_io.hpp>
 #include <boost/gil/extension/io/tiff_dynamic_io.hpp>
 #include <boost/program_options.hpp>
-
+#include <fstream>
+#include <iostream>
 #include <sigma/graphics/texture.hpp>
 #include <sigma/resource/identifier.hpp>
 #include <sigma/util/compile_time_hash.hpp>
@@ -20,10 +18,7 @@ int main(int argc, char const* argv[])
 
     po::options_description global_options("Options");
 
-    global_options.add_options()("help,h", "Show this help message")
-    ("output,o", po::value<boost::filesystem::path>()->default_value(boost::filesystem::current_path()), "output directory")
-    ("input-files", po::value<std::vector<boost::filesystem::path> >(), "input textures files");
-
+    global_options.add_options()("help,h", "Show this help message")("output,o", po::value<boost::filesystem::path>()->default_value(boost::filesystem::current_path()), "output directory")("input-files", po::value<std::vector<boost::filesystem::path> >(), "input textures files");
 
     po::positional_options_description positional_options;
     positional_options.add("input-files", -1);
@@ -41,7 +36,6 @@ int main(int argc, char const* argv[])
         return 0;
     }
 
-
     auto outputdir = vm["output"].as<boost::filesystem::path>();
     boost::filesystem::create_directories(outputdir);
 
@@ -49,7 +43,7 @@ int main(int argc, char const* argv[])
         file_path = boost::filesystem::absolute(file_path);
         if (sigma::util::directory_contains_file(boost::filesystem::current_path(), file_path)) {
             if (boost::filesystem::exists(file_path)) {
-                std::cout <<"Compiling texture: " << file_path << std::endl;
+                std::cout << "Compiling texture: " << file_path << std::endl;
 
                 sigma::resource::development_identifier rid("texture", file_path);
                 auto final_path = outputdir / std::to_string(rid.value());

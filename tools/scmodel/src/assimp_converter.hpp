@@ -1,10 +1,8 @@
 #ifndef SIGMA_FIVE_CONVERT_ASSIMP_CONVERTER_HPP
 #define SIGMA_FIVE_CONVERT_ASSIMP_CONVERTER_HPP
 
-#include <set>
-
 #include <boost/filesystem/path.hpp>
-
+#include <set>
 #include <sigma/graphics/static_mesh.hpp>
 
 namespace Assimp {

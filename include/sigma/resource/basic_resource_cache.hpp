@@ -3,13 +3,12 @@
 
 #include <sigma/resource/identifier.hpp>
 
-#include <fstream>
-#include <unordered_map>
-#include <vector>
-
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
+#include <fstream>
+#include <unordered_map>
+#include <vector>
 
 namespace sigma {
 namespace resource {

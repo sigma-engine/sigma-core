@@ -3,18 +3,16 @@
 
 #include <sigma/opengl/config.hpp>
 
+#include <sigma/graphics/material.hpp>
 #include <sigma/graphics/renderer.hpp>
+#include <sigma/graphics/shader.hpp>
+#include <sigma/graphics/static_mesh.hpp>
 #include <sigma/graphics/static_mesh_instance.hpp>
+#include <sigma/graphics/texture.hpp>
 #include <sigma/opengl/material.hpp>
 #include <sigma/opengl/shader.hpp>
 #include <sigma/opengl/static_mesh.hpp>
 #include <sigma/opengl/texture.hpp>
-
-#include <sigma/graphics/material.hpp>
-#include <sigma/graphics/shader.hpp>
-#include <sigma/graphics/static_mesh.hpp>
-#include <sigma/graphics/texture.hpp>
-
 #include <unordered_map>
 
 namespace sigma {
@@ -32,7 +30,7 @@ namespace opengl {
         static const resource::identifier FULLSCREEN_MATERIAL1;
         static const resource::identifier FULLSCREEN_MATERIAL2;
 
-        renderer(context *ctx);
+        renderer(context* ctx);
 
         virtual ~renderer();
 
@@ -49,16 +47,16 @@ namespace opengl {
         virtual void render(const graphics::view_port& viewport) override;
 
     private:
-        context *ctx_;
+        context* ctx_;
         graphics::texture_cache& texture_cache_;
-		graphics::shader_cache& shader_cache_;
-		graphics::material_cache& material_cache_;
-		graphics::static_mesh_cache& static_mesh_cache_;
+        graphics::shader_cache& shader_cache_;
+        graphics::material_cache& material_cache_;
+        graphics::static_mesh_cache& static_mesh_cache_;
 
-        std::unordered_map<resource::identifier,opengl::texture> textures_;
-        std::unordered_map<resource::identifier,opengl::shader> shaders_;
-        std::unordered_map<resource::identifier,opengl::material> materials_;
-        std::unordered_map<resource::identifier,opengl::static_mesh> static_meshes_;
+        std::unordered_map<resource::identifier, opengl::texture> textures_;
+        std::unordered_map<resource::identifier, opengl::shader> shaders_;
+        std::unordered_map<resource::identifier, opengl::material> materials_;
+        std::unordered_map<resource::identifier, opengl::static_mesh> static_meshes_;
     };
 }
 }
