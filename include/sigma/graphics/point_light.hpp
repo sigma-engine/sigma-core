@@ -17,6 +17,4 @@ namespace graphics {
 }
 }
 
-SIGMA_COMPONENT(sigma::graphics::point_light)
-
 #endif // SIGMA_GRAPHICS_POINT_LIGHT_HPP

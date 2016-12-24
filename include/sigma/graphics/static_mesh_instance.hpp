@@ -40,6 +40,4 @@ namespace graphics {
 }
 }
 
-SIGMA_COMPONENT(sigma::graphics::static_mesh_instance)
-
 #endif // SIGMA_GRAPHICS_STATIC_MESH_INSTANCE_HPP

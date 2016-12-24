@@ -26,6 +26,4 @@ struct SIGMA_API transform {
 using transform_manager = basic_component_manager<transform>;
 }
 
-SIGMA_COMPONENT(sigma::transform)
-
 #endif // SIGMA_TRANSFORM_HPP

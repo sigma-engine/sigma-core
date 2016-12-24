@@ -17,6 +17,4 @@ namespace graphics {
 }
 }
 
-SIGMA_COMPONENT(sigma::graphics::spot_light)
-
 #endif // SIGMA_GRAPHICS_SPOT_LIGHT_HPP

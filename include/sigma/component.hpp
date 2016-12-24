@@ -8,13 +8,7 @@
 #include <unordered_map>
 #include <vector>
 
-#define SIGMA_COMPONENT(T)
-
 namespace sigma {
-template <typename T>
-struct component_type_info {
-    static_assert(sizeof(component_type_info<T>) != 0, "Missing component_type_info!");
-};
 
 template <typename T>
 class component_manager {
