@@ -1,12 +1,16 @@
 #include "assimp_converter.hpp"
 
+#include <sigma/graphics/static_mesh.hpp>
+
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
-#include <boost/algorithm/string/predicate.hpp>
+
 #include <glm/gtc/quaternion.hpp>
+
+#include <boost/algorithm/string/predicate.hpp>
+
 #include <iostream>
-#include <sigma/graphics/static_mesh.hpp>
 #include <unordered_map>
 
 namespace sigma {

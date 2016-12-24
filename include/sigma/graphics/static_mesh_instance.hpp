@@ -1,11 +1,11 @@
 #ifndef SIGMA_GRAPHICS_STATIC_MESH_INSTANCE_HPP
 #define SIGMA_GRAPHICS_STATIC_MESH_INSTANCE_HPP
 
-#include <sigma/config.hpp>
-
 #include <sigma/component.hpp>
+#include <sigma/config.hpp>
 #include <sigma/graphics/static_mesh.hpp>
 #include <sigma/reflect/reflect.hpp>
+
 #include <unordered_map>
 
 namespace sigma {

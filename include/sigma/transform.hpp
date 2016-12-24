@@ -1,12 +1,12 @@
 #ifndef SIGMA_TRANSFORM_HPP
 #define SIGMA_TRANSFORM_HPP
 
+#include <sigma/component.hpp>
 #include <sigma/config.hpp>
+#include <sigma/reflect/reflect.hpp>
 
 #include <glm/gtc/quaternion.hpp>
 #include <glm/vec3.hpp>
-#include <sigma/component.hpp>
-#include <sigma/reflect/reflect.hpp>
 
 namespace sigma {
 

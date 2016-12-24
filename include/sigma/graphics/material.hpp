@@ -2,15 +2,15 @@
 #define SIGMA_GRAPHICS_MATERIAL_HPP
 
 #include <sigma/config.hpp>
-
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/utility.hpp>
-#include <boost/serialization/vector.hpp>
 #include <sigma/graphics/shader.hpp>
 #include <sigma/graphics/texture.hpp>
 #include <sigma/reflect/reflect.hpp>
 #include <sigma/resource/identifier.hpp>
 #include <sigma/resource/resource_cache.hpp>
+
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/utility.hpp>
+#include <boost/serialization/vector.hpp>
 
 namespace sigma {
 namespace graphics {

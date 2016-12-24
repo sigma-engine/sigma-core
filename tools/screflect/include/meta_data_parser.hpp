@@ -1,9 +1,10 @@
 #ifndef SIGMA_ENGINE_META_DATA_PARSER
 #define SIGMA_ENGINE_META_DATA_PARSER
 
+#include <sigma/reflect/reflect.hpp>
+
 #include <boost/wave/cpplexer/cpp_lex_iterator.hpp>
 #include <boost/wave/cpplexer/cpp_lex_token.hpp>
-#include <sigma/reflect/reflect.hpp>
 
 typedef boost::wave::cpplexer::lex_token<> token_type;
 typedef boost::wave::cpplexer::lex_iterator<token_type> lexer_type;

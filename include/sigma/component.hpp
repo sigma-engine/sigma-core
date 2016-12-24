@@ -2,9 +2,9 @@
 #define SIGMA_COMPONENT_HPP
 
 #include <sigma/config.hpp>
-
 #include <sigma/entity.hpp>
 #include <sigma/util/compile_time_hash.hpp>
+
 #include <unordered_map>
 #include <vector>
 

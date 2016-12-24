@@ -2,9 +2,10 @@
 #define sigma_ENTITY_MANAGER_HPP
 
 #include <sigma/config.hpp>
+#include <sigma/entity.hpp>
 
 #include <boost/iterator/filter_iterator.hpp>
-#include <sigma/entity.hpp>
+
 #include <vector>
 
 namespace sigma {

@@ -1,9 +1,8 @@
 #ifndef SIGMA_GRAPHICS_SPOT_LIGHT_HPP
 #define SIGMA_GRAPHICS_SPOT_LIGHT_HPP
 
-#include <sigma/config.hpp>
-
 #include <sigma/component.hpp>
+#include <sigma/config.hpp>
 #include <sigma/reflect/reflect.hpp>
 
 namespace sigma {

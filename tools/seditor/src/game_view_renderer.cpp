@@ -1,14 +1,18 @@
 #include <game_view_renderer.hpp>
 
-#include <QOpenGLFramebufferObjectFormat>
-#include <QtQuick/QQuickWindow>
 #include <game_view.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/vec2.hpp>
-#include <iostream>
 #include <qt_context.hpp>
+
 #include <sigma/game.hpp>
 #include <sigma/graphics/renderer.hpp>
+
+#include <QOpenGLFramebufferObjectFormat>
+#include <QtQuick/QQuickWindow>
+
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/vec2.hpp>
+
+#include <iostream>
 
 namespace sigma {
 game_view_renderer::game_view_renderer(qt_context* ctx)

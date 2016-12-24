@@ -1,9 +1,11 @@
 #include <game_view.hpp>
 
+#include <game_view_renderer.hpp>
+
 #include <QQuickWindow>
 #include <QRunnable>
 #include <QSGSimpleTextureNode>
-#include <game_view_renderer.hpp>
+
 #include <iostream>
 
 namespace sigma {

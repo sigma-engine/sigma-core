@@ -1,13 +1,15 @@
+#include <sigma/graphics/shader.hpp>
+#include <sigma/util/compile_time_hash.hpp>
+#include <sigma/util/filesystem.hpp>
+
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/program_options.hpp>
 #include <boost/wave.hpp>
 #include <boost/wave/cpplexer/cpp_lex_iterator.hpp>
 #include <boost/wave/cpplexer/cpp_lex_token.hpp>
+
 #include <fstream>
 #include <iostream>
-#include <sigma/graphics/shader.hpp>
-#include <sigma/util/compile_time_hash.hpp>
-#include <sigma/util/filesystem.hpp>
 
 namespace po = boost::program_options;
 

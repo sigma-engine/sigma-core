@@ -1,12 +1,15 @@
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/program_options.hpp>
-#include <fstream>
-#include <iostream>
-#include <json/json.h>
 #include <sigma/graphics/material.hpp>
 #include <sigma/util/compile_time_hash.hpp>
 #include <sigma/util/filesystem.hpp>
+
+#include <json/json.h>
+
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/program_options.hpp>
+
+#include <fstream>
+#include <iostream>
 #include <string>
 
 namespace po = boost::program_options;

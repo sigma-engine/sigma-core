@@ -1,10 +1,12 @@
 #include <meta_data_indexer.hpp>
 
+#include <meta_data_parser.hpp>
+
 #include <boost/algorithm/string/join.hpp>
 #include <boost/range/adaptor/transformed.hpp>
 #include <boost/wave.hpp>
+
 #include <iostream>
-#include <meta_data_parser.hpp>
 
 struct block {
     int level;

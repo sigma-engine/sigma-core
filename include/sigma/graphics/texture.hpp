@@ -1,12 +1,13 @@
 #ifndef SIGMA_GRAPHICS_TEXTURE_HPP
 #define SIGMA_GRAPHICS_TEXTURE_HPP
 
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/vector.hpp>
 #include <sigma/config.hpp>
 #include <sigma/reflect/reflect.hpp>
 #include <sigma/resource/identifier.hpp>
 #include <sigma/resource/resource_cache.hpp>
+
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/vector.hpp>
 
 namespace sigma {
 namespace graphics {

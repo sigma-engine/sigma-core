@@ -1,10 +1,11 @@
+#include <game_view.hpp>
+#include <qt_context.hpp>
+
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQuickStyle>
 #include <QQuickWindow>
-#include <game_view.hpp>
-#include <qt_context.hpp>
 
 int main(int argc, char* argv[])
 {

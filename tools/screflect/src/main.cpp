@@ -1,8 +1,9 @@
 #include <chrono>
 
-#include <boost/algorithm/string.hpp>
 #include <meta_data_indexer.hpp>
 #include <meta_data_parser.hpp>
+
+#include <boost/algorithm/string.hpp>
 
 int main(int argc, char const* argv[])
 {

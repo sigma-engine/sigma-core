@@ -1,4 +1,5 @@
 #include <qt_context.hpp>
+
 #include <sigma/game.hpp>
 
 namespace sigma {
@@ -10,6 +11,5 @@ qt_context::qt_context(QObject* parent)
     load_plugin("simple-game");
 
     set_game_class("simple_game");
-    //current_game_->update(16ms);
 }
 }

@@ -1,12 +1,13 @@
 #include <sigma/resource/identifier.hpp>
+#include <sigma/util/compile_time_hash.hpp>
+#include <sigma/util/filesystem.hpp>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/serialization/access.hpp>
+
 #include <functional>
 #include <iostream>
-#include <sigma/util/compile_time_hash.hpp>
-#include <sigma/util/filesystem.hpp>
 
 namespace sigma {
 namespace resource {

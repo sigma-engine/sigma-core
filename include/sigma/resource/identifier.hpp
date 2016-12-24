@@ -2,11 +2,12 @@
 #define SIGMA_RESOURCE_IDENTIFIER_HPP
 
 #include <sigma/config.hpp>
+#include <sigma/util/compile_time_hash.hpp>
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/serialization/access.hpp>
-#include <sigma/util/compile_time_hash.hpp>
+
 #include <string>
 
 namespace sigma {

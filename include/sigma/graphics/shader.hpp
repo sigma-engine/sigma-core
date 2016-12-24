@@ -2,17 +2,19 @@
 #define SIGMA_GRAPHICS_SHADER_HPP
 
 #include <sigma/config.hpp>
-
-#include <array>
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/array.hpp>
-#include <boost/serialization/vector.hpp>
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
 #include <sigma/reflect/reflect.hpp>
 #include <sigma/resource/identifier.hpp>
 #include <sigma/resource/resource_cache.hpp>
 #include <sigma/util/glm_serialize.hpp>
+
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/array.hpp>
+#include <boost/serialization/vector.hpp>
+
+#include <array>
 #include <string>
 
 namespace sigma {

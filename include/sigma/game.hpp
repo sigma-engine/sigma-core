@@ -1,10 +1,6 @@
 #ifndef SIGMA_GAME_HPP
 #define SIGMA_GAME_HPP
 
-#include <boost/preprocessor/seq/for_each_i.hpp>
-#include <boost/preprocessor/variadic/to_seq.hpp>
-#include <chrono>
-#include <memory>
 #include <sigma/entity_manager.hpp>
 #include <sigma/graphics/directional_light.hpp>
 #include <sigma/graphics/point_light.hpp>
@@ -12,6 +8,12 @@
 #include <sigma/graphics/static_mesh_instance.hpp>
 #include <sigma/reflect/reflect.hpp>
 #include <sigma/transform.hpp>
+
+#include <boost/preprocessor/seq/for_each_i.hpp>
+#include <boost/preprocessor/variadic/to_seq.hpp>
+
+#include <chrono>
+#include <memory>
 
 #define SIGMA_EXPORT_GAME_CLASS_I(r, data, i, elem)                                                     \
     extern "C" BOOST_SYMBOL_EXPORT sigma::game_class game_class_##i;                                    \

@@ -1,15 +1,17 @@
+#include <sigma/graphics/texture.hpp>
+#include <sigma/resource/identifier.hpp>
+#include <sigma/util/compile_time_hash.hpp>
+#include <sigma/util/filesystem.hpp>
+
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/gil/extension/io/jpeg_dynamic_io.hpp>
 #include <boost/gil/extension/io/png_dynamic_io.hpp>
 #include <boost/gil/extension/io/tiff_dynamic_io.hpp>
 #include <boost/program_options.hpp>
+
 #include <fstream>
 #include <iostream>
-#include <sigma/graphics/texture.hpp>
-#include <sigma/resource/identifier.hpp>
-#include <sigma/util/compile_time_hash.hpp>
-#include <sigma/util/filesystem.hpp>
 
 namespace po = boost::program_options;
 

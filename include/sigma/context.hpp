@@ -1,15 +1,18 @@
 #ifndef SIGMA_CONTEXT_HPP
 #define SIGMA_CONTEXT_HPP
 
-#include <boost/filesystem/path.hpp>
-#include <glm/mat4x4.hpp>
-#include <glm/vec2.hpp>
-#include <memory>
 #include <sigma/config.hpp>
 #include <sigma/graphics/material.hpp>
 #include <sigma/graphics/shader.hpp>
 #include <sigma/graphics/static_mesh.hpp>
 #include <sigma/graphics/texture.hpp>
+
+#include <glm/mat4x4.hpp>
+#include <glm/vec2.hpp>
+
+#include <boost/filesystem/path.hpp>
+
+#include <memory>
 #include <unordered_map>
 
 namespace sigma {

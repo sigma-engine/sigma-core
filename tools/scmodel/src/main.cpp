@@ -1,14 +1,16 @@
 #include "assimp_converter.hpp"
 
+#include <sigma/graphics/static_mesh.hpp>
+#include <sigma/util/filesystem.hpp>
+
 #include <boost/algorithm/string.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/program_options.hpp>
+
 #include <fstream>
 #include <iostream>
-#include <sigma/graphics/static_mesh.hpp>
-#include <sigma/util/filesystem.hpp>
 
 namespace po = boost::program_options;
 

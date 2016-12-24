@@ -1,10 +1,13 @@
 #ifndef SIGMA_GAME_VIEW_RENDERER_HPP
 #define SIGMA_GAME_VIEW_RENDERER_HPP
 
-#include <QtQuick/QQuickFramebufferObject>
-#include <glm/vec2.hpp>
-#include <memory>
 #include <sigma/graphics/renderer.hpp>
+
+#include <QtQuick/QQuickFramebufferObject>
+
+#include <glm/vec2.hpp>
+
+#include <memory>
 
 namespace sigma {
 class game_view;
