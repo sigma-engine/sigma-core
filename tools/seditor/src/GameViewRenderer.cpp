@@ -26,11 +26,21 @@ GameViewRenderer::GameViewRenderer(EditorContext* ctx)
 
 QOpenGLFramebufferObject* GameViewRenderer::createFramebufferObject(const QSize& size)
 {
+    // Create the frame buffer object and bind it
     QOpenGLFramebufferObjectFormat format;
     format.setSamples(8);
     format.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
+    auto frameBuffer = new QOpenGLFramebufferObject(size, format);
+    frameBuffer->bind();
+
+    // Create the renderer
+    renderer_ = ctx_->create_renderer("sigma::opengl::renderer");
+
+    // Setup the viewport size and projection
     projectionMatrix_ = glm::perspective(0.785398f, float(size.width()) / float(size.height()), 0.01f, 10000.0f);
-    return new QOpenGLFramebufferObject(size, format);
+    renderer_->resize(glm::ivec2{ size.width(), size.height() });
+
+    return frameBuffer;
 }
 
 void GameViewRenderer::synchronize(QQuickFramebufferObject* item)
@@ -38,7 +48,6 @@ void GameViewRenderer::synchronize(QQuickFramebufferObject* item)
     item_ = dynamic_cast<GameView*>(item);
     if (item_) {
         ctx_ = item_->activeContext();
-
         auto ctrl = item_->controller();
         if (ctrl)
             viewMatrix_ = ctrl->matrix();
@@ -47,10 +56,8 @@ void GameViewRenderer::synchronize(QQuickFramebufferObject* item)
 
 void GameViewRenderer::render()
 {
-    if (item_) {
+    if (item_ && renderer_) {
         if (ctx_) {
-            if (renderer_ == nullptr)
-                renderer_ = ctx_->create_renderer("sigma::opengl::renderer");
             auto g = ctx_->current_game();
             if (g) {
                 graphics::view_port vp{

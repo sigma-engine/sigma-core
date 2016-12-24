@@ -25,8 +25,14 @@ namespace opengl {
         material_cache_.increment_reference(FULLSCREEN_MATERIAL1);
         material_cache_.increment_reference(FULLSCREEN_MATERIAL2);
         static_mesh_cache_.increment_reference(PLANE_STATIC_MESH);
+
+        GLint drawFboId = 0, readFboId = 0;
+        glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &drawFboId);
+        glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &readFboId);
+
         std::cout << glGetString(GL_VERSION) << std::endl;
-        ;
+        std::cout << "Draw FBO: " << drawFboId << std::endl;
+        std::cout << "Read FBO: " << readFboId << std::endl;
     }
 
     renderer::~renderer()
