@@ -24,8 +24,9 @@ public:
 
 private:
     EditorContext* ctx_;
-    float aspectRatio_;
-    glm::ivec2 size_;
+
+    glm::mat4 projectionMatrix_;
+    glm::mat4 viewMatrix_;
     std::shared_ptr<graphics::renderer> renderer_;
 
     GameView* item_;

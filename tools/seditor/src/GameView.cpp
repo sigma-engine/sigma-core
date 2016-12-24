@@ -20,6 +20,11 @@ GameView::~GameView()
 {
 }
 
+QQuickFramebufferObject::Renderer* GameView::createRenderer() const
+{
+    return new GameViewRenderer{ activeContext_ };
+}
+
 EditorContext* GameView::activeContext()
 {
     return activeContext_;
@@ -33,8 +38,16 @@ void GameView::setActiveContext(EditorContext* ctx)
     }
 }
 
-QQuickFramebufferObject::Renderer* GameView::createRenderer() const
+TrackballController *GameView::controller() const
 {
-    return new GameViewRenderer{ activeContext_ };
+    return controller_;
+}
+
+void GameView::setController(TrackballController *ctl)
+{
+    if(controller_ != ctl) {
+        controller_ = ctl;
+        emit controllerChanged(ctl);
+    }
 }
 }

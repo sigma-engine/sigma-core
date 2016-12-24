@@ -1,5 +1,6 @@
 #include <GameView.hpp>
 #include <EditorContext.hpp>
+#include <TrackballController.hpp>
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -15,6 +16,7 @@ int main(int argc, char* argv[])
     QQuickStyle::setStyle("Material");
 
     qmlRegisterType<sigma::GameView>("sigma", 1, 0, "GameView");
+    qmlRegisterType<sigma::TrackballController>("sigma", 1, 0, "TrackballController");
 
     sigma::EditorContext ctx;
     QQmlApplicationEngine engine;

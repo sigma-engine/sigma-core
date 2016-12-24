@@ -17,7 +17,8 @@
 namespace sigma {
 GameViewRenderer::GameViewRenderer(EditorContext* ctx)
     : ctx_(ctx)
-    , aspectRatio_(1)
+    , projectionMatrix_(1)
+    , viewMatrix_(1)
     , renderer_(nullptr)
     , item_(nullptr)
 {
@@ -28,6 +29,7 @@ QOpenGLFramebufferObject* GameViewRenderer::createFramebufferObject(const QSize&
     QOpenGLFramebufferObjectFormat format;
     format.setSamples(8);
     format.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
+    projectionMatrix_ = glm::perspective(0.785398f, float(size.width()) / float(size.height()), 0.01f, 10000.0f);
     return new QOpenGLFramebufferObject(size, format);
 }
 
@@ -36,8 +38,10 @@ void GameViewRenderer::synchronize(QQuickFramebufferObject* item)
     item_ = dynamic_cast<GameView*>(item);
     if (item_) {
         ctx_ = item_->activeContext();
-        size_ = glm::ivec2{ item_->width(), item_->height() };
-        aspectRatio_ = float(size_.x) / float(size_.y);
+
+        auto ctrl = item_->controller();
+        if(ctrl)
+            viewMatrix_ = ctrl->matrix();
     }
 }
 
@@ -49,15 +53,12 @@ void GameViewRenderer::render()
                 renderer_ = ctx_->create_renderer("sigma::opengl::renderer");
             auto g = ctx_->current_game();
             if (g) {
-                glm::mat4 m = glm::mat4(1);
-                //m = glm::translate(m, glm::vec3(0.0f, 0.0f, z));
-
                 graphics::view_port vp{
                     g->entities,
                     g->transforms,
                     g->static_mesh_instances,
-                    glm::perspective(0.785398f, aspectRatio_, 0.01f, 10000.0f),
-                    m
+                    projectionMatrix_,
+                    viewMatrix_
                 };
                 renderer_->render(vp);
             }

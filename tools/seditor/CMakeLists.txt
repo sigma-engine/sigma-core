@@ -9,18 +9,22 @@ set(SOURCES
     src/EditorContext.cpp
     src/GameView.cpp
     src/GameViewRenderer.cpp
+    src/TrackballController.cpp
 )
 
 set(HEADERS
     include/EditorContext.hpp
     include/GameView.hpp
     include/GameViewRenderer.hpp
+    include/TrackballController.hpp
 )
 
 set(QML
     ui/main.qml
     ui/Page1.qml
     ui/Page1Form.ui.qml
+    ui/EditorGameView.qml
+    ui/DefaultTrackballController.qml
 )
 
 qt5_add_resources(RESOURCES

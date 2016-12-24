@@ -13,5 +13,5 @@ const vec4 skyhorizon = vec4(0.3294, 0.92157, 1.0, 1.0f);
 
 void main()
 {
-    gl_FragColor = mix(skyhorizon, skytop, normalize(position.xyz).z);
+    gl_FragColor = mix(skyhorizon, skytop, normalize(position.xyz).y);
 }

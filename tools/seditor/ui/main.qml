@@ -15,18 +15,8 @@ ApplicationWindow {
     Material.accent: Material.color(Material.Pink)
     Material.primary: Material.color(Material.Cyan)
 
-    GameView {
+    EditorGameView {
 		id: gameView1
-		anchors.fill: parent
-        activeContext: context
+        anchors.fill: parent
     }
-
-	Timer {
-		interval: 18; 
-		running: true;
-		repeat: true
-		onTriggered: {
-			gameView1.update()
-		}
-	}
 }

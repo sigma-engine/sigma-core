@@ -6,5 +6,7 @@
         <file>ui/error.svg</file>
         <file>ui/info.svg</file>
         <file>ui/warning.svg</file>
+        <file>ui/DefaultTrackballController.qml</file>
+        <file>ui/EditorGameView.qml</file>
     </qresource>
 </RCC>
