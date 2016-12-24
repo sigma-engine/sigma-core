@@ -4,9 +4,10 @@
 
 #include <boost/algorithm/string/join.hpp>
 #include <boost/range/adaptor/transformed.hpp>
-#include <boost/wave.hpp>
+#include <boost/wave/cpplexer/cpplexer_exceptions.hpp>
 
 #include <iostream>
+#include <fstream>
 
 struct block {
     int level;
