@@ -17,7 +17,7 @@
     extern "C" BOOST_SYMBOL_EXPORT sigma::graphics::renderer_class renderer_class_##i;                                \
     sigma::graphics::renderer_class renderer_class_##i = {                                                            \
         BOOST_PP_STRINGIZE(elem),                                                                                     \
-        [](sigma::context* ctx) -> std::shared_ptr<sigma::graphics::renderer> { return std::make_shared<elem>(ctx); } \
+        [](sigma::context* ctx, glm::ivec2 s) -> std::shared_ptr<sigma::graphics::renderer> { return std::make_shared<elem>(ctx,s); } \
     };
 
 #define SIGMA_EXPORT_RENDERER_CLASSES(...) BOOST_PP_SEQ_FOR_EACH_I(SIGMA_EXPORT_RENDERER_CLASS_I, _, BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__))
@@ -43,7 +43,7 @@ namespace graphics {
 
     class SIGMA_API renderer {
     public:
-        renderer(context* ctx);
+        renderer(context* ctx, glm::ivec2 size);
 
         virtual ~renderer();
 
@@ -69,7 +69,7 @@ namespace graphics {
 
     struct renderer_class {
         const char* name;
-        std::shared_ptr<renderer> (*create)(sigma::context* ctx);
+        std::shared_ptr<renderer> (*create)(sigma::context*,glm::ivec2);
     };
 }
 }

@@ -19,4 +19,11 @@ ApplicationWindow {
 		id: gameView1
         anchors.fill: parent
     }
+
+	Timer {
+		interval: 16; 
+		running: true; 
+		repeat: true
+		onTriggered: gameView1.update();
+	}
 }

@@ -64,9 +64,9 @@ bool context::load_plugin(boost::filesystem::path path)
     return total != 0;
 }
 
-std::shared_ptr<graphics::renderer> context::create_renderer(std::string renderer_class)
+std::shared_ptr<graphics::renderer> context::create_renderer(std::string renderer_class,glm::ivec2 size)
 {
-    return renderer_classes[renderer_class]->create(this);
+    return renderer_classes[renderer_class]->create(this,size);
 }
 
 void context::set_game_class(std::string game_class)

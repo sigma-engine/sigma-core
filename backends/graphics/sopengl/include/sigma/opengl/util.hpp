@@ -17,7 +17,7 @@
             stream << __FILE__ << ":" << __LINE__ << " 0x" << std::hex << gl_error_code_check; \
             throw std::runtime_error(stream.str());                                            \
         }                                                                                      \
-    }
+	}
 #else
 #define GL_CHECK(x) x
 #endif // USE_GL_CHECK

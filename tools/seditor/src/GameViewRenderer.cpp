@@ -34,11 +34,10 @@ QOpenGLFramebufferObject* GameViewRenderer::createFramebufferObject(const QSize&
     frameBuffer->bind();
 
     // Create the renderer
-    renderer_ = ctx_->create_renderer("sigma::opengl::renderer");
+    renderer_ = ctx_->create_renderer("sigma::opengl::renderer", glm::ivec2{ size.width(), size.height() });
 
-    // Setup the viewport size and projection
+    // Setup the viewport projection
     projectionMatrix_ = glm::perspective(0.785398f, float(size.width()) / float(size.height()), 0.01f, 10000.0f);
-    renderer_->resize(glm::ivec2{ size.width(), size.height() });
 
     return frameBuffer;
 }

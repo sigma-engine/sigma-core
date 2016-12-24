@@ -38,7 +38,7 @@ public:
 
     bool load_plugin(boost::filesystem::path path);
 
-    std::shared_ptr<graphics::renderer> create_renderer(std::string renderer_class);
+    std::shared_ptr<graphics::renderer> create_renderer(std::string renderer_class,glm::ivec2 size);
 
     void set_game_class(std::string game_class);
 

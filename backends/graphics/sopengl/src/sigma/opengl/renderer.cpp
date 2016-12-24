@@ -16,9 +16,10 @@ namespace opengl {
     const resource::identifier renderer::FULLSCREEN_MATERIAL1{ "material://fullscreen_quad" };
     const resource::identifier renderer::FULLSCREEN_MATERIAL2{ "material://fullscreen_quad2" };
 
-    renderer::renderer(context* ctx)
-        : graphics::renderer(ctx)
+    renderer::renderer(context* ctx,glm::ivec2 size)
+        : graphics::renderer(ctx,size)
         , ctx_(ctx)
+		, g_buffer_(size)
         , texture_cache_(ctx->textures())
         , shader_cache_(ctx->shaders())
         , material_cache_(ctx->materials())
@@ -65,7 +66,6 @@ namespace opengl {
     void renderer::resize(glm::uvec2 size)
     {
         glViewport(0, 0, size.x, size.y);
-        g_buffer_ = g_buffer(size);
     }
 
     opengl::texture renderer::get_texture(resource::identifier id)
@@ -116,6 +116,13 @@ namespace opengl {
             GL_CHECK(glShaderSource(shd.object, 1, &source, nullptr));
             GL_CHECK(glCompileShader(shd.object));
 
+			GLint compiled;
+			glGetShaderiv(shd.object, GL_COMPILE_STATUS, &compiled);
+			if (compiled == GL_FALSE) {
+				std::cout << "shader: compile faild" << std::endl;
+			}
+
+
             shaders_[id] = shd;
             return shaders_[id];
         }
@@ -136,6 +143,12 @@ namespace opengl {
             GL_CHECK(glAttachShader(mat.object, get_shader(rmaterial.vertex_shader).object));
             GL_CHECK(glAttachShader(mat.object, get_shader(rmaterial.fragment_shader).object));
             GL_CHECK(glLinkProgram(mat.object));
+
+			GLint linked;
+			glGetProgramiv(mat.object, GL_LINK_STATUS, &linked);
+			if (linked == GL_FALSE) {
+				std::cout << "shader program: link faild" << std::endl;
+			}
 
             auto texture_count = rmaterial.textures.size();
             mat.texture_locations.resize(texture_count);
@@ -198,7 +211,7 @@ namespace opengl {
 
     void renderer::geometry_pass(const graphics::view_port& viewport)
     {
-        //g_buffer_.bind_for_writting();
+        g_buffer_.bind_for_writting();
 
         GL_CHECK(glClearColor(.8f, 0.8f, 0.8f, 1.0f));
         GL_CHECK(glEnable(GL_DEPTH_TEST));
@@ -265,7 +278,7 @@ namespace opengl {
     void renderer::render(const graphics::view_port& viewport)
     {
         geometry_pass(viewport);
-        //light_pass(viewport);
+        light_pass(viewport);
     }
 }
 }

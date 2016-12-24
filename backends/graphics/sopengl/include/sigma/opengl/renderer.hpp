@@ -32,7 +32,7 @@ namespace opengl {
         static const resource::identifier FULLSCREEN_MATERIAL1;
         static const resource::identifier FULLSCREEN_MATERIAL2;
 
-        renderer(context* ctx);
+        renderer(context* ctx,glm::ivec2 size);
 
         virtual ~renderer();
 
