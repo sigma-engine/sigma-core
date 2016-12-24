@@ -9,10 +9,13 @@
 
 #include <sigma/reflect/reflect.hpp>
 #include <sigma/resource/identifier.hpp>
+#include <sigma/resource/resource_cache.hpp>
+#include <sigma/graphics/texture.hpp>
+#include <sigma/graphics/shader.hpp>
 
 namespace sigma {
 namespace graphics {
-
+	
     RCLASS()
     class SIGMA_API material {
     public:
@@ -39,48 +42,21 @@ namespace graphics {
             ar& fragment_shader;
             ar& textures;
         }
+
+		friend class material_cache;
+		std::size_t reference_count = 0;
     };
 
-    class SIGMA_API material_cache {
+    class SIGMA_API material_cache : public resource::resource_cache<material> {
     public:
-        material_cache() = default;
+		material_cache(boost::filesystem::path cache_directory, texture_cache &textures, shader_cache &shaders);
 
-        material_cache(material_cache&&) noexcept = default;
+		virtual bool increment_reference(resource::identifier resource_id) override;
 
-        material_cache(const material_cache&) = delete;
-
-        material_cache& operator=(material_cache&&) noexcept = default;
-
-        material_cache& operator=(const material_cache&) = delete;
-
-        virtual ~material_cache() = default;
-
-        /**
-        * @brief Returns if material is loaded in this cache.
-        *
-        * @param material the material to check if cached.
-        * @return true if the material is cache.
-        */
-        virtual bool is_cached(resource::identifier material) const = 0;
-
-        /**
-        * @brief Increases the reference count associated with the material.
-        *
-        *
-        * @param material the material to increase the reference count of.
-        * @return true if the material exists and is valid.
-        */
-        virtual bool increment_reference(resource::identifier material) = 0;
-
-        /**
-        * @brief Decreases the reference count associated with
-        * the material.
-        *
-        *
-        * @param material the material to decrease the reference count of.
-        * @returns true if the material reference count is zero.
-        */
-        virtual bool decrement_reference(resource::identifier material) = 0;
+		virtual bool decrement_reference(resource::identifier resource_id) override;
+	private:
+		texture_cache &textures_;
+		shader_cache &shaders_;
     };
 }
 }

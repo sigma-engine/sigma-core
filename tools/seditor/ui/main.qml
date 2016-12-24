@@ -16,12 +16,37 @@ ApplicationWindow {
     Material.primary: Material.color(Material.Cyan)
 
     GameView {
-        anchors.fill: parent
+		id: gameView1
+		anchors.fill: parent
+        /*
+		anchors.top: parent.top
+		anchors.bottom: parent.bottom
+		anchors.right: parent.horizontalCenter
+		anchors.left: parent.left
+		*/
+		//anchors.fill: parent
         activeContext: context
-        id: t
-        /*Timer {
-                interval: 18; running: true; repeat: true
-                onTriggered:t.update()
-            }*/
     }
+
+	/*
+	GameView {
+		id: gameView2
+        anchors.top: parent.top
+		anchors.bottom: parent.bottom
+		anchors.left: parent.horizontalCenter
+		anchors.right: parent.right
+		//anchors.fill: parent
+        activeContext: context
+    }
+	*/
+
+	Timer {
+		interval: 18; 
+		running: true;
+		repeat: true
+		onTriggered: {
+			gameView1.update()
+			//gameView2.update()
+		}
+	}
 }

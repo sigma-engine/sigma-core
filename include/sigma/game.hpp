@@ -28,12 +28,6 @@
 
 namespace sigma {
 class context;
-namespace graphics {
-    class texture_cache;
-    class shader_cache;
-    class material_cache;
-    class static_mesh_cache;
-}
 class SIGMA_API game {
 public:
     RPROPERTY()

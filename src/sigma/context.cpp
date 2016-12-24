@@ -8,37 +8,32 @@
 
 namespace sigma {
 context::context()
-    : current_game(nullptr)
-    , current_renderer(nullptr)
+    : textures_(boost::filesystem::current_path() / ".." / "data")
+	, shaders_(boost::filesystem::current_path() / ".." / "data")
+	, materials_(boost::filesystem::current_path() / ".." / "data",textures_,shaders_)
+	, static_meshes_(boost::filesystem::current_path() / ".." / "data", materials_)
+	, current_game_(nullptr)
 {
 }
 
-context::~context()
+graphics::texture_cache &context::textures()
 {
-    current_game = nullptr;
-    current_renderer = nullptr;
-    game_classes.clear();
-    renderer_classes.clear();
+    return textures_;
 }
 
-graphics::texture_cache& context::textures()
+graphics::shader_cache &context::shaders()
 {
-    return current_renderer->textures();
+    return shaders_;
 }
 
-graphics::shader_cache& context::shaders()
+graphics::material_cache &context::materials()
 {
-    return current_renderer->shaders();
+    return materials_;
 }
 
-graphics::material_cache& context::materials()
+graphics::static_mesh_cache &context::static_meshes()
 {
-    return current_renderer->materials();
-}
-
-graphics::static_mesh_cache& context::static_meshes()
-{
-    return current_renderer->static_meshes();
+    return static_meshes_;
 }
 
 bool context::load_plugin(boost::filesystem::path path)
@@ -69,39 +64,44 @@ bool context::load_plugin(boost::filesystem::path path)
     return total != 0;
 }
 
-void context::set_game_class(std::string game_class)
+std::shared_ptr<graphics::renderer> context::create_renderer(std::string renderer_class)
 {
-    current_game = game_classes[game_class]->create(this);
+    return renderer_classes[renderer_class]->create(this);
 }
 
-void context::set_renderer_class(std::string renderer_class)
+void context::set_game_class(std::string game_class)
 {
-    current_renderer = renderer_classes[renderer_class]->create();
+    current_game_ = game_classes[game_class]->create(this);
+}
+
+std::shared_ptr<game> context::current_game()
+{
+    return current_game_;
 }
 
 void context::update(std::chrono::duration<float> dt)
 {
-    if (current_game)
-        current_game->update(dt);
+    if (current_game_)
+        current_game_->update(dt);
 }
 
-void context::render(glm::ivec2 size)
+/*void context::render(glm::ivec2 size)
 {
     if (current_renderer != nullptr && current_game != nullptr) {
         glm::mat4 m = glm::mat4(1);
-        /*m = glm::translate(m,glm::vec3(0.0f,0.0f,z));
-		    z = 0;*/
+        m = glm::translate(m,glm::vec3(0.0f,0.0f,z));
+		//z = 0;
         //z-=.05;
         graphics::view_port vp{
             current_game->entities,
             current_game->transforms,
             current_game->static_mesh_instances,
-            glm::perspective(0.785398f, (float)size.x / (float)size.y, 0.01f, 1000.0f),
+            glm::perspective(0.785398f,(float)size.x/(float)size.y,0.01f,1000.0f),
             m
         };
         // TODO projection matrix and view matrix
-        current_renderer->resize(size);
+		current_renderer->resize(size);
         current_renderer->render(vp);
     }
-}
+}*/
 }

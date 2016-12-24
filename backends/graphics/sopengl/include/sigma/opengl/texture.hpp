@@ -18,67 +18,8 @@
 
 namespace sigma {
 namespace opengl {
-
-    /*struct texture_v2 : public graphics::texture {
-    GLuint object = 0;
-    texture_v2() = default;
-
-    ~texture_v2() {
-        if(object != 0)
-            glDeleteTextures(1,&object);
-    }
-};*/
-
-    struct texture : public graphics::texture {
-        texture() = default;
-
-        texture(const texture&) = delete;
-
-        texture(texture&&) = default;
-
-        texture& operator=(const texture&) = delete;
-
-        texture& operator=(texture&&) = default;
-
-        ~texture() = default;
-
+    struct texture {
         GLuint object = 0;
-        std::size_t reference_count = 0;
-    };
-
-    class texture_cache : public graphics::texture_cache {
-    public:
-        texture_cache();
-
-        texture_cache(const texture_cache&) = delete;
-
-        texture_cache(texture_cache&&) = default;
-
-        texture_cache& operator=(const texture_cache&) = delete;
-
-        texture_cache& operator=(texture_cache&&) = default;
-
-        virtual ~texture_cache();
-
-        virtual bool is_cached(resource::identifier texture) const override;
-
-        virtual bool increment_reference(resource::identifier texture) override;
-
-        virtual bool decrement_reference(resource::identifier texture) override;
-
-        void bind(resource::identifier texture_id) const;
-
-        void update();
-
-    private:
-        using size_type = std::vector<texture>::size_type;
-        using difference_type = std::vector<texture>::difference_type;
-
-        boost::filesystem::path cache_directory_;
-        std::unordered_map<resource::constexpr_identifier, size_type> resource_map_;
-
-        std::vector<texture> textures_;
-        size_type dirty_;
     };
 }
 }

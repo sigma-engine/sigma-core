@@ -3,13 +3,15 @@
 
 #include <QtQuick/QQuickFramebufferObject>
 #include <glm/vec2.hpp>
+#include <memory>
+#include <sigma/graphics/renderer.hpp>
 
 namespace sigma {
 class game_view;
 class qt_context;
 class game_view_renderer : public QQuickFramebufferObject::Renderer {
 public:
-    game_view_renderer();
+    game_view_renderer(qt_context *ctx);
 
     QOpenGLFramebufferObject* createFramebufferObject(const QSize& size) override;
 
@@ -18,9 +20,12 @@ public:
     void render() override;
 
 private:
-    game_view* item_;
-    qt_context* ctx_;
-    glm::ivec2 size_;
+	qt_context* ctx_;
+	float aspectRatio_;
+	glm::ivec2 size_;
+	std::shared_ptr<graphics::renderer> renderer_;
+
+	game_view* item_;
 };
 }
 

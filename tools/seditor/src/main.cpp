@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQuickStyle>
+#include <QQuickWindow>
 
 #include <game_view.hpp>
 #include <qt_context.hpp>
@@ -16,10 +17,10 @@ int main(int argc, char* argv[])
     qmlRegisterType<sigma::game_view>("sigma", 1, 0, "GameView");
     qmlRegisterType<sigma::qt_context>("sigma", 1, 0, "Context");
 
-    QQmlApplicationEngine engine;
     sigma::qt_context ctx;
-    engine.rootContext()->setContextProperty("context", &ctx);
+    QQmlApplicationEngine engine;
+	engine.rootContext()->setContextProperty("context", &ctx);
+	engine.load(QUrl(QLatin1String("qrc:/ui/main.qml")));
 
-    engine.load(QUrl(QLatin1String("qrc:/ui/main.qml")));
     return app.exec();
 }

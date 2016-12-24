@@ -6,6 +6,7 @@
 #include <sstream>
 #include <string>
 
+#ifdef USE_GL_CHECK
 #define GL_CHECK(x)                                                                            \
     {                                                                                          \
         x;                                                                                     \
@@ -16,7 +17,9 @@
             throw std::runtime_error(stream.str());                                            \
         }                                                                                      \
     }
-
+#else
+#define GL_CHECK(x) x
+#endif // USE_GL_CHECK
 namespace sigma {
 namespace opengl {
     enum data_types {

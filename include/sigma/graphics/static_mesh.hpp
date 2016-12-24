@@ -3,6 +3,8 @@
 
 #include <sigma/config.hpp>
 
+#include <sigma/graphics/material.hpp>
+
 #include <array>
 #include <vector>
 
@@ -56,49 +58,21 @@ namespace graphics {
         std::vector<vertex> vertices;
         std::vector<triangle> triangles;
         resource::identifier material;
+
+		friend class static_mesh_cache;
+		std::size_t reference_count = 0;
     };
 
-    class SIGMA_API static_mesh_cache {
-    public:
-        static_mesh_cache() = default;
+	class SIGMA_API static_mesh_cache : public resource::resource_cache<static_mesh> {
+	public:
+		static_mesh_cache(boost::filesystem::path cache_directory, material_cache &materials);
 
-        static_mesh_cache(static_mesh_cache&&) noexcept = default;
+		virtual bool increment_reference(resource::identifier resource_id) override;
 
-        static_mesh_cache(const static_mesh_cache&) = delete;
-
-        static_mesh_cache& operator=(static_mesh_cache&&) noexcept = default;
-
-        static_mesh_cache& operator=(const static_mesh_cache&) = delete;
-
-        virtual ~static_mesh_cache() = default;
-
-        /**
-        * @brief Returns if mesh is loaded in this cache.
-        *
-        * @param mesh the mesh to check if cached.
-        * @return true if the mesh is cache.
-        */
-        virtual bool is_cached(resource::identifier mesh) const = 0;
-
-        /**
-        * @brief Increases the reference count associated with the mesh.
-        *
-        *
-        * @param mesh the mesh to increase the reference count of.
-        * @return true if the mesh exists and is valid.
-        */
-        virtual bool increment_reference(resource::identifier mesh) = 0;
-
-        /**
-        * @brief Decreases the reference count associated with
-        * the mesh.
-        *
-        *
-        * @param mesh the mesh to decrease the reference count of.
-        * @returns true if the mesh reference count is zero.
-        */
-        virtual bool decrement_reference(resource::identifier mesh) = 0;
-    };
+		virtual bool decrement_reference(resource::identifier resource_id) override;
+	private:
+		material_cache &materials_;
+	};
 }
 }
 

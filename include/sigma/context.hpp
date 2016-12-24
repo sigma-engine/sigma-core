@@ -2,10 +2,14 @@
 #define SIGMA_CONTEXT_HPP
 
 #include <sigma/config.hpp>
+#include <sigma/graphics/texture.hpp>
+#include <sigma/graphics/shader.hpp>
+#include <sigma/graphics/material.hpp>
+#include <sigma/graphics/static_mesh.hpp>
 
 #include <boost/filesystem/path.hpp>
-#include <glm/mat4x4.hpp>
 #include <glm/vec2.hpp>
+#include <glm/mat4x4.hpp>
 
 #include <memory>
 #include <unordered_map>
@@ -16,44 +20,43 @@ struct game_class;
 namespace graphics {
     class renderer;
     struct renderer_class;
-    class texture_cache;
-    class shader_cache;
-    class material_cache;
-    class static_mesh_cache;
 }
 class SIGMA_API context {
 public:
     context();
 
-    virtual ~context();
+    virtual ~context() = default;
 
-    graphics::texture_cache& textures();
+    graphics::texture_cache &textures();
 
-    graphics::shader_cache& shaders();
+	graphics::shader_cache &shaders();
 
-    graphics::material_cache& materials();
+	graphics::material_cache &materials();
 
-    graphics::static_mesh_cache& static_meshes();
+	graphics::static_mesh_cache &static_meshes();
 
     bool load_plugin(boost::filesystem::path path);
 
-    void set_renderer_class(std::string renderer_class);
+    std::shared_ptr<graphics::renderer> create_renderer(std::string renderer_class);
 
     void set_game_class(std::string game_class);
 
+    std::shared_ptr<game> current_game();
+
     void update(std::chrono::duration<float> dt);
 
-    virtual void render(glm::ivec2 size);
-
 protected:
-    // TODO custom pointer that works better with dynamic libs
-    std::shared_ptr<game> current_game;
-    std::shared_ptr<graphics::renderer> current_renderer;
+	graphics::texture_cache textures_;
+	graphics::shader_cache shaders_;
+	graphics::material_cache materials_;
+	graphics::static_mesh_cache static_meshes_;
 
-private:
-    float z = 0;
+    float z = -10;
     std::unordered_map<std::string, boost::shared_ptr<game_class> > game_classes;
     std::unordered_map<std::string, boost::shared_ptr<graphics::renderer_class> > renderer_classes;
+
+    // TODO custom pointer that works better with dynamic libs
+    std::shared_ptr<game> current_game_;
 };
 }
 

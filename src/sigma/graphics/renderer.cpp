@@ -2,7 +2,7 @@
 
 namespace sigma {
 namespace graphics {
-    renderer::renderer() {}
+    renderer::renderer(context *ctx) {}
 
     renderer::~renderer() {}
 }

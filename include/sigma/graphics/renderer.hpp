@@ -2,6 +2,7 @@
 #define SIGMA_GRAPHICS_RENDERER_HPP
 
 #include <sigma/config.hpp>
+#include <sigma/context.hpp>
 
 #include <glm/mat4x4.hpp>
 #include <glm/vec2.hpp>
@@ -17,17 +18,13 @@
     extern "C" BOOST_SYMBOL_EXPORT sigma::graphics::renderer_class renderer_class_##i;          \
     sigma::graphics::renderer_class renderer_class_##i = {                                      \
         BOOST_PP_STRINGIZE(elem),                                                               \
-        []() -> std::shared_ptr<sigma::graphics::renderer> { return std::make_shared<elem>(); } \
+        [](sigma::context *ctx) -> std::shared_ptr<sigma::graphics::renderer> { return std::make_shared<elem>(ctx); } \
     };
 
 #define SIGMA_EXPORT_RENDERER_CLASSES(...) BOOST_PP_SEQ_FOR_EACH_I(SIGMA_EXPORT_RENDERER_CLASS_I, _, BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__))
 
 namespace sigma {
 namespace graphics {
-    class texture_cache;
-    class shader_cache;
-    class material_cache;
-    class static_mesh_cache;
     //    // PSEUDO code for occlusion query culling
     //    auto
     //    software_occlusion_cull(depthbuff,occluders_begin,occluders_end,instances_begin,instances_end)
@@ -47,17 +44,9 @@ namespace graphics {
 
     class SIGMA_API renderer {
     public:
-        renderer();
+        renderer(context *ctx);
 
         virtual ~renderer();
-
-        virtual graphics::texture_cache& textures() = 0;
-
-        virtual graphics::shader_cache& shaders() = 0;
-
-        virtual graphics::material_cache& materials() = 0;
-
-        virtual graphics::static_mesh_cache& static_meshes() = 0;
 
         virtual void resize(glm::uvec2 size) = 0;
 
@@ -77,13 +66,11 @@ namespace graphics {
         //        }
 
         virtual void render(const view_port& viewport) = 0;
-
-    private:
     };
 
     struct renderer_class {
         const char* name;
-        std::shared_ptr<renderer> (*create)();
+        std::shared_ptr<renderer> (*create)(sigma::context *ctx);
     };
 }
 }

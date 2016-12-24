@@ -14,76 +14,10 @@
 
 namespace sigma {
 namespace opengl {
-    material_cache::material_cache(shader_cache& shaders, texture_cache& textures)
-        : cache_directory_(boost::filesystem::current_path() / ".." / "data")
-        , dirty_(materials_.size())
-        , shaders_(shaders)
-        , textures_(textures)
-        , start_time_(std::chrono::high_resolution_clock::now())
-    {
-    }
-
-    material_cache::~material_cache()
+    /*material_cache::~material_cache()
     {
         for (auto& material : materials_)
-            glDeleteProgram(material.object);
-    }
-
-    bool material_cache::is_cached(resource::identifier material_id) const
-    {
-        return resource_map_.count(material_id) > 0;
-    }
-
-    bool material_cache::increment_reference(resource::identifier material_id)
-    {
-        if (is_cached(material_id)) {
-            materials_[resource_map_[material_id]].reference_count++;
-            return true;
-        }
-
-        material new_material;
-        try {
-            auto material_path = cache_directory_ / std::to_string(material_id.value());
-            std::ifstream file{ material_path.string(), std::ios::binary | std::ios::in };
-            boost::archive::binary_iarchive ia{ file };
-            ia >> new_material;
-        } catch (boost::archive::archive_exception& ex) {
-            std::cout << "material: " << material_id << " " << ex.what() << std::endl;
-            return false;
-        } catch (std::exception& ex) {
-            std::cout << "material: " << material_id << " " << ex.what() << std::endl;
-            return false;
-        } catch (...) { // TODO check for correct errors here
-            std::cout << "material: unknown exception " << std::endl;
-            return false;
-        }
-
-        auto index = materials_.size();
-        if (dirty_ >= index)
-            dirty_ = index;
-        resource_map_[material_id] = index;
-        new_material.reference_count = 1;
-        shaders_.increment_reference(new_material.vertex_shader);
-        shaders_.increment_reference(new_material.fragment_shader);
-        for (const auto& texture : new_material.textures)
-            textures_.increment_reference(texture.second);
-        materials_.push_back(std::move(new_material));
-
-        return true;
-    }
-
-    bool material_cache::decrement_reference(resource::identifier material_id)
-    {
-        if (!is_cached(material_id))
-            return false;
-        auto index = resource_map_[material_id];
-        if (materials_[index].reference_count > 0)
-            materials_[index].reference_count--;
-        shaders_.decrement_reference(materials_[index].vertex_shader);
-        shaders_.decrement_reference(materials_[index].fragment_shader);
-        for (const auto& texture : materials_[index].textures)
-            textures_.decrement_reference(texture.second);
-        return materials_[index].reference_count == 0;
+          glDeleteProgram(material.object);
     }
 
     void material_cache::apply(resource::identifier material_id,
@@ -138,6 +72,6 @@ namespace opengl {
             GL_CHECK(material.time_location = glGetUniformLocation(material.object, TIME_NAME));
         });
         dirty_ = materials_.size();
-    }
+    }*/
 }
 }

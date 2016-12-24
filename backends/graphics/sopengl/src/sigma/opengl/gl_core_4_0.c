@@ -4997,7 +4997,7 @@ static void CODEGEN_FUNCPTR Switch_DeleteBuffers(GLsizei n, const GLuint * buffe
 {
 	_ptrc_glDeleteBuffers = (PFN_PTRC_GLDELETEBUFFERSPROC)IntGetProcAddress("glDeleteBuffers");
 	_ptrc_glDeleteBuffers(n, buffers);
-}
+	}
 
 static void CODEGEN_FUNCPTR Switch_DeleteQueries(GLsizei n, const GLuint * ids)
 {

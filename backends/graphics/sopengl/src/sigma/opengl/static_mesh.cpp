@@ -11,73 +11,14 @@
 
 namespace sigma {
 namespace opengl {
-    static_mesh_cache::static_mesh_cache(material_cache& materials)
-        : cache_directory_(boost::filesystem::current_path() / ".." / "data")
-        , dirty_(static_meshes_.size())
-        , materials_(materials)
-    {
-    }
-
-    static_mesh_cache::~static_mesh_cache()
+    /*static_mesh_cache::~static_mesh_cache()
     {
         for (auto& mesh : static_meshes_) {
             // TODO decrement material?
-            glDeleteBuffers(1, &mesh.vertex_array);
+			glDeleteVertexArrays(1, &mesh.vertex_array);
+            glDeleteBuffers(1, &mesh.vertex_buffer);
             glDeleteBuffers(1, &mesh.index_buffer);
-            glDeleteVertexArrays(1, &mesh.vertex_array);
         }
-    }
-
-    bool static_mesh_cache::is_cached(resource::identifier mesh) const
-    {
-        return resource_map_.count(mesh) > 0;
-    }
-
-    bool static_mesh_cache::increment_reference(resource::identifier mesh)
-    {
-        if (is_cached(mesh)) {
-            static_meshes_[resource_map_[mesh]].reference_count++;
-            return true;
-        }
-
-        static_mesh gl_mesh;
-        try {
-            auto mesh_path = cache_directory_ / std::to_string(mesh.value());
-            std::ifstream file{ mesh_path.string(), std::ios::binary | std::ios::in };
-            boost::archive::binary_iarchive ia{ file };
-            ia >> gl_mesh;
-        } catch (boost::archive::archive_exception& ex) {
-            std::cout << "static_mesh: " << mesh << " " << ex.what() << std::endl;
-            return false;
-        } catch (std::exception& ex) {
-            std::cout << "static_mesh: " << mesh << " " << ex.what() << std::endl;
-            return false;
-        } catch (...) { // TODO check for correct errors here
-            std::cout << "static_mesh: " << mesh << " unknown exception" << std::endl;
-            return false;
-        }
-
-        auto index = static_meshes_.size();
-        if (dirty_ >= index)
-            dirty_ = index;
-        resource_map_[mesh] = index;
-        gl_mesh.reference_count = 1;
-        materials_.increment_reference(gl_mesh.material);
-        static_meshes_.push_back(std::move(gl_mesh));
-
-        return true;
-    }
-
-    bool static_mesh_cache::decrement_reference(resource::identifier mesh)
-    {
-        if (!is_cached(mesh))
-            return false;
-        auto index = resource_map_[mesh];
-        if (static_meshes_[index].reference_count > 0) {
-            static_meshes_[index].reference_count--;
-            materials_.decrement_reference(static_meshes_[index].material);
-        }
-        return static_meshes_[index].reference_count == 0;
     }
 
     void static_mesh_cache::update()
@@ -122,12 +63,14 @@ namespace opengl {
     {
         if (resource_map_.count(mesh_id) != 0) {
             const auto& mesh = static_meshes_.at(resource_map_.at(mesh_id));
-            materials_.apply(mesh.material, projection_matrix, view_matrix, model_matrix);
+			// TODO this needs to be done.
+           
+			materials_.apply(mesh.material, projection_matrix, view_matrix, model_matrix);
 
-            GL_CHECK(glBindVertexArray(mesh.vertex_array));
-            GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.index_buffer));
+			GL_CHECK(glBindVertexArray(mesh.vertex_array));
+			GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.index_buffer));
             GL_CHECK(glDrawElements(GL_TRIANGLES, 3 * mesh.triangles.size(), GL_UNSIGNED_INT, nullptr));
         }
-    }
+    }*/
 }
 }

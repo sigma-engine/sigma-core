@@ -13,17 +13,13 @@ public:
 
     game_view(QQuickItem* parent = 0);
 
-    ~game_view();
-
-    void releaseResources() Q_DECL_OVERRIDE;
+	~game_view();
 
     qt_context* activeContext();
 
     void setActiveContext(qt_context* ctx);
 
     QQuickFramebufferObject::Renderer* createRenderer() const override;
-
-    QSGNode* updatePaintNode(QSGNode* node, QQuickItem::UpdatePaintNodeData* nodeData) override;
 signals:
     void activeContextChanged(qt_context* ctx);
 

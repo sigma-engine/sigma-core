@@ -6,13 +6,12 @@ jsoncpp/1.8.0@siegelaaron94/develop
 libpng/1.6.21@lasote/stable
 libtiff/4.0.6@bilke/stable
 libjpeg/9a@Kaosumaru/stable
-gtest/master@smspillaz/gtest
+#gtest/master@smspillaz/gtest
 #SDL2/2.0.4@lasote/stable
 
 [options]
 Boost:fPIC=True
 Boost:shared=True
-#jsoncpp:shared=False
 
 [generators]
 cmake
