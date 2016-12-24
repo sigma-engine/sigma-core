@@ -23,18 +23,18 @@ public:
 
     void setActiveContext(EditorContext* ctx);
 
-    TrackballController *controller() const;
+    TrackballController* controller() const;
 
-    void setController(TrackballController *ctl);
+    void setController(TrackballController* ctl);
 
 signals:
     void activeContextChanged(EditorContext* ctx);
 
-    void controllerChanged(TrackballController *ctr);
+    void controllerChanged(TrackballController* ctr);
 
 private:
     EditorContext* activeContext_;
-    TrackballController *controller_;
+    TrackballController* controller_;
 };
 }
 

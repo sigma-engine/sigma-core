@@ -38,14 +38,14 @@ void GameView::setActiveContext(EditorContext* ctx)
     }
 }
 
-TrackballController *GameView::controller() const
+TrackballController* GameView::controller() const
 {
     return controller_;
 }
 
-void GameView::setController(TrackballController *ctl)
+void GameView::setController(TrackballController* ctl)
 {
-    if(controller_ != ctl) {
+    if (controller_ != ctl) {
         controller_ = ctl;
         emit controllerChanged(ctl);
     }

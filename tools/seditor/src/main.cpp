@@ -1,5 +1,5 @@
-#include <GameView.hpp>
 #include <EditorContext.hpp>
+#include <GameView.hpp>
 #include <TrackballController.hpp>
 
 #include <QGuiApplication>

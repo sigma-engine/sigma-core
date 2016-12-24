@@ -40,7 +40,7 @@ void GameViewRenderer::synchronize(QQuickFramebufferObject* item)
         ctx_ = item_->activeContext();
 
         auto ctrl = item_->controller();
-        if(ctrl)
+        if (ctrl)
             viewMatrix_ = ctrl->matrix();
     }
 }
