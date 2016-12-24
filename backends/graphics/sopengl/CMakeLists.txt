@@ -17,6 +17,7 @@ set(SOURCES
     src/sigma/opengl/texture_2d.cpp
     src/sigma/opengl/vertex_array.cpp
     src/sigma/opengl/vertex_buffer.cpp
+    src/sigma/opengl/g_buffer.cpp
 )
 
 set(HEADERS
@@ -36,6 +37,7 @@ set(HEADERS
     include/sigma/opengl/util.hpp
     include/sigma/opengl/vertex_array.hpp
     include/sigma/opengl/vertex_buffer.hpp
+    include/sigma/opengl/g_buffer.hpp
 )
 
 add_library(sopengl SHARED ${SOURCES} ${HEADERS})

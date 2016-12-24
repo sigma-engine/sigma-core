@@ -11,6 +11,11 @@ in vec3 vertex_binormal;
 in vec3 eye_vector;
 in vec3 n;
 
+/*layout (location = 0) out vec3 a;
+layout (location = 1) out vec3 DiffuseOut;
+layout (location = 2) out vec3 b;
+layout (location = 3) out vec3 c;*/
+
 void main()
 {
     vec3 r = reflect(eye_vector, n);

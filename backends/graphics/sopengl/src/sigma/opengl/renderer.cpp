@@ -1,12 +1,14 @@
+#include <sigma/opengl/gl_core_4_0.h>
 #include <sigma/opengl/renderer.hpp>
 
-#include <boost/filesystem.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/mat4x4.hpp>
 #include <glm/matrix.hpp>
+
+#include <boost/filesystem.hpp>
+
 #include <iostream>
-#include <sigma/opengl/gl_core_4_0.h>
 
 namespace sigma {
 namespace opengl {
@@ -63,6 +65,7 @@ namespace opengl {
     void renderer::resize(glm::uvec2 size)
     {
         glViewport(0, 0, size.x, size.y);
+        g_buffer_ = g_buffer(size);
     }
 
     opengl::texture renderer::get_texture(resource::identifier id)
@@ -193,8 +196,10 @@ namespace opengl {
         return opengl::static_mesh{};
     }
 
-    void renderer::render(const graphics::view_port& viewport)
+    void renderer::geometry_pass(const graphics::view_port& viewport)
     {
+        //g_buffer_.bind_for_writting();
+
         GL_CHECK(glClearColor(.8f, 0.8f, 0.8f, 1.0f));
         GL_CHECK(glEnable(GL_DEPTH_TEST));
         GL_CHECK(glEnable(GL_BLEND));
@@ -202,11 +207,6 @@ namespace opengl {
         GL_CHECK(glCullFace(GL_BACK));
         GL_CHECK(glEnable(GL_CULL_FACE));
         GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-
-        /*textures_.update();
-        shaders_.update();
-        materials_.update();
-        static_meshes_.update();*/
 
         for (auto e : viewport.entities) { // TODO use a filter here
             if (viewport.static_mesh_instances.has(e) && viewport.transforms.has(e)) {
@@ -243,9 +243,29 @@ namespace opengl {
                 GL_CHECK(glDrawElements(GL_TRIANGLES, mesh.index_count, GL_UNSIGNED_INT, nullptr));
             }
         }
+    }
 
-        // static_meshes_.render(PLANE_STATIC_MESH, FULLSCREEN_MATERIAL1,
-        // viewport.projection_matrix, viewport.view_matrix, glm::mat4(1.0f));
+    void renderer::light_pass(const graphics::view_port& viewport)
+    {
+        g_buffer_.bind_default();
+
+        GL_CHECK(glClearColor(0.8f, 0.8f, 0.8f, 1.0f));
+        GL_CHECK(glDisable(GL_DEPTH_TEST));
+        GL_CHECK(glDisable(GL_BLEND));
+        GL_CHECK(glCullFace(GL_BACK));
+        GL_CHECK(glDisable(GL_CULL_FACE));
+        GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+
+        g_buffer_.bind_for_reading();
+
+        g_buffer_.set_read_buffer(g_buffer::GBUFFER_TEXTURE_TYPE_DIFFUSE);
+        GL_CHECK(glBlitFramebuffer(0, 0, g_buffer_.size().x, g_buffer_.size().y, 0, 0, g_buffer_.size().x, g_buffer_.size().y, GL_COLOR_BUFFER_BIT, GL_LINEAR));
+    }
+
+    void renderer::render(const graphics::view_port& viewport)
+    {
+        geometry_pass(viewport);
+        //light_pass(viewport);
     }
 }
 }

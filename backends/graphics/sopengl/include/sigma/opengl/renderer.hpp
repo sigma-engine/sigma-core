@@ -9,10 +9,12 @@
 #include <sigma/graphics/static_mesh.hpp>
 #include <sigma/graphics/static_mesh_instance.hpp>
 #include <sigma/graphics/texture.hpp>
+#include <sigma/opengl/g_buffer.hpp>
 #include <sigma/opengl/material.hpp>
 #include <sigma/opengl/shader.hpp>
 #include <sigma/opengl/static_mesh.hpp>
 #include <sigma/opengl/texture.hpp>
+
 #include <unordered_map>
 
 namespace sigma {
@@ -44,10 +46,15 @@ namespace opengl {
 
         opengl::static_mesh get_static_mesh(resource::identifier id);
 
+        void geometry_pass(const graphics::view_port& viewport);
+
+        void light_pass(const graphics::view_port& viewport);
+
         virtual void render(const graphics::view_port& viewport) override;
 
     private:
         context* ctx_;
+        g_buffer g_buffer_;
         graphics::texture_cache& texture_cache_;
         graphics::shader_cache& shader_cache_;
         graphics::material_cache& material_cache_;
