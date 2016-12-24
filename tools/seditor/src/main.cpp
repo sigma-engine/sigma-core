@@ -1,5 +1,5 @@
-#include <game_view.hpp>
-#include <qt_context.hpp>
+#include <GameView.hpp>
+#include <EditorContext.hpp>
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -14,10 +14,9 @@ int main(int argc, char* argv[])
 
     QQuickStyle::setStyle("Material");
 
-    qmlRegisterType<sigma::game_view>("sigma", 1, 0, "GameView");
-    qmlRegisterType<sigma::qt_context>("sigma", 1, 0, "Context");
+    qmlRegisterType<sigma::GameView>("sigma", 1, 0, "GameView");
 
-    sigma::qt_context ctx;
+    sigma::EditorContext ctx;
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("context", &ctx);
     engine.load(QUrl(QLatin1String("qrc:/ui/main.qml")));

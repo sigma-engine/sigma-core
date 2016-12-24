@@ -52,7 +52,6 @@ protected:
     graphics::material_cache materials_;
     graphics::static_mesh_cache static_meshes_;
 
-    float z = -10;
     std::unordered_map<std::string, boost::shared_ptr<game_class> > game_classes;
     std::unordered_map<std::string, boost::shared_ptr<graphics::renderer_class> > renderer_classes;
 

@@ -6,15 +6,15 @@ find_package(Qt5 COMPONENTS Core Qml Quick QuickControls2)
 
 set(SOURCES
     src/main.cpp
-    src/qt_context.cpp
-    src/game_view.cpp
-    src/game_view_renderer.cpp
+    src/EditorContext.cpp
+    src/GameView.cpp
+    src/GameViewRenderer.cpp
 )
 
 set(HEADERS
-    include/qt_context.hpp
-    include/game_view.hpp
-    include/game_view_renderer.hpp
+    include/EditorContext.hpp
+    include/GameView.hpp
+    include/GameViewRenderer.hpp
 )
 
 set(QML

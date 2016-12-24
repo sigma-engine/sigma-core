@@ -10,11 +10,11 @@
 #include <memory>
 
 namespace sigma {
-class game_view;
-class qt_context;
-class game_view_renderer : public QQuickFramebufferObject::Renderer {
+class GameView;
+class EditorContext;
+class GameViewRenderer : public QQuickFramebufferObject::Renderer {
 public:
-    game_view_renderer(qt_context* ctx);
+    GameViewRenderer(EditorContext* ctx);
 
     QOpenGLFramebufferObject* createFramebufferObject(const QSize& size) override;
 
@@ -23,12 +23,12 @@ public:
     void render() override;
 
 private:
-    qt_context* ctx_;
+    EditorContext* ctx_;
     float aspectRatio_;
     glm::ivec2 size_;
     std::shared_ptr<graphics::renderer> renderer_;
 
-    game_view* item_;
+    GameView* item_;
 };
 }
 

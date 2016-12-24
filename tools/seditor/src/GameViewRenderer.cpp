@@ -1,7 +1,7 @@
-#include <game_view_renderer.hpp>
+#include <GameViewRenderer.hpp>
 
-#include <game_view.hpp>
-#include <qt_context.hpp>
+#include <EditorContext.hpp>
+#include <GameView.hpp>
 
 #include <sigma/game.hpp>
 #include <sigma/graphics/renderer.hpp>
@@ -15,7 +15,7 @@
 #include <iostream>
 
 namespace sigma {
-game_view_renderer::game_view_renderer(qt_context* ctx)
+GameViewRenderer::GameViewRenderer(EditorContext* ctx)
     : ctx_(ctx)
     , aspectRatio_(1)
     , renderer_(nullptr)
@@ -23,7 +23,7 @@ game_view_renderer::game_view_renderer(qt_context* ctx)
 {
 }
 
-QOpenGLFramebufferObject* game_view_renderer::createFramebufferObject(const QSize& size)
+QOpenGLFramebufferObject* GameViewRenderer::createFramebufferObject(const QSize& size)
 {
     QOpenGLFramebufferObjectFormat format;
     format.setSamples(8);
@@ -31,9 +31,9 @@ QOpenGLFramebufferObject* game_view_renderer::createFramebufferObject(const QSiz
     return new QOpenGLFramebufferObject(size, format);
 }
 
-void game_view_renderer::synchronize(QQuickFramebufferObject* item)
+void GameViewRenderer::synchronize(QQuickFramebufferObject* item)
 {
-    item_ = dynamic_cast<game_view*>(item);
+    item_ = dynamic_cast<GameView*>(item);
     if (item_) {
         ctx_ = item_->activeContext();
         size_ = glm::ivec2{ item_->width(), item_->height() };
@@ -41,7 +41,7 @@ void game_view_renderer::synchronize(QQuickFramebufferObject* item)
     }
 }
 
-void game_view_renderer::render()
+void GameViewRenderer::render()
 {
     if (item_) {
         if (ctx_) {
