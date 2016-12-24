@@ -34,6 +34,7 @@ function(add_resource_package package_name package_root_path)
             OUTPUT ${texture_time_stamp}
             COMMAND ${TEXTURE_COMPILER} --output="${CMAKE_BINARY_DIR}/data" ${texture}
             COMMAND ${CMAKE_COMMAND} -E touch ${texture_time_stamp}
+            MAIN_DEPENDENCY "${texture}"
             WORKING_DIRECTORY ${package_root_path}
             COMMENT ""
             SOURCES ${texture}
@@ -52,6 +53,7 @@ function(add_resource_package package_name package_root_path)
             OUTPUT ${shader_time_stamp}
             COMMAND ${SHADER_COMPILER} --output="${CMAKE_BINARY_DIR}/data" ${shader}
             COMMAND ${CMAKE_COMMAND} -E touch ${shader_time_stamp}
+            MAIN_DEPENDENCY "${shader}"
             WORKING_DIRECTORY ${package_root_path}
             COMMENT ""
             SOURCES ${shader}
@@ -70,6 +72,7 @@ function(add_resource_package package_name package_root_path)
             OUTPUT ${material_time_stamp}
             COMMAND ${MATERIAL_COMPILER} --output="${CMAKE_BINARY_DIR}/data" ${material}
             COMMAND ${CMAKE_COMMAND} -E touch ${material_time_stamp}
+            MAIN_DEPENDENCY "${material}"
             WORKING_DIRECTORY ${package_root_path}
             COMMENT ""
             SOURCES ${material}
@@ -88,6 +91,7 @@ function(add_resource_package package_name package_root_path)
             OUTPUT ${model_time_stamp}
             COMMAND ${MODEL_COMPILER} --output="${CMAKE_BINARY_DIR}/data" ${model}
             COMMAND ${CMAKE_COMMAND} -E touch ${model_time_stamp}
+            MAIN_DEPENDENCY "${model}"
             WORKING_DIRECTORY ${package_root_path}
             COMMENT ""
             SOURCES ${model}
