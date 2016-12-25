@@ -1,5 +1,5 @@
-#ifndef SIGMA_OPENGL_G_BUFFER
-#define SIGMA_OPENGL_G_BUFFER
+#ifndef SIGMA_ENGINE_OPENGL_G_BUFFER
+#define SIGMA_ENGINE_OPENGL_G_BUFFER
 
 #include <glm/vec2.hpp>
 #include <sigma/opengl/gl_core_4_0.h>
@@ -18,11 +18,11 @@ namespace opengl {
 
         g_buffer(glm::ivec2 size);
 
-		g_buffer(const g_buffer &) = delete;
+        g_buffer(const g_buffer&) = delete;
 
         ~g_buffer();
 
-		g_buffer &operator=(const g_buffer &) = delete;
+        g_buffer& operator=(const g_buffer&) = delete;
 
         void bind_for_writting();
 
@@ -38,17 +38,17 @@ namespace opengl {
 
     private:
         glm::ivec2 size_;
-		
+
         GLint default_fbo_;
 
         GLuint deffered_fbo_;
         GLuint textures_[GBUFFER_NUM_TEXTURES];
-		GLuint depth_texture_;
+        GLuint depth_texture_;
 
-		//GLint default_render_buffer_;
-		//GLuint depth_buffer_;
+        //GLint default_render_buffer_;
+        //GLuint depth_buffer_;
     };
 }
 }
 
-#endif // SIGMA_OPENGL_G_BUFFER
+#endif // SIGMA_ENGINE_OPENGL_G_BUFFER

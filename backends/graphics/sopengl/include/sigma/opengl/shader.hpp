@@ -1,5 +1,5 @@
-#ifndef SIGMA_FIVE_OPENGL_SHADER_HPP
-#define SIGMA_FIVE_OPENGL_SHADER_HPP
+#ifndef SIGMA_ENGINE_OPENGL_SHADER_HPP
+#define SIGMA_ENGINE_OPENGL_SHADER_HPP
 
 #include <sigma/opengl/config.hpp>
 
@@ -16,4 +16,4 @@ namespace opengl {
 }
 }
 
-#endif // SIGMA_FIVE_OPENGL_SHADER_HPP
+#endif // SIGMA_ENGINE_OPENGL_SHADER_HPP

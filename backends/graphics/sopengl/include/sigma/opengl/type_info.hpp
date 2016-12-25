@@ -1,5 +1,5 @@
-#ifndef SIGMA_FIVE_TYPE_INFO_HPP
-#define SIGMA_FIVE_TYPE_INFO_HPP
+#ifndef SIGMA_ENGINE_TYPE_INFO_HPP
+#define SIGMA_ENGINE_TYPE_INFO_HPP
 
 // TODO move to sigma/-typeinfo or something like that
 
@@ -68,4 +68,4 @@ namespace opengl {
 }
 }
 
-#endif // SIGMA_FIVE_TYPE_INFO_HPP
+#endif // SIGMA_ENGINE_TYPE_INFO_HPP

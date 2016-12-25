@@ -1,5 +1,5 @@
-#ifndef SIGMA_FIVE_OPENGL_UTIL_HPP
-#define SIGMA_FIVE_OPENGL_UTIL_HPP
+#ifndef SIGMA_ENGINE_OPENGL_UTIL_HPP
+#define SIGMA_ENGINE_OPENGL_UTIL_HPP
 
 #include <sigma/opengl/gl_core_4_0.h>
 
@@ -17,7 +17,7 @@
             stream << __FILE__ << ":" << __LINE__ << " 0x" << std::hex << gl_error_code_check; \
             throw std::runtime_error(stream.str());                                            \
         }                                                                                      \
-	}
+    }
 #else
 #define GL_CHECK(x) x
 #endif // USE_GL_CHECK
@@ -90,4 +90,4 @@ namespace opengl {
 }
 }
 
-#endif // SIGMA_FIVE_OPENGL_UTIL_HPP
+#endif // SIGMA_ENGINE_OPENGL_UTIL_HPP

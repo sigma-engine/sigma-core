@@ -1,5 +1,5 @@
-#ifndef SIGMA_FIVE_OPENGL_PROGRAM_HPP
-#define SIGMA_FIVE_OPENGL_PROGRAM_HPP
+#ifndef SIGMA_ENGINE_OPENGL_PROGRAM_HPP
+#define SIGMA_ENGINE_OPENGL_PROGRAM_HPP
 
 #include <functional>
 #include <glm/gtc/quaternion.hpp>
@@ -17,7 +17,7 @@
 
 namespace sigma {
 namespace opengl {
-    /*class SIGMA_FIVE_OPENGL_API program {
+    /*class SIGMA_ENGINE_OPENGL_API program {
 public:
 program();
 
@@ -81,4 +81,4 @@ std::vector<std::reference_wrapper<shader> > attached_shaders_;
 }
 }
 
-#endif // SIGMA_FIVE_OPENGL_PROGRAM_HPP
+#endif // SIGMA_ENGINE_OPENGL_PROGRAM_HPP

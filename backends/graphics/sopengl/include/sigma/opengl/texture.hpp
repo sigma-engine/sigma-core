@@ -1,5 +1,5 @@
-#ifndef SIGMA_FIVE_OPENGL_TEXTURE_HPP
-#define SIGMA_FIVE_OPENGL_TEXTURE_HPP
+#ifndef SIGMA_ENGINE_OPENGL_TEXTURE_HPP
+#define SIGMA_ENGINE_OPENGL_TEXTURE_HPP
 
 #include <sigma/opengl/config.hpp>
 
@@ -20,4 +20,4 @@ namespace opengl {
 }
 }
 
-#endif // SIGMA_FIVE_OPENGL_TEXTURE_HPP
+#endif // SIGMA_ENGINE_OPENGL_TEXTURE_HPP

@@ -1,5 +1,5 @@
-#ifndef SIGMA_FIVE_OPENGL_FRAME_BUFFER_HPP
-#define SIGMA_FIVE_OPENGL_FRAME_BUFFER_HPP
+#ifndef SIGMA_ENGINE_OPENGL_FRAME_BUFFER_HPP
+#define SIGMA_ENGINE_OPENGL_FRAME_BUFFER_HPP
 
 #include <vector>
 
@@ -36,7 +36,7 @@ enum class frame_buffer_attachment : GLenum {
     stencil = GL_STENCIL_ATTACHMENT
 };
 
-class SIGMA_FIVE_OPENGL_API frame_buffer {
+class SIGMA_ENGINE_OPENGL_API frame_buffer {
 public:
     static void bind_default(frame_buffer_target target =
 frame_buffer_target::both);
@@ -73,4 +73,4 @@ private:
 }
 }
 
-#endif // SIGMA_FIVE_OPENGL_FRAME_BUFFER_HPP
+#endif // SIGMA_ENGINE_OPENGL_FRAME_BUFFER_HPP

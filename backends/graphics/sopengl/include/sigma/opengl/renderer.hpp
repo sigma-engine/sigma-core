@@ -1,5 +1,5 @@
-#ifndef sigma_GRAPHICS_OPENGL_CONTEXT_HPP
-#define sigma_GRAPHICS_OPENGL_CONTEXT_HPP
+#ifndef SIGMA_GRAPHICS_OPENGL_CONTEXT_HPP
+#define SIGMA_GRAPHICS_OPENGL_CONTEXT_HPP
 
 #include <sigma/opengl/config.hpp>
 
@@ -32,7 +32,7 @@ namespace opengl {
         static const resource::identifier FULLSCREEN_MATERIAL1;
         static const resource::identifier FULLSCREEN_MATERIAL2;
 
-        renderer(context* ctx,glm::ivec2 size);
+        renderer(context* ctx, glm::ivec2 size);
 
         virtual ~renderer();
 
@@ -68,4 +68,4 @@ namespace opengl {
 }
 }
 
-#endif // sigma_GRAPHICS_OPENGL_CONTEXT_HPP
+#endif // SIGMA_GRAPHICS_OPENGL_CONTEXT_HPP

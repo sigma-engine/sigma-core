@@ -1,5 +1,5 @@
-#ifndef SIGMA_FIVE_OPENGL_TEXTURE2D_HPP
-#define SIGMA_FIVE_OPENGL_TEXTURE2D_HPP
+#ifndef SIGMA_ENGINE_OPENGL_TEXTURE2D_HPP
+#define SIGMA_ENGINE_OPENGL_TEXTURE2D_HPP
 
 #include <sigma/opengl/gl_core_4_0.h>
 
@@ -176,7 +176,7 @@ enum class pixel_type : GLenum {
     unsigned_int_2_10_10_10_rev = GL_UNSIGNED_INT_2_10_10_10_REV
 };
 
-class SIGMA_FIVE_OPENGL_API texture_2d {
+class SIGMA_ENGINE_OPENGL_API texture_2d {
 public:
     texture_2d();
 
@@ -198,4 +198,4 @@ private:
 }
 }
 
-#endif // SIGMA_FIVE_OPENGL_TEXTURE2D_HPP
+#endif // SIGMA_ENGINE_OPENGL_TEXTURE2D_HPP

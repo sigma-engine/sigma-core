@@ -1,5 +1,5 @@
-#ifndef SIGMA_FIVE_OPENGL_BUFFER_HPP
-#define SIGMA_FIVE_OPENGL_BUFFER_HPP
+#ifndef SIGMA_ENGINE_OPENGL_BUFFER_HPP
+#define SIGMA_ENGINE_OPENGL_BUFFER_HPP
 
 #include <sigma/opengl/config.hpp>
 
@@ -64,4 +64,4 @@ namespace opengl {
 }
 }
 
-#endif // SIGMA_FIVE_OPENGL_BUFFER_HPP
+#endif // SIGMA_ENGINE_OPENGL_BUFFER_HPP

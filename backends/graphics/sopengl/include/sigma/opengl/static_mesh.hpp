@@ -1,5 +1,5 @@
-#ifndef sigma_GRAPHICS_OPENGL_STATIC_MESH_HPP
-#define sigma_GRAPHICS_OPENGL_STATIC_MESH_HPP
+#ifndef SIGMA_GRAPHICS_OPENGL_STATIC_MESH_HPP
+#define SIGMA_GRAPHICS_OPENGL_STATIC_MESH_HPP
 
 #include <sigma/opengl/config.hpp>
 
@@ -25,4 +25,4 @@ namespace opengl {
 }
 }
 
-#endif // sigma_GRAPHICS_OPENGL_STATIC_MESH_HPP
+#endif // SIGMA_GRAPHICS_OPENGL_STATIC_MESH_HPP
