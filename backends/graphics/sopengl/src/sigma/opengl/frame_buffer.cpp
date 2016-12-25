@@ -19,19 +19,14 @@ namespace opengl {
         return size_;
     }
 
-    void default_frame_buffer::bind_for_writting()
-    {
-        GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, object_));
-    }
-
-    void default_frame_buffer::bind_for_reading()
-    {
-        GL_CHECK(glBindFramebuffer(GL_READ_FRAMEBUFFER, object_));
-    }
-
     void default_frame_buffer::bind()
     {
         GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, object_));
+    }
+
+    void default_frame_buffer::bind(target tgt)
+    {
+        GL_CHECK(glBindFramebuffer(GLenum(tgt), object_));
     }
 
     frame_buffer::frame_buffer(glm::ivec2 size)
@@ -45,18 +40,23 @@ namespace opengl {
         glDeleteFramebuffers(1, &object_);
     }
 
-    void frame_buffer::attach(frame_buffer_attachment attachment, texture& txt)
+    void frame_buffer::attach(attachment att, texture& txt)
     {
         GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, object_));
         txt.bind();
-        GL_CHECK(glFramebufferTexture2D(GL_FRAMEBUFFER, GLenum(attachment), GL_TEXTURE_2D, txt.get_object(), 0));
+        GL_CHECK(glFramebufferTexture2D(GL_FRAMEBUFFER, GLenum(att), GL_TEXTURE_2D, txt.get_object(), 0));
     }
 
-    void frame_buffer::draw_buffers(std::vector<frame_buffer_attachment> attachments)
+    void frame_buffer::read_buffer(attachment att)
+    {
+        GL_CHECK(glBindFramebuffer(GL_READ_FRAMEBUFFER, object_));
+        GL_CHECK(glReadBuffer(GLenum(att)));
+    }
+
+    void frame_buffer::draw_buffers(std::vector<attachment> atts)
     {
         GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, object_));
-        // TODO
-        GL_CHECK(glDrawBuffers(attachments.size(), (GLenum*)attachments.data()));
+        GL_CHECK(glDrawBuffers(atts.size(), (GLenum*)atts.data()));
     }
 }
 }

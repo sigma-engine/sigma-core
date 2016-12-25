@@ -23,6 +23,8 @@ namespace opengl {
 
         virtual void resize(glm::uvec2 size) override;
 
+		void geometry_pass(const graphics::view_port& viewport);
+
         virtual void render(const graphics::view_port& viewport) override;
 
     private:
