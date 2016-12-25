@@ -1,7 +1,7 @@
 #ifndef SIGMA_ENGINE_OPENGL_TEXTURE_HPP
 #define SIGMA_ENGINE_OPENGL_TEXTURE_HPP
 
-#include <sigma/opengl/gl_core_4_0.h>
+#include <sigma/opengl/gl_core_4_2.h>
 
 #include <glm/vec2.hpp>
 
@@ -81,6 +81,10 @@ namespace opengl {
         RGBA32I = GL_RGBA32I,
         RGBA32UI = GL_RGBA32UI,
 
+        //DEPTH_COMPONENT16F = GL_DEPTH_COMPONENT16F,
+        //DEPTH_COMPONENT24F = GL_DEPTH_COMPONENT24F,
+        DEPTH_COMPONENT32F = GL_DEPTH_COMPONENT32F,
+
         // Compressed internal formats
         COMPRESSED_RED = GL_COMPRESSED_RED,
         COMPRESSED_RG = GL_COMPRESSED_RG,
@@ -103,7 +107,11 @@ namespace opengl {
         // TODO replace pixles with boost::gil
         texture(internal_format format, glm::ivec2 size, const std::vector<unsigned char>& pixels);
 
+        texture(internal_format format, glm::ivec2 size);
+
         ~texture();
+
+        GLuint get_object() const;
 
         void bind();
 

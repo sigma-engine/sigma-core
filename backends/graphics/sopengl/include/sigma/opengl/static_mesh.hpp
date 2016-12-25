@@ -1,7 +1,7 @@
 #ifndef SIGMA_ENGINE_STATIC_MESH_HPP
 #define SIGMA_ENGINE_STATIC_MESH_HPP
 
-#include <sigma/opengl/gl_core_4_0.h>
+#include <sigma/opengl/gl_core_4_2.h>
 
 #include <sigma/graphics/static_mesh.hpp>
 

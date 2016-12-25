@@ -1,7 +1,7 @@
 #ifndef SIGMA_ENGINE_SHADER_HPP
 #define SIGMA_ENGINE_SHADER_HPP
 
-#include <sigma/opengl/gl_core_4_0.h>
+#include <sigma/opengl/gl_core_4_2.h>
 
 #include <string>
 

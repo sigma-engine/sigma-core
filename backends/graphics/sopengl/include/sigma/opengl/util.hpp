@@ -1,7 +1,7 @@
 #ifndef SIGMA_ENGINE_OPENGL_UTIL_HPP
 #define SIGMA_ENGINE_OPENGL_UTIL_HPP
 
-#include <sigma/opengl/gl_core_4_0.h>
+#include <sigma/opengl/gl_core_4_2.h>
 
 #include <sstream>
 #include <string>

@@ -4,7 +4,7 @@ project(sopengl)
 find_package(OpenGL REQUIRED)
 
 set(SOURCES
-    src/sigma/opengl/gl_core_4_0.c
+    src/sigma/opengl/gl_core_4_2.c
     src/sigma/opengl/renderer.cpp
     src/sigma/opengl/texture.cpp
     src/sigma/opengl/texture_manager.cpp
@@ -14,13 +14,14 @@ set(SOURCES
     src/sigma/opengl/material_manager.cpp
     src/sigma/opengl/static_mesh.cpp
     src/sigma/opengl/static_mesh_manager.cpp
+    src/sigma/opengl/frame_buffer.cpp
 )
 
 set(HEADERS
     include/sigma/opengl/render_uniforms.hpp
     include/sigma/opengl/util.hpp
     include/sigma/opengl/config.hpp
-    include/sigma/opengl/gl_core_4_0.h
+    include/sigma/opengl/gl_core_4_2.h
     include/sigma/opengl/renderer.hpp
     include/sigma/opengl/texture.hpp
     include/sigma/opengl/texture_manager.hpp
@@ -30,6 +31,7 @@ set(HEADERS
     include/sigma/opengl/material_manager.hpp
     include/sigma/opengl/static_mesh.hpp
     include/sigma/opengl/static_mesh_manager.hpp
+    include/sigma/opengl/frame_buffer.hpp
 )
 
 add_library(sopengl SHARED ${SOURCES} ${HEADERS})

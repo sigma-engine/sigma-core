@@ -1,7 +1,7 @@
 #ifndef SIGMA_ENGINE_MATERIAL_HPP
 #define SIGMA_ENGINE_MATERIAL_HPP
 
-#include <sigma/opengl/gl_core_4_0.h>
+#include <sigma/opengl/gl_core_4_2.h>
 
 #include <memory>
 #include <string>
