@@ -11,7 +11,7 @@ conaninfo.txt
 __pycache__/
 
 # Ide Generated files
-*.txt.user
+*.txt.user*
 .idea/
 
 # Generated Source files
@@ -49,4 +49,5 @@ generated
 # pack-cpp
 .pack-cpp/
 
-CMakeLists.txt.*
+#assimp
+dna.txt
