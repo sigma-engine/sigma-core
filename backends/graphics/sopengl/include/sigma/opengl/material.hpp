@@ -15,6 +15,16 @@ namespace opengl {
     struct render_matrices;
     class material {
     public:
+        static constexpr const char* WORLD_POSITION_OUTPUT_NAME = "position_output";
+        static constexpr const char* DIFFUSE_COLOR_OUTPUT_NAME = "diffuse_output";
+        static constexpr const char* NORMAL_OUTPUT_NAME = "normal_output";
+        static constexpr const char* TEXTURE_COORDINATE_OUTPUT_NAME = "texture_coordinate_output";
+
+        static constexpr const GLuint WORLD_POSITION_OUTPUT_LOCATION = 0;
+        static constexpr const GLuint DIFFUSE_COLOR_OUTPUT_LOCATION = 1;
+        static constexpr const GLuint NORMAL_OUTPUT_LOCATION = 2;
+        static constexpr const GLuint TEXTURE_COORDINATE_OUTPUT_LOCATION = 3;
+
         static constexpr const char* PROJECTION_MATRIX_NAME = "projectionMatrix";
         static constexpr const char* VIEW_MATRIX_NAME = "viewMatrix";
         static constexpr const char* MODEL_MATRIX_NAME = "modelMatrix";

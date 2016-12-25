@@ -62,6 +62,11 @@ namespace opengl {
         GL_CHECK(model_view_matrix_location_ = glGetUniformLocation(object_, MODEL_VIEW_MATRIX_NAME));
         GL_CHECK(normal_matrix_location_ = glGetUniformLocation(object_, NORMAL_MATRIX_NAME));
         GL_CHECK(time_location_ = glGetUniformLocation(object_, TIME_NAME));
+
+        GL_CHECK(glBindFragDataLocation(object_, WORLD_POSITION_OUTPUT_LOCATION, WORLD_POSITION_OUTPUT_NAME));
+        GL_CHECK(glBindFragDataLocation(object_, DIFFUSE_COLOR_OUTPUT_LOCATION, DIFFUSE_COLOR_OUTPUT_NAME));
+        GL_CHECK(glBindFragDataLocation(object_, NORMAL_OUTPUT_LOCATION, NORMAL_OUTPUT_NAME));
+        GL_CHECK(glBindFragDataLocation(object_, TEXTURE_COORDINATE_OUTPUT_LOCATION, TEXTURE_COORDINATE_OUTPUT_NAME));
     }
 
     void material::bind(render_matrices* matrices)
