@@ -21,7 +21,7 @@ namespace resource {
         {
         }
 
-        virtual ~resource_cache() = default;
+        ~resource_cache() = default;
 
         resource_cache(const resource_cache&) = delete;
 

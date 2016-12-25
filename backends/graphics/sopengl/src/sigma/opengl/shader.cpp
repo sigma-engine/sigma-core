@@ -1,41 +1,46 @@
 #include <sigma/opengl/shader.hpp>
 
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <fstream>
-#include <iostream>
 #include <sigma/opengl/util.hpp>
-#include <string>
+
+#include <cassert>
+#include <iostream>
+#include <vector>
 
 namespace sigma {
 namespace opengl {
-
-    /*shader_cache::~shader_cache()
+    shader::shader(shader_type type, std::string source)
     {
-        for (auto& shader : shaders_)
-          glDeleteShader(shader.object);
+        const char* src = source.c_str();
+
+        GL_CHECK(object_ = glCreateShader(GLenum(type)));
+        GL_CHECK(glShaderSource(object_, 1, &src, nullptr));
+        GL_CHECK(glCompileShader(object_));
+
+        GLint compiled;
+        glGetShaderiv(object_, GL_COMPILE_STATUS, &compiled);
+        if (compiled == GL_FALSE) {
+            GLint length = 0;
+            glGetShaderiv(object_, GL_INFO_LOG_LENGTH, &length);
+
+            // The length includes the NULL character
+            std::vector<GLchar> error_buffer(length);
+            glGetShaderInfoLog(object_, length, &length, error_buffer.data());
+
+            std::string error_string(error_buffer.begin(), error_buffer.end());
+            std::cout << error_string << std::endl;
+
+            std::abort();
+        }
     }
 
-    GLuint shader_cache::get_object(resource::identifier shader_id)
+    shader::~shader()
     {
-        if (!is_cached(shader_id))
-            return 0;
-        return shaders_[resource_map_[shader_id]].object;
+        glDeleteShader(object_);
     }
 
-    void shader_cache::update()
+    GLuint shader::get_object() const
     {
-        std::for_each(std::begin(shaders_) + static_cast<difference_type>(dirty_), std::end(shaders_), [](opengl::shader& shader) {
-            if (shader.object == 0)
-                GL_CHECK(shader.object = glCreateShader(convert(shader.type)));
-            const char* source = shader.source.c_str();
-            GL_CHECK(glShaderSource(shader.object, 1, &source, nullptr));
-            GL_CHECK(glCompileShader(shader.object));
-        });
-
-        // TODO free any shaders that have a reference count of zero
-
-        dirty_ = shaders_.size();
-    }*/
+        return object_;
+    }
 }
 }

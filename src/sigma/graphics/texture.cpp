@@ -15,6 +15,11 @@ namespace graphics {
 
     unsigned int texture::height() const { return height_; }
 
+    glm::ivec2 texture::size() const
+    {
+        return glm::ivec2{ width_, height_ };
+    }
+
     const std::vector<unsigned char>& texture::data() const { return data_; }
 
     void texture::set_data(unsigned int width, unsigned int height,

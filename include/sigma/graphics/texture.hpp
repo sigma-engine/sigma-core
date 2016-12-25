@@ -6,6 +6,8 @@
 #include <sigma/resource/identifier.hpp>
 #include <sigma/resource/resource_cache.hpp>
 
+#include <glm/vec2.hpp>
+
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/vector.hpp>
 
@@ -31,6 +33,8 @@ namespace graphics {
 
         unsigned int height() const;
 
+        glm::ivec2 size() const;
+
         const std::vector<unsigned char>& data() const;
 
         void set_data(unsigned int width, unsigned int height, const std::vector<unsigned char>& data);
@@ -47,6 +51,7 @@ namespace graphics {
 
         unsigned int width_;
         unsigned int height_;
+        // TODO use boost::gil
         std::vector<unsigned char> data_;
 
         friend class resource::resource_cache<texture>;

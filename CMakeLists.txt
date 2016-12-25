@@ -59,6 +59,7 @@ set(LIBRARY_HEADERS
     include/sigma/util/compile_time_hash.hpp
     include/sigma/graphics/static_mesh_instance.hpp
     include/sigma/resource/resource_cache.hpp
+    include/sigma/resource/resource_manager.hpp
 )
 
 add_library(sigma-core SHARED ${LIBRARY_SOURCES} ${LIBRARY_HEADERS})
