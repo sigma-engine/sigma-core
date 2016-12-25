@@ -1,8 +1,5 @@
 #include <sigma/opengl/program.hpp>
 
-#include <algorithm>
-#include <numeric>
-
 namespace sigma {
 namespace opengl {
     /*program::program()

@@ -2,16 +2,9 @@
 #define SIGMA_GRAPHICS_OPENGL_STATIC_MESH_HPP
 
 #include <sigma/opengl/config.hpp>
+#include <sigma/opengl/gl_core_4_0.h>
 
-#include <boost/filesystem/path.hpp>
-#include <sigma/graphics/renderer.hpp>
-#include <sigma/graphics/static_mesh.hpp>
-#include <sigma/opengl/index_buffer.hpp>
-#include <sigma/opengl/material.hpp>
-#include <sigma/opengl/vertex_array.hpp>
-#include <sigma/opengl/vertex_buffer.hpp>
-#include <unordered_map>
-#include <vector>
+#include <sigma/resource/identifier.hpp>
 
 namespace sigma {
 namespace opengl {

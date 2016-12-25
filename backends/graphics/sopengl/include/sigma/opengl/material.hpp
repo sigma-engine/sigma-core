@@ -2,15 +2,8 @@
 #define SIGMA_ENGINE_OPENGL_MATERIAL_HPP
 
 #include <sigma/opengl/config.hpp>
-
-#include <boost/filesystem/path.hpp>
-#include <chrono>
-#include <glm/mat4x4.hpp>
-#include <sigma/graphics/material.hpp>
 #include <sigma/opengl/gl_core_4_0.h>
-#include <sigma/opengl/shader.hpp>
-#include <sigma/opengl/texture.hpp>
-#include <unordered_map>
+
 #include <vector>
 
 namespace sigma {

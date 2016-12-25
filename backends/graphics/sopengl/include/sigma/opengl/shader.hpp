@@ -2,9 +2,6 @@
 #define SIGMA_ENGINE_OPENGL_SHADER_HPP
 
 #include <sigma/opengl/config.hpp>
-
-#include <boost/filesystem/path.hpp>
-#include <sigma/graphics/shader.hpp>
 #include <sigma/opengl/gl_core_4_0.h>
 
 namespace sigma {
