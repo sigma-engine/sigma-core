@@ -8,14 +8,22 @@ in vec3 vertex_tangent;
 in vec2 vertex_texcoord;
 in vec3 vertex_binormal;
 
+
 in vec3 eye_vector;
 in vec3 n;
 
-void main()
+out vec3 diffuse_output;
+
+vec2 matcap_uv(vec3 eye_vec, vec3 normal)
 {
-    vec3 r = reflect(eye_vector, n);
+    vec3 r = reflect(eye_vec, normal);
+
     float m = 2.0 * length(vec3(0, 0, 1.1) + r);
     vec2 uv = r.xy / m + 0.5;
+    return uv;
+}
 
-	gl_FragData[1] = vec4(texture2D(matcap, uv).rgb,1);
+void main()
+{
+	diffuse_output = texture2D(matcap, matcap_uv(eye_vector,n)).rgb;
 }

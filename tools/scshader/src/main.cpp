@@ -3,12 +3,15 @@
 #include <sigma/util/filesystem.hpp>
 
 #include <boost/archive/binary_oarchive.hpp>
+#include <boost/assign/list_of.hpp>
 #include <boost/program_options.hpp>
-#pragma warning(push, 0)  
+#include <boost/version.hpp>
+
+#pragma warning(push, 0)
 #include <boost/wave.hpp>
 #include <boost/wave/cpplexer/cpp_lex_iterator.hpp>
 #include <boost/wave/cpplexer/cpp_lex_token.hpp>
-#pragma warning(pop)  
+#pragma warning(pop)
 
 #include <fstream>
 #include <iostream>
@@ -55,7 +58,13 @@ public:
 int main(int argc, char const* argv[])
 {
     po::options_description global_options("Options");
-    global_options.add_options()("help,h", "Show this help message")("output,o", po::value<boost::filesystem::path>()->default_value(boost::filesystem::current_path()), "output directory")("input-files", po::value<std::vector<boost::filesystem::path> >(), "input shaders files");
+    // clang-format off
+    global_options.add_options()
+    ("help,h", "Show this help message")
+    ("output,o", po::value<boost::filesystem::path>()->default_value(boost::filesystem::current_path()), "output directory")
+    ("include-dir,I", po::value<std::vector<boost::filesystem::path>>(), "Include directory")
+    ("input-files", po::value<std::vector<boost::filesystem::path> >(), "input shaders files");
+    // clang-format on
 
     po::positional_options_description positional_options;
     positional_options.add("input-files", -1);
@@ -69,15 +78,14 @@ int main(int argc, char const* argv[])
     }
 
     if (vm.count("input-files") <= 0) {
-        //std::cerr << "scshader: fatal error: no input files." << std::endl;
+        std::cerr << "scshader: fatal error: no input files." << std::endl;
         return 0;
     }
 
     auto outputdir = vm["output"].as<boost::filesystem::path>();
     boost::filesystem::create_directories(outputdir);
 
-    for (auto file_path :
-        vm["input-files"].as<std::vector<boost::filesystem::path> >()) {
+    for (auto file_path : vm["input-files"].as<std::vector<boost::filesystem::path>>()) {
         file_path = boost::filesystem::absolute(file_path);
         if (sigma::util::directory_contains_file(boost::filesystem::current_path(), file_path)) {
             if (boost::filesystem::exists(file_path)) {
@@ -98,6 +106,12 @@ int main(int argc, char const* argv[])
 
                         auto file_name = file_path.string();
                         context_type ctx(input_source.begin(), input_source.end(), file_name.c_str());
+
+                        for (const auto& include_path : vm["include-dir"].as<std::vector<boost::filesystem::path>>()) {
+                            auto dir = boost::filesystem::absolute(include_path);
+                            ctx.add_include_path(dir.string().c_str());
+                            ctx.add_sysinclude_path(dir.string().c_str());
+                        }
 
                         context_type::iterator_type first = ctx.begin();
                         context_type::iterator_type last = ctx.end();

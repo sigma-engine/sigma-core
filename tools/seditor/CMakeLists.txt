@@ -37,7 +37,4 @@ target_include_directories(seditor PUBLIC include PRIVATE ${CMAKE_CURRENT_BINARY
 
 target_link_libraries(seditor sigma-core Qt5::Core Qt5::Qml Qt5::Quick Qt5::QuickControls2)
 
-add_resource_package(seditor-resources resources)
-add_dependencies(seditor seditor-resources)
-
 add_dependencies(seditor simple-game sopengl)

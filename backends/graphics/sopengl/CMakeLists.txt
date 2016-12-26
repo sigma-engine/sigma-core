@@ -44,5 +44,8 @@ target_compile_definitions(sopengl PRIVATE -DSIGMA_ENGINE_OPENGL_EXPORT)
 
 target_link_libraries(sopengl sigma-core ${OPENGL_LIBRARIES})
 
-add_resource_package(sopengl-resources resources)
-add_dependencies(sopengl sopengl-resources)
+file(GLOB_RECURSE SHADER_SOURCES resources ${SIGMA_ENGINE_SHADER_GLOB})
+file(GLOB_RECURSE TEXTURE_SOURCES resources ${SIGMA_ENGINE_TEXTURE_GLOB})
+file(GLOB_RECURSE MATERIAL_SOURCES resources ${SIGMA_ENGINE_MATERIAL_GLOB})
+file(GLOB_RECURSE MODEL_SOURCES resources ${SIGMA_ENGINE_MODEL_GLOB})
+add_resources(sopengl PACKAGE_ROOT resources ${SHADER_SOURCES} ${TEXTURE_SOURCES} ${MATERIAL_SOURCES} ${MODEL_SOURCES})
