@@ -15,27 +15,13 @@ namespace opengl {
         : graphics::renderer(ctx, size)
         , ctx_(ctx)
         , default_fbo_(size)
-        , position_texture_(internal_format::RGB32F, size)
-        , diffuse_texture_(internal_format::RGB32F, size)
-        , normal_texture_(internal_format::RGB32F, size)
-        , texcoord_texture_(internal_format::RGB32F, size)
-        , depth_texture_(internal_format::DEPTH_COMPONENT32F, size)
-        , gbuffer_(size)
+		, gbuffer_(size)
         , textures_(ctx_->textures())
         , shaders_(ctx_->shaders())
         , materials_(ctx_->materials(), textures_, shaders_)
         , static_meshes_(ctx_->static_meshes(), materials_)
     {
         std::cout << glGetString(GL_VERSION) << std::endl;
-        gbuffer_.attach(frame_buffer::attachment::COLOR0, position_texture_);
-        gbuffer_.attach(frame_buffer::attachment::COLOR1, diffuse_texture_);
-        gbuffer_.attach(frame_buffer::attachment::COLOR2, normal_texture_);
-        gbuffer_.attach(frame_buffer::attachment::COLOR3, texcoord_texture_);
-        gbuffer_.attach(frame_buffer::attachment::DEPTH, depth_texture_);
-        gbuffer_.draw_buffers({ frame_buffer::attachment::COLOR0,
-            frame_buffer::attachment::COLOR1,
-            frame_buffer::attachment::COLOR2,
-            frame_buffer::attachment::COLOR3 });
     }
 
     renderer::~renderer()
@@ -53,12 +39,17 @@ namespace opengl {
 		matrices_.projection_matrix = viewport.projection_matrix;
 		matrices_.view_matrix = viewport.view_matrix;
 
-		GL_CHECK(glClearColor(0.8f, 0.8f, 0.8f, 1.0f));
 		GL_CHECK(glEnable(GL_DEPTH_TEST));
-		GL_CHECK(glDisable(GL_BLEND));
+		GL_CHECK(glDepthMask(GL_TRUE));
+
+		GL_CHECK(glEnable(GL_CULL_FACE));
 		GL_CHECK(glCullFace(GL_BACK));
-		GL_CHECK(glDisable(GL_CULL_FACE));
+
+		GL_CHECK(glDisable(GL_BLEND));
+		
+		GL_CHECK(glClearColor(0.8f, 0.8f, 0.8f, 1.0f));
 		GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+
 		for (auto e : viewport.entities) { // TODO use a filter here
 			if (viewport.static_mesh_instances.has(e) && viewport.transforms.has(e)) {
 				const auto& txform = viewport.transforms.get(e);
@@ -72,18 +63,43 @@ namespace opengl {
 				mesh->render(&matrices_);
 			}
 		}
+
+		GL_CHECK(glDepthMask(GL_FALSE));
+		GL_CHECK(glDisable(GL_DEPTH_TEST));
+	}
+
+	void renderer::begin_light_pass()
+	{
+		GL_CHECK(glEnable(GL_BLEND));
+		GL_CHECK(glBlendEquation(GL_FUNC_ADD));
+		GL_CHECK(glBlendFunc(GL_ONE, GL_ONE));
+
+		default_fbo_.bind();
+
+		gbuffer_.bind_textures();
+		GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
+	}
+
+	void renderer::light_pass(const graphics::view_port& viewport)
+	{
+		begin_light_pass();
+
+		gbuffer_.read_buffer(frame_buffer::attachment::COLOR1);
+		glm::ivec2 s = gbuffer_.size();
+		glBlitFramebuffer(0, 0, s.x, s.y, 0, 0, s.x, s.y, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+
+		end_light_pass();
+	}
+
+	void renderer::end_light_pass()
+	{
+
 	}
 
     void renderer::render(const graphics::view_port& viewport)
     {
 		geometry_pass(viewport);
-
-        default_fbo_.bind();
-        GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-
-		gbuffer_.read_buffer(frame_buffer::attachment::COLOR1);
-        glm::ivec2 s = gbuffer_.size();
-        glBlitFramebuffer(0, 0, s.x, s.y, 0, 0, s.x, s.y, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+		light_pass(viewport);
     }
 }
 }

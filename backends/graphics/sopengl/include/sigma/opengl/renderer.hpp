@@ -3,6 +3,7 @@
 
 #include <sigma/opengl/config.hpp>
 #include <sigma/opengl/frame_buffer.hpp>
+#include <sigma/opengl/geometry_buffer.hpp>
 #include <sigma/opengl/material_manager.hpp>
 #include <sigma/opengl/render_uniforms.hpp>
 #include <sigma/opengl/shader_manager.hpp>
@@ -25,18 +26,18 @@ namespace opengl {
 
 		void geometry_pass(const graphics::view_port& viewport);
 
+		void begin_light_pass();
+
+		void light_pass(const graphics::view_port& viewport);
+
+		void end_light_pass();
+
         virtual void render(const graphics::view_port& viewport) override;
 
     private:
         context* ctx_;
-        default_frame_buffer default_fbo_;
-        texture position_texture_;
-        texture diffuse_texture_;
-        texture normal_texture_;
-        texture texcoord_texture_;
-        texture depth_texture_;
-
-        frame_buffer gbuffer_;
+		default_frame_buffer default_fbo_;
+        geometry_buffer gbuffer_;
 
         texture_manager textures_;
         shader_manager shaders_;

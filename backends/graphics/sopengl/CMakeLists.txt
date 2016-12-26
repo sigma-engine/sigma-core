@@ -15,6 +15,7 @@ set(SOURCES
     src/sigma/opengl/static_mesh.cpp
     src/sigma/opengl/static_mesh_manager.cpp
     src/sigma/opengl/frame_buffer.cpp
+    src/sigma/opengl/geometry_buffer.cpp
 )
 
 set(HEADERS
@@ -32,6 +33,7 @@ set(HEADERS
     include/sigma/opengl/static_mesh.hpp
     include/sigma/opengl/static_mesh_manager.hpp
     include/sigma/opengl/frame_buffer.hpp
+    include/sigma/opengl/geometry_buffer.hpp
 )
 
 add_library(sopengl SHARED ${SOURCES} ${HEADERS})
