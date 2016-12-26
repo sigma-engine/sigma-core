@@ -16,6 +16,9 @@ set(SOURCES
     src/sigma/opengl/static_mesh_manager.cpp
     src/sigma/opengl/frame_buffer.cpp
     src/sigma/opengl/geometry_buffer.cpp
+    src/sigma/opengl/shader_technique.cpp
+    src/sigma/opengl/post_process_effect.cpp
+    src/sigma/opengl/post_process_effect_manager.cpp
 )
 
 set(HEADERS
@@ -34,6 +37,9 @@ set(HEADERS
     include/sigma/opengl/static_mesh_manager.hpp
     include/sigma/opengl/frame_buffer.hpp
     include/sigma/opengl/geometry_buffer.hpp
+    include/sigma/opengl/shader_technique.hpp
+    include/sigma/opengl/post_process_effect.hpp
+    include/sigma/opengl/post_process_effect_manager.hpp
 )
 
 add_library(sopengl SHARED ${SOURCES} ${HEADERS})

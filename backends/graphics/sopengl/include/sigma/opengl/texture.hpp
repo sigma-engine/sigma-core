@@ -109,6 +109,10 @@ namespace opengl {
 
         texture(internal_format format, glm::ivec2 size);
 
+        texture(texture&&) = default;
+
+        texture& operator=(texture&&) = default;
+
         ~texture();
 
         GLuint get_object() const;

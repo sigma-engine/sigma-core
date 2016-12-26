@@ -1,12 +1,12 @@
 #include <sigma/opengl/static_mesh.hpp>
 
-#include <sigma/opengl/material.hpp>
 #include <sigma/opengl/render_uniforms.hpp>
+#include <sigma/opengl/shader_technique.hpp>
 #include <sigma/opengl/util.hpp>
 
 namespace sigma {
 namespace opengl {
-    static_mesh::static_mesh(const std::vector<graphics::static_mesh::vertex>& vertices, const std::vector<graphics::static_mesh::triangle>& triangles, std::shared_ptr<material> mat)
+    static_mesh::static_mesh(const std::vector<graphics::static_mesh::vertex>& vertices, const std::vector<graphics::static_mesh::triangle>& triangles, std::shared_ptr<shader_technique> tech)
     {
         GL_CHECK(glGenVertexArrays(1, &vertex_array_));
         GL_CHECK(glBindVertexArray(vertex_array_));
@@ -31,7 +31,7 @@ namespace opengl {
         GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_));
         GL_CHECK(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * index_count_, triangles.data(), GL_STATIC_DRAW));
 
-        material_ = mat;
+        technique_ = tech;
     }
 
     static_mesh::~static_mesh()
@@ -41,18 +41,17 @@ namespace opengl {
         glDeleteVertexArrays(1, &vertex_array_);
     }
 
-    void static_mesh::set_material(std::shared_ptr<material> mat)
-    {
-        material_ = mat;
-    }
-
-	std::shared_ptr<material> static_mesh::get_material()
-	{
-		return material_;
-	}
-
     void static_mesh::render(render_matrices* matrices)
     {
+        technique_->bind(matrices);
+        GL_CHECK(glBindVertexArray(vertex_array_));
+        GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_));
+        GL_CHECK(glDrawElements(GL_TRIANGLES, index_count_, GL_UNSIGNED_INT, nullptr));
+    }
+
+    void static_mesh::render(render_matrices* matrices, shader_technique* tech)
+    {
+        tech->bind(matrices);
         GL_CHECK(glBindVertexArray(vertex_array_));
         GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_));
         GL_CHECK(glDrawElements(GL_TRIANGLES, index_count_, GL_UNSIGNED_INT, nullptr));

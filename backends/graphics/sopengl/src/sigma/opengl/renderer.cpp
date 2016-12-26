@@ -7,39 +7,28 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/matrix.hpp>
 
-#include <iostream>
-
-// glm::vec3 position;
-// glm::vec3 normal;
-// glm::vec3 tangent;
-// glm::vec2 texcoord;
-
 namespace sigma {
 namespace opengl {
-    const resource::identifier renderer::TEXTURE_BLIT_MAT{ "material://texture_blit" };
+    const resource::identifier renderer::TEXTURE_BLIT_EFFECT{ "post_process_effect://texture_blit" };
 
     renderer::renderer(context* ctx, glm::ivec2 size)
         : graphics::renderer(ctx, size)
         , ctx_(ctx)
         , default_fbo_(size)
         , gbuffer_(size)
-        , fullscreen_quad_({ { { -1.0f, -1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f } },
-                               { { -1.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f } },
-                               { { 1.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f } },
-                               { { 1.0f, -1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 1.0f, 0.0f } } },
-              { { 0, 3, 2 }, { 2, 1, 0 } }, nullptr)
         , textures_(ctx_->textures())
         , shaders_(ctx_->shaders())
+        , effects_(ctx_->effects(), textures_, shaders_)
         , materials_(ctx_->materials(), textures_, shaders_)
         , static_meshes_(ctx_->static_meshes(), materials_)
     {
-        ctx_->materials().increment_reference(TEXTURE_BLIT_MAT);
-		fullscreen_quad_.set_material(materials_.get(TEXTURE_BLIT_MAT));
+		ctx_->effects().increment_reference(TEXTURE_BLIT_EFFECT);
+		fullscreen_blit_ = effects_.get(TEXTURE_BLIT_EFFECT);
     }
 
     renderer::~renderer()
     {
-        ctx_->materials().decrement_reference(TEXTURE_BLIT_MAT);
+		ctx_->effects().decrement_reference(TEXTURE_BLIT_EFFECT);
     }
 
     void renderer::resize(glm::uvec2 size)
@@ -74,7 +63,6 @@ namespace opengl {
 
                 matrices_.model_view_matrix = viewport.view_matrix * model_matrix;
                 matrices_.normal_matrix = glm::mat3(glm::transpose(glm::inverse(matrices_.model_view_matrix)));
-				mesh->get_material()->bind(&matrices_);
                 mesh->render(&matrices_);
             }
         }
@@ -99,15 +87,10 @@ namespace opengl {
     {
         begin_light_pass();
 
-		
-		gbuffer_.bind_textures();
+        gbuffer_.bind_textures();
 
-		GL_CHECK(glDisable(GL_BLEND));
-		auto mat = fullscreen_quad_.get_material();
-		mat->bind(&matrices_);
-		auto ind = glGetUniformLocation(mat->object_, "input_image");
-		GL_CHECK(glUniform1i(ind,1));
-		fullscreen_quad_.render(&matrices_);
+        GL_CHECK(glDisable(GL_BLEND));
+		fullscreen_blit_->apply(&matrices_,4);
 
         end_light_pass();
     }

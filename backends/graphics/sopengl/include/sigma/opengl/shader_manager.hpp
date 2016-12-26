@@ -13,6 +13,10 @@ namespace opengl {
         shader_manager(resource::resource_cache<graphics::shader>& cache);
 
         virtual std::shared_ptr<opengl::shader> create(const graphics::shader& cpu_shader) override;
+
+    private:
+        shader_manager(const shader_manager&) = delete;
+        shader_manager& operator=(const shader_manager&) = delete;
     };
 }
 }

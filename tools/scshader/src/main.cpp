@@ -107,7 +107,7 @@ int main(int argc, char const* argv[])
                         auto file_name = file_path.string();
                         context_type ctx(input_source.begin(), input_source.end(), file_name.c_str());
 
-						ctx.add_macro_definition("SIGMA_ENGINE_SHADER");
+                        ctx.add_macro_definition("SIGMA_ENGINE_SHADER");
                         for (const auto& include_path : vm["include-dir"].as<std::vector<boost::filesystem::path>>()) {
                             auto dir = boost::filesystem::absolute(include_path);
                             ctx.add_include_path(dir.string().c_str());
@@ -124,10 +124,11 @@ int main(int argc, char const* argv[])
                             ++first;
                         }
 
+						// TODO validate the shader here.
+
                         auto ext = file_path.extension();
                         if (ext == ".vert") {
                             sigma::graphics::shader shader{ sigma::graphics::shader_type::vertex, output_source };
-
                             sigma::resource::development_identifier rid("vertex", file_path);
                             auto final_path = outputdir / std::to_string(rid.value());
 
@@ -148,8 +149,6 @@ int main(int argc, char const* argv[])
                         } else {
                             std::cerr << "scshader: error: " << ext << " not supported." << std::endl;
                         }
-
-                        // TODO validate the shader here.
                     }
                 } catch (boost::wave::cpp_exception const& e) {
                     std::cerr << e.file_name() << "(" << e.line_no() << "): " << e.description() << std::endl;

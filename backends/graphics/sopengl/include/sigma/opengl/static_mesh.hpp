@@ -11,18 +11,20 @@
 namespace sigma {
 namespace opengl {
     struct render_matrices;
-    class material;
+    class shader_technique;
     class static_mesh {
     public:
-        static_mesh(const std::vector<graphics::static_mesh::vertex>& vertices, const std::vector<graphics::static_mesh::triangle>& triangles, std::shared_ptr<material> mat);
+        static_mesh(const std::vector<graphics::static_mesh::vertex>& vertices, const std::vector<graphics::static_mesh::triangle>& triangles, std::shared_ptr<shader_technique> tech);
+
+        static_mesh(static_mesh&&) = default;
+
+        static_mesh& operator=(static_mesh&&) = default;
 
         ~static_mesh();
 
-        void set_material(std::shared_ptr<material> mat);
-
-		std::shared_ptr<material> get_material();
-
         void render(render_matrices* matrices);
+
+        void render(render_matrices* matrices, shader_technique* tech);
 
     private:
         static_mesh(const static_mesh&) = delete;
@@ -32,7 +34,7 @@ namespace opengl {
         GLuint vertex_buffer_ = 0;
         GLuint index_buffer_ = 0;
         GLuint index_count_ = 0;
-        std::shared_ptr<material> material_ = nullptr;
+        std::shared_ptr<shader_technique> technique_ = nullptr;
     };
 }
 }

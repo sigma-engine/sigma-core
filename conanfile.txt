@@ -6,6 +6,7 @@ jsoncpp/1.8.0@siegelaaron94/develop
 libpng/1.6.21@lasote/stable
 libtiff/4.0.6@bilke/stable
 libjpeg/9a@Kaosumaru/stable
+#glslang/master@siegelaaron94/develop
 #gtest/master@smspillaz/gtest
 #SDL2/2.0.4@lasote/stable
 

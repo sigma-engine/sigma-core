@@ -20,6 +20,10 @@ namespace opengl {
     public:
         shader(shader_type type, std::string source);
 
+        shader(shader&&) = default;
+
+        shader& operator=(shader&&) = default;
+
         ~shader();
 
         GLuint get_object() const;

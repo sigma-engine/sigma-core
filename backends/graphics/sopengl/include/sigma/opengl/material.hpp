@@ -1,19 +1,11 @@
 #ifndef SIGMA_ENGINE_MATERIAL_HPP
 #define SIGMA_ENGINE_MATERIAL_HPP
 
-#include <sigma/opengl/gl_core_4_2.h>
-
-#include <memory>
-#include <string>
-#include <unordered_map>
-#include <vector>
+#include <sigma/opengl/shader_technique.hpp>
 
 namespace sigma {
 namespace opengl {
-    class shader;
-    class texture;
-    struct render_matrices;
-    class material {
+    class material : public shader_technique {
     public:
         static constexpr const char* WORLD_POSITION_OUTPUT_NAME = "position_output";
         static constexpr const char* DIFFUSE_COLOR_OUTPUT_NAME = "diffuse_output";
@@ -25,42 +17,17 @@ namespace opengl {
         static constexpr const GLuint NORMAL_OUTPUT_LOCATION = 2;
         static constexpr const GLuint TEXTURE_COORDINATE_OUTPUT_LOCATION = 3;
 
-        static constexpr const char* PROJECTION_MATRIX_NAME = "projectionMatrix";
-        static constexpr const char* VIEW_MATRIX_NAME = "viewMatrix";
-        static constexpr const char* MODEL_MATRIX_NAME = "modelMatrix";
-        static constexpr const char* MODEL_VIEW_MATRIX_NAME = "modelViewMatrix";
-        static constexpr const char* NORMAL_MATRIX_NAME = "normalMatrix";
-        static constexpr const char* TIME_NAME = "time";
+        material() = default;
 
-        material();
+        material(material&&) = default;
 
-        ~material();
-
-        void attach(std::shared_ptr<shader> shdr);
+        material& operator=(material&&) = default;
 
         void link();
 
-        void set_texture(std::string name, std::shared_ptr<texture> txt);
-
-        void bind(render_matrices* matrices);
-
-		GLuint object_ = 0; // TODO make this priavate
     private:
         material(const material&) = delete;
         material& operator=(const material&) = delete;
-
-        
-        GLint projection_matrix_location_ = -1;
-        GLint view_matrix_location_ = -1;
-        GLint model_matrix_location_ = -1;
-        GLint model_view_matrix_location_ = -1;
-        GLint normal_matrix_location_ = -1;
-        GLint time_location_ = -1;
-
-        GLint linked_ = GL_FALSE;
-        std::vector<std::shared_ptr<shader>> shaders_;
-        std::unordered_map<std::string, std::size_t> texture_map_;
-        std::vector<std::pair<GLint, std::shared_ptr<texture>>> textures_;
     };
 }
 }

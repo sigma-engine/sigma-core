@@ -6,6 +6,7 @@
 #include <sigma/graphics/point_light.hpp>
 #include <sigma/graphics/spot_light.hpp>
 #include <sigma/graphics/static_mesh_instance.hpp>
+#include <sigma/graphics/post_process_effect.hpp>
 #include <sigma/reflect/reflect.hpp>
 #include <sigma/transform.hpp>
 
@@ -33,6 +34,9 @@ public:
 
     RPROPERTY()
     graphics::shader_cache& shaders;
+
+    RPROPERTY()
+    graphics::post_process_effect_cache& effects;
 
     RPROPERTY()
     graphics::material_cache& materials;

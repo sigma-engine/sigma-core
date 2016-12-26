@@ -22,7 +22,7 @@ out vec3 n;
 
 void main()
 {
-    
+
     vec4 p = vec4(position, 1.0);
 
     eye_vector = normalize(vec3(modelViewMatrix * p));

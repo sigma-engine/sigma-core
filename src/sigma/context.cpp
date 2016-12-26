@@ -10,6 +10,7 @@ namespace sigma {
 context::context()
     : textures_(boost::filesystem::current_path() / ".." / "data")
     , shaders_(boost::filesystem::current_path() / ".." / "data")
+	, effects_(boost::filesystem::current_path() / ".." / "data", textures_, shaders_)
     , materials_(boost::filesystem::current_path() / ".." / "data", textures_, shaders_)
     , static_meshes_(boost::filesystem::current_path() / ".." / "data", materials_)
     , current_game_(nullptr)
@@ -24,6 +25,11 @@ graphics::texture_cache& context::textures()
 graphics::shader_cache& context::shaders()
 {
     return shaders_;
+}
+
+graphics::post_process_effect_cache& context::effects()
+{
+    return effects_;
 }
 
 graphics::material_cache& context::materials()
@@ -64,9 +70,9 @@ bool context::load_plugin(boost::filesystem::path path)
     return total != 0;
 }
 
-std::shared_ptr<graphics::renderer> context::create_renderer(std::string renderer_class,glm::ivec2 size)
+std::shared_ptr<graphics::renderer> context::create_renderer(std::string renderer_class, glm::ivec2 size)
 {
-    return renderer_classes[renderer_class]->create(this,size);
+    return renderer_classes[renderer_class]->create(this, size);
 }
 
 void context::set_game_class(std::string game_class)

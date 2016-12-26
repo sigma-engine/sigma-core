@@ -10,9 +10,13 @@ namespace sigma {
 namespace opengl {
     class texture_manager : public resource::resource_manager<graphics::texture, opengl::texture> {
     public:
-		texture_manager(resource::resource_cache<graphics::texture>& cache);
+        texture_manager(resource::resource_cache<graphics::texture>& cache);
 
-		virtual std::shared_ptr<opengl::texture> create(const graphics::texture& cpu_texture) override;
+        virtual std::shared_ptr<opengl::texture> create(const graphics::texture& cpu_texture) override;
+
+    private:
+        texture_manager(const texture_manager&) = delete;
+        texture_manager& operator=(const texture_manager&) = delete;
     };
 }
 }

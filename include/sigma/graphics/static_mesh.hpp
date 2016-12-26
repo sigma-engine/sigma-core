@@ -16,8 +16,8 @@
 #include <boost/serialization/vector.hpp>
 
 #include <array>
-#include <vector>
 #include <utility>
+#include <vector>
 
 namespace sigma {
 namespace graphics {
@@ -36,11 +36,7 @@ namespace graphics {
 
         static_mesh() = default;
 
-        static_mesh(const static_mesh&) = delete;
-
         static_mesh(static_mesh&&) = default;
-
-        static_mesh& operator=(const static_mesh&) = delete;
 
         static_mesh& operator=(static_mesh&&) = default;
 
@@ -60,6 +56,10 @@ namespace graphics {
 
         friend class static_mesh_cache;
         std::size_t reference_count = 0;
+
+    private:
+        static_mesh(const static_mesh&) = delete;
+        static_mesh& operator=(const static_mesh&) = delete;
     };
 
     class SIGMA_API static_mesh_cache : public resource::resource_cache<static_mesh> {

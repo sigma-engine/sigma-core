@@ -9,39 +9,41 @@
 #include <sigma/resource/resource_cache.hpp>
 
 #include <boost/serialization/access.hpp>
-#include <boost/serialization/utility.hpp>
 #include <boost/serialization/unordered_map.hpp>
+#include <boost/serialization/utility.hpp>
 
 #include <unordered_map>
 
 namespace sigma {
 namespace graphics {
-    class shader_technique {
-	public:
-		shader_technique() = default;
+    class SIGMA_API shader_technique {
+    public:
+        shader_technique() = default;
 
-		~shader_technique() = default;
+        ~shader_technique() = default;
 
-		shader_technique(shader_technique &&) = default;
+        shader_technique(shader_technique&&) = default;
 
-		std::unordered_map<shader_type, resource::identifier> shaders;
-		std::unordered_map<std::string, resource::identifier> textures;
+        shader_technique& operator=(shader_technique&&) = default;
 
-	private:
-		shader_technique(const shader_technique &) = delete;
-		shader_technique &operator =(const shader_technique &) = delete;
+        std::unordered_map<shader_type, resource::identifier> shaders;
+        std::unordered_map<std::string, resource::identifier> textures;
 
-		friend class boost::serialization::access;
-		template <class Archive>
-		void serialize(Archive& ar, const unsigned int version)
-		{
-			ar& shaders;
-			ar& textures;
-		}
+    private:
+        shader_technique(const shader_technique&) = delete;
+        shader_technique& operator=(const shader_technique&) = delete;
 
-		template<class>
-		friend class resource::resource_cache;
-		std::size_t reference_count = 0;
+        friend class boost::serialization::access;
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version)
+        {
+            ar& shaders;
+            ar& textures;
+        }
+
+        template <class>
+        friend class resource::resource_cache;
+        std::size_t reference_count = 0;
     };
 
     template <class T>
@@ -60,12 +62,11 @@ namespace graphics {
             if (r) {
                 auto& tech = resources_[resource_id];
 
-				// TODO shaders
-				
+                // TODO shaders
+
                 // TODO what if a shader is missing???
                 for (const auto& shdr : tech.shaders)
                     shaders_.increment_reference(shdr.second);
-					
 
                 // TODO what texture is missing???
                 for (const auto& txt : tech.textures)
@@ -79,7 +80,7 @@ namespace graphics {
             auto r = resource::resource_cache<T>::decrement_reference(resource_id);
             if (is_cached(resource_id)) {
                 auto& tech = resources_[resource_id];
-				// TODO shaders
+                // TODO shaders
                 for (const auto& shdr : tech.shaders)
                     shaders_.decrement_reference(shdr.second);
                 for (const auto& txt : tech.textures)

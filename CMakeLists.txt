@@ -41,6 +41,7 @@ set(LIBRARY_SOURCES
     src/sigma/graphics/static_mesh.cpp
     src/sigma/graphics/static_mesh_instance.cpp
     src/sigma/graphics/shader_technique.cpp
+    src/sigma/graphics/post_process_effect.cpp
 )
 set(LIBRARY_HEADERS
     include/sigma/game.hpp
@@ -67,6 +68,7 @@ set(LIBRARY_HEADERS
     include/sigma/resource/resource_cache.hpp
     include/sigma/resource/resource_manager.hpp
     include/sigma/graphics/shader_technique.hpp
+    include/sigma/graphics/post_process_effect.hpp
 )
 
 add_library(sigma-core SHARED ${LIBRARY_SOURCES} ${LIBRARY_HEADERS})
@@ -91,11 +93,7 @@ add_subdirectory(tools/scshader)
 add_subdirectory(tools/sctexture)
 add_subdirectory(tools/seditor)
 add_subdirectory(backends/graphics/sopengl)
-#
-#
-# # add_subdirectory(tests)
-#
+
+# add_subdirectory(tests)
+
 add_subdirectory(simple_game)
-#
-# #get_target_property(incs simple-game INCLUDE_DIRECTORIES)
-# #message(${incs})

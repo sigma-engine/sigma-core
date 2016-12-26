@@ -5,6 +5,7 @@
 #include <sigma/opengl/frame_buffer.hpp>
 #include <sigma/opengl/geometry_buffer.hpp>
 #include <sigma/opengl/material_manager.hpp>
+#include <sigma/opengl/post_process_effect_manager.hpp>
 #include <sigma/opengl/render_uniforms.hpp>
 #include <sigma/opengl/shader_manager.hpp>
 #include <sigma/opengl/static_mesh_manager.hpp>
@@ -34,19 +35,23 @@ namespace opengl {
         virtual void render(const graphics::view_port& viewport) override;
 
     private:
-        static const resource::identifier TEXTURE_BLIT_MAT;
+        renderer(const renderer&) = delete;
+        renderer& operator=(const renderer&) = delete;
+
+        static const resource::identifier TEXTURE_BLIT_EFFECT;
 
         context* ctx_;
         default_frame_buffer default_fbo_;
         geometry_buffer gbuffer_;
 
-        static_mesh fullscreen_quad_;
-
         texture_manager textures_;
         shader_manager shaders_;
+        post_process_effect_manager effects_;
         material_manager materials_;
         static_mesh_manager static_meshes_;
         render_matrices matrices_;
+
+		std::shared_ptr<post_process_effect> fullscreen_blit_;
     };
 }
 }

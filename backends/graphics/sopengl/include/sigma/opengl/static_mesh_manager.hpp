@@ -16,6 +16,9 @@ namespace opengl {
         virtual std::shared_ptr<opengl::static_mesh> create(const graphics::static_mesh& cpu_static_mesh) override;
 
     private:
+        static_mesh_manager(const static_mesh_manager&) = delete;
+        static_mesh_manager& operator=(const static_mesh_manager&) = delete;
+
         material_manager& materials_;
     };
 }
