@@ -18,6 +18,10 @@ namespace opengl {
 
         ~static_mesh();
 
+        void set_material(std::shared_ptr<material> mat);
+
+		std::shared_ptr<material> get_material();
+
         void render(render_matrices* matrices);
 
     private:

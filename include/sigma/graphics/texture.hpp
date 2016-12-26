@@ -21,11 +21,7 @@ namespace graphics {
 
         texture(texture&&) noexcept = default;
 
-        texture(const texture&) = delete;
-
         texture& operator=(texture&&) noexcept = default;
-
-        texture& operator=(const texture&) = delete;
 
         ~texture() = default;
 
@@ -40,6 +36,9 @@ namespace graphics {
         void set_data(unsigned int width, unsigned int height, const std::vector<unsigned char>& data);
 
     private:
+		texture(const texture&) = delete;
+		texture& operator=(const texture&) = delete;
+
         friend class boost::serialization::access;
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)

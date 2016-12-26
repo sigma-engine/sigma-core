@@ -30,28 +30,30 @@ namespace graphics {
     public:
         shader(shader_type type = shader_type::none, std::string code = "");
 
-        shader(const shader&) = delete;
-
         shader(shader&&) = default;
-
-        shader& operator=(const shader&) = delete;
 
         shader& operator=(shader&&) = default;
 
         ~shader() = default;
 
-        template <class Archive>
-        void serialize(Archive& ar, const unsigned int version)
-        {
-            ar& type;
-            ar& source;
-        }
-
         shader_type type = shader_type::none;
         std::string source;
 
-        friend class resource::resource_cache<shader>;
-        std::size_t reference_count = 0;
+	private:
+		shader(const shader&) = delete;
+		shader& operator=(const shader&) = delete;
+
+		friend class boost::serialization::access;
+		template <class Archive>
+		void serialize(Archive& ar, const unsigned int version)
+		{
+			ar& type;
+			ar& source;
+		}
+
+		template<class>
+		friend class resource::resource_cache;
+		std::size_t reference_count = 0;
     };
 
     using shader_cache = resource::resource_cache<shader>;

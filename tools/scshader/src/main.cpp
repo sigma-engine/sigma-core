@@ -4,9 +4,11 @@
 
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/program_options.hpp>
+#pragma warning(push, 0)  
 #include <boost/wave.hpp>
 #include <boost/wave/cpplexer/cpp_lex_iterator.hpp>
 #include <boost/wave/cpplexer/cpp_lex_token.hpp>
+#pragma warning(pop)  
 
 #include <fstream>
 #include <iostream>

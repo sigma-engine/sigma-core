@@ -59,18 +59,18 @@ int main(int argc, char const* argv[])
                         auto vertex_shader = value.asString();
                         if (!boost::starts_with(vertex_shader, "vertex://"))
                             vertex_shader = "vertex://" + vertex_shader;
-                        material.vertex_shader = vertex_shader;
+                        material.shaders[sigma::graphics::shader_type::vertex] = vertex_shader; // TODO warn if tring to set shader more that once
                     } else if (it.key() == "fragment") {
                         auto fragment_shader = value.asString();
                         if (!boost::starts_with(fragment_shader, "fragment://"))
                             fragment_shader = "fragment://" + fragment_shader;
-                        material.fragment_shader = fragment_shader;
+						material.shaders[sigma::graphics::shader_type::fragment] = fragment_shader; // TODO warn if tring to set shader more that once
                     } else if (it.key() == "textures") {
                         for (const auto& texture_object : value) {
                             auto texture_source = texture_object["source"].asString();
                             if (!boost::starts_with(texture_source, "texture://"))
                                 texture_source = "texture://" + texture_source;
-                            material.textures.emplace_back(texture_object["name"].asString(), texture_source);
+                            material.textures[texture_object["name"].asString()] = texture_source; // TODO warn if tring to set texture more than once
                         }
                     }
                 }

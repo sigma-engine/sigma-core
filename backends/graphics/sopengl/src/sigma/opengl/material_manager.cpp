@@ -15,8 +15,8 @@ namespace opengl {
     std::shared_ptr<opengl::material> material_manager::create(const graphics::material& cpu_material)
     {
         auto mat = std::make_shared<opengl::material>();
-        mat->attach(shaders_.get(cpu_material.vertex_shader));
-        mat->attach(shaders_.get(cpu_material.fragment_shader));
+		for(const auto &shdr:cpu_material.shaders) 
+			mat->attach(shaders_.get(shdr.second));
         mat->link();
 
         for (auto texture : cpu_material.textures)

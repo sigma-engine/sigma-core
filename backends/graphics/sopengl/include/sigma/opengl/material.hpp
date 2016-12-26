@@ -44,11 +44,12 @@ namespace opengl {
 
         void bind(render_matrices* matrices);
 
+		GLuint object_ = 0; // TODO make this priavate
     private:
         material(const material&) = delete;
         material& operator=(const material&) = delete;
 
-        GLuint object_ = 0;
+        
         GLint projection_matrix_location_ = -1;
         GLint view_matrix_location_ = -1;
         GLint model_matrix_location_ = -1;

@@ -12,6 +12,11 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES ".*[cC][lL][aA][nN]
     set(CMAKE_CXX_FLAGS "-fPIC")
 endif()
 
+if (MSVC)
+    # TODO fix these warnings in visual studio
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4275 /wd4251 /wd4996")
+endif()
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -35,6 +40,7 @@ set(LIBRARY_SOURCES
     src/sigma/resource/identifier.cpp
     src/sigma/graphics/static_mesh.cpp
     src/sigma/graphics/static_mesh_instance.cpp
+    src/sigma/graphics/shader_technique.cpp
 )
 set(LIBRARY_HEADERS
     include/sigma/game.hpp
@@ -60,6 +66,7 @@ set(LIBRARY_HEADERS
     include/sigma/graphics/static_mesh_instance.hpp
     include/sigma/resource/resource_cache.hpp
     include/sigma/resource/resource_manager.hpp
+    include/sigma/graphics/shader_technique.hpp
 )
 
 add_library(sigma-core SHARED ${LIBRARY_SOURCES} ${LIBRARY_HEADERS})
@@ -74,9 +81,9 @@ set(MAIN_SOURCES
 set(MAIN_HEADERS
 )
 
-# add_executable(sigma-runner ${MAIN_SOURCES} ${MAIN_HEADERS})
-# target_link_libraries(sigma-runner PUBLIC sigma-core)
-#
+add_executable(sigma-runner ${MAIN_SOURCES} ${MAIN_HEADERS})
+target_link_libraries(sigma-runner PUBLIC sigma-core)
+
 add_subdirectory(tools/scmaterial)
 add_subdirectory(tools/scmodel)
 add_subdirectory(tools/screflect)
@@ -86,6 +93,6 @@ add_subdirectory(tools/seditor)
 add_subdirectory(backends/graphics/sopengl)
 
 
-#add_subdirectory(tests)
+# add_subdirectory(tests)
 
 add_subdirectory(simple_game)

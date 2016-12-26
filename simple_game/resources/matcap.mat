@@ -1,0 +1,10 @@
+{
+    "vertex" : "matcap",
+    "fragment" : "matcap",
+    "textures": [
+        {
+            "name" : "matcap",
+            "source" : "matcap/textures/00028"
+        }
+    ]
+}

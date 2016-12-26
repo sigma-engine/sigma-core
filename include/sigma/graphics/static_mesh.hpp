@@ -17,6 +17,7 @@
 
 #include <array>
 #include <vector>
+#include <utility>
 
 namespace sigma {
 namespace graphics {

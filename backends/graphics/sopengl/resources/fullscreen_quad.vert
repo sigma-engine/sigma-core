@@ -23,5 +23,5 @@ void main()
     tangent = vertex_tangent;
     binormal = normalize(cross(tangent, normal));
     texcoord = vertex_texcoord;
-    gl_Position = vec4(vertex_position, 1); // projectionMatrix * vec4(mat3(viewMatrix) * vertex_position, 1);
+    gl_Position = vec4(vertex_position, 1);
 }

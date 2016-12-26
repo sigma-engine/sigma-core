@@ -15,7 +15,6 @@
 namespace sigma {
 
 namespace opengl {
-
     class renderer : public graphics::renderer {
     public:
         renderer(context* ctx, glm::ivec2 size);
@@ -24,20 +23,24 @@ namespace opengl {
 
         virtual void resize(glm::uvec2 size) override;
 
-		void geometry_pass(const graphics::view_port& viewport);
+        void geometry_pass(const graphics::view_port& viewport);
 
-		void begin_light_pass();
+        void begin_light_pass();
 
-		void light_pass(const graphics::view_port& viewport);
+        void light_pass(const graphics::view_port& viewport);
 
-		void end_light_pass();
+        void end_light_pass();
 
         virtual void render(const graphics::view_port& viewport) override;
 
     private:
+        static const resource::identifier TEXTURE_BLIT_MAT;
+
         context* ctx_;
-		default_frame_buffer default_fbo_;
+        default_frame_buffer default_fbo_;
         geometry_buffer gbuffer_;
+
+        static_mesh fullscreen_quad_;
 
         texture_manager textures_;
         shader_manager shaders_;

@@ -41,9 +41,18 @@ namespace opengl {
         glDeleteVertexArrays(1, &vertex_array_);
     }
 
+    void static_mesh::set_material(std::shared_ptr<material> mat)
+    {
+        material_ = mat;
+    }
+
+	std::shared_ptr<material> static_mesh::get_material()
+	{
+		return material_;
+	}
+
     void static_mesh::render(render_matrices* matrices)
     {
-        material_->bind(matrices);
         GL_CHECK(glBindVertexArray(vertex_array_));
         GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_));
         GL_CHECK(glDrawElements(GL_TRIANGLES, index_count_, GL_UNSIGNED_INT, nullptr));
