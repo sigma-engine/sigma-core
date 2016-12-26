@@ -42,107 +42,109 @@ function(add_resources target)
         set(package_PACKAGE_ROOT "${CMAKE_CURRENT_LIST_DIR}")
     endif()
 
-    get_target_property(include_dirs ${target} INCLUDE_DIRECTORIES)
-    set(include_args -I${package_PACKAGE_ROOT})
-    foreach(inc ${include_dirs})
-        list(APPEND include_args -I${inc})
-    endforeach()
-    list(REMOVE_DUPLICATES include_args)
+    if(package_UNPARSED_ARGUMENTS)
+        get_target_property(include_dirs ${target} INCLUDE_DIRECTORIES)
+        set(include_args -I${package_PACKAGE_ROOT})
+        foreach(inc ${include_dirs})
+            list(APPEND include_args -I${inc})
+        endforeach()
+        list(REMOVE_DUPLICATES include_args)
 
-    set(TIME_STAMPS)
-    set(resource_files ${package_UNPARSED_ARGUMENTS})
-    list(REMOVE_DUPLICATES resource_files)
+        set(TIME_STAMPS)
+        set(resource_files ${package_UNPARSED_ARGUMENTS})
+        list(REMOVE_DUPLICATES resource_files)
 
-    set(texture_files ${resource_files})
-    list(FILTER texture_files INCLUDE REGEX ${SIGMA_ENGINE_TEXTURE_REGEX})
-    foreach(texture ${texture_files})
-        file(RELATIVE_PATH texture_time_stamp ${package_PACKAGE_ROOT} ${texture})
-        set(texture_time_stamp "${CMAKE_BINARY_DIR}/data/${texture_time_stamp}.stamp")
+        set(texture_files ${resource_files})
+        list(FILTER texture_files INCLUDE REGEX ${SIGMA_ENGINE_TEXTURE_REGEX})
+        foreach(texture ${texture_files})
+            file(RELATIVE_PATH texture_time_stamp ${package_PACKAGE_ROOT} ${texture})
+            set(texture_time_stamp "${CMAKE_BINARY_DIR}/data/${texture_time_stamp}.stamp")
 
-        get_filename_component(directory ${texture_time_stamp} DIRECTORY)
-        file(MAKE_DIRECTORY ${directory})
+            get_filename_component(directory ${texture_time_stamp} DIRECTORY)
+            file(MAKE_DIRECTORY ${directory})
 
-        add_custom_command(
-            OUTPUT ${texture_time_stamp}
-            COMMAND ${TEXTURE_COMPILER} ARGS --output="${CMAKE_BINARY_DIR}/data" ${texture}
-            COMMAND ${CMAKE_COMMAND} ARGS -E touch ${texture_time_stamp}
-            MAIN_DEPENDENCY "${texture}"
-            WORKING_DIRECTORY ${package_PACKAGE_ROOT}
-            COMMENT ""
-            SOURCES ${texture}
-        )
-        set(TIME_STAMPS ${TIME_STAMPS} ${texture_time_stamp})
-    endforeach()
+            add_custom_command(
+                OUTPUT ${texture_time_stamp}
+                COMMAND ${TEXTURE_COMPILER} ARGS --output="${CMAKE_BINARY_DIR}/data" ${texture}
+                COMMAND ${CMAKE_COMMAND} ARGS -E touch ${texture_time_stamp}
+                MAIN_DEPENDENCY "${texture}"
+                WORKING_DIRECTORY ${package_PACKAGE_ROOT}
+                COMMENT ""
+                SOURCES ${texture}
+            )
+            set(TIME_STAMPS ${TIME_STAMPS} ${texture_time_stamp})
+        endforeach()
 
-    set(shader_files ${resource_files})
-    list(FILTER shader_files INCLUDE REGEX ${SIGMA_ENGINE_SHADER_REGEX})
-    foreach(shader ${shader_files})
-        file(RELATIVE_PATH shader_time_stamp ${package_PACKAGE_ROOT} ${shader})
-        set(shader_time_stamp "${CMAKE_BINARY_DIR}/data/${shader_time_stamp}.stamp")
+        set(shader_files ${resource_files})
+        list(FILTER shader_files INCLUDE REGEX ${SIGMA_ENGINE_SHADER_REGEX})
+        foreach(shader ${shader_files})
+            file(RELATIVE_PATH shader_time_stamp ${package_PACKAGE_ROOT} ${shader})
+            set(shader_time_stamp "${CMAKE_BINARY_DIR}/data/${shader_time_stamp}.stamp")
 
-        get_filename_component(directory ${shader_time_stamp} DIRECTORY)
-        file(MAKE_DIRECTORY ${directory})
+            get_filename_component(directory ${shader_time_stamp} DIRECTORY)
+            file(MAKE_DIRECTORY ${directory})
 
-        add_custom_command(
-            OUTPUT ${shader_time_stamp}
-            COMMAND ${SHADER_COMPILER} ARGS --output="${CMAKE_BINARY_DIR}/data" ${include_args} ${shader}
-            COMMAND ${CMAKE_COMMAND} ARGS -E touch ${shader_time_stamp}
-            MAIN_DEPENDENCY "${shader}"
-            WORKING_DIRECTORY ${package_PACKAGE_ROOT}
-            COMMENT ""
-            SOURCES ${shader}
-        )
-        set(TIME_STAMPS ${TIME_STAMPS} ${shader_time_stamp})
-    endforeach()
+            add_custom_command(
+                OUTPUT ${shader_time_stamp}
+                COMMAND ${SHADER_COMPILER} ARGS --output="${CMAKE_BINARY_DIR}/data" ${include_args} ${shader}
+                COMMAND ${CMAKE_COMMAND} ARGS -E touch ${shader_time_stamp}
+                MAIN_DEPENDENCY "${shader}"
+                WORKING_DIRECTORY ${package_PACKAGE_ROOT}
+                COMMENT ""
+                SOURCES ${shader}
+            )
+            set(TIME_STAMPS ${TIME_STAMPS} ${shader_time_stamp})
+        endforeach()
 
-    set(material_files ${resource_files})
-    list(FILTER material_files INCLUDE REGEX ${SIGMA_ENGINE_MATERIAL_REGEX})
-    foreach(material ${material_files})
-        file(RELATIVE_PATH material_time_stamp ${package_PACKAGE_ROOT} ${material})
-        set(material_time_stamp "${CMAKE_BINARY_DIR}/data/${material_time_stamp}.stamp")
+        set(material_files ${resource_files})
+        list(FILTER material_files INCLUDE REGEX ${SIGMA_ENGINE_MATERIAL_REGEX})
+        foreach(material ${material_files})
+            file(RELATIVE_PATH material_time_stamp ${package_PACKAGE_ROOT} ${material})
+            set(material_time_stamp "${CMAKE_BINARY_DIR}/data/${material_time_stamp}.stamp")
 
-        get_filename_component(directory ${material_time_stamp} DIRECTORY)
-        file(MAKE_DIRECTORY ${directory})
+            get_filename_component(directory ${material_time_stamp} DIRECTORY)
+            file(MAKE_DIRECTORY ${directory})
 
-        add_custom_command(
-            OUTPUT ${material_time_stamp}
-            COMMAND ${MATERIAL_COMPILER} ARGS --output="${CMAKE_BINARY_DIR}/data" ${material}
-            COMMAND ${CMAKE_COMMAND} ARGS -E touch ${material_time_stamp}
-            MAIN_DEPENDENCY "${material}"
-            WORKING_DIRECTORY ${package_PACKAGE_ROOT}
-            COMMENT ""
-            SOURCES ${material}
-        )
-        set(TIME_STAMPS ${TIME_STAMPS} ${material_time_stamp})
-    endforeach()
+            add_custom_command(
+                OUTPUT ${material_time_stamp}
+                COMMAND ${MATERIAL_COMPILER} ARGS --output="${CMAKE_BINARY_DIR}/data" ${material}
+                COMMAND ${CMAKE_COMMAND} ARGS -E touch ${material_time_stamp}
+                MAIN_DEPENDENCY "${material}"
+                WORKING_DIRECTORY ${package_PACKAGE_ROOT}
+                COMMENT ""
+                SOURCES ${material}
+            )
+            set(TIME_STAMPS ${TIME_STAMPS} ${material_time_stamp})
+        endforeach()
 
-    set(model_files ${resource_files})
-    list(FILTER model_files INCLUDE REGEX ${SIGMA_ENGINE_MODEL_REGEX})
-    foreach(model ${MODEL_SOURCES})
-        file(RELATIVE_PATH model_time_stamp ${package_PACKAGE_ROOT} ${model})
-        set(model_time_stamp "${CMAKE_BINARY_DIR}/data/${model_time_stamp}.stamp")
+        set(model_files ${resource_files})
+        list(FILTER model_files INCLUDE REGEX ${SIGMA_ENGINE_MODEL_REGEX})
+        foreach(model ${MODEL_SOURCES})
+            file(RELATIVE_PATH model_time_stamp ${package_PACKAGE_ROOT} ${model})
+            set(model_time_stamp "${CMAKE_BINARY_DIR}/data/${model_time_stamp}.stamp")
 
-        get_filename_component(directory ${model_time_stamp} DIRECTORY)
-        file(MAKE_DIRECTORY ${directory})
+            get_filename_component(directory ${model_time_stamp} DIRECTORY)
+            file(MAKE_DIRECTORY ${directory})
 
-        add_custom_command(
-            OUTPUT ${model_time_stamp}
-            COMMAND ${MODEL_COMPILER} ARGS --output="${CMAKE_BINARY_DIR}/data" ${model}
-            COMMAND ${CMAKE_COMMAND} ARGS -E touch ${model_time_stamp}
-            MAIN_DEPENDENCY "${model}"
-            WORKING_DIRECTORY ${package_PACKAGE_ROOT}
-            COMMENT ""
-            SOURCES ${model}
-        )
-        set(TIME_STAMPS ${TIME_STAMPS} ${model_time_stamp})
-    endforeach()
+            add_custom_command(
+                OUTPUT ${model_time_stamp}
+                COMMAND ${MODEL_COMPILER} ARGS --output="${CMAKE_BINARY_DIR}/data" ${model}
+                COMMAND ${CMAKE_COMMAND} ARGS -E touch ${model_time_stamp}
+                MAIN_DEPENDENCY "${model}"
+                WORKING_DIRECTORY ${package_PACKAGE_ROOT}
+                COMMENT ""
+                SOURCES ${model}
+            )
+            set(TIME_STAMPS ${TIME_STAMPS} ${model_time_stamp})
+        endforeach()
 
-    add_custom_target(${target}-resources ALL DEPENDS ${TIME_STAMPS})
-    add_dependencies(${target} ${target}-resources)
-    target_include_directories(${target} PUBLIC ${package_PACKAGE_ROOT})
+        add_custom_target(${target}-resources ALL DEPENDS ${TIME_STAMPS})
+        add_dependencies(${target} ${target}-resources)
+        target_include_directories(${target} PUBLIC ${package_PACKAGE_ROOT})
 
-    if(NOT DEFINED CONAN_BIN_DIRS_SIGMA-ENGINE)
-        add_dependencies(${target}-resources sctexture scshader scmaterial scmodel)
+        if(NOT DEFINED CONAN_BIN_DIRS_SIGMA-ENGINE)
+            add_dependencies(${target}-resources sctexture scshader scmaterial scmodel)
+        endif()
     endif()
 endfunction()
 
