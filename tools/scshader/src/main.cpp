@@ -107,6 +107,7 @@ int main(int argc, char const* argv[])
                         auto file_name = file_path.string();
                         context_type ctx(input_source.begin(), input_source.end(), file_name.c_str());
 
+						ctx.add_macro_definition("SIGMA_ENGINE_SHADER");
                         for (const auto& include_path : vm["include-dir"].as<std::vector<boost::filesystem::path>>()) {
                             auto dir = boost::filesystem::absolute(include_path);
                             ctx.add_include_path(dir.string().c_str());

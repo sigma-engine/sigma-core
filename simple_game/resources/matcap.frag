@@ -8,7 +8,6 @@ in vec3 vertex_tangent;
 in vec2 vertex_texcoord;
 in vec3 vertex_binormal;
 
-
 in vec3 eye_vector;
 in vec3 n;
 
