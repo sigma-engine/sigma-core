@@ -10,9 +10,9 @@ namespace sigma {
 context::context()
     : textures_(boost::filesystem::current_path() / ".." / "data")
     , shaders_(boost::filesystem::current_path() / ".." / "data")
-	, effects_(boost::filesystem::current_path() / ".." / "data", textures_, shaders_)
     , materials_(boost::filesystem::current_path() / ".." / "data", textures_, shaders_)
     , static_meshes_(boost::filesystem::current_path() / ".." / "data", materials_)
+	, effects_(boost::filesystem::current_path() / ".." / "data", textures_, shaders_, static_meshes_)
     , current_game_(nullptr)
 {
 }

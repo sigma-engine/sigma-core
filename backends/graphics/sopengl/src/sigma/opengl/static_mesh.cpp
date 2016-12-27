@@ -41,20 +41,17 @@ namespace opengl {
         glDeleteVertexArrays(1, &vertex_array_);
     }
 
-    void static_mesh::render(render_matrices* matrices)
+    void static_mesh::render()
     {
-        technique_->bind(matrices);
         GL_CHECK(glBindVertexArray(vertex_array_));
         GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_));
         GL_CHECK(glDrawElements(GL_TRIANGLES, index_count_, GL_UNSIGNED_INT, nullptr));
     }
 
-    void static_mesh::render(render_matrices* matrices, shader_technique* tech)
+    void static_mesh::render(render_matrices* matrices, int first_texture_slot)
     {
-        tech->bind(matrices);
-        GL_CHECK(glBindVertexArray(vertex_array_));
-        GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_));
-        GL_CHECK(glDrawElements(GL_TRIANGLES, index_count_, GL_UNSIGNED_INT, nullptr));
+        technique_->bind(matrices, first_texture_slot);
+        render();
     }
 }
 }

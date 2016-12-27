@@ -52,9 +52,9 @@ public:
 protected:
     graphics::texture_cache textures_;
     graphics::shader_cache shaders_;
-    graphics::post_process_effect_cache effects_;
     graphics::material_cache materials_;
     graphics::static_mesh_cache static_meshes_;
+	graphics::post_process_effect_cache effects_;
 
     std::unordered_map<std::string, boost::shared_ptr<game_class>> game_classes;
     std::unordered_map<std::string, boost::shared_ptr<graphics::renderer_class>> renderer_classes;

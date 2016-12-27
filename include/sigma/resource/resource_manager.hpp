@@ -14,6 +14,15 @@ namespace resource {
         {
         }
 
+		std::shared_ptr<InteralType> get_interal(resource::identifier resource_id)
+		{
+			// TODO this not very clean or safe
+			cache_.increment_reference(resource_id);
+			auto r = get(resource_id);
+			cache_.decrement_reference(resource_id);
+			return r;
+		}
+
         std::shared_ptr<InteralType> get(resource::identifier resource_id)
         {
             // TODO what should happen when missing resources!
@@ -27,7 +36,7 @@ namespace resource {
             return internals_[resource_id];
         }
 
-        // TODO release internal resources if the public resource's refcount goes to zero.
+        // TODO 'release' internal resources if the public resource's refcount goes to zero.
 
         virtual std::shared_ptr<InteralType> create(const PublicType& public_resource) = 0;
 

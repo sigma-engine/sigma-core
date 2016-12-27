@@ -30,6 +30,7 @@ private:
     std::shared_ptr<graphics::renderer> renderer_;
 
     GameView* item_;
+	glm::vec2 size_;
 };
 }
 

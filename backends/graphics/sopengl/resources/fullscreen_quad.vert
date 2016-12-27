@@ -1,27 +1,28 @@
 #version 330
 
-layout(location = 0) in vec3 vertex_position;
-layout(location = 1) in vec3 vertex_normal;
-layout(location = 2) in vec3 vertex_tangent;
-layout(location = 3) in vec2 vertex_texcoord;
+layout(location = 0) in vec3 in_position;
+layout(location = 1) in vec3 in_normal;
+layout(location = 2) in vec3 in_tangent;
+layout(location = 3) in vec2 in_texcoord;
 
-uniform mat4 projectionMatrix;
-uniform mat4 viewMatrix;
-uniform mat4 modelMatrix;
-uniform mat3 normalMatrix;
+uniform mat4 projection_matrix;
+uniform mat4 view_matrix;
+uniform mat4 model_matrix;
+uniform mat4 model_view_matrix;
+uniform mat3 normal_matrix;
 
-out vec3 position;
-out vec3 normal;
-out vec3 tangent;
-out vec2 texcoord;
-out vec3 binormal;
+out vec4 vertex_position;
+out vec3 vertex_normal;
+out vec3 vertex_tangent;
+out vec2 vertex_texcoord;
+out vec3 vertex_binormal;
 
 void main()
 {
-    position = mat3(modelMatrix) * vertex_position;
-    normal = vertex_normal;
-    tangent = vertex_tangent;
-    binormal = normalize(cross(tangent, normal));
-    texcoord = vertex_texcoord;
-    gl_Position = vec4(vertex_position, 1);
+    vertex_position = vec4(in_position,1);
+    vertex_normal = in_normal;
+    vertex_tangent = in_tangent;
+    vertex_binormal = normalize(cross(vertex_tangent, vertex_normal));
+    vertex_texcoord = in_texcoord;
+    gl_Position = vec4(in_position, 1);
 }

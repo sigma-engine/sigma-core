@@ -4,8 +4,11 @@
 #include <sigma/config.hpp>
 #include <sigma/context.hpp>
 #include <sigma/entity_manager.hpp>
-#include <sigma/graphics/static_mesh_instance.hpp>
+#include <sigma/graphics/directional_light.hpp>
+#include <sigma/graphics/point_light.hpp>
 #include <sigma/graphics/post_process_effect.hpp>
+#include <sigma/graphics/spot_light.hpp>
+#include <sigma/graphics/static_mesh_instance.hpp>
 #include <sigma/transform.hpp>
 
 #include <glm/mat4x4.hpp>
@@ -38,8 +41,12 @@ namespace graphics {
         entity_manager& entities;
         transform_manager& transforms;
         static_mesh_instance_manager& static_mesh_instances;
+        point_light_manager& point_lights;
+        directional_light_manager& directional_lights;
+        spot_light_manager& spot_lights;
         glm::mat4 projection_matrix;
         glm::mat4 view_matrix;
+        glm::vec2 size;
     };
 
     class SIGMA_API renderer {

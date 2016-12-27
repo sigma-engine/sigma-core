@@ -22,9 +22,9 @@ namespace opengl {
 
         ~static_mesh();
 
-        void render(render_matrices* matrices);
+        void render();
 
-        void render(render_matrices* matrices, shader_technique* tech);
+        void render(render_matrices* matrices, int first_texture_slot);
 
     private:
         static_mesh(const static_mesh&) = delete;

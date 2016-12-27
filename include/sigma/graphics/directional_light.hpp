@@ -5,11 +5,14 @@
 #include <sigma/config.hpp>
 #include <sigma/reflect/reflect.hpp>
 
+#include <glm/vec3.hpp>
+
 namespace sigma {
 namespace graphics {
 
     RCLASS()
     struct SIGMA_API directional_light {
+        glm::vec3 color;
     };
 
     using directional_light_manager = basic_component_manager<directional_light>;

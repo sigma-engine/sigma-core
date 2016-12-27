@@ -62,8 +62,6 @@ namespace graphics {
             if (r) {
                 auto& tech = resources_[resource_id];
 
-                // TODO shaders
-
                 // TODO what if a shader is missing???
                 for (const auto& shdr : tech.shaders)
                     shaders_.increment_reference(shdr.second);

@@ -39,6 +39,8 @@ namespace opengl {
         renderer& operator=(const renderer&) = delete;
 
         static const resource::identifier TEXTURE_BLIT_EFFECT;
+        static const resource::identifier DIRECTIONAL_LIGHT_EFFECT;
+        static const resource::identifier POINT_LIGHT_EFFECT;
 
         context* ctx_;
         default_frame_buffer default_fbo_;
@@ -46,12 +48,14 @@ namespace opengl {
 
         texture_manager textures_;
         shader_manager shaders_;
-        post_process_effect_manager effects_;
         material_manager materials_;
         static_mesh_manager static_meshes_;
+        post_process_effect_manager effects_;
         render_matrices matrices_;
 
-		std::shared_ptr<post_process_effect> fullscreen_blit_;
+        std::shared_ptr<post_process_effect> fullscreen_blit_;
+        std::shared_ptr<post_process_effect> directional_light_effect_;
+        std::shared_ptr<post_process_effect> point_light_effect_;
     };
 }
 }

@@ -15,11 +15,12 @@ namespace opengl {
     struct render_matrices;
     class shader_technique {
     public:
-        static constexpr const char* PROJECTION_MATRIX_NAME = "projectionMatrix";
-        static constexpr const char* VIEW_MATRIX_NAME = "viewMatrix";
-        static constexpr const char* MODEL_MATRIX_NAME = "modelMatrix";
-        static constexpr const char* MODEL_VIEW_MATRIX_NAME = "modelViewMatrix";
-        static constexpr const char* NORMAL_MATRIX_NAME = "normalMatrix";
+        static constexpr const char* PROJECTION_MATRIX_NAME = "projection_matrix";
+        static constexpr const char* VIEW_MATRIX_NAME = "view_matrix";
+        static constexpr const char* MODEL_MATRIX_NAME = "model_matrix";
+        static constexpr const char* MODEL_VIEW_MATRIX_NAME = "model_view_matrix";
+        static constexpr const char* NORMAL_MATRIX_NAME = "normal_matrix";
+        static constexpr const char* VIEW_PORT_SIZE_NAME = "view_port_size";
         static constexpr const char* TIME_NAME = "time";
 
         shader_technique();
@@ -34,9 +35,11 @@ namespace opengl {
 
         void link();
 
+        GLint get_uniform_location(const char* name);
+
         void set_texture(std::string name, std::shared_ptr<texture> txt);
 
-        void bind(render_matrices* matrices);
+        void bind(render_matrices* matrices, int first_texture_slot);
 
         GLuint object_;
 
@@ -46,6 +49,7 @@ namespace opengl {
         GLint model_matrix_location_ = -1;
         GLint model_view_matrix_location_ = -1;
         GLint normal_matrix_location_ = -1;
+        GLint view_port_size_location_ = -1;
         GLint time_location_ = -1;
 
         GLint linked_ = GL_FALSE;
