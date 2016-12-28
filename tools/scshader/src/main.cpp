@@ -89,6 +89,8 @@ int main(int argc, char const* argv[])
         file_path = boost::filesystem::absolute(file_path);
         if (sigma::util::directory_contains_file(boost::filesystem::current_path(), file_path)) {
             if (boost::filesystem::exists(file_path)) {
+                auto ext = file_path.extension();
+
                 std::cout << "Compiling shader: " << file_path << std::endl;
                 boost::wave::util::file_position_type current_position;
                 try {
@@ -108,6 +110,15 @@ int main(int argc, char const* argv[])
                         context_type ctx(input_source.begin(), input_source.end(), file_name.c_str());
 
                         ctx.add_macro_definition("SIGMA_ENGINE_SHADER");
+                        if (ext == ".vert")
+                            ctx.add_macro_definition("SIGMA_ENGINE_VERTEX_SHADER");
+                        else if (ext == ".frag")
+                            ctx.add_macro_definition("SIGMA_ENGINE_FRAGMENT_SHADER");
+                        else {
+                            std::cerr << "scshader: error: " << ext << " not supported." << std::endl;
+                            return -1;
+                        }
+
                         for (const auto& include_path : vm["include-dir"].as<std::vector<boost::filesystem::path>>()) {
                             auto dir = boost::filesystem::absolute(include_path);
                             ctx.add_include_path(dir.string().c_str());
@@ -124,9 +135,8 @@ int main(int argc, char const* argv[])
                             ++first;
                         }
 
-						// TODO validate the shader here.
+                        // TODO validate the shader here.
 
-                        auto ext = file_path.extension();
                         if (ext == ".vert") {
                             sigma::graphics::shader shader{ sigma::graphics::shader_type::vertex, output_source };
                             sigma::resource::development_identifier rid("vertex", file_path);
@@ -148,25 +158,28 @@ int main(int argc, char const* argv[])
                             oa << shader;
                         } else {
                             std::cerr << "scshader: error: " << ext << " not supported." << std::endl;
+                            return -1;
                         }
                     }
                 } catch (boost::wave::cpp_exception const& e) {
                     std::cerr << e.file_name() << "(" << e.line_no() << "): " << e.description() << std::endl;
-                    return 2;
+                    return -1;
                 } catch (std::exception const& e) {
                     std::cerr << current_position.get_file() << "(" << current_position.get_line() << "): "
                               << "exception caught: " << e.what() << std::endl;
-                    return 3;
+                    return -1;
                 } catch (...) {
                     std::cerr << current_position.get_file() << "(" << current_position.get_line() << "): "
                               << "unexpected exception caught." << std::endl;
-                    return 4;
+                    return -1;
                 }
             } else {
                 std::cerr << "scshader: error: file '" << file_path << "' does not exist!" << std::endl;
+                return -1;
             }
         } else {
             std::cerr << "scshader: error: file '" << file_path << "' is not contained in '" << boost::filesystem::current_path() << "'!" << std::endl;
+            return -1;
         }
     }
 
