@@ -1,13 +1,11 @@
 #version 330
 
+#include <post_process_effect.glsl>
 #include <vertex.glsl>
 #include <uniforms.glsl>
-
-uniform sampler2D in_image;
+#include <lighting.glsl>
 
 const vec4 gamma_correction = vec4(0.45454545454);
-
-out vec4 out_image;
 
 void main()
 {

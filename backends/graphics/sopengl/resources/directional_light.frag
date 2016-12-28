@@ -1,20 +1,14 @@
 #version 330
 
-#include <vertex.glsl>
+#include <lighting.glsl>
+#include <post_process_effect.glsl>
 #include <uniforms.glsl>
-#include "lighting.glsl"
+#include <vertex.glsl>
 
 uniform directional_light light;
 
-uniform sampler2D in_position;
-uniform sampler2D in_diffuse;
-uniform sampler2D in_normal;
-
-out vec4 out_image;
-
 void main()
 {
-
     vec2 uv = calculate_texture_coordinate();
     vec3 surface_position = texture(in_position, uv).xyz;
     vec3 surface_normal = texture(in_normal, uv).xyz;

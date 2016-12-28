@@ -1,16 +1,11 @@
 #version 330
 
-#include <vertex.glsl>
+#include <lighting.glsl>
+#include <post_process_effect.glsl>
 #include <uniforms.glsl>
-#include "lighting.glsl"
+#include <vertex.glsl>
 
 uniform point_light light;
-
-uniform sampler2D in_position;
-uniform sampler2D in_diffuse;
-uniform sampler2D in_normal;
-
-out vec4 out_image;
 
 void main()
 {

@@ -1,11 +1,9 @@
 #version 330
 
+#include <post_process_effect.glsl>
 #include <vertex.glsl>
 #include <uniforms.glsl>
-
-uniform sampler2D in_image;
-
-out vec4 out_image;
+#include <lighting.glsl>
 
 void main()
 {
