@@ -2,6 +2,11 @@
 #define SIGMA_ENGINE_OPENGL_VERTEX_GLSL
 
 #if defined(SIGMA_ENGINE_VERTEX_SHADER)
+layout(location = 0) in vec3 in_position;
+layout(location = 1) in vec3 in_normal;
+layout(location = 2) in vec3 in_tangent;
+layout(location = 3) in vec2 in_texcoord;
+
 out vertex_data
 {
     vec4 position;

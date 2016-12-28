@@ -80,7 +80,7 @@ namespace opengl {
                     matrices_.model_matrix = glm::mat4(1);
                     matrices_.model_matrix = glm::mat4_cast(txform.rotation) * glm::translate(glm::scale(matrices_.model_matrix, txform.scale), txform.position);
                     matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
-                    matrices_.normal_matrix = glm::mat3(glm::transpose(glm::inverse(matrices_.model_view_matrix)));
+                    matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
 
                     mesh->render(&matrices_, texture_unit::TEXTURE0);
                 }
@@ -118,7 +118,7 @@ namespace opengl {
                 matrices_.model_matrix = glm::mat4(1);
                 matrices_.model_matrix = glm::mat4_cast(txform.rotation) * glm::translate(glm::scale(matrices_.model_matrix, glm::vec3(txform.scale)), txform.position);
                 matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
-                matrices_.normal_matrix = glm::mat3(glm::transpose(glm::inverse(matrices_.model_view_matrix)));
+                matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
 
                 point_light_stencil_pass(txform, light);
                 point_light_pass(txform, light);
@@ -137,7 +137,7 @@ namespace opengl {
                 matrices_.model_matrix = glm::mat4(1);
                 matrices_.model_matrix = glm::mat4_cast(txform.rotation) * glm::translate(glm::scale(matrices_.model_matrix, glm::vec3(txform.scale)), txform.position);
                 matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
-                matrices_.normal_matrix = glm::mat3(glm::transpose(glm::inverse(matrices_.model_view_matrix)));
+                matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
 
                 directional_light_pass(txform, light);
             }
@@ -180,9 +180,10 @@ namespace opengl {
         GL_CHECK(glCullFace(GL_FRONT));
 
         // TODO this should be abstracted away better
+        auto view_space_position = matrices_.model_view_matrix * glm::vec4(txform.position, 1);
         point_light_effect_->bind();
         GL_CHECK(glUniform3fv(point_light_color_location_, 1, glm::value_ptr(light.color)));
-        GL_CHECK(glUniform3fv(point_light_position_location_, 1, glm::value_ptr(txform.position)));
+        GL_CHECK(glUniform3fv(point_light_position_location_, 1, glm::value_ptr(view_space_position)));
         GL_CHECK(glUniform1f(point_light_radius_location_, txform.scale.x)); // TODO non uniform scale on point light???
         GL_CHECK(glUniform1f(point_light_falloff_location_, light.falloff));
         GL_CHECK(glUniform1f(point_light_intensity_location_, light.intensity));
@@ -196,7 +197,7 @@ namespace opengl {
     void renderer::directional_light_pass(const transform& txform, const graphics::directional_light& light)
     {
         gbuffer_.bind_for_effect_pass();
-        
+
         GL_CHECK(glEnable(GL_BLEND));
         GL_CHECK(glBlendEquation(GL_FUNC_ADD));
         GL_CHECK(glBlendFunc(GL_ONE, GL_ONE));
@@ -208,7 +209,7 @@ namespace opengl {
 
         directional_light_effect_->apply(&matrices_);
 
-		GL_CHECK(glEnable(GL_CULL_FACE));
+        GL_CHECK(glEnable(GL_CULL_FACE));
         GL_CHECK(glDisable(GL_BLEND));
     }
 }
