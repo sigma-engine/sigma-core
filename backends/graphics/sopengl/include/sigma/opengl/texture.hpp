@@ -9,6 +9,19 @@
 
 namespace sigma {
 namespace opengl {
+    enum class texture_unit : GLenum {
+        TEXTURE0 = GL_TEXTURE0,
+        TEXTURE1 = GL_TEXTURE1,
+        TEXTURE2 = GL_TEXTURE2,
+        TEXTURE3 = GL_TEXTURE3,
+        TEXTURE4 = GL_TEXTURE4,
+        TEXTURE5 = GL_TEXTURE5,
+        TEXTURE6 = GL_TEXTURE6,
+        TEXTURE7 = GL_TEXTURE7,
+        TEXTURE8 = GL_TEXTURE8,
+        TEXTURE9 = GL_TEXTURE9,
+    };
+
     enum class internal_format : GLenum {
         // Base internal formats
         DEPTH_COMPONENT = GL_DEPTH_COMPONENT,
@@ -84,7 +97,7 @@ namespace opengl {
         //DEPTH_COMPONENT16F = GL_DEPTH_COMPONENT16F,
         //DEPTH_COMPONENT24F = GL_DEPTH_COMPONENT24F,
         DEPTH_COMPONENT32F = GL_DEPTH_COMPONENT32F,
-		DEPTH32F_STENCIL8 = GL_DEPTH32F_STENCIL8,
+        DEPTH32F_STENCIL8 = GL_DEPTH32F_STENCIL8,
 
         // Compressed internal formats
         COMPRESSED_RED = GL_COMPRESSED_RED,

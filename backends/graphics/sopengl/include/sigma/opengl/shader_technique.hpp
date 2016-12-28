@@ -12,6 +12,7 @@ namespace sigma {
 namespace opengl {
     class shader;
     class texture;
+	enum class texture_unit : GLenum;
     struct render_matrices;
     class shader_technique {
     public:
@@ -39,7 +40,7 @@ namespace opengl {
 
         void set_texture(std::string name, std::shared_ptr<texture> txt);
 
-        void bind(render_matrices* matrices, int first_texture_slot);
+        void bind(render_matrices* matrices, texture_unit first_texture_unit);
 
         GLuint object_;
 

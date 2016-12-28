@@ -1,8 +1,8 @@
 #include <sigma/opengl/post_process_effect.hpp>
 
+#include <sigma/opengl/geometry_buffer.hpp>
 #include <sigma/opengl/static_mesh.hpp>
 #include <sigma/opengl/util.hpp>
-#include <sigma/opengl/geometry_buffer.hpp>
 
 namespace sigma {
 namespace opengl {
@@ -21,7 +21,7 @@ namespace opengl {
 
     void post_process_effect::apply(render_matrices* matrices)
     {
-        this->bind(matrices, 4);
+        this->bind(matrices, geometry_buffer::FINAL_IMAGE_TEXTURE_UINT);
         GL_CHECK(glUniform1i(world_position_input_location_, geometry_buffer::WORLD_POSITION_OUTPUT_LOCATION));
         GL_CHECK(glUniform1i(diffuse_color_input_location_, geometry_buffer::DIFFUSE_COLOR_OUTPUT_LOCATION));
         GL_CHECK(glUniform1i(normal_input_location_, geometry_buffer::NORMAL_OUTPUT_LOCATION));

@@ -63,7 +63,7 @@ namespace opengl {
         auto it = texture_map_.find(name);
         if (it == texture_map_.end()) {
             auto ind = get_uniform_location(name.c_str());
-			// TODO maybe warn about the texture not being used?
+            // TODO maybe warn about the texture not being used?
             //assert(ind >= 0 && "Program does not have this texture!");
             if (ind >= 0) {
                 texture_map_[name] = textures_.size();
@@ -74,13 +74,13 @@ namespace opengl {
         textures_[texture_map_[name]].second = txt;
     }
 
-    void shader_technique::bind(render_matrices* matrices, int first_texture_slot)
+    void shader_technique::bind(render_matrices* matrices, texture_unit first_texture_unit)
     {
         GL_CHECK(glUseProgram(object_));
         auto size = textures_.size();
         for (uint32_t i = 0; i < size; ++i) {
             GL_CHECK(glUniform1i(textures_[i].first, i));
-            GL_CHECK(glActiveTexture(GL_TEXTURE0 + first_texture_slot + i));
+            GL_CHECK(glActiveTexture(GLenum(first_texture_unit) + i));
             textures_[i].second->bind();
         }
 

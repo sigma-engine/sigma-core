@@ -48,9 +48,9 @@ namespace opengl {
         GL_CHECK(glDrawElements(GL_TRIANGLES, index_count_, GL_UNSIGNED_INT, nullptr));
     }
 
-    void static_mesh::render(render_matrices* matrices, int first_texture_slot)
+    void static_mesh::render(render_matrices* matrices, texture_unit first_texture_unit)
     {
-        technique_->bind(matrices, first_texture_slot);
+        technique_->bind(matrices, first_texture_unit);
         render();
     }
 }

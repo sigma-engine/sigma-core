@@ -2,6 +2,7 @@
 
 #include <sigma/opengl/gl_core_4_2.h>
 #include <sigma/opengl/shader.hpp>
+#include <sigma/opengl/texture.hpp>
 #include <sigma/opengl/util.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -66,7 +67,7 @@ namespace opengl {
                     matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
                     matrices_.normal_matrix = glm::mat3(glm::transpose(glm::inverse(matrices_.model_view_matrix)));
 
-                    mesh->render(&matrices_, 0);
+                    mesh->render(&matrices_, texture_unit::TEXTURE0);
                 }
             }
         }

@@ -11,24 +11,22 @@ namespace opengl {
         , normal_texture_(internal_format::RGB32F, size)
         , depth_stencil_texture_(internal_format::DEPTH32F_STENCIL8, size)
     {
-        attach(frame_buffer::attachment::COLOR0, position_texture_);
-        attach(frame_buffer::attachment::COLOR1, diffuse_texture_);
-        attach(frame_buffer::attachment::COLOR2, normal_texture_);
+        attach(WORLD_POSITION_ATTACHMENT, position_texture_);
+        attach(DIFFUSE_COLOR_ATTACHMENT, diffuse_texture_);
+        attach(NORMAL_ATTACHMENT, normal_texture_);
         attach(frame_buffer::attachment::DEPTH_STENCIL_ATTACHMENT, depth_stencil_texture_);
-        draw_buffers({ frame_buffer::attachment::COLOR0,
-            frame_buffer::attachment::COLOR1,
-            frame_buffer::attachment::COLOR2 });
+        draw_buffers({ WORLD_POSITION_ATTACHMENT, DIFFUSE_COLOR_ATTACHMENT, NORMAL_ATTACHMENT });
     }
 
     void geometry_buffer::bind_textures()
     {
-        GL_CHECK(glActiveTexture(GL_TEXTURE0));
+        GL_CHECK(glActiveTexture(GLenum(WORLD_POSITION_TEXTURE_UINT)));
         position_texture_.bind();
 
-        GL_CHECK(glActiveTexture(GL_TEXTURE1));
+        GL_CHECK(glActiveTexture(GLenum(DIFFUSE_COLOR_TEXTURE_UINT)));
         diffuse_texture_.bind();
 
-        GL_CHECK(glActiveTexture(GL_TEXTURE2));
+        GL_CHECK(glActiveTexture(GLenum(NORMAL_TEXTURE_UINT)));
         normal_texture_.bind();
     }
 }

@@ -8,6 +8,16 @@ namespace sigma {
 namespace opengl {
     class geometry_buffer : public frame_buffer {
     public:
+        static constexpr const attachment WORLD_POSITION_ATTACHMENT = attachment::COLOR0;
+        static constexpr const attachment DIFFUSE_COLOR_ATTACHMENT = attachment::COLOR1;
+        static constexpr const attachment NORMAL_ATTACHMENT = attachment::COLOR2;
+        static constexpr const attachment FINAL_IMAGE_ATTACHMENT = attachment::COLOR3;
+
+        static constexpr const texture_unit WORLD_POSITION_TEXTURE_UINT = texture_unit::TEXTURE0;
+        static constexpr const texture_unit DIFFUSE_COLOR_TEXTURE_UINT = texture_unit::TEXTURE1;
+        static constexpr const texture_unit NORMAL_TEXTURE_UINT = texture_unit::TEXTURE2;
+        static constexpr const texture_unit FINAL_IMAGE_TEXTURE_UINT = texture_unit::TEXTURE3;
+
         static constexpr const char* WORLD_POSITION_OUTPUT_NAME = "position_output";
         static constexpr const char* DIFFUSE_COLOR_OUTPUT_NAME = "diffuse_output";
         static constexpr const char* NORMAL_OUTPUT_NAME = "normal_output";
