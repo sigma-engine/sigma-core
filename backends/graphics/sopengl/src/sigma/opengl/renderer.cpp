@@ -28,10 +28,18 @@ namespace opengl {
         , static_meshes_(ctx_->static_meshes(), materials_)
         , effects_(ctx_->effects(), textures_, shaders_, static_meshes_)
     {
-        fullscreen_blit_ = effects_.get_interal(TEXTURE_BLIT_EFFECT);
         point_light_effect_ = effects_.get_interal(POINT_LIGHT_EFFECT);
+        // TODO were should these go?
+        point_light_color_location_ = point_light_effect_->get_uniform_location("light.color");
+        point_light_position_location_ = point_light_effect_->get_uniform_location("light.position");
+        point_light_radius_location_ = point_light_effect_->get_uniform_location("light.radius");
+        point_light_falloff_location_ = point_light_effect_->get_uniform_location("light.falloff");
+        point_light_intensity_location_ = point_light_effect_->get_uniform_location("light.intensity");
         point_light_stencil_effect_ = effects_.get_interal(POINT_LIGHT_STENCIL_EFFECT);
+
         vignette_effect_ = effects_.get_interal(VIGNETTE_EFFECT);
+
+        fullscreen_blit_ = effects_.get_interal(TEXTURE_BLIT_EFFECT);
     }
 
     renderer::~renderer()
@@ -146,17 +154,14 @@ namespace opengl {
         GL_CHECK(glEnable(GL_CULL_FACE));
         GL_CHECK(glCullFace(GL_FRONT));
 
-        auto color_loc = point_light_effect_->get_uniform_location("light.color");
-        auto position_loc = point_light_effect_->get_uniform_location("light.position");
-        auto radius_loc = point_light_effect_->get_uniform_location("light.radius");
-        auto falloff_loc = point_light_effect_->get_uniform_location("light.falloff");
-        auto intensity_loc = point_light_effect_->get_uniform_location("light.intensity");
+        // TODO this should be abstracted away better
+        point_light_effect_->bind();
+        GL_CHECK(glUniform3fv(point_light_color_location_, 1, glm::value_ptr(light.color)));
+        GL_CHECK(glUniform3fv(point_light_position_location_, 1, glm::value_ptr(txform.position)));
+        GL_CHECK(glUniform1f(point_light_radius_location_, txform.scale.x)); // TODO non uniform scale on point light???
+        GL_CHECK(glUniform1f(point_light_falloff_location_, light.falloff));
+        GL_CHECK(glUniform1f(point_light_intensity_location_, light.intensity));
 
-        GL_CHECK(glUniform3fv(color_loc, 1, glm::value_ptr(light.color)));
-        GL_CHECK(glUniform3fv(position_loc, 1, glm::value_ptr(txform.position)));
-        GL_CHECK(glUniform1f(radius_loc, txform.scale.x)); // TODO non uniform scale on point light???
-        GL_CHECK(glUniform1f(falloff_loc, light.falloff));
-        GL_CHECK(glUniform1f(intensity_loc, light.intensity));
         point_light_effect_->apply(&matrices_);
 
         GL_CHECK(glCullFace(GL_BACK));

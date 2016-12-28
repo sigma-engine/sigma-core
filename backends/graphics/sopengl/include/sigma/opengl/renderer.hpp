@@ -52,10 +52,17 @@ namespace opengl {
         post_process_effect_manager effects_;
         render_matrices matrices_;
 
-        std::shared_ptr<post_process_effect> fullscreen_blit_;
+        // TODO were should these go?
+        GLint point_light_color_location_;
+        GLint point_light_position_location_;
+        GLint point_light_radius_location_;
+        GLint point_light_falloff_location_;
+        GLint point_light_intensity_location_;
         std::shared_ptr<post_process_effect> point_light_effect_;
         std::shared_ptr<post_process_effect> point_light_stencil_effect_;
+
         std::shared_ptr<post_process_effect> vignette_effect_;
+        std::shared_ptr<post_process_effect> fullscreen_blit_;
     };
 }
 }

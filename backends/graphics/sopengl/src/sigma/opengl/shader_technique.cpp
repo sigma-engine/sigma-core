@@ -74,6 +74,11 @@ namespace opengl {
         textures_[texture_map_[name]].second = txt;
     }
 
+	void shader_technique::bind()
+	{
+		GL_CHECK(glUseProgram(object_));
+	}
+
     void shader_technique::bind(render_matrices* matrices, texture_unit first_texture_unit)
     {
         GL_CHECK(glUseProgram(object_));

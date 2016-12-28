@@ -40,6 +40,8 @@ namespace opengl {
 
         void set_texture(std::string name, std::shared_ptr<texture> txt);
 
+		void bind();
+
         void bind(render_matrices* matrices, texture_unit first_texture_unit);
 
         GLuint object_;
