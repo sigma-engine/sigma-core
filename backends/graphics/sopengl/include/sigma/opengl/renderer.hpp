@@ -30,16 +30,19 @@ namespace opengl {
 
         void point_light_pass(const transform& txform, const graphics::point_light& light);
 
+        void directional_light_pass(const transform& txform, const graphics::directional_light& light);
+
         virtual void render(const graphics::view_port& viewport) override;
 
     private:
-        renderer(const renderer&) = delete;
-        renderer& operator=(const renderer&) = delete;
-
-        static const resource::identifier TEXTURE_BLIT_EFFECT;
         static const resource::identifier POINT_LIGHT_EFFECT;
         static const resource::identifier POINT_LIGHT_STENCIL_EFFECT;
+        static const resource::identifier DIRECTIONAL_LIGHT_EFFECT;
         static const resource::identifier VIGNETTE_EFFECT;
+        static const resource::identifier TEXTURE_BLIT_EFFECT;
+
+        renderer(const renderer&) = delete;
+        renderer& operator=(const renderer&) = delete;
 
         context* ctx_;
         default_frame_buffer default_fbo_;
@@ -61,7 +64,13 @@ namespace opengl {
         std::shared_ptr<post_process_effect> point_light_effect_;
         std::shared_ptr<post_process_effect> point_light_stencil_effect_;
 
+        // TODO were should these go?
+        GLint directional_light_color_location_;
+        GLint directional_light_intensity_location_;
+        std::shared_ptr<post_process_effect> directional_light_effect_;
+
         std::shared_ptr<post_process_effect> vignette_effect_;
+
         std::shared_ptr<post_process_effect> fullscreen_blit_;
     };
 }

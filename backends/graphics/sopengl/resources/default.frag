@@ -18,6 +18,7 @@ out vec4 normal_output;
 void main()
 {
     position_output = vertex_position;
-    diffuse_output = texture(basecolor_map,vertex_texcoord);
+    // TODO this should be done by sctexture
+    diffuse_output = pow(texture(basecolor_map,vertex_texcoord),vec4(2.2));
     normal_output = vec4(vertex_normal,1);
 }

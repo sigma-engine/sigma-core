@@ -12,7 +12,8 @@ namespace graphics {
 
     RCLASS()
     struct SIGMA_API directional_light {
-        glm::vec3 color;
+        glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
+        float intensity = 1.0f;
     };
 
     using directional_light_manager = basic_component_manager<directional_light>;

@@ -1,6 +1,11 @@
 #ifndef SIGMA_GRAPHICS_OPENGL_LIGHTING_H
 #define SIGMA_GRAPHICS_OPENGL_LIGHTING_H
 
+struct directional_light {
+    vec3 color;
+    float intensity;
+};
+
 struct point_light {
     vec3 color;
     vec3 position;
