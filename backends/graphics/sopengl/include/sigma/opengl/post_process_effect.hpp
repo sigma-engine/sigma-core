@@ -21,13 +21,11 @@ namespace opengl {
 
         void apply(render_matrices* matrices);
 
-        //void apply(render_matrices* matrices, int texture_unit);
-
     private:
-        GLint world_position_input_location_ = -1;
-        GLint diffuse_color_input_location_ = -1;
-        GLint normal_input_location_ = -1;
-        GLint texture_coordinate_input_location_ = -1;
+        GLint in_position_location_ = -1;
+        GLint in_diffuse_location_ = -1;
+        GLint in_normal_location_ = -1;
+		GLint in_image_location_ = -1;
 
         std::shared_ptr<static_mesh> mesh_;
 

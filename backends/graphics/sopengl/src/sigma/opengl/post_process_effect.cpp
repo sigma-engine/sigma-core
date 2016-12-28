@@ -14,17 +14,19 @@ namespace opengl {
     void post_process_effect::link()
     {
         shader_technique::link();
-        GL_CHECK(world_position_input_location_ = glGetUniformLocation(object_, geometry_buffer::WORLD_POSITION_INPUT_NAME));
-        GL_CHECK(diffuse_color_input_location_ = glGetUniformLocation(object_, geometry_buffer::DIFFUSE_COLOR_INPUT_NAME));
-        GL_CHECK(normal_input_location_ = glGetUniformLocation(object_, geometry_buffer::NORMAL_INPUT_NAME));
+        GL_CHECK(in_position_location_ = glGetUniformLocation(object_, geometry_buffer::WORLD_POSITION_INPUT_NAME));
+        GL_CHECK(in_diffuse_location_ = glGetUniformLocation(object_, geometry_buffer::DIFFUSE_COLOR_INPUT_NAME));
+        GL_CHECK(in_normal_location_ = glGetUniformLocation(object_, geometry_buffer::NORMAL_INPUT_NAME));
+		GL_CHECK(in_image_location_ = glGetUniformLocation(object_, geometry_buffer::IMAGE_INPUT_NAME));
     }
 
     void post_process_effect::apply(render_matrices* matrices)
     {
-        this->bind(matrices, geometry_buffer::FINAL_IMAGE_TEXTURE_UINT);
-        GL_CHECK(glUniform1i(world_position_input_location_, geometry_buffer::WORLD_POSITION_OUTPUT_LOCATION));
-        GL_CHECK(glUniform1i(diffuse_color_input_location_, geometry_buffer::DIFFUSE_COLOR_OUTPUT_LOCATION));
-        GL_CHECK(glUniform1i(normal_input_location_, geometry_buffer::NORMAL_OUTPUT_LOCATION));
+        this->bind(matrices, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
+        GL_CHECK(glUniform1i(in_position_location_, geometry_buffer::WORLD_POSITION_OUTPUT_LOCATION));
+        GL_CHECK(glUniform1i(in_diffuse_location_, geometry_buffer::DIFFUSE_COLOR_OUTPUT_LOCATION));
+        GL_CHECK(glUniform1i(in_normal_location_, geometry_buffer::NORMAL_OUTPUT_LOCATION));
+		GL_CHECK(glUniform1i(in_image_location_, geometry_buffer::FINAL_IMAGE_LOCATION));
         mesh_->render();
     }
 }

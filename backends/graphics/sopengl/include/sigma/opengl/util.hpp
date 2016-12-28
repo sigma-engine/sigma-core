@@ -6,11 +6,11 @@
 #include <sstream>
 #include <string>
 
-//#define USE_GL_CHECK
+#define USE_GL_CHECK
 #ifdef USE_GL_CHECK
 #define GL_CHECK(x)                                                                            \
+	x;																						   \
     {                                                                                          \
-        x;                                                                                     \
         auto gl_error_code_check = glGetError();                                               \
         if (gl_error_code_check != GL_NO_ERROR) {                                              \
             std::stringstream stream;                                                          \

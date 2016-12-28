@@ -94,7 +94,8 @@ namespace opengl {
 
         gbuffer_.bind_textures();
 
-        //GL_CHECK(glDisable(GL_BLEND));
+        GL_CHECK(glDisable(GL_BLEND));
+		glDisable(GL_CULL_FACE);
 
         for (auto e : viewport.entities) { // TODO use a filter here
             if (viewport.transforms.has(e) && viewport.point_lights.has(e)) {
@@ -121,28 +122,9 @@ namespace opengl {
 				GL_CHECK(glUniform1f(intensity_loc, light.intensity));
                 point_light_effect_->apply(&matrices_);
             }
-            /*if (viewport.transforms.has(e) && viewport.directional_lights.has(e)) {
-                const auto& txform = viewport.transforms.get(e);
-                const auto& light = viewport.directional_lights.get(e);
-
-                // TODO move this into an ecs
-                matrices_.model_matrix = glm::mat4(1);
-                matrices_.model_matrix = glm::mat4_cast(txform.rotation) * glm::translate(glm::scale(matrices_.model_matrix, txform.scale), txform.position);
-                matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
-                matrices_.normal_matrix = glm::mat3(glm::transpose(glm::inverse(matrices_.model_view_matrix)));
-
-                glm::vec3 direction{ matrices_.model_matrix * glm::vec4(0, 0, 1, 0) };
-
-                auto color_loc = directional_light_effect_->get_uniform_location("color");
-                auto direction_loc = directional_light_effect_->get_uniform_location("direction");
-                GL_CHECK(glUniform3fv(color_loc, 1, glm::value_ptr(light.color)));
-                GL_CHECK(glUniform3fv(direction_loc, 1, glm::value_ptr(direction)));
-                directional_light_effect_->apply(&matrices_);
-            }*/
         }
 
-        //fullscreen_blit_->apply(&matrices_, 1);
-
+		glEnable(GL_CULL_FACE);
         end_light_pass();
     }
 
@@ -155,9 +137,12 @@ namespace opengl {
         matrices_.projection_matrix = viewport.projection_matrix;
         matrices_.view_matrix = viewport.view_matrix;
         matrices_.size = viewport.size;
+		matrices_.model_matrix = glm::mat4(1);
+		matrices_.model_view_matrix = glm::mat4(1);
+		matrices_.normal_matrix = glm::mat3(1);
 
         geometry_pass(viewport);
-        light_pass(viewport);
+		light_pass(viewport);
     }
 }
 }
