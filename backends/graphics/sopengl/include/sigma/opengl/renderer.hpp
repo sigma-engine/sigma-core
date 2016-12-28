@@ -26,9 +26,9 @@ namespace opengl {
 
         void geometry_pass(const graphics::view_port& viewport);
 
-		void point_light_stencil_pass(const transform &txform, const graphics::point_light &light);
+        void point_light_stencil_pass(const transform& txform, const graphics::point_light& light);
 
-		void point_light_pass(const transform &txform, const graphics::point_light &light);
+        void point_light_pass(const transform& txform, const graphics::point_light& light);
 
         virtual void render(const graphics::view_port& viewport) override;
 
@@ -38,7 +38,8 @@ namespace opengl {
 
         static const resource::identifier TEXTURE_BLIT_EFFECT;
         static const resource::identifier POINT_LIGHT_EFFECT;
-		static const resource::identifier POINT_LIGHT_STENCIL_EFFECT;
+        static const resource::identifier POINT_LIGHT_STENCIL_EFFECT;
+        static const resource::identifier VIGNETTE_EFFECT;
 
         context* ctx_;
         default_frame_buffer default_fbo_;
@@ -53,7 +54,8 @@ namespace opengl {
 
         std::shared_ptr<post_process_effect> fullscreen_blit_;
         std::shared_ptr<post_process_effect> point_light_effect_;
-		std::shared_ptr<post_process_effect> point_light_stencil_effect_;
+        std::shared_ptr<post_process_effect> point_light_stencil_effect_;
+        std::shared_ptr<post_process_effect> vignette_effect_;
     };
 }
 }

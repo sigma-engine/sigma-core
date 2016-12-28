@@ -26,7 +26,7 @@ namespace opengl {
         GL_CHECK(glUniform1i(in_position_location_, geometry_buffer::WORLD_POSITION_OUTPUT_LOCATION));
         GL_CHECK(glUniform1i(in_diffuse_location_, geometry_buffer::DIFFUSE_COLOR_OUTPUT_LOCATION));
         GL_CHECK(glUniform1i(in_normal_location_, geometry_buffer::NORMAL_OUTPUT_LOCATION));
-		GL_CHECK(glUniform1i(in_image_location_, geometry_buffer::FINAL_IMAGE_LOCATION));
+		GL_CHECK(glUniform1i(in_image_location_, geometry_buffer::INPUT_IMAGE_LOCATION));
         mesh_->render();
     }
 }
