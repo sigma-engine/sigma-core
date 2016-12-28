@@ -11,11 +11,6 @@ namespace opengl {
 
     class post_process_effect : public shader_technique {
     public:
-        static constexpr const char* WORLD_POSITION_INPUT_NAME = "in_position";
-        static constexpr const char* DIFFUSE_COLOR_INPUT_NAME = "in_diffuse";
-        static constexpr const char* NORMAL_INPUT_NAME = "in_normal";
-        static constexpr const char* TEXTURE_COORDINATE_INPUT_NAME = "in_texture_coordinate";
-
         post_process_effect(std::shared_ptr<static_mesh> mesh);
 
         post_process_effect(post_process_effect&&) = default;

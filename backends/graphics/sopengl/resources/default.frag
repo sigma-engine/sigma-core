@@ -14,12 +14,10 @@ in vec3 vertex_binormal;
 out vec3 position_output;
 out vec3 diffuse_output;
 out vec3 normal_output;
-out vec3 texture_coordinate_output;
 
 void main()
 {
     position_output = vertex_position.rgb;
     diffuse_output = texture(basecolor_map,vertex_texcoord).rgb;
     normal_output = vertex_normal;
-    texture_coordinate_output = vec3(vertex_texcoord,0);
 }
