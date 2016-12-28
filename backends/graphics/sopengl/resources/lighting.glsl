@@ -3,6 +3,7 @@
 
 struct directional_light {
     vec3 color;
+    vec3 direction;
     float intensity;
 };
 
@@ -13,7 +14,6 @@ struct point_light {
     float falloff;
     float intensity;
 };
-
 
 float attenuation(float r, float f, float d)
 {

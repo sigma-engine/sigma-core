@@ -66,6 +66,7 @@ namespace opengl {
 
         // TODO were should these go?
         GLint directional_light_color_location_;
+        GLint directional_light_direction_location_;
         GLint directional_light_intensity_location_;
         std::shared_ptr<post_process_effect> directional_light_effect_;
 

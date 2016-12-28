@@ -41,6 +41,7 @@ namespace opengl {
         directional_light_effect_ = effects_.get_internal(DIRECTIONAL_LIGHT_EFFECT);
         // TODO were should these go?
         directional_light_color_location_ = directional_light_effect_->get_uniform_location("light.color");
+        directional_light_direction_location_ = directional_light_effect_->get_uniform_location("light.direction");
         directional_light_intensity_location_ = directional_light_effect_->get_uniform_location("light.intensity");
 
         vignette_effect_ = effects_.get_internal(VIGNETTE_EFFECT);
@@ -205,8 +206,10 @@ namespace opengl {
         GL_CHECK(glBlendFunc(GL_ONE, GL_ONE));
         GL_CHECK(glDisable(GL_CULL_FACE));
 
+        auto view_space_direction = matrices_.normal_matrix * glm::vec3(0, 0, -1);
         directional_light_effect_->bind();
         GL_CHECK(glUniform3fv(directional_light_color_location_, 1, glm::value_ptr(light.color)));
+        GL_CHECK(glUniform3fv(directional_light_direction_location_, 1, glm::value_ptr(view_space_direction)));
         GL_CHECK(glUniform1f(directional_light_intensity_location_, light.intensity));
 
         directional_light_effect_->apply(&matrices_);
