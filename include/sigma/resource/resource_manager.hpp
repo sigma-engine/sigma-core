@@ -14,7 +14,7 @@ namespace resource {
         {
         }
 
-		std::shared_ptr<InteralType> get_interal(resource::identifier resource_id)
+		std::shared_ptr<InteralType> get_internal(resource::identifier resource_id)
 		{
 			// TODO this not very clean or safe
 			cache_.increment_reference(resource_id);

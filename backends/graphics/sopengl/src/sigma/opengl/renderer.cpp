@@ -28,18 +28,18 @@ namespace opengl {
         , static_meshes_(ctx_->static_meshes(), materials_)
         , effects_(ctx_->effects(), textures_, shaders_, static_meshes_)
     {
-        point_light_effect_ = effects_.get_interal(POINT_LIGHT_EFFECT);
+        point_light_effect_ = effects_.get_internal(POINT_LIGHT_EFFECT);
         // TODO were should these go?
         point_light_color_location_ = point_light_effect_->get_uniform_location("light.color");
         point_light_position_location_ = point_light_effect_->get_uniform_location("light.position");
         point_light_radius_location_ = point_light_effect_->get_uniform_location("light.radius");
         point_light_falloff_location_ = point_light_effect_->get_uniform_location("light.falloff");
         point_light_intensity_location_ = point_light_effect_->get_uniform_location("light.intensity");
-        point_light_stencil_effect_ = effects_.get_interal(POINT_LIGHT_STENCIL_EFFECT);
+        point_light_stencil_effect_ = effects_.get_internal(POINT_LIGHT_STENCIL_EFFECT);
 
-        vignette_effect_ = effects_.get_interal(VIGNETTE_EFFECT);
+        vignette_effect_ = effects_.get_internal(VIGNETTE_EFFECT);
 
-        fullscreen_blit_ = effects_.get_interal(TEXTURE_BLIT_EFFECT);
+        fullscreen_blit_ = effects_.get_internal(TEXTURE_BLIT_EFFECT);
     }
 
     renderer::~renderer()
