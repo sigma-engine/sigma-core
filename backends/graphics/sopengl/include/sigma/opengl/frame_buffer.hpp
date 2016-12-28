@@ -51,7 +51,8 @@ namespace opengl {
             COLOR8 = GL_COLOR_ATTACHMENT8,
             COLOR9 = GL_COLOR_ATTACHMENT9,
             DEPTH = GL_DEPTH_ATTACHMENT,
-            STENCIL = GL_STENCIL_ATTACHMENT
+            STENCIL = GL_STENCIL_ATTACHMENT,
+			DEPTH_STENCIL_ATTACHMENT = GL_DEPTH_STENCIL_ATTACHMENT
         };
 
         frame_buffer(glm::ivec2 size);

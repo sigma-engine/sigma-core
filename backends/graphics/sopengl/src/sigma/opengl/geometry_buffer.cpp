@@ -9,12 +9,12 @@ namespace opengl {
         , position_texture_(internal_format::RGB32F, size)
         , diffuse_texture_(internal_format::RGB32F, size)
         , normal_texture_(internal_format::RGB32F, size)
-        , depth_texture_(internal_format::DEPTH_COMPONENT32F, size)
+        , depth_stencil_texture_(internal_format::DEPTH32F_STENCIL8, size)
     {
         attach(frame_buffer::attachment::COLOR0, position_texture_);
         attach(frame_buffer::attachment::COLOR1, diffuse_texture_);
         attach(frame_buffer::attachment::COLOR2, normal_texture_);
-        attach(frame_buffer::attachment::DEPTH, depth_texture_);
+        attach(frame_buffer::attachment::DEPTH_STENCIL_ATTACHMENT, depth_stencil_texture_);
         draw_buffers({ frame_buffer::attachment::COLOR0,
             frame_buffer::attachment::COLOR1,
             frame_buffer::attachment::COLOR2 });

@@ -32,7 +32,7 @@ namespace opengl {
         texture position_texture_;
         texture diffuse_texture_;
         texture normal_texture_;
-        texture depth_texture_;
+        texture depth_stencil_texture_;
     };
 }
 }

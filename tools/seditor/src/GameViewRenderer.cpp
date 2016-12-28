@@ -29,7 +29,7 @@ QOpenGLFramebufferObject* GameViewRenderer::createFramebufferObject(const QSize&
     // Create the frame buffer object and bind it
     QOpenGLFramebufferObjectFormat format;
     //format.setSamples(8);
-    format.setAttachment(QOpenGLFramebufferObject::Depth);
+    format.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
     auto frameBuffer = new QOpenGLFramebufferObject(size, format);
     frameBuffer->bind();
 
