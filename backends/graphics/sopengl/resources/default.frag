@@ -11,13 +11,13 @@ in vec3 vertex_tangent;
 in vec2 vertex_texcoord;
 in vec3 vertex_binormal;
 
-out vec3 position_output;
-out vec3 diffuse_output;
-out vec3 normal_output;
+out vec4 position_output;
+out vec4 diffuse_output;
+out vec4 normal_output;
 
 void main()
 {
-    position_output = vertex_position.rgb;
-    diffuse_output = texture(basecolor_map,vertex_texcoord).rgb;
-    normal_output = vertex_normal;
+    position_output = vertex_position;
+    diffuse_output = texture(basecolor_map,vertex_texcoord);
+    normal_output = vec4(vertex_normal,1);
 }

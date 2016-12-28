@@ -38,8 +38,15 @@ namespace opengl {
 
         geometry_buffer(glm::ivec2 size);
 
-        void bind_textures();
+		void bind_for_geometry_pass();
 
+		void bind_for_stencil_pass();
+
+		void bind_for_light_pass();
+
+		void clear_final_image(glm::vec4 color);
+
+		void bind_for_junk(); // TODO remove this
     private:
         geometry_buffer(const geometry_buffer&) = delete;
         geometry_buffer& operator=(const geometry_buffer&) = delete;
