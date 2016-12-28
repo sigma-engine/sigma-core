@@ -1,6 +1,7 @@
 #version 330
 
 #include <vertex.glsl>
+#include <uniforms.glsl>
 #include "lighting.glsl"
 
 uniform point_light light;
@@ -8,9 +9,6 @@ uniform point_light light;
 uniform sampler2D in_position;
 uniform sampler2D in_diffuse;
 uniform sampler2D in_normal;
-
-uniform mat4 view_matrix;
-
 
 out vec4 out_image;
 

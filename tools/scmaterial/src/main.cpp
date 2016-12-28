@@ -30,6 +30,11 @@ void compile_technique(T& technique, const Json::Value& technique_data)
             if (!boost::starts_with(fragment_shader, "fragment://"))
                 fragment_shader = "fragment://" + fragment_shader;
             technique.shaders[sigma::graphics::shader_type::fragment] = fragment_shader; // TODO warn if tring to set shader more that once
+        } else if (it.key() == "geometry") {
+            auto geometry_shader = value.asString();
+            if (!boost::starts_with(geometry_shader, "geometry://"))
+                geometry_shader = "geometry://" + geometry_shader;
+            technique.shaders[sigma::graphics::shader_type::geometry] = geometry_shader; // TODO warn if tring to set shader more that once
         } else if (it.key() == "textures") {
             for (const auto& texture_object : value) {
                 auto texture_source = texture_object["source"].asString();
@@ -64,7 +69,7 @@ int main(int argc, char const* argv[])
 
     if (vm.count("input-files") <= 0) {
         std::cerr << "scmaterial: fatal error: no input files." << std::endl;
-        return 0;
+        return -1;
     }
 
     auto outputdir = vm["output"].as<boost::filesystem::path>();
@@ -111,9 +116,11 @@ int main(int argc, char const* argv[])
                 }
             } else {
                 std::cerr << "file '" << file_path << "' does not exist!" << std::endl;
+                return -1;
             }
         } else {
             std::cerr << "file '" << file_path << "' is not contained in '" << boost::filesystem::current_path() << "'!" << std::endl;
+            return -1;
         }
     }
 

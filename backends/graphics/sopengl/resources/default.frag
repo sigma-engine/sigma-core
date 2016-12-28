@@ -1,6 +1,7 @@
 #version 330
 
 #include <vertex.glsl>
+#include <uniforms.glsl>
 
 uniform sampler2D basecolor_map;
 uniform sampler2D metallic_map;

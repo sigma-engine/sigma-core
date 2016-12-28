@@ -114,6 +114,8 @@ int main(int argc, char const* argv[])
                             ctx.add_macro_definition("SIGMA_ENGINE_VERTEX_SHADER");
                         else if (ext == ".frag")
                             ctx.add_macro_definition("SIGMA_ENGINE_FRAGMENT_SHADER");
+                        else if (ext == ".geom")
+                            ctx.add_macro_definition("SIGMA_ENGINE_GEOMETRY_SHADER");
                         else {
                             std::cerr << "scshader: error: " << ext << " not supported." << std::endl;
                             return -1;
@@ -150,6 +152,16 @@ int main(int argc, char const* argv[])
                             sigma::graphics::shader shader{ sigma::graphics::shader_type::fragment, output_source };
 
                             sigma::resource::development_identifier rid("fragment", file_path);
+                            auto final_path = outputdir / std::to_string(rid.value());
+
+                            std::ofstream stream{ final_path.string(), std::ios::binary | std::ios::out };
+                            boost::archive::binary_oarchive oa(stream);
+
+                            oa << shader;
+                        } else if (ext == ".geom") {
+                            sigma::graphics::shader shader{ sigma::graphics::shader_type::geometry, output_source };
+
+                            sigma::resource::development_identifier rid("geometry", file_path);
                             auto final_path = outputdir / std::to_string(rid.value());
 
                             std::ofstream stream{ final_path.string(), std::ios::binary | std::ios::out };

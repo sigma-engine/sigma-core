@@ -1,9 +1,9 @@
 #version 330
 
 #include <vertex.glsl>
+#include <uniforms.glsl>
 
 uniform sampler2D in_image;
-uniform vec2 view_port_size;
 
 out vec4 out_image;
 

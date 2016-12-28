@@ -1,6 +1,8 @@
 #ifndef SIGMA_GRAPHICS_OPENGL_LIGHTING_H
 #define SIGMA_GRAPHICS_OPENGL_LIGHTING_H
 
+#include <uniforms.glsl>
+
 struct directional_light {
     vec3 color;
     float intensity;
@@ -13,9 +15,6 @@ struct point_light {
     float falloff;
     float intensity;
 };
-
-// TODO should this be here or some other location?
-uniform vec2 view_port_size;
 
 vec2 calculate_texture_coordinate()
 {
@@ -30,7 +29,7 @@ float attenuation(float r, float f, float d)
     return max(t, 0.0);
 }
 
-#define PI 3.1415
+#define PI 3.1415 // TODO PI
 float orenNayarDiffuse(vec3 lightDirection, vec3 viewDirection, vec3 surfaceNormal, float roughness, float albedo)
 {
 

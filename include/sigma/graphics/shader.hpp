@@ -22,7 +22,8 @@ namespace graphics {
     enum class shader_type {
         none,
         vertex,
-        fragment
+        fragment,
+        geometry
     };
 
     RCLASS()
@@ -36,24 +37,25 @@ namespace graphics {
 
         ~shader() = default;
 
+        // TODO make these private
         shader_type type = shader_type::none;
         std::string source;
 
-	private:
-		shader(const shader&) = delete;
-		shader& operator=(const shader&) = delete;
+    private:
+        shader(const shader&) = delete;
+        shader& operator=(const shader&) = delete;
 
-		friend class boost::serialization::access;
-		template <class Archive>
-		void serialize(Archive& ar, const unsigned int version)
-		{
-			ar& type;
-			ar& source;
-		}
+        friend class boost::serialization::access;
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version)
+        {
+            ar& type;
+            ar& source;
+        }
 
-		template<class>
-		friend class resource::resource_cache;
-		std::size_t reference_count = 0;
+        template <class>
+        friend class resource::resource_cache;
+        std::size_t reference_count = 0;
     };
 
     using shader_cache = resource::resource_cache<shader>;

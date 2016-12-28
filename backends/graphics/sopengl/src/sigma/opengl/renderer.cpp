@@ -196,13 +196,11 @@ namespace opengl {
     void renderer::directional_light_pass(const transform& txform, const graphics::directional_light& light)
     {
         gbuffer_.bind_for_effect_pass();
-
-        GL_CHECK(glDisable(GL_DEPTH_TEST));
+        
         GL_CHECK(glEnable(GL_BLEND));
         GL_CHECK(glBlendEquation(GL_FUNC_ADD));
         GL_CHECK(glBlendFunc(GL_ONE, GL_ONE));
         GL_CHECK(glDisable(GL_CULL_FACE));
-        GL_CHECK(glCullFace(GL_FRONT));
 
         directional_light_effect_->bind();
         GL_CHECK(glUniform3fv(directional_light_color_location_, 1, glm::value_ptr(light.color)));
@@ -210,7 +208,7 @@ namespace opengl {
 
         directional_light_effect_->apply(&matrices_);
 
-        GL_CHECK(glCullFace(GL_BACK));
+		GL_CHECK(glEnable(GL_CULL_FACE));
         GL_CHECK(glDisable(GL_BLEND));
     }
 }

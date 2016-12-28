@@ -2,7 +2,8 @@
 #define SIGMA_ENGINE_OPENGL_VERTEX_GLSL
 
 #if defined(SIGMA_ENGINE_VERTEX_SHADER)
-out vertex_data {
+out vertex_data
+{
     vec4 position;
     vec3 normal;
     vec3 tangent;
@@ -10,7 +11,8 @@ out vertex_data {
     vec3 binormal;
 } out_vertex;
 #elif defined(SIGMA_ENGINE_FRAGMENT_SHADER)
-in vertex_data {
+in vertex_data
+{
     vec4 position;
     vec3 normal;
     vec3 tangent;
@@ -18,7 +20,8 @@ in vertex_data {
     vec3 binormal;
 } in_vertex;
 #elif defined(SIGMA_ENGINE_GEOMETRY_SHADER)
-in vertex_data {
+in vertex_data
+{
     vec4 position;
     vec3 normal;
     vec3 tangent;

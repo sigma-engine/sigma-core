@@ -15,7 +15,7 @@ function(generate_type_regex_and_glob name)
 endfunction()
 
 generate_type_regex_and_glob(TEXTURE png jpeg jpg jpeg jpe jif jfif jfi tiff tif)
-generate_type_regex_and_glob(SHADER vert frag tesc geom frag comp)
+generate_type_regex_and_glob(SHADER vert frag tesc geom comp)
 generate_type_regex_and_glob(MATERIAL mat eff)
 generate_type_regex_and_glob(MODEL 3ds blend dae fbx ifc-step ase dxf hmp md2 md3 md5 mdc mdl nff ply stl x obj opengex smd lwo lxo lws ter ac3d ms3d cob q3bsp xgl csm bvh b3d ndo q3d assbin gltf 3mf)
 
