@@ -61,6 +61,8 @@ namespace opengl {
     {
         gbuffer_.bind_for_geometry_pass();
 
+        GL_CHECK(glDisable(GL_BLEND));
+
         GL_CHECK(glEnable(GL_DEPTH_TEST));
         GL_CHECK(glDepthMask(GL_TRUE));
 

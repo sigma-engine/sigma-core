@@ -11,8 +11,9 @@ uniform sampler2D roughness_map;
 
 void main()
 {
-    position_output = in_vertex.position;
-    // TODO this should be done by sctexture
-    diffuse_output = pow(texture(basecolor_map, in_vertex.texcoord), vec4(2.2));
-    normal_output = vec4(in_vertex.normal, 1);
+    surface s;
+    s.position = in_vertex.position.xyz;
+    s.diffuse = pow(texture(basecolor_map, in_vertex.texcoord).rgb, vec3(2.2));
+    s.normal = in_vertex.normal.xyz;
+    write_geometry_buffer(s);
 }

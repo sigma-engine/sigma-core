@@ -1,9 +1,6 @@
 #version 330
 
 #include <post_process_effect.glsl>
-#include <vertex.glsl>
-#include <uniforms.glsl>
-#include <lighting.glsl>
 
 void main()
 {

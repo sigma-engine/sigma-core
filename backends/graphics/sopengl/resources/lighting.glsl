@@ -1,8 +1,6 @@
 #ifndef SIGMA_GRAPHICS_OPENGL_LIGHTING_H
 #define SIGMA_GRAPHICS_OPENGL_LIGHTING_H
 
-#include <uniforms.glsl>
-
 struct directional_light {
     vec3 color;
     float intensity;
@@ -16,10 +14,6 @@ struct point_light {
     float intensity;
 };
 
-vec2 calculate_texture_coordinate()
-{
-    return gl_FragCoord.xy / view_port_size;
-}
 
 float attenuation(float r, float f, float d)
 {
