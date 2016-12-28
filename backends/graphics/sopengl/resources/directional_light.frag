@@ -1,5 +1,6 @@
 #version 330
 
+#include <vertex.glsl>
 #include "lighting.glsl"
 
 uniform directional_light light;
@@ -10,12 +11,6 @@ uniform sampler2D in_normal;
 
 uniform mat4 view_matrix;
 uniform mat4 model_matrix;
-
-in vec4 vertex_position;
-in vec3 vertex_normal;
-in vec3 vertex_tangent;
-in vec2 vertex_texcoord;
-in vec3 vertex_binormal;
 
 out vec4 out_image;
 
@@ -30,6 +25,7 @@ void main()
     vec3 L = normalize((model_matrix * vec4(0, 0, -1, 0)).xyz); // TODO move to the cpu
     vec3 V = (view_matrix * vec4(0, 0, -1, 0)).xyz; // TODO move to the cpu
     vec3 o = light.intensity * light.color * surface_diffuse * orenNayarDiffuse(L, V, surface_normal, .2, .8);
+    //vec3 o = fresnel(vec3(.03), V, surface_normal);
 
     out_image = vec4(o, 1);
 }

@@ -48,4 +48,13 @@ float orenNayarDiffuse(vec3 lightDirection, vec3 viewDirection, vec3 surfaceNorm
     return albedo * max(0.0, NdotL) * (A + B * s / t) / PI;
 }
 
+vec3 fresnel(vec3 cspec, vec3 n, vec3 l)
+{
+    vec3 t = vec3(1 - dot(l, n));
+    vec3 t2 = t * t;
+    vec3 t4 = t2 * t2;
+    vec3 t5 = t * t4;
+    return cspec + (vec3(1) - cspec) * t5;
+}
+
 #endif // SIGMA_GRAPHICS_OPENGL_LIGHTING_H
