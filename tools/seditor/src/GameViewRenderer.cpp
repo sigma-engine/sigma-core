@@ -38,6 +38,7 @@ QOpenGLFramebufferObject* GameViewRenderer::createFramebufferObject(const QSize&
 	size_ = glm::vec2{ size.width(), size.height() };
 
     // Setup the viewport projection
+	// TODO do not hard code z near, far and fov
     projectionMatrix_ = glm::perspective(0.785398f, float(size.width()) / float(size.height()), 0.01f, 10000.0f);
 
     return frameBuffer;
@@ -69,6 +70,7 @@ void GameViewRenderer::render()
 					g->spot_lights,
 					projectionMatrix_,
 					viewMatrix_,
+					0.01f, 10000.0f, // TODO do not hard code z near and far
 					size_
                 };
                 renderer_->render(vp);

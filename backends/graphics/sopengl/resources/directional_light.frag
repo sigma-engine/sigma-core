@@ -9,6 +9,7 @@ void main()
 {
     surface s = read_geometry_buffer();
 
+
     vec3 L = normalize(light.direction);
     vec3 V = -normalize(s.position);
     vec3 o = light.intensity * light.color * s.diffuse * orenNayarDiffuse(L, V, s.normal, .2, .8);

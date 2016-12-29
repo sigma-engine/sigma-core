@@ -18,7 +18,7 @@ namespace opengl {
         attach(DIFFUSE_COLOR_ATTACHMENT, diffuse_texture_);
         attach(NORMAL_ATTACHMENT, normal_texture_);
         attach(OUTPUT_IMAGE_ATTACHMENT, images_[output_image_]);
-        attach(frame_buffer::attachment::DEPTH_STENCIL_ATTACHMENT, depth_stencil_texture_);
+        attach(frame_buffer::attachment::DEPTH_STENCIL, depth_stencil_texture_);
         draw_buffers({ WORLD_POSITION_ATTACHMENT, DIFFUSE_COLOR_ATTACHMENT, NORMAL_ATTACHMENT });
     }
 

@@ -11,6 +11,8 @@ namespace opengl {
         glm::mat4 model_matrix;
         glm::mat4 model_view_matrix;
         glm::mat3 normal_matrix;
+		float z_near;
+		float z_far;
         glm::vec2 size;
     };
 }

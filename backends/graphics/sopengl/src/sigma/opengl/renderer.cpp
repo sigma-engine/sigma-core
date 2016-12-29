@@ -97,7 +97,9 @@ namespace opengl {
     {
         matrices_.projection_matrix = viewport.projection_matrix;
         matrices_.view_matrix = viewport.view_matrix;
-        matrices_.size = viewport.size;
+        matrices_.z_near = viewport.z_near;
+		matrices_.z_far = viewport.z_far;
+		matrices_.size = viewport.size;
         matrices_.model_matrix = glm::mat4(1);
         matrices_.model_view_matrix = glm::mat4(1);
         matrices_.normal_matrix = glm::mat3(1);

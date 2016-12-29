@@ -52,7 +52,7 @@ namespace opengl {
             COLOR9 = GL_COLOR_ATTACHMENT9,
             DEPTH = GL_DEPTH_ATTACHMENT,
             STENCIL = GL_STENCIL_ATTACHMENT,
-			DEPTH_STENCIL_ATTACHMENT = GL_DEPTH_STENCIL_ATTACHMENT,
+			DEPTH_STENCIL = GL_DEPTH_STENCIL_ATTACHMENT,
 			NONE = GL_NONE
         };
 
@@ -61,6 +61,8 @@ namespace opengl {
         ~frame_buffer();
 
         void attach(attachment att, texture& txt);
+
+		void dettach(attachment att);
 
         void read_buffer(attachment att);
 

@@ -47,6 +47,8 @@ namespace opengl {
         GL_CHECK(model_matrix_location_ = glGetUniformLocation(object_, MODEL_MATRIX_NAME));
         GL_CHECK(model_view_matrix_location_ = glGetUniformLocation(object_, MODEL_VIEW_MATRIX_NAME));
         GL_CHECK(normal_matrix_location_ = glGetUniformLocation(object_, NORMAL_MATRIX_NAME));
+		GL_CHECK(z_near_location_ = glGetUniformLocation(object_, Z_NEAR_NAME));
+		GL_CHECK(z_far_location_ = glGetUniformLocation(object_, Z_FAR_NAME));
         GL_CHECK(view_port_size_location_ = glGetUniformLocation(object_, VIEW_PORT_SIZE_NAME));
         GL_CHECK(time_location_ = glGetUniformLocation(object_, TIME_NAME));
     }
@@ -94,6 +96,8 @@ namespace opengl {
         GL_CHECK(glUniformMatrix4fv(model_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->model_matrix)));
         GL_CHECK(glUniformMatrix4fv(model_view_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->model_view_matrix)));
         GL_CHECK(glUniformMatrix3fv(normal_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->normal_matrix)));
+		GL_CHECK(glUniform1f(z_near_location_, matrices->z_near));
+		GL_CHECK(glUniform1f(z_far_location_, matrices->z_far));
         GL_CHECK(glUniform2fv(view_port_size_location_, 1, glm::value_ptr(matrices->size)));
     }
 }
