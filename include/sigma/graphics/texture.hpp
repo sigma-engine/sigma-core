@@ -36,8 +36,8 @@ namespace graphics {
         void set_data(unsigned int width, unsigned int height, const std::vector<unsigned char>& data);
 
     private:
-		texture(const texture&) = delete;
-		texture& operator=(const texture&) = delete;
+        texture(const texture&) = delete;
+        texture& operator=(const texture&) = delete;
 
         friend class boost::serialization::access;
         template <class Archive>

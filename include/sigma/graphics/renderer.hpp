@@ -46,8 +46,8 @@ namespace graphics {
         spot_light_manager& spot_lights;
         glm::mat4 projection_matrix;
         glm::mat4 view_matrix;
-		float z_near;
-		float z_far;
+        float z_near;
+        float z_far;
         glm::vec2 size;
     };
 

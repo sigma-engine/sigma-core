@@ -1,2 +1,2 @@
 #!/bin/bash
-clang-format -style='WebKit' -i `find . -type f -name "*.vert" -o -name "*.frag" -o -name "*.cpp" -o -name "*.hpp" | tr "\n" " "`
+clang-format -style='WebKit' -i `find . -type f -name "*.vert" -o -name "*.frag" -o -name "*.mat" -o -name "*.eff" -o -name "*.geom" -o -name "*.glsl" -o -name "*.cpp" -o -name "*.hpp" | tr "\n" " "`

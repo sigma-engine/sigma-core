@@ -9,7 +9,7 @@ namespace opengl {
 
     std::shared_ptr<opengl::texture> texture_manager::create(const graphics::texture& cpu_texture)
     {
-		// TODO support more than just rgba interal formats
+        // TODO support more than just rgba interal formats
         return std::make_shared<opengl::texture>(internal_format::RGBA, cpu_texture.size(), cpu_texture.data());
     }
 }

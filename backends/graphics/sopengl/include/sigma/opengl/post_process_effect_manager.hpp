@@ -9,8 +9,8 @@
 namespace sigma {
 namespace opengl {
     class texture_manager;
-	class shader_manager;
-	class static_mesh_manager;
+    class shader_manager;
+    class static_mesh_manager;
     class post_process_effect_manager : public resource::resource_manager<graphics::post_process_effect, opengl::post_process_effect> {
     public:
         post_process_effect_manager(resource::resource_cache<graphics::post_process_effect>& cache, texture_manager& textures, shader_manager& shaders, static_mesh_manager& meshes);
@@ -23,7 +23,7 @@ namespace opengl {
 
         texture_manager& textures_;
         shader_manager& shaders_;
-		static_mesh_manager& meshes_;
+        static_mesh_manager& meshes_;
     };
 }
 }

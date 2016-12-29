@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.7)
 project(sigma-engine)
 
 include(${CMAKE_SOURCE_DIR}/sigma_setup.cmake)

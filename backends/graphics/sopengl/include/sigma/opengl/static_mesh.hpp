@@ -12,7 +12,7 @@ namespace sigma {
 namespace opengl {
     struct render_matrices;
     class shader_technique;
-	enum class texture_unit : GLenum;
+    enum class texture_unit : GLenum;
     class static_mesh {
     public:
         static_mesh(const std::vector<graphics::static_mesh::vertex>& vertices, const std::vector<graphics::static_mesh::triangle>& triangles, std::shared_ptr<shader_technique> tech);

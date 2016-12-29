@@ -1,5 +1,6 @@
 {
-    "fragment": "directional_light",
-    "textures": [
+    "fragment" : "directional_light",
+                 "textures" : [
+
     ]
 }

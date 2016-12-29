@@ -4,9 +4,9 @@
 #include <sigma/entity_manager.hpp>
 #include <sigma/graphics/directional_light.hpp>
 #include <sigma/graphics/point_light.hpp>
+#include <sigma/graphics/post_process_effect.hpp>
 #include <sigma/graphics/spot_light.hpp>
 #include <sigma/graphics/static_mesh_instance.hpp>
-#include <sigma/graphics/post_process_effect.hpp>
 #include <sigma/reflect/reflect.hpp>
 #include <sigma/transform.hpp>
 

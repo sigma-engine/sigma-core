@@ -60,7 +60,7 @@ namespace graphics {
         {
             auto r = resource::resource_cache<T>::increment_reference(resource_id);
             if (r) {
-                auto& tech = resources_[resource_id];
+                auto& tech = resource::resource_cache<T>::resources_[resource_id];
 
                 // TODO what if a shader is missing???
                 for (const auto& shdr : tech.shaders)
@@ -76,8 +76,8 @@ namespace graphics {
         virtual bool decrement_reference(resource::identifier resource_id) override
         {
             auto r = resource::resource_cache<T>::decrement_reference(resource_id);
-            if (is_cached(resource_id)) {
-                auto& tech = resources_[resource_id];
+            if (resource::resource_cache<T>::is_cached(resource_id)) {
+                auto& tech = resource::resource_cache<T>::resources_[resource_id];
                 // TODO shaders
                 for (const auto& shdr : tech.shaders)
                     shaders_.decrement_reference(shdr.second);

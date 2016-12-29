@@ -25,7 +25,7 @@ namespace opengl {
         GLint in_position_location_ = -1;
         GLint in_diffuse_location_ = -1;
         GLint in_normal_location_ = -1;
-		GLint in_image_location_ = -1;
+        GLint in_image_location_ = -1;
 
         std::shared_ptr<static_mesh> mesh_;
 

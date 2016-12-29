@@ -14,14 +14,14 @@ namespace resource {
         {
         }
 
-		std::shared_ptr<InteralType> get_internal(resource::identifier resource_id)
-		{
-			// TODO this not very clean or safe
-			cache_.increment_reference(resource_id);
-			auto r = get(resource_id);
-			cache_.decrement_reference(resource_id);
-			return r;
-		}
+        std::shared_ptr<InteralType> get_internal(resource::identifier resource_id)
+        {
+            // TODO this not very clean or safe
+            cache_.increment_reference(resource_id);
+            auto r = get(resource_id);
+            cache_.decrement_reference(resource_id);
+            return r;
+        }
 
         std::shared_ptr<InteralType> get(resource::identifier resource_id)
         {
@@ -32,7 +32,7 @@ namespace resource {
             if (it != internals_.end())
                 return it->second;
 
-			internals_[resource_id] = create(cache_.get(resource_id));
+            internals_[resource_id] = create(cache_.get(resource_id));
             return internals_[resource_id];
         }
 
@@ -45,7 +45,7 @@ namespace resource {
         resource_manager<PublicType, InteralType>& operator=(const resource_manager<PublicType, InteralType>&) = delete;
 
         resource_cache<PublicType>& cache_;
-        std::unordered_map<resource::identifier, std::shared_ptr<InteralType>> internals_;
+        std::unordered_map<resource::identifier, std::shared_ptr<InteralType> > internals_;
     };
 }
 }

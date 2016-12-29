@@ -19,7 +19,7 @@
 
 namespace sigma {
 namespace graphics {
-    enum class shader_type {
+    enum class shader_type : size_t {
         none,
         vertex,
         fragment,
@@ -60,6 +60,16 @@ namespace graphics {
 
     using shader_cache = resource::resource_cache<shader>;
 }
+}
+
+namespace std {
+template <>
+struct hash<sigma::graphics::shader_type> {
+    size_t operator()(const sigma::graphics::shader_type& type) const
+    {
+        return size_t(type);
+    }
+};
 }
 
 #endif // SIGMA_GRAPHICS_SHADER_HPP

@@ -6,8 +6,8 @@
 #include <boost/range/adaptor/transformed.hpp>
 #include <boost/wave/cpplexer/cpplexer_exceptions.hpp>
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 
 struct block {
     int level;

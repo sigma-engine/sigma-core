@@ -35,10 +35,10 @@ QOpenGLFramebufferObject* GameViewRenderer::createFramebufferObject(const QSize&
 
     // Create the renderer
     renderer_ = ctx_->create_renderer("sigma::opengl::renderer", glm::ivec2{ size.width(), size.height() });
-	size_ = glm::vec2{ size.width(), size.height() };
+    size_ = glm::vec2{ size.width(), size.height() };
 
     // Setup the viewport projection
-	// TODO do not hard code z near, far and fov
+    // TODO do not hard code z near, far and fov
     projectionMatrix_ = glm::perspective(0.785398f, float(size.width()) / float(size.height()), 0.01f, 10000.0f);
 
     return frameBuffer;
@@ -61,17 +61,17 @@ void GameViewRenderer::render()
         if (ctx_) {
             auto g = ctx_->current_game();
             if (g) {
-				graphics::view_port vp{
-					g->entities,
-					g->transforms,
-					g->static_mesh_instances,
-					g->point_lights,
-					g->directional_lights,
-					g->spot_lights,
-					projectionMatrix_,
-					viewMatrix_,
-					0.01f, 10000.0f, // TODO do not hard code z near and far
-					size_
+                graphics::view_port vp{
+                    g->entities,
+                    g->transforms,
+                    g->static_mesh_instances,
+                    g->point_lights,
+                    g->directional_lights,
+                    g->spot_lights,
+                    projectionMatrix_,
+                    viewMatrix_,
+                    0.01f, 10000.0f, // TODO do not hard code z near and far
+                    size_
                 };
                 renderer_->render(vp);
             }

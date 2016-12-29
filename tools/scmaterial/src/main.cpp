@@ -75,7 +75,7 @@ int main(int argc, char const* argv[])
     auto outputdir = vm["output"].as<boost::filesystem::path>();
     boost::filesystem::create_directories(outputdir);
 
-    for (auto file_path : vm["input-files"].as<std::vector<boost::filesystem::path>>()) {
+    for (auto file_path : vm["input-files"].as<std::vector<boost::filesystem::path> >()) {
         file_path = boost::filesystem::absolute(file_path);
         if (sigma::util::directory_contains_file(boost::filesystem::current_path(), file_path)) {
             if (boost::filesystem::exists(file_path)) {

@@ -35,23 +35,23 @@ namespace graphics {
         resource::identifier mesh_;
     };
 
-	class SIGMA_API post_process_effect_cache : public shader_technique_cache<post_process_effect> {
-	public:
-		post_process_effect_cache(boost::filesystem::path cache_directory, texture_cache& textures, shader_cache& shaders, static_mesh_cache &meshes);
+    class SIGMA_API post_process_effect_cache : public shader_technique_cache<post_process_effect> {
+    public:
+        post_process_effect_cache(boost::filesystem::path cache_directory, texture_cache& textures, shader_cache& shaders, static_mesh_cache& meshes);
 
-		post_process_effect_cache(post_process_effect_cache &&) = default;
+        post_process_effect_cache(post_process_effect_cache&&) = default;
 
-		~post_process_effect_cache() = default;
+        ~post_process_effect_cache() = default;
 
-		post_process_effect_cache& operator=(post_process_effect_cache &&) = default;
+        post_process_effect_cache& operator=(post_process_effect_cache&&) = default;
 
-		virtual bool increment_reference(resource::identifier resource_id) override;
+        virtual bool increment_reference(resource::identifier resource_id) override;
 
-		virtual bool decrement_reference(resource::identifier resource_id) override;
-	private:
-		static_mesh_cache &meshes_;
+        virtual bool decrement_reference(resource::identifier resource_id) override;
 
-	};
+    private:
+        static_mesh_cache& meshes_;
+    };
 }
 }
 

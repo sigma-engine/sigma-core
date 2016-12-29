@@ -12,7 +12,7 @@ namespace opengl {
 
     std::shared_ptr<opengl::static_mesh> static_mesh_manager::create(const graphics::static_mesh& cpu_static_mesh)
     {
-        return std::make_shared<opengl::static_mesh>(cpu_static_mesh.vertices,cpu_static_mesh.triangles,materials_.get(cpu_static_mesh.material));
+        return std::make_shared<opengl::static_mesh>(cpu_static_mesh.vertices, cpu_static_mesh.triangles, materials_.get(cpu_static_mesh.material));
     }
 }
 }

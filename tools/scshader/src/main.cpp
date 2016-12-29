@@ -62,7 +62,7 @@ int main(int argc, char const* argv[])
     global_options.add_options()
     ("help,h", "Show this help message")
     ("output,o", po::value<boost::filesystem::path>()->default_value(boost::filesystem::current_path()), "output directory")
-    ("include-dir,I", po::value<std::vector<boost::filesystem::path>>(), "Include directory")
+    ("include-dir,I", po::value<std::vector<boost::filesystem::path> >(), "Include directory")
     ("input-files", po::value<std::vector<boost::filesystem::path> >(), "input shaders files");
     // clang-format on
 
@@ -85,7 +85,7 @@ int main(int argc, char const* argv[])
     auto outputdir = vm["output"].as<boost::filesystem::path>();
     boost::filesystem::create_directories(outputdir);
 
-    for (auto file_path : vm["input-files"].as<std::vector<boost::filesystem::path>>()) {
+    for (auto file_path : vm["input-files"].as<std::vector<boost::filesystem::path> >()) {
         file_path = boost::filesystem::absolute(file_path);
         if (sigma::util::directory_contains_file(boost::filesystem::current_path(), file_path)) {
             if (boost::filesystem::exists(file_path)) {
@@ -121,7 +121,7 @@ int main(int argc, char const* argv[])
                             return -1;
                         }
 
-                        for (const auto& include_path : vm["include-dir"].as<std::vector<boost::filesystem::path>>()) {
+                        for (const auto& include_path : vm["include-dir"].as<std::vector<boost::filesystem::path> >()) {
                             auto dir = boost::filesystem::absolute(include_path);
                             ctx.add_include_path(dir.string().c_str());
                             ctx.add_sysinclude_path(dir.string().c_str());

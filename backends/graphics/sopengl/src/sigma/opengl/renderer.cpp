@@ -98,8 +98,8 @@ namespace opengl {
         matrices_.projection_matrix = viewport.projection_matrix;
         matrices_.view_matrix = viewport.view_matrix;
         matrices_.z_near = viewport.z_near;
-		matrices_.z_far = viewport.z_far;
-		matrices_.size = viewport.size;
+        matrices_.z_far = viewport.z_far;
+        matrices_.size = viewport.size;
         matrices_.model_matrix = glm::mat4(1);
         matrices_.model_view_matrix = glm::mat4(1);
         matrices_.normal_matrix = glm::mat3(1);
@@ -112,9 +112,9 @@ namespace opengl {
 
         geometry_pass(viewport);
 
-		GL_CHECK(glEnable(GL_BLEND));
-		GL_CHECK(glBlendEquation(GL_FUNC_ADD));
-		GL_CHECK(glBlendFunc(GL_ONE, GL_ONE));
+        GL_CHECK(glEnable(GL_BLEND));
+        GL_CHECK(glBlendEquation(GL_FUNC_ADD));
+        GL_CHECK(glBlendFunc(GL_ONE, GL_ONE));
 
         for (auto e : viewport.entities) { // TODO use a filter here
             if (viewport.transforms.has(e) && viewport.point_lights.has(e)) {
@@ -162,58 +162,57 @@ namespace opengl {
 
     void renderer::point_light_pass(const transform& txform, const graphics::point_light& light)
     {
-		// TODO this should be pre calculated
-		glm::vec3 cpos(glm::inverse(matrices_.view_matrix)*glm::vec4(0,0,0,1));
+        // TODO this should be pre calculated
+        glm::vec3 cpos(glm::inverse(matrices_.view_matrix) * glm::vec4(0, 0, 0, 1));
 
-		GL_CHECK(glEnable(GL_DEPTH_TEST));
+        GL_CHECK(glEnable(GL_DEPTH_TEST));
 
-		auto view_space_position = matrices_.view_matrix * glm::vec4(txform.position, 1);
-		if (glm::length(cpos - txform.position) <= txform.scale.x) {
-			GL_CHECK(glCullFace(GL_FRONT));
-			GL_CHECK(glDepthFunc(GL_GREATER));
-		}
-		else {
-			gbuffer_.bind_for_stencil_pass();
-			
-			// http://forum.devmaster.net/t/deferred-lighting-rendering-light-volumes/14998/5
-			GL_CHECK(glEnable(GL_STENCIL_TEST));
-			GL_CHECK(glClear(GL_STENCIL_BUFFER_BIT));
+        auto view_space_position = matrices_.view_matrix * glm::vec4(txform.position, 1);
+        if (glm::length(cpos - txform.position) <= txform.scale.x) {
+            GL_CHECK(glCullFace(GL_FRONT));
+            GL_CHECK(glDepthFunc(GL_GREATER));
+        } else {
+            gbuffer_.bind_for_stencil_pass();
 
-			GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE));
-			GL_CHECK(glStencilFunc(GL_GEQUAL,2,0xFF));
+            // http://forum.devmaster.net/t/deferred-lighting-rendering-light-volumes/14998/5
+            GL_CHECK(glEnable(GL_STENCIL_TEST));
+            GL_CHECK(glClear(GL_STENCIL_BUFFER_BIT));
 
-			GL_CHECK(glDepthFunc(GL_GEQUAL));
-			GL_CHECK(glCullFace(GL_FRONT));
+            GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE));
+            GL_CHECK(glStencilFunc(GL_GEQUAL, 2, 0xFF));
 
-			point_light_stencil_effect_->apply(&matrices_);
+            GL_CHECK(glDepthFunc(GL_GEQUAL));
+            GL_CHECK(glCullFace(GL_FRONT));
 
-			GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP));
-			GL_CHECK(glStencilFunc(GL_LEQUAL, 1, 0xFF));
-			
-			GL_CHECK(glDepthFunc(GL_LEQUAL));
-			GL_CHECK(glCullFace(GL_BACK));
-		}
+            point_light_stencil_effect_->apply(&matrices_);
 
-		gbuffer_.bind_for_effect_pass();
-		point_light_effect_->bind();
+            GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP));
+            GL_CHECK(glStencilFunc(GL_LEQUAL, 1, 0xFF));
 
-		// TODO this should be abstracted away better
-		GL_CHECK(glUniform3fv(point_light_color_location_, 1, glm::value_ptr(light.color)));
-		GL_CHECK(glUniform3fv(point_light_position_location_, 1, glm::value_ptr(view_space_position)));
-		GL_CHECK(glUniform1f(point_light_radius_location_, txform.scale.x)); // TODO non uniform scale on point light???
-		GL_CHECK(glUniform1f(point_light_falloff_location_, light.falloff));
-		GL_CHECK(glUniform1f(point_light_intensity_location_, light.intensity));
+            GL_CHECK(glDepthFunc(GL_LEQUAL));
+            GL_CHECK(glCullFace(GL_BACK));
+        }
 
-		point_light_effect_->apply(&matrices_);
-        
-		GL_CHECK(glDepthFunc(GL_LESS));
-		GL_CHECK(glDisable(GL_STENCIL_TEST));
-		GL_CHECK(glCullFace(GL_BACK));
+        gbuffer_.bind_for_effect_pass();
+        point_light_effect_->bind();
+
+        // TODO this should be abstracted away better
+        GL_CHECK(glUniform3fv(point_light_color_location_, 1, glm::value_ptr(light.color)));
+        GL_CHECK(glUniform3fv(point_light_position_location_, 1, glm::value_ptr(view_space_position)));
+        GL_CHECK(glUniform1f(point_light_radius_location_, txform.scale.x)); // TODO non uniform scale on point light???
+        GL_CHECK(glUniform1f(point_light_falloff_location_, light.falloff));
+        GL_CHECK(glUniform1f(point_light_intensity_location_, light.intensity));
+
+        point_light_effect_->apply(&matrices_);
+
+        GL_CHECK(glDepthFunc(GL_LESS));
+        GL_CHECK(glDisable(GL_STENCIL_TEST));
+        GL_CHECK(glCullFace(GL_BACK));
     }
 
     void renderer::directional_light_pass(const transform& txform, const graphics::directional_light& light)
     {
-		GL_CHECK(glDisable(GL_DEPTH_TEST));
+        GL_CHECK(glDisable(GL_DEPTH_TEST));
 
         gbuffer_.bind_for_effect_pass();
 
@@ -223,7 +222,7 @@ namespace opengl {
         GL_CHECK(glUniform3fv(directional_light_direction_location_, 1, glm::value_ptr(view_space_direction)));
         GL_CHECK(glUniform1f(directional_light_intensity_location_, light.intensity));
 
-		directional_light_effect_->apply(&matrices_);
+        directional_light_effect_->apply(&matrices_);
     }
 }
 }

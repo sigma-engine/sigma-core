@@ -14,7 +14,8 @@ out vertex_data
     vec3 tangent;
     vec2 texcoord;
     vec3 binormal;
-} out_vertex;
+}
+out_vertex;
 #elif defined(SIGMA_ENGINE_FRAGMENT_SHADER)
 in vertex_data
 {
@@ -23,7 +24,8 @@ in vertex_data
     vec3 tangent;
     vec2 texcoord;
     vec3 binormal;
-} in_vertex;
+}
+in_vertex;
 #elif defined(SIGMA_ENGINE_GEOMETRY_SHADER)
 in vertex_data
 {
@@ -32,7 +34,8 @@ in vertex_data
     vec3 tangent;
     vec2 texcoord;
     vec3 binormal;
-} in_vertex[];
+}
+in_vertex[];
 #else
 #error "This shader type is not supported"
 #endif

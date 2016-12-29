@@ -47,11 +47,11 @@ namespace opengl {
         GL_CHECK(glFramebufferTexture2D(GL_FRAMEBUFFER, GLenum(att), GL_TEXTURE_2D, txt.get_object(), 0));
     }
 
-	void frame_buffer::dettach(attachment att)
-	{
-		GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, object_));
-		GL_CHECK(glFramebufferTexture2D(GL_FRAMEBUFFER, GLenum(att), GL_TEXTURE_2D, 0, 0));
-	}
+    void frame_buffer::dettach(attachment att)
+    {
+        GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, object_));
+        GL_CHECK(glFramebufferTexture2D(GL_FRAMEBUFFER, GLenum(att), GL_TEXTURE_2D, 0, 0));
+    }
 
     void frame_buffer::read_buffer(attachment att)
     {
