@@ -26,8 +26,6 @@ namespace opengl {
 
         void geometry_pass(const graphics::view_port& viewport);
 
-        void point_light_stencil_pass(const transform& txform, const graphics::point_light& light);
-
         void point_light_pass(const transform& txform, const graphics::point_light& light);
 
         void directional_light_pass(const transform& txform, const graphics::directional_light& light);
