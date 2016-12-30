@@ -3,6 +3,8 @@
 
 #include <sigma/graphics/static_mesh.hpp>
 
+#include <json/json-forwards.h>
+
 #include <boost/filesystem/path.hpp>
 
 #include <set>
@@ -21,12 +23,18 @@ namespace convert {
 
         virtual const std::set<std::string>& static_mesh_names() const;
 
-        virtual void convert_static_mesh(std::string name,
-            graphics::static_mesh& mesh) const;
+        virtual const std::set<std::string>& scene_object_names() const;
+
+        virtual void convert_static_mesh(std::string name,graphics::static_mesh& mesh) const;
+
+        virtual void convert_object(std::string name,Json::Value& entity) const;
 
     private:
+        boost::filesystem::path root_directroy_;
+        boost::filesystem::path source_file_;
         std::unique_ptr<Assimp::Importer> importer_;
         std::set<std::string> static_mesh_names_;
+        std::set<std::string> object_names_;
     };
 }
 }

@@ -1,0 +1,21 @@
+{
+	"plane" : 
+	{
+		"sigma::graphics::static_mesh" : "fullscreen_quad:plane",
+		"sigma::transform" : 
+		{
+			"position" : 
+			[
+				0.0,
+				0.0,
+				-0.0
+			],
+			"rotation" : 
+			[
+				0.0,
+				0.0,
+				0.0
+			]
+		}
+	}
+}

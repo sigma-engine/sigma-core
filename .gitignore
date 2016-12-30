@@ -10,6 +10,8 @@ conaninfo.txt
 
 __pycache__/
 
+proprietary/
+
 # Ide Generated files
 *.txt.user*
 .idea/

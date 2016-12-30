@@ -72,6 +72,13 @@ namespace resource {
 
     std::string development_identifier::name() const { return name_; }
 
+    std::string development_identifier::nice_name() const
+    {
+        auto s = boost::find_first(name_,"://").end();
+        return std::string(s,name_.end());
+
+    }
+
     std::ostream& operator<<(std::ostream& os, const constexpr_identifier& id)
     {
         os << "{"

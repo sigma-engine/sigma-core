@@ -3,6 +3,8 @@
 #include <sigma/graphics/static_mesh.hpp>
 #include <sigma/util/filesystem.hpp>
 
+#include <json/json.h>
+
 #include <boost/algorithm/string.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/filesystem.hpp>
@@ -31,8 +33,8 @@ int main(int argc, char const* argv[])
     }
 
     if (vm.count("input-files") <= 0) {
-        //std::cerr << "scmodel: fatal error: no input files." << std::endl;
-        return 0;
+        std::cerr << "scmodel: fatal error: no input files." << std::endl;
+        return -1;
     }
 
     auto outputdir = vm["output"].as<boost::filesystem::path>();
@@ -57,11 +59,27 @@ int main(int argc, char const* argv[])
                     boost::archive::binary_oarchive oa(stream);
                     oa << mesh;
                 }
+
+                auto scene_path = file_path.replace_extension(".scn");
+
+                Json::Value scene;
+                if(boost::filesystem::exists(scene_path)) {
+                    std::ifstream in_scene(scene_path.string());
+                    in_scene >> scene;
+                }
+
+                for(auto object_name: imported.scene_object_names()) {
+                    imported.convert_object(object_name, scene[object_name]);
+                }
+                std::ofstream outscene(scene_path.string());
+                outscene << scene;
             } else {
                 std::cerr << "file '" << file_path << "' does not exist!" << std::endl;
+                return -1;
             }
         } else {
             std::cerr << "file '" << file_path << "' is not contained in '" << boost::filesystem::current_path() << "'!" << std::endl;
+            return -1;
         }
     }
 

@@ -1,0 +1,21 @@
+{
+	"sphere" : 
+	{
+		"sigma::graphics::static_mesh" : "point_light:sphere",
+		"sigma::transform" : 
+		{
+			"position" : 
+			[
+				0.0,
+				0.0,
+				-0.0
+			],
+			"rotation" : 
+			[
+				0.0,
+				0.0,
+				0.0
+			]
+		}
+	}
+}

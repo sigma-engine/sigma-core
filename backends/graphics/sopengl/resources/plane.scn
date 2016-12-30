@@ -1,0 +1,21 @@
+{
+	"Plane" : 
+	{
+		"sigma::graphics::static_mesh" : "plane:Plane",
+		"sigma::transform" : 
+		{
+			"position" : 
+			[
+				0.0,
+				0.0,
+				-0.0
+			],
+			"rotation" : 
+			[
+				0.0,
+				0.0,
+				0.0
+			]
+		}
+	}
+}

@@ -73,6 +73,8 @@ namespace resource {
 
         std::string name() const;
 
+        std::string nice_name() const;
+
     protected:
         std::string name_;
 

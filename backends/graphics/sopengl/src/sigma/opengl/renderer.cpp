@@ -80,8 +80,8 @@ namespace opengl {
                     auto mesh = static_meshes_.get(viewport.static_mesh_instances.get(e));
 
                     // TODO move this into an ecs
-                    matrices_.model_matrix = glm::mat4(1);
-                    matrices_.model_matrix = glm::mat4_cast(txform.rotation) * glm::translate(glm::scale(matrices_.model_matrix, txform.scale), txform.position);
+                    matrices_.model_matrix = glm::translate(glm::mat4(1),txform.position) * glm::mat4_cast(txform.rotation) * glm::scale(glm::mat4(1),glm::vec3(txform.scale));
+
                     matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
                     matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
 
@@ -123,8 +123,8 @@ namespace opengl {
 
                 // TODO move this into an ecs
                 // TODO non uniform scale on point light???
-                matrices_.model_matrix = glm::mat4(1);
-                matrices_.model_matrix = glm::mat4_cast(txform.rotation) * glm::translate(glm::scale(matrices_.model_matrix, glm::vec3(txform.scale)), txform.position);
+                matrices_.model_matrix = glm::translate(glm::mat4(1),txform.position) * glm::mat4_cast(txform.rotation) * glm::scale(glm::mat4(1),glm::vec3(txform.scale));
+
                 matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
                 matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
 
@@ -141,8 +141,8 @@ namespace opengl {
 
                 // TODO move this into an ecs
                 // TODO scale on directional light???
-                matrices_.model_matrix = glm::mat4(1);
-                matrices_.model_matrix = glm::mat4_cast(txform.rotation) * glm::translate(glm::scale(matrices_.model_matrix, glm::vec3(txform.scale)), txform.position);
+                matrices_.model_matrix = glm::translate(glm::mat4(1),txform.position) * glm::mat4_cast(txform.rotation) * glm::scale(glm::mat4(1),glm::vec3(txform.scale));
+
                 matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
                 matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
 
@@ -150,6 +150,10 @@ namespace opengl {
             }
         }
 
+        /*GL_CHECK(glDisable(GL_DEPTH_TEST));
+        GL_CHECK(glDisable(GL_STENCIL_TEST));
+        GL_CHECK(glDisable(GL_BLEND));
+        GL_CHECK(glDisable(GL_CULL_FACE));*/
         // gbuffer_.swap_input_image();
         // gbuffer_.bind_for_effect_pass();
         // vignette_effect_->apply(&matrices_);
@@ -200,7 +204,7 @@ namespace opengl {
         // TODO this should be abstracted away better
         GL_CHECK(glUniform3fv(point_light_color_location_, 1, glm::value_ptr(light.color)));
         GL_CHECK(glUniform3fv(point_light_position_location_, 1, glm::value_ptr(view_space_position)));
-        GL_CHECK(glUniform1f(point_light_radius_location_, txform.scale.x)); // TODO non uniform scale on point light???
+        GL_CHECK(glUniform1f(point_light_radius_location_, std::abs(txform.scale.x))); // TODO non uniform scale on point light???
         GL_CHECK(glUniform1f(point_light_falloff_location_, light.falloff));
         GL_CHECK(glUniform1f(point_light_intensity_location_, light.intensity));
 
@@ -217,7 +221,7 @@ namespace opengl {
 
         gbuffer_.bind_for_effect_pass();
 
-        auto view_space_direction = matrices_.normal_matrix * glm::vec3(0, 0, -1);
+        auto view_space_direction = matrices_.model_view_matrix * glm::vec4(0,1,0,0);
         directional_light_effect_->bind();
         GL_CHECK(glUniform3fv(directional_light_color_location_, 1, glm::value_ptr(light.color)));
         GL_CHECK(glUniform3fv(directional_light_direction_location_, 1, glm::value_ptr(view_space_direction)));

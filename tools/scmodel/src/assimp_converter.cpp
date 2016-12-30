@@ -6,7 +6,10 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
+#include <json/json.h>
+
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -14,6 +17,15 @@
 #include <unordered_map>
 
 namespace sigma {
+
+Json::Value to_json(glm::vec3 v) {
+    Json::Value out(Json::arrayValue);
+    out[0] = v.x;
+    out[1] = v.y;
+    out[2] = v.z;
+    return out;
+}
+
 namespace convert {
     namespace {
         std::string get_name(const aiMesh* mesh)
@@ -24,21 +36,49 @@ namespace convert {
             return name;
         }
 
-        glm::vec3 convert(aiVector3D v) { return glm::vec3(v.x, v.y, v.z); }
+        std::string get_name(const aiNode* node)
+        {
+            std::string name = node->mName.C_Str();
+            if (name == "")
+                return "unnamed";
+            return name;
+        }
 
-        glm::vec2 convert(aiVector2D v) { return glm::vec2(v.x, v.y); }
+        glm::vec3 convert_3d(aiVector3D v) {
+            return {v.x,v.z,-v.y};
+        }
 
-        glm::quat convert(aiQuaternion q) { return glm::quat(q.x, q.y, q.z, q.w); }
+        glm::vec3 convert_n(aiVector3D v) {
+            return {v.x,v.y,v.z};
+        }
+
+        glm::vec3 convert_color(aiColor3D c) { return glm::vec3(c.r, c.g, c.b); }
+
+        glm::vec2 convert_2d(aiVector3D v) {
+            return glm::vec2(v.x, v.y);
+        }
+
+
+        /*glm::vec3 convert(aiVector3D v) {
+            return glm::vec3(v.x, -v.z, v.y);
+        }
+
+
+
+        glm::vec2 convert(aiVector2D v) { return glm::vec2(v.x, v.y); }*/
+
+        glm::quat convert_3d(aiQuaternion q) { return glm::quat(q.w, q.x, q.z, -q.y); }
     }
 
     assimp_converter::assimp_converter(boost::filesystem::path source_file)
-        : importer_(std::make_unique<Assimp::Importer>())
+        : source_file_(source_file)
+        , importer_(std::make_unique<Assimp::Importer>())
     {
-        auto filename = source_file.string();
+        auto filename = source_file_.string();
         const aiScene* scene = importer_->ReadFile(
             filename.c_str(),
             aiProcess_CalcTangentSpace | aiProcess_JoinIdenticalVertices |
-                // aiProcess_MakeLeftHanded |
+                //aiProcess_MakeLeftHanded |
                 aiProcess_Triangulate |
                 // aiProcess_RemoveComponent |
                 // aiProcess_GenNormals |
@@ -49,12 +89,12 @@ namespace convert {
                 //##aiProcess_FixInfacingNormals | //???
                 aiProcess_SortByPType | aiProcess_FindDegenerates | aiProcess_FindInvalidData | aiProcess_GenUVCoords |
                 // aiProcess_TransformUVCoords | //???
-                aiProcess_FindInstances //|
+                aiProcess_FindInstances// |
             // aiProcess_ConvertToLeftHanded|
             // aiProcess_OptimizeMeshes  |
             // aiProcess_OptimizeGraph  |
             // aiProcess_FlipUVs |
-            // aiProcess_FlipWindingOrder  |
+             //aiProcess_FlipWindingOrder
             // aiProcess_SplitByBoneCount  |
             // aiProcess_Debone //???
             );
@@ -72,8 +112,14 @@ namespace convert {
                 static_mesh_names_.erase(name);
         }
 
+        // TODO recursive
+        for (unsigned int i = 0; i < scene->mRootNode->mNumChildren; ++i) {
+            object_names_.insert(get_name(scene->mRootNode->mChildren[i]));
+        }
+
+
         // TODO skeletal mesehes.
-        // TODO materials
+        // TODO matericonvertals
         // TODO the whole scene.
         // TODO animations.
         // TODO textures?
@@ -86,8 +132,12 @@ namespace convert {
         return static_mesh_names_;
     }
 
-    void assimp_converter::convert_static_mesh(std::string name,
-        graphics::static_mesh& mesh) const
+    const std::set<std::string> &assimp_converter::scene_object_names() const
+    {
+        return object_names_;
+    }
+
+    void assimp_converter::convert_static_mesh(std::string name, graphics::static_mesh& mesh) const
     {
         const aiScene* aiScene = importer_->GetScene();
 
@@ -110,20 +160,20 @@ namespace convert {
             std::vector<sigma::graphics::static_mesh::vertex> submesh_vertices(aimesh->mNumVertices);
             for (unsigned int j = 0; j < aimesh->mNumVertices; ++j) {
                 auto pos = aimesh->mVertices[j];
-                submesh_vertices[j].position = convert(pos);
+                submesh_vertices[j].position = convert_3d(pos);
 
                 if (aimesh->HasNormals()) {
                     auto nor = aimesh->mNormals[j];
-                    submesh_vertices[j].normal = convert(nor);
+                    submesh_vertices[j].normal = convert_3d(nor);
                 }
 
                 if (aimesh->HasTangentsAndBitangents()) {
                     auto tan = aimesh->mTangents[j];
-                    submesh_vertices[j].tangent = convert(tan);
+                    submesh_vertices[j].tangent = convert_3d(tan);
                 }
                 if (aimesh->HasTextureCoords(0)) {
-                    auto tex = convert(aimesh->mTextureCoords[0][j]);
-                    submesh_vertices[j].texcoord = glm::vec2(tex.x, tex.y); // TODO HERE
+                    auto tex = convert_2d(aimesh->mTextureCoords[0][j]);
+                    submesh_vertices[j].texcoord = tex;
                 }
             }
 
@@ -143,6 +193,50 @@ namespace convert {
         // TODO materials
         mesh.vertices = std::move(vertices);
         mesh.triangles = std::move(triangles);
+    }
+
+    void assimp_converter::convert_object(std::string name, Json::Value &entity) const
+    {
+        const aiScene* aiScene = importer_->GetScene();
+        const aiNode* ainode = aiScene->mRootNode->FindNode(name.c_str());
+        aiVector3D aiposition;
+        aiQuaternion airotation;
+        aiVector3D aiscale;
+        ainode->mTransformation.Decompose(aiscale,airotation,aiposition);
+        aiscale.y *= -1;
+
+        entity["sigma::transform"]["position"] = to_json(convert_3d(aiposition));
+        entity["sigma::transform"]["rotation"] = to_json(glm::degrees(glm::eulerAngles(convert_3d(airotation))));
+        entity["sigma::transform"]["scale"] = to_json(convert_3d(aiscale));
+
+        if(ainode->mNumMeshes > 0) {
+            // TODO warn if more than one mesh per object
+            const aiMesh* aimesh = aiScene->mMeshes[ainode->mMeshes[0]];
+            sigma::resource::development_identifier meshid("static_mesh", source_file_, get_name(aimesh));
+            entity["sigma::graphics::static_mesh"] = meshid.nice_name();
+        }
+
+        if(ainode->mMetaData)
+            std::cout << ainode->mMetaData->mNumProperties << std::endl;
+
+        for(auto i=0;i<aiScene->mNumLights;++i) {
+            const aiLight* ailight = aiScene->mLights[i];
+            if(name == ailight->mName.C_Str()) {
+                switch (ailight->mType) {
+                case aiLightSource_POINT:
+                    entity["sigma::graphics::point_light"]["color"] = to_json(convert_color(ailight->mColorDiffuse));
+                    // TOOD intensity
+                    break;
+                case aiLightSource_DIRECTIONAL:
+                    entity["sigma::graphics::directional_light"]["color"] = to_json(convert_color(ailight->mColorDiffuse));
+                    // TOOD intensity
+                    break;
+                default: // TODO more lights
+                    break;
+                }
+                break;
+            }
+        }
     }
 }
 }

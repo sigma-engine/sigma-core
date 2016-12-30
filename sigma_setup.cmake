@@ -64,13 +64,13 @@ function(add_resources target)
             file(MAKE_DIRECTORY ${directory})
 
             add_custom_command(
-                OUTPUT ${texture_time_stamp}
-                COMMAND ${TEXTURE_COMPILER} ARGS --output="${CMAKE_BINARY_DIR}/data" ${texture}
-                COMMAND ${CMAKE_COMMAND} ARGS -E touch ${texture_time_stamp}
+                OUTPUT "${texture_time_stamp}"
+                COMMAND ${TEXTURE_COMPILER} ARGS --output="${CMAKE_BINARY_DIR}/data" "${texture}"
+                COMMAND ${CMAKE_COMMAND} ARGS -E touch "${texture_time_stamp}"
                 MAIN_DEPENDENCY "${texture}"
-                WORKING_DIRECTORY ${package_PACKAGE_ROOT}
+                WORKING_DIRECTORY "${package_PACKAGE_ROOT}"
                 COMMENT ""
-                SOURCES ${texture}
+                SOURCES "${texture}"
             )
             set(TIME_STAMPS ${TIME_STAMPS} ${texture_time_stamp})
         endforeach()
@@ -85,13 +85,13 @@ function(add_resources target)
             file(MAKE_DIRECTORY ${directory})
 
             add_custom_command(
-                OUTPUT ${shader_time_stamp}
-                COMMAND ${SHADER_COMPILER} ARGS --output="${CMAKE_BINARY_DIR}/data" ${include_args} ${shader}
-                COMMAND ${CMAKE_COMMAND} ARGS -E touch ${shader_time_stamp}
+                OUTPUT "${shader_time_stamp}"
+                COMMAND ${SHADER_COMPILER} ARGS --output="${CMAKE_BINARY_DIR}/data" ${include_args} "${shader}"
+                COMMAND ${CMAKE_COMMAND} ARGS -E touch "${shader_time_stamp}"
                 MAIN_DEPENDENCY "${shader}"
-                WORKING_DIRECTORY ${package_PACKAGE_ROOT}
+                WORKING_DIRECTORY "${package_PACKAGE_ROOT}"
                 COMMENT ""
-                SOURCES ${shader}
+                SOURCES "${shader}"
             )
             set(TIME_STAMPS ${TIME_STAMPS} ${shader_time_stamp})
         endforeach()
@@ -106,13 +106,13 @@ function(add_resources target)
             file(MAKE_DIRECTORY ${directory})
 
             add_custom_command(
-                OUTPUT ${material_time_stamp}
-                COMMAND ${MATERIAL_COMPILER} ARGS --output="${CMAKE_BINARY_DIR}/data" ${material}
-                COMMAND ${CMAKE_COMMAND} ARGS -E touch ${material_time_stamp}
+                OUTPUT "${material_time_stamp}"
+                COMMAND ${MATERIAL_COMPILER} ARGS --output="${CMAKE_BINARY_DIR}/data" "${material}"
+                COMMAND ${CMAKE_COMMAND} ARGS -E touch "${material_time_stamp}"
                 MAIN_DEPENDENCY "${material}"
-                WORKING_DIRECTORY ${package_PACKAGE_ROOT}
+                WORKING_DIRECTORY "${package_PACKAGE_ROOT}"
                 COMMENT ""
-                SOURCES ${material}
+                SOURCES "${material}"
             )
             set(TIME_STAMPS ${TIME_STAMPS} ${material_time_stamp})
         endforeach()
@@ -127,13 +127,13 @@ function(add_resources target)
             file(MAKE_DIRECTORY ${directory})
 
             add_custom_command(
-                OUTPUT ${model_time_stamp}
-                COMMAND ${MODEL_COMPILER} ARGS --output="${CMAKE_BINARY_DIR}/data" ${model}
-                COMMAND ${CMAKE_COMMAND} ARGS -E touch ${model_time_stamp}
+                OUTPUT "${model_time_stamp}"
+                COMMAND ${MODEL_COMPILER} ARGS --output="${CMAKE_BINARY_DIR}/data" "${model}"
+                COMMAND ${CMAKE_COMMAND} ARGS -E touch "${model_time_stamp}"
                 MAIN_DEPENDENCY "${model}"
-                WORKING_DIRECTORY ${package_PACKAGE_ROOT}
+                WORKING_DIRECTORY "${package_PACKAGE_ROOT}"
                 COMMENT ""
-                SOURCES ${model}
+                SOURCES "${model}"
             )
             set(TIME_STAMPS ${TIME_STAMPS} ${model_time_stamp})
         endforeach()
