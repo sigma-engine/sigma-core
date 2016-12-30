@@ -66,6 +66,8 @@ public:
 
     virtual ~game() = default;
 
+    void load(boost::filesystem::path file_path);
+
     virtual void update(std::chrono::duration<float> dt) = 0;
 
 protected:

@@ -163,12 +163,12 @@ namespace opengl {
     void renderer::point_light_pass(const transform& txform, const graphics::point_light& light)
     {
         // TODO this should be pre calculated
-        glm::vec3 cpos(glm::inverse(matrices_.view_matrix) * glm::vec4(0, 0, 0, 1));
+        //glm::vec3 cpos(glm::inverse(matrices_.view_matrix) * glm::vec4(0, 0, 0, 1));
 
         GL_CHECK(glEnable(GL_DEPTH_TEST));
 
-        auto view_space_position = matrices_.view_matrix * glm::vec4(txform.position, 1);
-        if (glm::length(cpos - txform.position) <= txform.scale.x) {
+        auto view_space_position = matrices_.model_view_matrix * glm::vec4(0, 0, 0, 1);
+        if (glm::length(view_space_position) <= 1.1 * txform.scale.x) {
             GL_CHECK(glCullFace(GL_FRONT));
             GL_CHECK(glDepthFunc(GL_GREATER));
         } else {
@@ -176,10 +176,11 @@ namespace opengl {
 
             // http://forum.devmaster.net/t/deferred-lighting-rendering-light-volumes/14998/5
             GL_CHECK(glEnable(GL_STENCIL_TEST));
+            GL_CHECK(glClearStencil(4));
             GL_CHECK(glClear(GL_STENCIL_BUFFER_BIT));
 
             GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE));
-            GL_CHECK(glStencilFunc(GL_GEQUAL, 2, 0xFF));
+            GL_CHECK(glStencilFunc(GL_GEQUAL, 6, 0xFF));
 
             GL_CHECK(glDepthFunc(GL_GEQUAL));
             GL_CHECK(glCullFace(GL_FRONT));
@@ -187,7 +188,7 @@ namespace opengl {
             point_light_stencil_effect_->apply(&matrices_);
 
             GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP));
-            GL_CHECK(glStencilFunc(GL_LEQUAL, 1, 0xFF));
+            GL_CHECK(glStencilFunc(GL_LEQUAL, 5, 0xFF));
 
             GL_CHECK(glDepthFunc(GL_LEQUAL));
             GL_CHECK(glCullFace(GL_BACK));

@@ -13,6 +13,7 @@ libjpeg/9a@Kaosumaru/stable
 [options]
 Boost:fPIC=True
 Boost:shared=True
+jsoncpp:fPIC=True
 
 [generators]
 cmake
