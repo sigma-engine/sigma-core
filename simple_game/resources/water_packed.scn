@@ -1,0 +1,110 @@
+{
+	"Cube" : 
+	{
+		"sigma::graphics::static_mesh" : "water_packed:Cube.002",
+		"sigma::transform" : 
+		{
+			"position" : 
+			[
+				61.183815002441406,
+				15.213972091674805,
+				-56.895404815673828
+			],
+			"rotation" : 
+			[
+				0.0,
+				0.0,
+				-89.999992370605469
+			],
+			"scale" : 
+			[
+				0.26740676164627075,
+				0.26740676164627075,
+				0.26740676164627075
+			]
+		}
+	},
+	"Cube.001" : 
+	{
+		"sigma::graphics::static_mesh" : "water_packed:Cube",
+		"sigma::transform" : 
+		{
+			"position" : 
+			[
+				0.0,
+				0.0,
+				-0.0
+			],
+			"rotation" : 
+			[
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale" : 
+			[
+				1.0302406549453735,
+				1.0302406549453735,
+				1.0302406549453735
+			]
+		}
+	},
+	"Sun" : 
+	{
+		"sigma::graphics::directional_light" : 
+		{
+			"color" : 
+			[
+				1.0,
+				1.0,
+				1.0
+			]
+		},
+		"sigma::transform" : 
+		{
+			"position" : 
+			[
+				63.473903656005859,
+				53.387027740478516,
+				-44.087699890136719
+			],
+			"rotation" : 
+			[
+				-39.185218811035156,
+				-8.7149515151977539,
+				-59.713706970214844
+			],
+			"scale" : 
+			[
+				1.0,
+				1.0,
+				1.0
+			]
+		}
+	},
+	"ground" : 
+	{
+		"sigma::graphics::static_mesh" : "water_packed:ground",
+		"sigma::transform" : 
+		{
+			"position" : 
+			[
+				0.0,
+				0.0,
+				-0.0
+			],
+			"rotation" : 
+			[
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale" : 
+			[
+				1.0,
+				1.0,
+				1.0
+			]
+		}
+	}
+}

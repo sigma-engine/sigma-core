@@ -1,0 +1,6 @@
+{
+    "vertex" : "skybox",
+    "fragment" : "skybox",
+    "textures" : [
+    ]
+}
