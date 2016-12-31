@@ -6,23 +6,22 @@ namespace sigma {
 namespace opengl {
     geometry_buffer::geometry_buffer(glm::ivec2 size)
         : frame_buffer(size)
-        , diffuse_texture_(internal_format::RGB32F, size)
-        , normal_texture_(internal_format::RGB32F, size)
+        , diffuse_texture_(internal_format::RGBA16F, size)
+        , normal_texture_(internal_format::RGBA16F, size)
         , depth_stencil_texture_(internal_format::DEPTH32F_STENCIL8, size)
-        , images_{ texture{ internal_format::RGB32F, size }, texture{ internal_format::RGB32F, size } }
+        , images_{ texture{ internal_format::RGB16F, size }, texture{ internal_format::RGB16F, size } }
         , input_image_(0)
         , output_image_(1)
     {
-        attach(DIFFUSE_COLOR_ATTACHMENT, diffuse_texture_);
-        attach(NORMAL_ATTACHMENT, normal_texture_);
+        attach(DIFFUSE_ROUGHNESS_ATTACHMENT, diffuse_texture_);
+        attach(NORMAL_METALNESS_ATTACHMENT, normal_texture_);
         attach(OUTPUT_IMAGE_ATTACHMENT, images_[output_image_]);
         attach(frame_buffer::attachment::DEPTH_STENCIL, depth_stencil_texture_);
-        draw_buffers({ DIFFUSE_COLOR_ATTACHMENT, NORMAL_ATTACHMENT });
     }
 
     void geometry_buffer::bind_for_geometry_pass()
     {
-        draw_buffers({ DIFFUSE_COLOR_ATTACHMENT, NORMAL_ATTACHMENT });
+        draw_buffers({ DIFFUSE_ROUGHNESS_ATTACHMENT, NORMAL_METALNESS_ATTACHMENT });
     }
 
     void geometry_buffer::bind_for_stencil_pass()
@@ -34,17 +33,17 @@ namespace opengl {
     {
         draw_buffers({ OUTPUT_IMAGE_ATTACHMENT });
 
-        GL_CHECK(glActiveTexture(GLenum(DIFFUSE_COLOR_TEXTURE_UINT)));
+        GL_CHECK(glActiveTexture(GLenum(DIFFUSE_ROUGHNESS_TEXTURE_UINT)));
         diffuse_texture_.bind();
 
-        GL_CHECK(glActiveTexture(GLenum(NORMAL_TEXTURE_UINT)));
+        GL_CHECK(glActiveTexture(GLenum(NORMAL_METALNESS_TEXTURE_UINT)));
         normal_texture_.bind();
-
-        GL_CHECK(glActiveTexture(GLenum(INPUT_IMAGE_TEXTURE_UINT)));
-        images_[input_image_].bind();
 
         GL_CHECK(glActiveTexture(GLenum(DEPTH_STENCIL_TEXTURE_UINT)));
         depth_stencil_texture_.bind();
+
+        GL_CHECK(glActiveTexture(GLenum(INPUT_IMAGE_TEXTURE_UINT)));
+        images_[input_image_].bind();
     }
 
     void geometry_buffer::clear_input_image(glm::vec4 color)

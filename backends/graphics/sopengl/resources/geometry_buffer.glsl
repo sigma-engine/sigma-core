@@ -4,40 +4,54 @@
 #include <uniforms.glsl>
 
 struct surface {
+#if defined(SIGMA_ENGINE_POST_PROCESS_EFFECT)
     vec3 position;
-    vec3 diffuse;
+#endif // SIGMA_ENGINE_POST_PROCESS_EFFECT
     vec3 normal;
+    vec3 diffuse;
+    float roughness;
+    float metalness;
 };
 
 #if defined(SIGMA_ENGINE_POST_PROCESS_EFFECT)
-uniform sampler2D in_diffuse;
-uniform sampler2D in_normal;
-uniform sampler2D in_image;
+uniform sampler2D in_diffuse_roughness;
+uniform sampler2D in_normal_metalness;
 uniform sampler2D in_depth_stencil;
+uniform sampler2D in_image;
 
 out vec4 out_image;
 
 surface read_geometry_buffer()
 {
-    vec2 uv = gl_FragCoord.xy/view_port_size;
-
     surface s;
-    float depth = 2*texture(in_depth_stencil, uv).x - 1;
-    vec4 view_space_position = inverse(projection_matrix)*vec4(2 * uv - 1,depth,1);
-    s.position = (view_space_position/view_space_position.w).xyz;
-    s.normal = texture(in_normal, uv).xyz;
-    s.diffuse = texture(in_diffuse, uv).rgb;
+
+    vec2 uv = gl_FragCoord.xy / view_port_size;
+
+    float depth = texture(in_depth_stencil, uv).x;
+    vec4 diffuse_roughness = texture(in_diffuse_roughness, uv);
+    vec4 normal_metalness = texture(in_normal_metalness, uv);
+
+    // TODO pass inverse projection from cpu
+    vec4 view_space_position = inverse(projection_matrix) * vec4(2 * uv - 1, 2 * depth - 1, 1);
+
+    s.position = (view_space_position / view_space_position.w).xyz;
+    s.normal = normal_metalness.xyz;
+
+    s.diffuse = diffuse_roughness.rgb;
+    s.roughness = diffuse_roughness.a;
+    s.metalness = normal_metalness.a;
+
     return s;
 }
 #else
 
-out vec3 diffuse_output;
-out vec3 normal_output;
+out vec4 out_diffuse_roughness;
+out vec4 out_normal_metalness;
 
 void write_geometry_buffer(surface s)
 {
-    diffuse_output = s.diffuse;
-    normal_output = s.normal;
+    out_diffuse_roughness = vec4(s.diffuse, s.roughness);
+    out_normal_metalness = vec4(s.normal, s.metalness);
 }
 #endif
 

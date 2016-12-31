@@ -10,29 +10,28 @@ namespace sigma {
 namespace opengl {
     class geometry_buffer : public frame_buffer {
     public:
-        static constexpr const attachment DIFFUSE_COLOR_ATTACHMENT = attachment::COLOR0;
-        static constexpr const attachment NORMAL_ATTACHMENT = attachment::COLOR1;
+        static constexpr const attachment DIFFUSE_ROUGHNESS_ATTACHMENT = attachment::COLOR0;
+        static constexpr const attachment NORMAL_METALNESS_ATTACHMENT = attachment::COLOR1;
         static constexpr const attachment OUTPUT_IMAGE_ATTACHMENT = attachment::COLOR2;
 
-        static constexpr const texture_unit DIFFUSE_COLOR_TEXTURE_UINT = texture_unit::TEXTURE0;
-        static constexpr const texture_unit NORMAL_TEXTURE_UINT = texture_unit::TEXTURE1;
-        static constexpr const texture_unit INPUT_IMAGE_TEXTURE_UINT = texture_unit::TEXTURE2;
-        static constexpr const texture_unit DEPTH_STENCIL_TEXTURE_UINT = texture_unit::TEXTURE3;
+        static constexpr const texture_unit DIFFUSE_ROUGHNESS_TEXTURE_UINT = texture_unit::TEXTURE0;
+        static constexpr const texture_unit NORMAL_METALNESS_TEXTURE_UINT = texture_unit::TEXTURE1;
+        static constexpr const texture_unit DEPTH_STENCIL_TEXTURE_UINT = texture_unit::TEXTURE2;
+        static constexpr const texture_unit INPUT_IMAGE_TEXTURE_UINT = texture_unit::TEXTURE3;
         static constexpr const texture_unit NEXT_FREE_TEXTURE_UINT = texture_unit::TEXTURE4;
 
-        static constexpr const char* WORLD_POSITION_OUTPUT_NAME = "position_output";
-        static constexpr const char* DIFFUSE_COLOR_OUTPUT_NAME = "diffuse_output";
-        static constexpr const char* NORMAL_OUTPUT_NAME = "normal_output";
+        static constexpr const char* DIFFUSE_ROUGHNESS_OUTPUT_NAME = "out_diffuse_roughness";
+        static constexpr const char* NORMAL_METALNESS_OUTPUT_NAME = "out_normal_metalness";
 
-        static constexpr const GLuint DIFFUSE_COLOR_OUTPUT_LOCATION = 0;
-        static constexpr const GLuint NORMAL_OUTPUT_LOCATION = 1;
-        static constexpr const GLuint INPUT_IMAGE_LOCATION = 2;
-        static constexpr const GLuint DEPTH_STENCIL_LOCATION = 3;
+        static constexpr const GLuint DIFFUSE_ROUGHNESS_OUTPUT_LOCATION = 0;
+        static constexpr const GLuint NORMAL_METALNESS_LOCATION = 1;
+        static constexpr const GLuint DEPTH_STENCIL_LOCATION = 2;
+        static constexpr const GLuint INPUT_IMAGE_LOCATION = 3;
 
-        static constexpr const char* DIFFUSE_COLOR_INPUT_NAME = "in_diffuse";
-        static constexpr const char* NORMAL_INPUT_NAME = "in_normal";
-        static constexpr const char* IMAGE_INPUT_NAME = "in_image";
+        static constexpr const char* DIFFUSE_ROUGHNESS_INPUT_NAME = "in_diffuse_roughness";
+        static constexpr const char* NORMAL_METALNESS_INPUT_NAME = "in_normal_metalness";
         static constexpr const char* DEPTH_STENCIL_INPUT_NAME = "in_depth_stencil";
+        static constexpr const char* IMAGE_INPUT_NAME = "in_image";
 
         geometry_buffer(glm::ivec2 size);
 
