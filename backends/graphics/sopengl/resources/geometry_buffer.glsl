@@ -31,13 +31,11 @@ surface read_geometry_buffer()
 }
 #else
 
-out vec3 position_output;
 out vec3 diffuse_output;
 out vec3 normal_output;
 
 void write_geometry_buffer(surface s)
 {
-    position_output = s.position;
     diffuse_output = s.diffuse;
     normal_output = s.normal;
 }
