@@ -7,7 +7,7 @@ set(SOURCES
 set(HEADERS
 )
 add_library(simple-game SHARED ${SOURCES} ${HEADERS})
-target_include_directories(simple-game PUBLIC include)
+target_include_directories(simple-game PUBLIC include ../backends/graphics/sopengl/resources)
 target_link_libraries(simple-game sigma-core)
 
 #add_resource_package(simple-game-resources resources include)

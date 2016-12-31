@@ -10,6 +10,11 @@ EditorContext::EditorContext(QObject* parent)
     load_plugin("sopengl");
     load_plugin("simple-game");
 
-    set_game_class("simple_game");
+    current_game_ = create_game("simple_game");
+}
+
+std::shared_ptr<game> EditorContext::current_game() const
+{
+    return current_game_;
 }
 }

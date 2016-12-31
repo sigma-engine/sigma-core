@@ -43,11 +43,7 @@ public:
 
     std::shared_ptr<graphics::renderer> create_renderer(std::string renderer_class, glm::ivec2 size);
 
-    void set_game_class(std::string game_class);
-
-    std::shared_ptr<game> current_game();
-
-    void update(std::chrono::duration<float> dt);
+    std::shared_ptr<game> create_game(std::string game_class);
 
 protected:
     graphics::texture_cache textures_;
@@ -58,9 +54,6 @@ protected:
 
     std::unordered_map<std::string, boost::shared_ptr<game_class> > game_classes;
     std::unordered_map<std::string, boost::shared_ptr<graphics::renderer_class> > renderer_classes;
-
-    // TODO custom pointer that works better with dynamic libs
-    std::shared_ptr<game> current_game_;
 };
 }
 

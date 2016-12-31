@@ -42,6 +42,7 @@ set(LIBRARY_SOURCES
     src/sigma/graphics/static_mesh_instance.cpp
     src/sigma/graphics/shader_technique.cpp
     src/sigma/graphics/post_process_effect.cpp
+    src/sigma/trackball_controller.cpp
 )
 set(LIBRARY_HEADERS
     include/sigma/game.hpp
@@ -69,6 +70,7 @@ set(LIBRARY_HEADERS
     include/sigma/resource/resource_manager.hpp
     include/sigma/graphics/shader_technique.hpp
     include/sigma/graphics/post_process_effect.hpp
+    include/sigma/trackball_controller.hpp
 )
 
 add_library(sigma-core SHARED ${LIBRARY_SOURCES} ${LIBRARY_HEADERS})
@@ -79,8 +81,10 @@ target_compile_options(sigma-core PRIVATE -DSIGMA_EXPORT)
 
 set(MAIN_SOURCES
     src/sigma/main.cpp
+    src/sigma/window.cpp
 )
 set(MAIN_HEADERS
+    include/sigma/window.hpp
 )
 
 add_executable(sigma-runner ${MAIN_SOURCES} ${MAIN_HEADERS})

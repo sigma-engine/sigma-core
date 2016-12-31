@@ -13,7 +13,7 @@ GameView::GameView(QQuickItem* parent)
     : QQuickFramebufferObject(parent)
     , activeContext_(nullptr)
 {
-    //this->setMirrorVertically(true);
+    this->setMirrorVertically(true);
 }
 
 GameView::~GameView()

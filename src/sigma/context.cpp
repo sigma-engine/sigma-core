@@ -13,7 +13,6 @@ context::context()
     , materials_(boost::filesystem::current_path() / ".." / "data", textures_, shaders_)
     , static_meshes_(boost::filesystem::current_path() / ".." / "data", materials_)
     , effects_(boost::filesystem::current_path() / ".." / "data", textures_, shaders_, static_meshes_)
-    , current_game_(nullptr)
 {
 }
 
@@ -75,20 +74,9 @@ std::shared_ptr<graphics::renderer> context::create_renderer(std::string rendere
     return renderer_classes[renderer_class]->create(this, size);
 }
 
-void context::set_game_class(std::string game_class)
+std::shared_ptr<game> context::create_game(std::string game_class)
 {
-    current_game_ = game_classes[game_class]->create(this);
-}
-
-std::shared_ptr<game> context::current_game()
-{
-    return current_game_;
-}
-
-void context::update(std::chrono::duration<float> dt)
-{
-    if (current_game_)
-        current_game_->update(dt);
+    return game_classes[game_class]->create(this);
 }
 
 /*void context::render(glm::ivec2 size)

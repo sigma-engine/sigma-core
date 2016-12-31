@@ -44,28 +44,16 @@ namespace convert {
             return name;
         }
 
+        glm::vec3 convert_color(aiColor3D c) { return glm::vec3(c.r, c.g, c.b); }
+
         glm::vec3 convert_3d(aiVector3D v) {
             return {v.x,v.z,-v.y};
         }
 
-        glm::vec3 convert_n(aiVector3D v) {
-            return {v.x,v.y,v.z};
-        }
-
-        glm::vec3 convert_color(aiColor3D c) { return glm::vec3(c.r, c.g, c.b); }
 
         glm::vec2 convert_2d(aiVector3D v) {
             return glm::vec2(v.x, v.y);
         }
-
-
-        /*glm::vec3 convert(aiVector3D v) {
-            return glm::vec3(v.x, -v.z, v.y);
-        }
-
-
-
-        glm::vec2 convert(aiVector2D v) { return glm::vec2(v.x, v.y); }*/
 
         glm::quat convert_3d(aiQuaternion q) { return glm::quat(q.w, q.x, q.z, -q.y); }
     }
@@ -88,12 +76,12 @@ namespace convert {
                 aiProcess_LimitBoneWeights | aiProcess_ValidateDataStructure | aiProcess_ImproveCacheLocality | aiProcess_RemoveRedundantMaterials |
                 //##aiProcess_FixInfacingNormals | //???
                 aiProcess_SortByPType | aiProcess_FindDegenerates | aiProcess_FindInvalidData | aiProcess_GenUVCoords |
-                // aiProcess_TransformUVCoords | //???
-                aiProcess_FindInstances// |
+                 //aiProcess_TransformUVCoords | //???
+                aiProcess_FindInstances |
             // aiProcess_ConvertToLeftHanded|
             // aiProcess_OptimizeMeshes  |
             // aiProcess_OptimizeGraph  |
-            // aiProcess_FlipUVs |
+             aiProcess_FlipUVs //|
              //aiProcess_FlipWindingOrder
             // aiProcess_SplitByBoneCount  |
             // aiProcess_Debone //???
@@ -242,19 +230,6 @@ namespace convert {
 }
 
 /*
- *
- * glm::vec3 convert(aiVector3D v) {
-    return glm::vec3(v.x, v.y, v.z);
-}
-
-glm::vec2 convert(aiVector2D v) {
-    return glm::vec2(v.x, v.y);
-}
-
-glm::quat convert(aiQuaternion q) {
-    return glm::quat(q.x, q.y, q.z, q.w);
-}
-
 void convert(aiMaterial *aiMat) {
     aiString name;
     aiColor3D diffuse;
@@ -422,156 +397,4 @@ std::endl;
 //    TEXMAP_AXIS(t,n);
 //    TEXFLAGS(t,n);
 }
-
-void assimp_import::import_file(sigma::entity::entity_manager
-*entity_manager_,
-                                sigma::entity::component_manager
-*component_manager_,
-                                boost::filesystem::path filepath) {
-
-    auto filename = filepath.string();
-    auto path = filepath.replace_extension("");
-
-    Assimp::Importer importer;
-    const aiScene *scene = importer.ReadFile(filename.c_str(),
-aiProcess_CalcTangentSpace |
-                                                               aiProcess_JoinIdenticalVertices
-|
-                                                               //aiProcess_MakeLeftHanded
-|
-                                                               aiProcess_Triangulate
-|
-                                                               //aiProcess_RemoveComponent
-|
-                                                               //???aiProcess_GenNormals
-|
-                                                               //???aiProcess_GenSmoothNormals
-|
-                                                               //aiProcess_SplitLargeMeshes
-|
-                                                               //aiProcess_PreTransformVertices
-|
-                                                               aiProcess_LimitBoneWeights
-|
-                                                               aiProcess_ValidateDataStructure
-|
-                                                               aiProcess_ImproveCacheLocality
-|
-                                                               //??aiProcess_RemoveRedundantMaterials
-|
-                                                               aiProcess_FixInfacingNormals
-| //???
-                                                               aiProcess_SortByPType
-|
-                                                               aiProcess_FindDegenerates
-|
-                                                               aiProcess_FindInvalidData
-|
-                                                               aiProcess_GenUVCoords
-|
-                                                               //aiProcess_TransformUVCoords
-| //???
-                                                               aiProcess_FindInstances
-|
-                                                               //aiProcess_ConvertToLeftHanded|
-                                                               //aiProcess_OptimizeMeshes
-|
-                                                               //aiProcess_OptimizeGraph
-|
-                                                               //aiProcess_FlipUVs
-|
-                                                               //aiProcess_FlipWindingOrder
-|
-                                                               //aiProcess_SplitByBoneCount
-|
-                                                               aiProcess_Debone
-//???
-    );
-    if (scene == nullptr) {
-        std::cout << importer.GetErrorString() << std::endl;
-        return;
-    }
-
-
-    for (unsigned int i = 0; i < scene->mNumMaterials; ++i) {
-        auto aiMat = scene->mMaterials[i];
-        convert(aiMat);
-    }
-
-    std::unordered_map<int, std::shared_ptr<sigma::graphics::static_mesh>>
-static_meshes;
-    std::unordered_map<std::string,int> names;
-    for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
-        auto mesh = scene->mMeshes[i];
-        assert(mesh->HasPositions());
-        //assert(mesh->HasNormals());
-        //assert(mesh->HasTextureCoords(0));
-        //assert(mesh->HasTangentsAndBitangents());
-
-        std::vector<sigma::graphics::static_mesh::vertex>
-vertices(mesh->mNumVertices);
-        std::vector<sigma::graphics::static_mesh::triangle>
-triangles(mesh->mNumFaces);
-
-        for (unsigned int j = 0; j < mesh->mNumVertices; ++j) {
-            auto pos = mesh->mVertices[j];
-            vertices[j].position = convert(pos);
-
-            if (mesh->HasNormals()) {
-                auto nor = mesh->mNormals[j];
-                vertices[j].normal = convert(nor);
-            }
-
-            if (mesh->HasTangentsAndBitangents()) {
-                auto tan = mesh->mTangents[j];
-                vertices[j].tangent = convert(tan);
-            }
-            if (mesh->HasTextureCoords(0)) {
-                auto tex = mesh->mTextureCoords[0][j];
-                vertices[j].texcoord = convert(tex);
-            }
-        }
-
-        for (unsigned int j = 0; j < mesh->mNumFaces; ++j) {
-            aiFace f = mesh->mFaces[j];
-            for (unsigned int k = 0; k < 3; ++k) {
-                triangles[j][k] = f.mIndices[k];
-            }
-        }
-
-        std::string name = mesh->mName.C_Str();
-        if(names[mesh->mName.C_Str()] != 0)
-            name += "_"+std::to_string(names[mesh->mName.C_Str()]);
-
-        names[mesh->mName.C_Str()]++;
-
-        static_meshes[i] =
-std::make_shared<sigma::graphics::static_mesh>(sigma::resource::identifier{path/name});
-        static_meshes[i]->set_data(vertices, triangles);
-    }
-
-    for (unsigned int i = 0; i < scene->mRootNode->mNumChildren; ++i) {
-        aiNode *node = scene->mRootNode->mChildren[i];
-        if (node->mNumMeshes <= 0)
-            continue;
-        auto e = entity_manager_->create();
-
-        aiVector3D scaling;
-        aiQuaternion rotation;
-        aiVector3D position;
-        node->mTransformation.Decompose(scaling, rotation, position);
-
-        auto tc =
-component_manager_->add_component<sigma::game::transform_component>(e);
-        tc->rotation = convert(rotation);
-
-        tc->position = convert(position);
-        tc->scale = convert(scaling);
-
-        auto smc =
-component_manager_->add_component<sigma::game::static_mesh_component>(e);
-        smc->set_static_mesh(static_meshes[node->mMeshes[0]]);
-    }
-}
-
 */
