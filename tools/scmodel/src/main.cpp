@@ -43,7 +43,7 @@ int main(int argc, char const* argv[])
     for (auto file_path :
         vm["input-files"].as<std::vector<boost::filesystem::path> >()) {
         file_path = boost::filesystem::absolute(file_path);
-        if (sigma::util::directory_contains_file(boost::filesystem::current_path(), file_path)) {
+        if (sigma::filesystem::contains_file(boost::filesystem::current_path(), file_path)) {
             if (boost::filesystem::exists(file_path)) {
                 std::cout << "Compiling model: " << file_path << std::endl;
 
@@ -63,14 +63,16 @@ int main(int argc, char const* argv[])
                 auto scene_path = file_path.replace_extension(".scn");
 
                 Json::Value scene;
-                if(boost::filesystem::exists(scene_path)) {
+                if (boost::filesystem::exists(scene_path)) {
                     std::ifstream in_scene(scene_path.string());
                     in_scene >> scene;
                 }
 
-                for(auto object_name: imported.scene_object_names()) {
+                for (auto object_name : imported.scene_object_names()) {
                     imported.convert_object(object_name, scene[object_name]);
                 }
+
+                std::cout << sigma::filesystem::make_relative(boost::filesystem::current_path(), "/home/aaron/Desktop/sigma-engine/simple_game/resources/proprietary/rustediron2.mat") << std::endl;
                 std::ofstream outscene(scene_path.string());
                 outscene << scene;
             } else {

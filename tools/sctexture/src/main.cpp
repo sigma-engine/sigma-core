@@ -43,7 +43,7 @@ int main(int argc, char const* argv[])
 
     for (auto file_path : vm["input-files"].as<std::vector<boost::filesystem::path> >()) {
         file_path = boost::filesystem::absolute(file_path);
-        if (sigma::util::directory_contains_file(boost::filesystem::current_path(), file_path)) {
+        if (sigma::filesystem::contains_file(boost::filesystem::current_path(), file_path)) {
             if (boost::filesystem::exists(file_path)) {
                 std::cout << "Compiling texture: " << file_path << std::endl;
 

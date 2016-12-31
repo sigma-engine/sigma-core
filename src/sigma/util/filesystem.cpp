@@ -1,9 +1,14 @@
 #include <sigma/util/filesystem.hpp>
 
+#include <boost/filesystem/operations.hpp>
+
 namespace sigma {
-namespace util {
-    bool directory_contains_file(boost::filesystem::path directory, boost::filesystem::path file)
+namespace filesystem {
+    bool contains_file(boost::filesystem::path directory, boost::filesystem::path file)
     {
+        directory = boost::filesystem::canonical(directory);
+        file = boost::filesystem::canonical(file);
+
         auto dbegin = directory.begin();
         auto dend = directory.end();
         auto fbegin = file.begin();
@@ -17,8 +22,11 @@ namespace util {
         return std::equal(dbegin, dend, fbegin);
     }
 
-    boost::filesystem::path path_divergence(boost::filesystem::path directory, boost::filesystem::path file)
+    boost::filesystem::path make_relative(boost::filesystem::path directory, boost::filesystem::path file)
     {
+        directory = boost::filesystem::canonical(directory);
+        file = boost::filesystem::canonical(file);
+
         auto dbegin = directory.begin();
         auto fbegin = file.begin();
         auto fend = file.end();

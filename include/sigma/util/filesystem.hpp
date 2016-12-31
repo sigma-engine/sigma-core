@@ -1,22 +1,16 @@
-#ifndef SIGMA_ENGINE_UTIL_FILESYSTEM_HPP
-#define SIGMA_ENGINE_UTIL_FILESYSTEM_HPP
+#ifndef SIGMA_ENGINE_FILESYSTEM_FILESYSTEM_HPP
+#define SIGMA_ENGINE_FILESYSTEM_FILESYSTEM_HPP
 
 #include <sigma/config.hpp>
 
 #include <boost/filesystem/path.hpp>
 
 namespace sigma {
-namespace util {
-    /**
-     * Returns true if file is in the directory
-     * @param directory the directory to check in MUST be absolute.
-     * @param file the file to check for MUST be absolute.
-     * @return
-     */
-    bool SIGMA_API directory_contains_file(boost::filesystem::path directory, boost::filesystem::path file);
+namespace filesystem {
+    bool SIGMA_API contains_file(boost::filesystem::path directory, boost::filesystem::path file);
 
-    boost::filesystem::path SIGMA_API path_divergence(boost::filesystem::path directory, boost::filesystem::path file);
+    boost::filesystem::path SIGMA_API make_relative(boost::filesystem::path directory, boost::filesystem::path file);
 }
 }
 
-#endif // SIGMA_ENGINE_UTIL_FILESYSTEM_HPP
+#endif // SIGMA_ENGINE_FILESYSTEM_FILESYSTEM_HPP

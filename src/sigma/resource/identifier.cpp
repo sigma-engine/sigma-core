@@ -43,7 +43,7 @@ namespace resource {
         // TODO error if path is not in root_directroy
         path = boost::filesystem::absolute(path, root_directroy);
         path = path.replace_extension("");
-        auto resource_path = util::path_divergence(root_directroy, path);
+        auto resource_path = filesystem::make_relative(root_directroy, path);
         name_ = resource_path.string();
         boost::algorithm::replace_all(name_, "\\", "/");
         name_ = type + "://" + name_;
@@ -57,7 +57,7 @@ namespace resource {
         // TODO error if path is not in root_directroy
         path = boost::filesystem::absolute(path, root_directroy);
         path = path.replace_extension("");
-        auto resource_path = util::path_divergence(root_directroy, path);
+        auto resource_path = filesystem::make_relative(root_directroy, path);
         name_ = resource_path.string() + ":" + sub_name;
         boost::algorithm::replace_all(name_, "\\", "/");
         name_ = type + "://" + name_;
