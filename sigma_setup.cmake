@@ -4,6 +4,31 @@ set(MATERIAL_COMPILER scmaterial)
 set(MODEL_COMPILER scmodel)
 set(REFLECTION_COMPILER screflect)
 
+set(SIGMA_SHADER_INCLUDE_REGEX "#[ \t]*include[ \t]*[<\"]([^>\"]*)[>\"]\n")
+
+function(get_file_depends filename output)
+    file(READ ${filename} source)
+    string(REGEX MATCHALL ${SIGMA_SHADER_INCLUDE_REGEX} included_files "${source}")
+    set(my_deps)
+    foreach(include_file ${included_files})
+        string(REGEX REPLACE ${SIGMA_SHADER_INCLUDE_REGEX} "\\1" inc "${include_file}")
+        get_filename_component(dir ${inc} DIRECTORY)
+        get_filename_component(name ${inc} NAME)
+        find_path(file_path NAMES ${name} PATHS ${ARGN} PATH_SUFFIXES ${dir} NO_DEFAULT_PATH)
+        if(dir STREQUAL "")
+            set(my_deps ${my_deps} "${file_path}/${name}")
+        else()
+            set(my_deps ${my_deps} "${file_path}/${dir}/${name}")
+        endif()
+    endforeach()
+    foreach(dep ${my_deps})
+        if(NOT dep IN_LIST ${output})
+            get_file_depends(${dep} ${output} ${ARGN})
+        endif()
+        set(${output} ${${output}} ${dep} PARENT_SCOPE)
+    endforeach()
+endfunction()
+
 function(generate_type_regex_and_glob name)
     set(globs)
     foreach(stype ${ARGN})
@@ -84,11 +109,14 @@ function(add_resources target)
             get_filename_component(directory ${shader_time_stamp} DIRECTORY)
             file(MAKE_DIRECTORY ${directory})
 
+            get_file_depends(${shader} include_deps ${include_dirs})
+
             add_custom_command(
                 OUTPUT "${shader_time_stamp}"
                 COMMAND ${SHADER_COMPILER} ARGS --output="${CMAKE_BINARY_DIR}/data" ${include_args} "${shader}"
                 COMMAND ${CMAKE_COMMAND} ARGS -E touch "${shader_time_stamp}"
                 MAIN_DEPENDENCY "${shader}"
+                DEPENDS ${include_deps}
                 WORKING_DIRECTORY "${package_PACKAGE_ROOT}"
                 COMMENT ""
                 SOURCES "${shader}"
