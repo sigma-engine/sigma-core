@@ -69,7 +69,7 @@ namespace opengl {
             //assert(ind >= 0 && "Program does not have this texture!");
             if (ind >= 0) {
                 texture_map_[name] = textures_.size();
-                textures_.push_back(std::make_pair(textures_.size(), txt));
+                textures_.push_back(std::make_pair(ind, txt));
             }
             return;
         }
