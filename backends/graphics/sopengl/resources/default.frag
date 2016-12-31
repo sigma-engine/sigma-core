@@ -12,7 +12,10 @@ uniform sampler2D roughness_map;
 void main()
 {
     surface s;
+    // TODO do this conversion on the cpu
     s.diffuse = pow(texture(basecolor_map, in_vertex.texcoord).rgb, vec3(2.2));
-    s.normal = in_vertex.normal.xyz;
+    s.metalness = texture(metallic_map, in_vertex.texcoord).r;
+    s.roughness = texture(roughness_map, in_vertex.texcoord).r;
+    s.normal = in_vertex.normal.xyz; // TODO normal map
     write_geometry_buffer(s);
 }
