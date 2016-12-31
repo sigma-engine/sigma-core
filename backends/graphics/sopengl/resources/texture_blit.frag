@@ -7,8 +7,10 @@
 
 const vec4 gamma_correction = vec4(0.45454545454);
 
+
 void main()
 {
-    vec4 c = vec4(texture(in_image, in_vertex.texcoord).rgb, 1);
+    vec4 c = texture(in_image, in_vertex.texcoord);
     out_image = pow(c, gamma_correction);
+    out_image.a = 1;
 }

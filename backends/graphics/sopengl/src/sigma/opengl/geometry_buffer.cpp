@@ -6,11 +6,11 @@ namespace sigma {
 namespace opengl {
     geometry_buffer::geometry_buffer(glm::ivec2 size)
         : frame_buffer(size)
-        , position_texture_(internal_format::RGB16F, size)
-        , diffuse_texture_(internal_format::RGB8, size)
-        , normal_texture_(internal_format::RGB16F, size)
+        , position_texture_(internal_format::RGB32F, size)
+        , diffuse_texture_(internal_format::RGB32F, size)
+        , normal_texture_(internal_format::RGB32F, size)
         , depth_stencil_texture_(internal_format::DEPTH32F_STENCIL8, size)
-        , images_{ texture{ internal_format::RGB16F, size }, texture{ internal_format::RGB16F, size } }
+        , images_{ texture{ internal_format::RGB32F, size }, texture{ internal_format::RGB32F, size } }
         , input_image_(0)
         , output_image_(1)
     {
@@ -50,6 +50,9 @@ namespace opengl {
 
         GL_CHECK(glActiveTexture(GLenum(INPUT_IMAGE_TEXTURE_UINT)));
         images_[input_image_].bind();
+
+        GL_CHECK(glActiveTexture(GLenum(DEPTH_STENCIL_TEXTURE_UINT)));
+        depth_stencil_texture_.bind();
     }
 
     void geometry_buffer::clear_input_image(glm::vec4 color)
