@@ -1,4 +1,10 @@
 {
     "vertex" : "default",
-    "fragment" : "default"
+    "fragment" : "default",
+    "textures": {
+        "basecolor_map" : "default_basecolor",
+		"metallic_map" : "default_metalness",
+		"normal_map" : "default_normal",
+		"roughness_map" : "default_roughness"
+    }
 }

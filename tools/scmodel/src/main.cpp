@@ -68,11 +68,11 @@ int main(int argc, char const* argv[])
                     in_scene >> scene;
                 }
 
-                for (auto object_name : imported.scene_object_names()) {
+                for (auto object_name : imported.scene_object_names())
                     imported.convert_object(object_name, scene[object_name]);
-                }
 
-                std::cout << sigma::filesystem::make_relative(boost::filesystem::current_path(), "/home/aaron/Desktop/sigma-engine/simple_game/resources/proprietary/rustediron2.mat") << std::endl;
+                scene_path = sigma::filesystem::make_relative(boost::filesystem::current_path(), scene_path);
+                scene_path = outputdir / scene_path;
                 std::ofstream outscene(scene_path.string());
                 outscene << scene;
             } else {

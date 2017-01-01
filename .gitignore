@@ -5,6 +5,8 @@
 
 .ycm_extra_conf*
 
+.blend1
+
 conanbuildinfo.cmake
 conaninfo.txt
 

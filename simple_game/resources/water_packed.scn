@@ -1,145 +1,16 @@
 {
-	"Cube" : 
+	"Point" :
 	{
-		"sigma::graphics::static_mesh" : "water_packed:Cube.002",
-		"sigma::transform" : 
+		"sigma::graphics::point_light" :
 		{
-			"position" : 
-			[
-				6.605928897857666,
-				2.2936844825744629,
-				-5.8845081329345703
-			],
-			"rotation" : 
-			[
-				0.0,
-				0.0,
-				0.0
-			],
-			"scale" : 
-			[
-				1.0,
-				1.0,
-				1.0
-			]
-		}
-	},
-	"Point" : 
-	{
-		"sigma::graphics::point_light" : 
-		{
-			"color" : 
-			[
-				1.0,
-				1.0,
-				1.0
-			],
 			"intensity" : 2
-		},
-		"sigma::transform" : 
-		{
-			"position" : 
-			[
-				2.7954199314117432,
-				0.57407641410827637,
-				-0.0
-			],
-			"rotation" : 
-			[
-				0.0,
-				0.0,
-				0.0
-			],
-			"scale" : 
-			[
-				50.0,
-				50.0,
-				50.0
-			]
 		}
 	},
-	"Sun" : 
+	"Sun" :
 	{
-		"sigma::graphics::directional_light" : 
+		"sigma::graphics::directional_light" :
 		{
-			"color" : 
-			[
-				1.0,
-				1.0,
-				1.0
-			],
 			"intensity" : 1
-		},
-		"sigma::transform" : 
-		{
-			"position" : 
-			[
-				0.0,
-				0.0,
-				-0.0
-			],
-			"rotation" : 
-			[
-				-47.974990844726562,
-				45.685104370117188,
-				-74.865264892578125
-			],
-			"scale" : 
-			[
-				0.99999994039535522,
-				1.0,
-				0.99999994039535522
-			]
-		}
-	},
-	"Torus" : 
-	{
-		"sigma::graphics::static_mesh" : "water_packed:Torus",
-		"sigma::transform" : 
-		{
-			"position" : 
-			[
-				0.0,
-				0.0,
-				-0.0
-			],
-			"rotation" : 
-			[
-				0.0,
-				0.0,
-				0.0
-			],
-			"scale" : 
-			[
-				1.0,
-				1.0,
-				1.0
-			]
-		}
-	},
-	"ground" : 
-	{
-		"sigma::graphics::static_mesh" : "water_packed:ground",
-		"sigma::transform" : 
-		{
-			"position" : 
-			[
-				0.0,
-				0.0,
-				-0.0
-			],
-			"rotation" : 
-			[
-				0.0,
-				0.0,
-				0.0
-			],
-			"scale" : 
-			[
-				1.0,
-				1.0,
-				1.0
-			]
 		}
 	}
 }
