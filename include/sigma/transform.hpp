@@ -3,27 +3,61 @@
 
 #include <sigma/component.hpp>
 #include <sigma/config.hpp>
-#include <sigma/reflect/reflect.hpp>
 
 #include <glm/gtc/quaternion.hpp>
 #include <glm/vec3.hpp>
 
 namespace sigma {
 
-RCLASS()
 struct SIGMA_API transform {
+public:
 
-    RPROPERTY()
-    glm::vec3 position;
+    glm::vec3 position() const;
 
-    RPROPERTY()
-    glm::vec3 scale{ 1.0f };
+    void set_position(const glm::vec3 &position);
 
-    RPROPERTY()
-    glm::quat rotation;
+    glm::quat rotation() const;
+
+    void set_rotation(const glm::quat &rotation);
+
+    glm::vec3 scale() const;
+
+    void set_scale(const glm::vec3 &scale);
+
+    bool dirty() const;
+
+    void set_dirty(bool dirty=true);
+
+    const glm::mat4 &matrix();
+
+private:
+    glm::vec3 position_;
+    glm::quat rotation_;
+    glm::vec3 scale_{ 1.0f };
+    bool dirty_;
+    glm::mat4 matrix_;
 };
 
 using transform_manager = basic_component_manager<transform>;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 #endif // SIGMA_TRANSFORM_HPP

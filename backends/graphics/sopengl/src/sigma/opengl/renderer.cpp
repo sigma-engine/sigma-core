@@ -75,12 +75,11 @@ namespace opengl {
 
         for (auto e : viewport.entities) { // TODO use a filter here
             if (viewport.transforms.has(e)) {
-                const auto& txform = viewport.transforms.get(e);
+                auto& txform = viewport.transforms.get(e); // TODO const
                 if (viewport.static_mesh_instances.has(e)) {
                     auto mesh = static_meshes_.get(viewport.static_mesh_instances.get(e));
 
-                    // TODO move this into an ecs
-                    matrices_.model_matrix = glm::translate(glm::mat4(1), txform.position) * glm::mat4_cast(txform.rotation) * glm::scale(glm::mat4(1), glm::vec3(txform.scale));
+                    matrices_.model_matrix = txform.matrix();
 
                     matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
                     matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
@@ -118,12 +117,11 @@ namespace opengl {
 
         for (auto e : viewport.entities) { // TODO use a filter here
             if (viewport.transforms.has(e) && viewport.point_lights.has(e)) {
-                const auto& txform = viewport.transforms.get(e);
+                auto& txform = viewport.transforms.get(e); // TODO const
                 const auto& light = viewport.point_lights.get(e);
 
-                // TODO move this into an ecs
                 // TODO non uniform scale on point light???
-                matrices_.model_matrix = glm::translate(glm::mat4(1), txform.position) * glm::mat4_cast(txform.rotation) * glm::scale(glm::mat4(1), glm::vec3(txform.scale));
+                matrices_.model_matrix = txform.matrix();
 
                 matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
                 matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
@@ -136,12 +134,11 @@ namespace opengl {
         // TODO directional lights
         for (auto e : viewport.entities) { // TODO use a filter here
             if (viewport.transforms.has(e) && viewport.directional_lights.has(e)) {
-                const auto& txform = viewport.transforms.get(e);
+                auto& txform = viewport.transforms.get(e); // TODO const
                 const auto& light = viewport.directional_lights.get(e);
 
-                // TODO move this into an ecs
                 // TODO scale on directional light???
-                matrices_.model_matrix = glm::translate(glm::mat4(1), txform.position) * glm::mat4_cast(txform.rotation) * glm::scale(glm::mat4(1), glm::vec3(txform.scale));
+                matrices_.model_matrix = txform.matrix();
 
                 matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
                 matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
@@ -172,7 +169,7 @@ namespace opengl {
         GL_CHECK(glEnable(GL_DEPTH_TEST));
 
         auto view_space_position = matrices_.model_view_matrix * glm::vec4(0, 0, 0, 1);
-        if (glm::length(view_space_position) <= 1.1 * txform.scale.x) {
+        if (glm::length(view_space_position) <= 1.1 * txform.scale().x) {
             GL_CHECK(glCullFace(GL_FRONT));
             GL_CHECK(glDepthFunc(GL_GREATER));
         } else {
@@ -204,7 +201,7 @@ namespace opengl {
         // TODO this should be abstracted away better
         GL_CHECK(glUniform3fv(point_light_color_location_, 1, glm::value_ptr(light.color)));
         GL_CHECK(glUniform3fv(point_light_position_location_, 1, glm::value_ptr(view_space_position)));
-        GL_CHECK(glUniform1f(point_light_radius_location_, std::abs(txform.scale.x))); // TODO non uniform scale on point light???
+        GL_CHECK(glUniform1f(point_light_radius_location_, std::abs(txform.scale().x))); // TODO non uniform scale on point light???
         GL_CHECK(glUniform1f(point_light_falloff_location_, light.falloff));
         GL_CHECK(glUniform1f(point_light_intensity_location_, light.intensity));
 

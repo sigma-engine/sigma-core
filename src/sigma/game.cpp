@@ -63,12 +63,21 @@ void game::load(boost::filesystem::path file_path)
                 auto& txform = transforms.add(e);
                 std::for_each(component_values.begin(), component_values.end(), [&](const std::string& value_name) {
                     const auto& value = component[value_name];
-                    if (value_name == "position")
-                        to_vec3(value, txform.position);
-                    else if (value_name == "scale")
-                        to_vec3(value, txform.scale);
-                    else if (value_name == "rotation")
-                        to_quat(value, txform.rotation);
+                    if (value_name == "position") {
+                        glm::vec3 position;
+                        to_vec3(value, position);
+                        txform.set_position(position);
+                    }
+                    else if (value_name == "scale") {
+                        glm::vec3 scale;
+                        to_vec3(value,scale);
+                        txform.set_scale(scale);
+                    }
+                    else if (value_name == "rotation") {
+                        glm::quat rotation;
+                        to_quat(value, rotation);
+                        txform.set_rotation(rotation);
+                    }
                 });
             } else if (component_type == "sigma::graphics::directional_light") {
                 const auto& component_values = component.getMemberNames();

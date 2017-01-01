@@ -43,6 +43,7 @@ set(LIBRARY_SOURCES
     src/sigma/graphics/shader_technique.cpp
     src/sigma/graphics/post_process_effect.cpp
     src/sigma/trackball_controller.cpp
+    src/sigma/transform.cpp
 )
 set(LIBRARY_HEADERS
     include/sigma/game.hpp
