@@ -1,6 +1,5 @@
 {
     "vertex" : "default",
-               "fragment" : "null",
-                            "static_mesh" : "point_light:sphere",
-                                            "textures" : []
+    "fragment" : "null",
+    "static_mesh" : "point_light:sphere"
 }
