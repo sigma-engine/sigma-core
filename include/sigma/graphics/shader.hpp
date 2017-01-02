@@ -3,8 +3,7 @@
 
 #include <sigma/config.hpp>
 #include <sigma/reflect/reflect.hpp>
-#include <sigma/resource/identifier.hpp>
-#include <sigma/resource/resource_cache.hpp>
+#include <sigma/resource/cache.hpp>
 #include <sigma/util/glm_serialize.hpp>
 
 #include <glm/vec2.hpp>
@@ -52,13 +51,10 @@ namespace graphics {
             ar& type;
             ar& source;
         }
-
-        template <class>
-        friend class resource::resource_cache;
-        std::size_t reference_count = 0;
     };
 
-    using shader_cache = resource::resource_cache<shader>;
+    using shader_cache = resource::cache<shader>;
+
 }
 }
 

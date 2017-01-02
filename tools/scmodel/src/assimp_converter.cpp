@@ -2,6 +2,7 @@
 
 #include <sigma/graphics/static_mesh.hpp>
 #include <sigma/util/filesystem.hpp>
+#include <sigma/util/json_conversion.hpp>
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
@@ -61,15 +62,6 @@ namespace convert {
         glm::vec2 convert_2d(aiVector3D v)
         {
             return glm::vec2(v.x, v.y);
-        }
-
-        Json::Value to_json(glm::vec3 v)
-        {
-            Json::Value out(Json::arrayValue);
-            out[0] = v.x;
-            out[1] = v.y;
-            out[2] = v.z;
-            return out;
         }
     }
 
@@ -208,9 +200,9 @@ namespace convert {
         ainode->mTransformation.Decompose(aiscale, airotation, aiposition);
         aiscale.y *= -1;
 
-        entity["sigma::transform"]["position"] = to_json(convert_3d(aiposition));
-        entity["sigma::transform"]["rotation"] = to_json(glm::degrees(glm::eulerAngles(convert_3d(airotation))));
-        entity["sigma::transform"]["scale"] = to_json(convert_3d(aiscale));
+        entity["sigma::transform"]["position"] = json::to_json(convert_3d(aiposition));
+        entity["sigma::transform"]["rotation"] = json::to_json(glm::degrees(glm::eulerAngles(convert_3d(airotation))));
+        entity["sigma::transform"]["scale"] = json::to_json(convert_3d(aiscale));
 
         if (ainode->mNumMeshes > 0) {
             // TODO warn if more than one mesh per object
@@ -227,11 +219,11 @@ namespace convert {
             if (name == ailight->mName.C_Str()) {
                 switch (ailight->mType) {
                 case aiLightSource_POINT:
-                    entity["sigma::graphics::point_light"]["color"] = to_json(convert_color(ailight->mColorDiffuse));
+                    entity["sigma::graphics::point_light"]["color"] = json::to_json(convert_color(ailight->mColorDiffuse));
                     // TOOD intensity
                     break;
                 case aiLightSource_DIRECTIONAL:
-                    entity["sigma::graphics::directional_light"]["color"] = to_json(convert_color(ailight->mColorDiffuse));
+                    entity["sigma::graphics::directional_light"]["color"] = json::to_json(convert_color(ailight->mColorDiffuse));
                     // TOOD intensity
                     break;
                 default: // TODO more lights

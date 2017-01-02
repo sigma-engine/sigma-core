@@ -42,6 +42,15 @@ namespace graphics {
 
         ~static_mesh() = default;
 
+        std::vector<vertex> vertices;
+        std::vector<triangle> triangles;
+        material_cache::instance material;
+
+    private:
+        static_mesh(const static_mesh&) = delete;
+        static_mesh& operator=(const static_mesh&) = delete;
+
+        friend class boost::serialization::access;
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
         {
@@ -49,29 +58,22 @@ namespace graphics {
             ar& triangles;
             ar& material;
         }
-
-        std::vector<vertex> vertices;
-        std::vector<triangle> triangles;
-        resource::identifier material;
-
-        friend class static_mesh_cache;
-        std::size_t reference_count = 0;
-
-    private:
-        static_mesh(const static_mesh&) = delete;
-        static_mesh& operator=(const static_mesh&) = delete;
     };
 
-    class SIGMA_API static_mesh_cache : public resource::resource_cache<static_mesh> {
+    class static_mesh_cache : public resource::cache<static_mesh> {
     public:
-        static_mesh_cache(boost::filesystem::path cache_directory, material_cache& materials);
+        static_mesh_cache(boost::filesystem::path cache_directory,material_cache &materials)
+            : resource::cache<static_mesh>(cache_directory)
+            , materials_(materials)
+        {
+        }
 
-        virtual bool increment_reference(resource::identifier resource_id) override;
-
-        virtual bool decrement_reference(resource::identifier resource_id) override;
-
+        virtual void patch(std::shared_ptr<static_mesh> mesh) override
+        {
+            mesh->material = materials_.get(mesh->material.id());
+        }
     private:
-        material_cache& materials_;
+        material_cache &materials_;
     };
 }
 }

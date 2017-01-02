@@ -40,6 +40,7 @@ set(HEADERS
     include/sigma/opengl/shader_technique.hpp
     include/sigma/opengl/post_process_effect.hpp
     include/sigma/opengl/post_process_effect_manager.hpp
+    include/sigma/opengl/resource_manager.hpp
 )
 
 add_library(sopengl SHARED ${SOURCES} ${HEADERS})

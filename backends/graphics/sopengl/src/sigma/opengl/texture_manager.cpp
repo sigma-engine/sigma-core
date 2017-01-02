@@ -2,7 +2,7 @@
 
 namespace sigma {
 namespace opengl {
-    texture_manager::texture_manager(resource::resource_cache<graphics::texture>& cache)
+    texture_manager::texture_manager(resource::cache<graphics::texture> &cache)
         : resource::resource_manager<graphics::texture, opengl::texture>(cache)
     {
     }

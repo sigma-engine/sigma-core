@@ -5,7 +5,7 @@
 
 namespace sigma {
 namespace opengl {
-    material_manager::material_manager(resource::resource_cache<graphics::material>& cache, texture_manager& textures, shader_manager& shaders)
+    material_manager::material_manager(resource::cache<graphics::material>& cache, texture_manager& textures, shader_manager& shaders)
         : resource::resource_manager<graphics::material, opengl::material>(cache)
         , textures_(textures)
         , shaders_(shaders)

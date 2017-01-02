@@ -3,6 +3,8 @@
 
 #include <sigma/graphics/shader_technique.hpp>
 
+#include <sigma/resource/cache.hpp>
+
 namespace sigma {
 namespace graphics {
 

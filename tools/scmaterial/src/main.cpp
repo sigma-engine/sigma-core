@@ -104,7 +104,7 @@ int main(int argc, char const* argv[])
                         auto mesh_source = technique_data["static_mesh"].asString();
                         if (!boost::starts_with(mesh_source, "static_mesh://"))
                             mesh_source = "static_mesh://" + mesh_source;
-                        effect.set_mesh(mesh_source);
+                        effect.set_mesh(sigma::graphics::static_mesh_cache::instance{mesh_source});
                     }
 
                     // TODO check for errors like no vertex or fragment shader

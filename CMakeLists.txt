@@ -44,6 +44,7 @@ set(LIBRARY_SOURCES
     src/sigma/graphics/post_process_effect.cpp
     src/sigma/trackball_controller.cpp
     src/sigma/transform.cpp
+    src/sigma/util/json_conversion.cpp
 )
 set(LIBRARY_HEADERS
     include/sigma/game.hpp
@@ -61,17 +62,17 @@ set(LIBRARY_HEADERS
     include/sigma/graphics/material.hpp
     include/sigma/graphics/spot_light.hpp
     include/sigma/resource/identifier.hpp
+    include/sigma/resource/cache.hpp
     include/sigma/graphics/point_light.hpp
     include/sigma/graphics/static_mesh.hpp
     include/sigma/util/glm_serialize.hpp
     include/sigma/graphics/directional_light.hpp
     include/sigma/util/compile_time_hash.hpp
     include/sigma/graphics/static_mesh_instance.hpp
-    include/sigma/resource/resource_cache.hpp
-    include/sigma/resource/resource_manager.hpp
     include/sigma/graphics/shader_technique.hpp
     include/sigma/graphics/post_process_effect.hpp
     include/sigma/trackball_controller.hpp
+    include/sigma/util/json_conversion.hpp
 )
 
 add_library(sigma-core SHARED ${LIBRARY_SOURCES} ${LIBRARY_HEADERS})
@@ -80,16 +81,16 @@ target_link_libraries(sigma-core PUBLIC ${CMAKE_DL_LIBS} ${CONAN_LIBS})
 target_compile_definitions(sigma-core PUBLIC -DSIGMA_SHARED)
 target_compile_options(sigma-core PRIVATE -DSIGMA_EXPORT)
 
-set(MAIN_SOURCES
-    src/sigma/main.cpp
-    src/sigma/window.cpp
-)
-set(MAIN_HEADERS
-    include/sigma/window.hpp
-)
+#set(MAIN_SOURCES
+#    src/sigma/main.cpp
+#    src/sigma/window.cpp
+#)
+#set(MAIN_HEADERS
+#    include/sigma/window.hpp
+#)
 
-add_executable(sigma-runner ${MAIN_SOURCES} ${MAIN_HEADERS})
-target_link_libraries(sigma-runner PUBLIC sigma-core)
+#add_executable(sigma-runner ${MAIN_SOURCES} ${MAIN_HEADERS})
+#target_link_libraries(sigma-runner PUBLIC sigma-core)
 
 add_subdirectory(tools/scmaterial)
 add_subdirectory(tools/scmodel)
@@ -99,6 +100,6 @@ add_subdirectory(tools/sctexture)
 add_subdirectory(tools/seditor)
 add_subdirectory(backends/graphics/sopengl)
 
-# add_subdirectory(tests)
+## add_subdirectory(tests)
 
 add_subdirectory(simple_game)

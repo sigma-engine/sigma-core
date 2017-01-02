@@ -1,10 +1,13 @@
 #include <sigma/game.hpp>
 
 #include <sigma/context.hpp>
+#include <sigma/util/json_conversion.hpp>
 
 #include <json/json.h>
 
 #include <boost/algorithm/string/predicate.hpp>
+
+#include <fstream>
 
 namespace sigma {
 game::game(context* ctx)
@@ -18,34 +21,11 @@ game::game(context* ctx)
 {
 }
 
-bool to_float(const Json::Value& value, float& output)
-{
-    if (value.isConvertibleTo(Json::realValue)) {
-        output = float(value.asDouble());
-        return true;
-    }
-    return false;
-}
 
-bool to_vec3(const Json::Value& value, glm::vec3& output)
-{
-    // TODO support x,y,z
-    return value.isArray() && value.size() == 3 && to_float(value[0], output.x) && to_float(value[1], output.y) && to_float(value[2], output.z);
-}
-
-bool to_quat(const Json::Value& value, glm::quat& output)
-{
-    glm::vec3 e;
-    if (to_vec3(value, e)) {
-        output = glm::quat{ glm::radians(e) };
-        return true;
-    }
-    // TODO support x,y,z,w
-    return false;
-}
 
 void game::load(boost::filesystem::path file_path)
 {
+    // TODO load
     std::ifstream file{ file_path.string(), std::ios::in };
     Json::Value scene_data;
     file >> scene_data;
@@ -65,17 +45,17 @@ void game::load(boost::filesystem::path file_path)
                     const auto& value = component[value_name];
                     if (value_name == "position") {
                         glm::vec3 position;
-                        to_vec3(value, position);
+                        json::from_json(value, position);
                         txform.set_position(position);
                     }
                     else if (value_name == "scale") {
                         glm::vec3 scale;
-                        to_vec3(value,scale);
+                        json::from_json(value,scale);
                         txform.set_scale(scale);
                     }
                     else if (value_name == "rotation") {
                         glm::quat rotation;
-                        to_quat(value, rotation);
+                        json::from_json(value, rotation);
                         txform.set_rotation(rotation);
                     }
                 });
@@ -85,9 +65,9 @@ void game::load(boost::filesystem::path file_path)
                 std::for_each(component_values.begin(), component_values.end(), [&](const std::string& value_name) {
                     const auto& value = component[value_name];
                     if (value_name == "color")
-                        to_vec3(value, light.color);
+                        json::from_json(value, light.color);
                     else if (value_name == "intensity")
-                        to_float(value, light.intensity);
+                        json::from_json(value, light.intensity);
                 });
             } else if (component_type == "sigma::graphics::point_light") {
                 const auto& component_values = component.getMemberNames();
@@ -95,15 +75,15 @@ void game::load(boost::filesystem::path file_path)
                 std::for_each(component_values.begin(), component_values.end(), [&](const std::string& value_name) {
                     const auto& value = component[value_name];
                     if (value_name == "color")
-                        to_vec3(value, light.color);
+                        json::from_json(value, light.color);
                     else if (value_name == "intensity")
-                        to_float(value, light.intensity);
+                        json::from_json(value, light.intensity);
                 });
             } else if (component_type == "sigma::graphics::static_mesh") {
                 auto resource_name = component.asString();
                 if (!boost::starts_with(resource_name, "static_mesh://"))
                     resource_name = "static_mesh://" + resource_name;
-                static_mesh_instances.add(e, resource_name);
+                static_mesh_instances.add(e, resource::identifier{resource_name});
             }
         });
     });

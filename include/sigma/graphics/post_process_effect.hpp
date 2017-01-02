@@ -16,9 +16,9 @@ namespace graphics {
 
         post_process_effect& operator=(post_process_effect&&) = default;
 
-        resource::identifier mesh() const;
+        static_mesh_cache::instance mesh() const;
 
-        void set_mesh(resource::identifier mesh);
+        void set_mesh(static_mesh_cache::instance mesh);
 
     private:
         post_process_effect(const post_process_effect&) = delete;
@@ -32,25 +32,24 @@ namespace graphics {
             ar& mesh_;
         }
 
-        resource::identifier mesh_;
+        static_mesh_cache::instance mesh_;
     };
 
-    class SIGMA_API post_process_effect_cache : public shader_technique_cache<post_process_effect> {
+    class post_process_effect_cache : public shader_technique_cache<post_process_effect> {
     public:
-        post_process_effect_cache(boost::filesystem::path cache_directory, texture_cache& textures, shader_cache& shaders, static_mesh_cache& meshes);
+        post_process_effect_cache(boost::filesystem::path cache_directory,texture_cache &textures,shader_cache &shaders, static_mesh_cache &static_meshes)
+            : shader_technique_cache<post_process_effect>(cache_directory,textures,shaders)
+            , static_meshes_(static_meshes)
+        {
+        }
 
-        post_process_effect_cache(post_process_effect_cache&&) = default;
-
-        ~post_process_effect_cache() = default;
-
-        post_process_effect_cache& operator=(post_process_effect_cache&&) = default;
-
-        virtual bool increment_reference(resource::identifier resource_id) override;
-
-        virtual bool decrement_reference(resource::identifier resource_id) override;
-
+        virtual void patch(std::shared_ptr<post_process_effect> effect) override
+        {
+            shader_technique_cache<post_process_effect>::patch(effect);
+            effect->set_mesh(static_meshes_.get(effect->mesh().id()));
+        }
     private:
-        static_mesh_cache& meshes_;
+        static_mesh_cache &static_meshes_;
     };
 }
 }

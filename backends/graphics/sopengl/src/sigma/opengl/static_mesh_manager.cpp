@@ -4,7 +4,7 @@
 
 namespace sigma {
 namespace opengl {
-    static_mesh_manager::static_mesh_manager(resource::resource_cache<graphics::static_mesh>& cache, material_manager& materials)
+    static_mesh_manager::static_mesh_manager(resource::cache<graphics::static_mesh> &cache, material_manager& materials)
         : resource::resource_manager<graphics::static_mesh, opengl::static_mesh>(cache)
         , materials_(materials)
     {

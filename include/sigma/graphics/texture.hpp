@@ -3,8 +3,7 @@
 
 #include <sigma/config.hpp>
 #include <sigma/reflect/reflect.hpp>
-#include <sigma/resource/identifier.hpp>
-#include <sigma/resource/resource_cache.hpp>
+#include <sigma/resource/cache.hpp>
 
 #include <glm/vec2.hpp>
 
@@ -52,12 +51,9 @@ namespace graphics {
         unsigned int height_;
         // TODO use boost::gil
         std::vector<unsigned char> data_;
-
-        friend class resource::resource_cache<texture>;
-        std::size_t reference_count = 0;
     };
 
-    using texture_cache = resource::resource_cache<texture>;
+    using texture_cache = resource::cache<texture>;
 }
 }
 

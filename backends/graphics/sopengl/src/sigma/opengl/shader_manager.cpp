@@ -2,7 +2,7 @@
 
 namespace sigma {
 namespace opengl {
-    shader_manager::shader_manager(resource::resource_cache<graphics::shader>& cache)
+    shader_manager::shader_manager(resource::cache<graphics::shader> &cache)
         : resource::resource_manager<graphics::shader, opengl::shader>(cache)
     {
     }
