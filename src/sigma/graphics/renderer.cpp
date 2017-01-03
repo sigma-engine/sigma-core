@@ -2,7 +2,7 @@
 
 namespace sigma {
 namespace graphics {
-    renderer::renderer(context* ctx, glm::ivec2 size) {}
+    renderer::renderer(glm::ivec2 size) {}
 
     renderer::~renderer() {}
 }

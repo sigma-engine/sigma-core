@@ -1,6 +1,8 @@
 #ifndef SIGMA_GRAPHICS_OPENGL_SHADER_TECHNIQUE_HPP
 #define SIGMA_GRAPHICS_OPENGL_SHADER_TECHNIQUE_HPP
 
+#include <sigma/opengl/shader.hpp>
+#include <sigma/opengl/texture.hpp>
 #include <sigma/opengl/gl_core_4_2.h>
 
 #include <memory>
@@ -34,13 +36,13 @@ namespace opengl {
 
         ~shader_technique();
 
-        void attach(std::shared_ptr<shader> shdr);
+        void attach(resource::handle<graphics::shader> shdr);
 
         void link();
 
         GLint get_uniform_location(const char* name);
 
-        void set_texture(std::string name, std::shared_ptr<texture> txt);
+        void set_texture(std::string name, resource::handle<graphics::texture> txt);
 
         void bind();
 
@@ -60,9 +62,9 @@ namespace opengl {
         GLint time_location_ = -1;
 
         GLint linked_ = GL_FALSE;
-        std::vector<std::shared_ptr<shader> > shaders_;
+        std::vector<resource::handle<graphics::shader> > shaders_;
         std::unordered_map<std::string, std::size_t> texture_map_;
-        std::vector<std::pair<GLint, std::shared_ptr<texture> > > textures_;
+        std::vector<std::pair<GLint, resource::handle<graphics::texture> > > textures_;
 
     private:
         shader_technique(const shader_technique&) = delete;

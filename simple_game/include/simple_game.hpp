@@ -5,7 +5,7 @@
 
 class simple_game : public sigma::game {
 public:
-    simple_game(sigma::context* ctx);
+    simple_game(sigma::graphics::renderer* renderer);
 
     virtual void update(std::chrono::duration<float> dt) override;
 };

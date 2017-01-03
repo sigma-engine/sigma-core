@@ -22,6 +22,10 @@ namespace opengl {
         GL_CHECK(glTexStorage2D(GL_TEXTURE_2D, 1, GLenum(format), size.x, size.y));
     }
 
+    texture::texture(graphics::texture_data data)
+     : texture(internal_format::RGBA8,data.size,data.pixels) {
+    }
+
     texture::~texture()
     {
         glDeleteTextures(1, &object_);
@@ -36,5 +40,11 @@ namespace opengl {
     {
         GL_CHECK(glBindTexture(GL_TEXTURE_2D, object_));
     }
+
+    std::unique_ptr<graphics::texture> texture_manager::load(graphics::texture_data data, boost::archive::binary_iarchive &ia)
+    {
+        return std::make_unique<texture>(std::move(data));
+    }
+
 }
 }

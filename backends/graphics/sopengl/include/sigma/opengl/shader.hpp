@@ -1,9 +1,12 @@
 #ifndef SIGMA_ENGINE_SHADER_HPP
 #define SIGMA_ENGINE_SHADER_HPP
 
+#include <sigma/graphics/shader.hpp>
+
 #include <sigma/opengl/gl_core_4_2.h>
 
-#include <string>
+#define SHADER_CONST_PTR(x) static_cast<const sigma::opengl::shader*>(x.get())
+#define SHADER_PTR(x) static_cast<sigma::opengl::shader*>(x.get())
 
 namespace sigma {
 namespace opengl {
@@ -16,15 +19,17 @@ namespace opengl {
         FRAGMENT_SHADER = GL_FRAGMENT_SHADER
     };
 
-    class shader {
+    class shader : public graphics::shader {
     public:
         shader(shader_type type, std::string source);
+
+        shader(graphics::shader_data data);
 
         shader(shader&&) = default;
 
         shader& operator=(shader&&) = default;
 
-        ~shader();
+        virtual ~shader();
 
         GLuint get_object() const;
 
@@ -33,6 +38,13 @@ namespace opengl {
         shader& operator=(const shader&) = delete;
 
         GLuint object_ = 0;
+    };
+
+    class shader_manager : public graphics::shader_manager {
+    public:
+        using graphics::shader_manager::shader_manager;
+
+        virtual std::unique_ptr<graphics::shader> load(graphics::shader_data data, boost::archive::binary_iarchive &ia) override;
     };
 }
 }

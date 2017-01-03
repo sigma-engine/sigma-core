@@ -1,11 +1,15 @@
 #ifndef SIGMA_ENGINE_OPENGL_TEXTURE_HPP
 #define SIGMA_ENGINE_OPENGL_TEXTURE_HPP
 
+#include <sigma/graphics/texture.hpp>
+
 #include <sigma/opengl/gl_core_4_2.h>
 
-#include <glm/vec2.hpp>
-
 #include <vector>
+
+
+#define TEXTURE_CONST_PTR(x) static_cast<const sigma::opengl::texture*>(x.get())
+#define TEXTURE_PTR(x) static_cast<sigma::opengl::texture*>(x.get())
 
 namespace sigma {
 namespace opengl {
@@ -117,12 +121,14 @@ namespace opengl {
         //COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT = GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT,
     };
 
-    class texture {
+    class texture : public graphics::texture {
     public:
         // TODO replace pixles with boost::gil
         texture(internal_format format, glm::ivec2 size, const std::vector<unsigned char>& pixels);
 
         texture(internal_format format, glm::ivec2 size);
+
+        texture(graphics::texture_data data);
 
         texture(texture&&) = default;
 
@@ -139,6 +145,13 @@ namespace opengl {
         texture& operator=(const texture&) = delete;
 
         GLuint object_ = 0;
+    };
+
+    class texture_manager : public graphics::texture_manager {
+    public:
+        using graphics::texture_manager::texture_manager;
+
+        virtual std::unique_ptr<graphics::texture> load(graphics::texture_data data, boost::archive::binary_iarchive &ia) override;
     };
 }
 }

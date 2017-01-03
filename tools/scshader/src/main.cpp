@@ -140,7 +140,7 @@ int main(int argc, char const* argv[])
                         // TODO validate the shader here.
 
                         if (ext == ".vert") {
-                            sigma::graphics::shader shader{ sigma::graphics::shader_type::vertex, output_source };
+                            sigma::graphics::shader_data shader{ sigma::graphics::shader_type::vertex, output_source };
                             sigma::resource::development_identifier rid("vertex", file_path);
                             auto final_path = outputdir / std::to_string(rid.value());
 
@@ -149,7 +149,7 @@ int main(int argc, char const* argv[])
 
                             oa << shader;
                         } else if (ext == ".frag") {
-                            sigma::graphics::shader shader{ sigma::graphics::shader_type::fragment, output_source };
+                            sigma::graphics::shader_data shader{ sigma::graphics::shader_type::fragment, output_source };
 
                             sigma::resource::development_identifier rid("fragment", file_path);
                             auto final_path = outputdir / std::to_string(rid.value());
@@ -159,7 +159,7 @@ int main(int argc, char const* argv[])
 
                             oa << shader;
                         } else if (ext == ".geom") {
-                            sigma::graphics::shader shader{ sigma::graphics::shader_type::geometry, output_source };
+                            sigma::graphics::shader_data shader{ sigma::graphics::shader_type::geometry, output_source };
 
                             sigma::resource::development_identifier rid("geometry", file_path);
                             auto final_path = outputdir / std::to_string(rid.value());

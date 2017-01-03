@@ -2,12 +2,10 @@
 #define SIGMA_GRAPHICS_MATERIAL_HPP
 
 #include <sigma/graphics/shader.hpp>
-#include <sigma/graphics/texture.hpp>
-#include <sigma/resource/cache.hpp>
+#include <sigma/resource/manager.hpp>
 
-#include <boost/serialization/access.hpp>
+#include <boost/serialization/vector.hpp>
 #include <boost/serialization/unordered_map.hpp>
-#include <boost/serialization/utility.hpp>
 
 #include <string>
 #include <unordered_map>
@@ -15,23 +13,10 @@
 namespace sigma {
 namespace graphics {
 
-    RCLASS()
-    class SIGMA_API material {
-    public:
-        material() = default;
+    struct material_data {
+        std::unordered_map<shader_type,resource::identifier> shaders;
+        std::unordered_map<std::string,resource::identifier> textures;
 
-        material(material&&) = default;
-
-        material& operator=(material&&) = default;
-
-        std::unordered_map<shader_type, shader_cache::instance> shaders;
-        std::unordered_map<std::string, texture_cache::instance> textures;
-
-    private:
-        material(const material&) = delete;
-        material& operator=(const material&) = delete;
-
-        friend class boost::serialization::access;
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
         {
@@ -40,27 +25,23 @@ namespace graphics {
         }
     };
 
-    class material_cache : public resource::cache<material> {
+    class SIGMA_API material {
     public:
-        material_cache(boost::filesystem::path cache_directory, texture_cache& textures, shader_cache& shaders)
-            : resource::cache<material>(cache_directory)
-            , textures_(textures)
-            , shaders_(shaders)
-        {
-        }
+        using resource_data = material_data;
 
-        virtual void patch(std::shared_ptr<material> mat) override
-        {
-            for (auto& tex : mat->textures)
-                tex.second = textures_.get(tex.second);
-            for (auto& shd : mat->shaders)
-                shd.second = shaders_.get(shd.second);
-        }
+        material() = default;
 
+        material(material&&) = default;
+
+        material& operator=(material&&) = default;
+
+        virtual ~material() = default;
     private:
-        texture_cache& textures_;
-        shader_cache& shaders_;
+        material(const material&) = delete;
+        material& operator=(const material&) = delete;
     };
+
+    using material_manager = resource::manager<material>;
 }
 }
 

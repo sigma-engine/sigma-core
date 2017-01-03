@@ -52,7 +52,7 @@ int main(int argc, char const* argv[])
                     sigma::resource::development_identifier rid("static_mesh", file_path, mesh_name);
                     auto final_path = outputdir / std::to_string(rid.value());
 
-                    sigma::graphics::static_mesh mesh;
+                    sigma::graphics::static_mesh_data mesh;
                     imported.convert_static_mesh(mesh_name, mesh);
 
                     std::ofstream stream(final_path.string(), std::ios::binary | std::ios::out);

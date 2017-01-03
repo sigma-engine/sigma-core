@@ -8,6 +8,17 @@
 
 namespace sigma {
 namespace opengl {
+    shader_type convert(graphics::shader_type type) {
+        switch(type) {
+        case graphics::shader_type::vertex:
+            return shader_type::VERTEX_SHADER;
+        case graphics::shader_type::fragment:
+            return shader_type::FRAGMENT_SHADER;
+        case graphics::shader_type::geometry:
+            return shader_type::GEOMETRY_SHADER;
+        }
+    }
+
     shader::shader(shader_type type, std::string source)
     {
         const char* src = source.c_str();
@@ -33,6 +44,10 @@ namespace opengl {
         }
     }
 
+    shader::shader(graphics::shader_data data)
+        : shader(convert(data.type),data.source) {
+    }
+
     shader::~shader()
     {
         glDeleteShader(object_);
@@ -41,6 +56,11 @@ namespace opengl {
     GLuint shader::get_object() const
     {
         return object_;
+    }
+
+    std::unique_ptr<graphics::shader> shader_manager::load(graphics::shader_data data, boost::archive::binary_iarchive &ia)
+    {
+        return std::make_unique<shader>(std::move(data));
     }
 }
 }

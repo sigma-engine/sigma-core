@@ -22,10 +22,10 @@ namespace opengl {
         glDeleteProgram(object_);
     }
 
-    void shader_technique::attach(std::shared_ptr<shader> shdr)
+    void shader_technique::attach(resource::handle<graphics::shader> shdr)
     {
         assert(linked_ == GL_FALSE && "Can not add shaders to already linked programs");
-        GL_CHECK(glAttachShader(object_, shdr->get_object()));
+        GL_CHECK(glAttachShader(object_, SHADER_CONST_PTR(shdr)->get_object()));
         shaders_.push_back(shdr);
     }
 
@@ -60,7 +60,7 @@ namespace opengl {
         return loc;
     }
 
-    void shader_technique::set_texture(std::string name, std::shared_ptr<texture> txt)
+    void shader_technique::set_texture(std::string name, resource::handle<graphics::texture> txt)
     {
         auto it = texture_map_.find(name);
         if (it == texture_map_.end()) {
@@ -88,7 +88,7 @@ namespace opengl {
         for (uint32_t i = 0; i < size; ++i) {
             GL_CHECK(glUniform1i(textures_[i].first, i));
             GL_CHECK(glActiveTexture(GLenum(first_texture_unit) + i));
-            textures_[i].second->bind();
+            TEXTURE_PTR(textures_[i].second)->bind();
         }
 
         GL_CHECK(glUniformMatrix4fv(projection_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->projection_matrix)));

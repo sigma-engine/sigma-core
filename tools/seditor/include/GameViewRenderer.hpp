@@ -28,6 +28,7 @@ private:
     glm::mat4 projectionMatrix_;
     glm::mat4 viewMatrix_;
     std::shared_ptr<graphics::renderer> renderer_;
+    std::shared_ptr<game> game_;
 
     GameView* item_;
     glm::vec2 size_;

@@ -65,23 +65,18 @@ int main(int argc, char const* argv[])
                     break;
                 }
 
-                auto w = image.width();
-                auto h = image.height();
+                sigma::graphics::texture_data texture;
+                texture.size = glm::ivec2{image.width(),image.height()};
+                texture.pixels.reserve(image.width() * image.height() * 4);
 
-                std::vector<uint8_t> data;
-                data.reserve(w * h * 4);
-
-                auto f = [&data](boost::gil::rgba8_pixel_t p) {
-                    data.push_back(boost::gil::at_c<0>(p));
-                    data.push_back(boost::gil::at_c<1>(p));
-                    data.push_back(boost::gil::at_c<2>(p));
-                    data.push_back(boost::gil::at_c<3>(p));
+                auto f = [&texture](boost::gil::rgba8_pixel_t p) {
+                    texture.pixels.push_back(boost::gil::at_c<0>(p));
+                    texture.pixels.push_back(boost::gil::at_c<1>(p));
+                    texture.pixels.push_back(boost::gil::at_c<2>(p));
+                    texture.pixels.push_back(boost::gil::at_c<3>(p));
                 };
 
                 boost::gil::for_each_pixel(boost::gil::const_view(image), std::function<void(boost::gil::rgba8_pixel_t)>(f));
-
-                sigma::graphics::texture texture;
-                texture.set_data(w, h, data);
 
                 std::ofstream stream{ final_path.string(), std::ios::binary | std::ios::out };
                 boost::archive::binary_oarchive oa(stream);

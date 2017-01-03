@@ -1,26 +1,36 @@
 #ifndef SIGMA_GRAPHICS_OPENGL_CONTEXT_HPP
 #define SIGMA_GRAPHICS_OPENGL_CONTEXT_HPP
 
+#include <sigma/graphics/renderer.hpp>
+
 #include <sigma/opengl/config.hpp>
+#include <sigma/opengl/texture.hpp>
+#include <sigma/opengl/shader.hpp>
+#include <sigma/opengl/material.hpp>
+#include <sigma/opengl/static_mesh.hpp>
+#include <sigma/opengl/post_process_effect.hpp>
 #include <sigma/opengl/frame_buffer.hpp>
 #include <sigma/opengl/geometry_buffer.hpp>
-#include <sigma/opengl/material_manager.hpp>
-#include <sigma/opengl/post_process_effect_manager.hpp>
 #include <sigma/opengl/render_uniforms.hpp>
-#include <sigma/opengl/shader_manager.hpp>
-#include <sigma/opengl/static_mesh_manager.hpp>
-#include <sigma/opengl/texture_manager.hpp>
-
-#include <sigma/graphics/renderer.hpp>
 
 namespace sigma {
 
 namespace opengl {
     class renderer : public graphics::renderer {
     public:
-        renderer(context* ctx, glm::ivec2 size);
+        renderer(glm::ivec2 size);
 
         virtual ~renderer();
+
+        virtual graphics::texture_manager& textures() override;
+
+        virtual graphics::shader_manager& shaders() override;
+
+        virtual graphics::material_manager& materials() override;
+
+        virtual graphics::static_mesh_manager& static_meshes() override;
+
+        virtual graphics::post_process_effect_manager& effects() override;
 
         virtual void resize(glm::uvec2 size) override;
 
@@ -42,15 +52,14 @@ namespace opengl {
         renderer(const renderer&) = delete;
         renderer& operator=(const renderer&) = delete;
 
-        context* ctx_;
         default_frame_buffer default_fbo_;
         geometry_buffer gbuffer_;
 
-        texture_manager textures_;
-        shader_manager shaders_;
-        material_manager materials_;
-        static_mesh_manager static_meshes_;
-        post_process_effect_manager effects_;
+        opengl::texture_manager textures_;
+        opengl::shader_manager shaders_;
+        opengl::material_manager materials_;
+        opengl::static_mesh_manager static_meshes_;
+        opengl::post_process_effect_manager effects_;
         render_matrices matrices_;
 
         // TODO were should these go?
@@ -59,18 +68,18 @@ namespace opengl {
         GLint point_light_radius_location_;
         GLint point_light_falloff_location_;
         GLint point_light_intensity_location_;
-        std::shared_ptr<post_process_effect> point_light_effect_;
-        std::shared_ptr<post_process_effect> point_light_stencil_effect_;
+        resource::handle<graphics::post_process_effect> point_light_effect_;
+        resource::handle<graphics::post_process_effect> point_light_stencil_effect_;
 
         // TODO were should these go?
         GLint directional_light_color_location_;
         GLint directional_light_direction_location_;
         GLint directional_light_intensity_location_;
-        std::shared_ptr<post_process_effect> directional_light_effect_;
+        resource::handle<graphics::post_process_effect> directional_light_effect_;
 
-        std::shared_ptr<post_process_effect> vignette_effect_;
+        resource::handle<graphics::post_process_effect> vignette_effect_;
 
-        std::shared_ptr<post_process_effect> fullscreen_blit_;
+        resource::handle<graphics::post_process_effect> fullscreen_blit_;
     };
 }
 }

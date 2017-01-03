@@ -10,14 +10,8 @@
 #include <fstream>
 
 namespace sigma {
-game::game(context* ctx)
-    : ctx(ctx)
-    , textures(ctx->textures())
-    , shaders(ctx->shaders())
-    , effects(ctx->effects())
-    , materials(ctx->materials())
-    , static_meshes(ctx->static_meshes())
-    , static_mesh_instances(static_meshes)
+game::game(graphics::renderer *renderer)
+    : renderer_(renderer)
 {
 }
 
@@ -83,7 +77,7 @@ void game::load(boost::filesystem::path file_path)
                 auto resource_name = component.asString();
                 if (!boost::starts_with(resource_name, "static_mesh://"))
                     resource_name = "static_mesh://" + resource_name;
-                static_mesh_instances.add(e, resource::identifier{resource_name});
+                static_mesh_instances.add(e, renderer_->static_meshes().get(resource_name));
             }
         });
     });

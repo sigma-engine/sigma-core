@@ -136,12 +136,10 @@ namespace convert {
         return object_names_;
     }
 
-    void assimp_converter::convert_static_mesh(std::string name, graphics::static_mesh& mesh) const
+    void assimp_converter::convert_static_mesh(std::string name, graphics::static_mesh_data& mesh) const
     {
         const aiScene* aiScene = importer_->GetScene();
 
-        std::vector<graphics::static_mesh::vertex> vertices;
-        std::vector<sigma::graphics::static_mesh::triangle> triangles;
         for (unsigned int i = 0; i < aiScene->mNumMeshes; ++i) {
             const aiMesh* aimesh = aiScene->mMeshes[i];
             if (name != get_name(aimesh))
@@ -152,7 +150,7 @@ namespace convert {
                 material_name = "material://" + material_name;
             mesh.material = material_name;
 
-            std::vector<sigma::graphics::static_mesh::vertex> submesh_vertices(aimesh->mNumVertices);
+            std::vector<sigma::graphics::static_mesh_data::vertex> submesh_vertices(aimesh->mNumVertices);
             for (unsigned int j = 0; j < aimesh->mNumVertices; ++j) {
                 auto pos = aimesh->mVertices[j];
                 submesh_vertices[j].position = convert_3d(pos);
@@ -172,22 +170,22 @@ namespace convert {
                 }
             }
 
-            std::vector<sigma::graphics::static_mesh::triangle> submesh_triangles(aimesh->mNumFaces);
+            std::vector<sigma::graphics::static_mesh_data::triangle> submesh_triangles(aimesh->mNumFaces);
             for (unsigned int j = 0; j < aimesh->mNumFaces; ++j) {
                 aiFace f = aimesh->mFaces[j];
                 for (unsigned int k = 0; k < 3; ++k)
-                    submesh_triangles[j][k] = f.mIndices[k] + static_cast<unsigned int>(vertices.size());
+                    submesh_triangles[j][k] = f.mIndices[k] + static_cast<unsigned int>(mesh.vertices.size());
             }
 
-            vertices.reserve(vertices.size() + aimesh->mNumVertices);
-            vertices.insert(vertices.end(), submesh_vertices.begin(), submesh_vertices.end());
+            mesh.vertices.reserve(mesh.vertices.size() + aimesh->mNumVertices);
+            mesh.vertices.insert(mesh.vertices.end(), submesh_vertices.begin(), submesh_vertices.end());
 
-            triangles.reserve(triangles.size() + submesh_triangles.size());
-            triangles.insert(triangles.end(), submesh_triangles.begin(), submesh_triangles.end());
+            mesh.triangles.reserve(mesh.triangles.size() + submesh_triangles.size());
+            mesh.triangles.insert(mesh.triangles.end(), submesh_triangles.begin(), submesh_triangles.end());
         }
+        mesh.vertices.shrink_to_fit();
+        mesh.triangles.shrink_to_fit();
         // TODO materials
-        mesh.vertices = std::move(vertices);
-        mesh.triangles = std::move(triangles);
     }
 
     void assimp_converter::convert_object(std::string name, Json::Value& entity) const

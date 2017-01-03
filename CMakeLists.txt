@@ -72,6 +72,7 @@ set(LIBRARY_HEADERS
 
     include/sigma/resource/cache.hpp
     include/sigma/resource/identifier.hpp
+    include/sigma/resource/manager.hpp
 
     include/sigma/util/compile_time_hash.hpp
     include/sigma/util/filesystem.hpp

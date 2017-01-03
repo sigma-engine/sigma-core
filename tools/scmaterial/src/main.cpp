@@ -86,7 +86,7 @@ int main(int argc, char const* argv[])
 
                 if (file_path.extension() == ".mat") {
                     std::cout << "Compiling material: " << file_path << std::endl;
-                    sigma::graphics::material material;
+                    sigma::graphics::material_data material;
                     compile_technique(material, technique_data);
 
                     // TODO check for errors like no vertex or fragment shader
@@ -98,13 +98,13 @@ int main(int argc, char const* argv[])
                     oa << material;
                 } else if (file_path.extension() == ".eff") {
                     std::cout << "Compiling post process effect: " << file_path << std::endl;
-                    sigma::graphics::post_process_effect effect;
+                    sigma::graphics::post_process_effect_data effect;
                     compile_technique(effect, technique_data);
                     if (technique_data.isMember("static_mesh")) {
                         auto mesh_source = technique_data["static_mesh"].asString();
                         if (!boost::starts_with(mesh_source, "static_mesh://"))
                             mesh_source = "static_mesh://" + mesh_source;
-                        effect.set_mesh(sigma::graphics::static_mesh_cache::instance{mesh_source});
+                        effect.mesh = mesh_source;
                     }
 
                     // TODO check for errors like no vertex or fragment shader

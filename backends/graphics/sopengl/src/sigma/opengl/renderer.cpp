@@ -18,31 +18,31 @@ namespace opengl {
     const resource::identifier renderer::VIGNETTE_EFFECT{ "post_process_effect://vignette" };
     const resource::identifier renderer::TEXTURE_BLIT_EFFECT{ "post_process_effect://texture_blit" };
 
-    renderer::renderer(context* ctx, glm::ivec2 size)
-        : graphics::renderer(ctx, size)
-        , ctx_(ctx)
+    renderer::renderer(glm::ivec2 size)
+        : graphics::renderer(size)
         , default_fbo_(size)
         , gbuffer_(size)
-        , textures_(ctx_->textures())
-        , shaders_(ctx_->shaders())
-        , materials_(ctx_->materials(), textures_, shaders_)
-        , static_meshes_(ctx_->static_meshes(), materials_)
-        , effects_(ctx_->effects(), textures_, shaders_, static_meshes_)
+        , textures_(boost::filesystem::current_path() / ".." / "data")
+        , shaders_(boost::filesystem::current_path() / ".." / "data")
+        , materials_(boost::filesystem::current_path() / ".." / "data", textures_, shaders_)
+        , static_meshes_(boost::filesystem::current_path() / ".." / "data", materials_)
+        , effects_(boost::filesystem::current_path() / ".." / "data", textures_, shaders_, static_meshes_)
     {
         point_light_effect_ = effects_.get(POINT_LIGHT_EFFECT);
-        // TODO were should these go?
-        point_light_color_location_ = point_light_effect_->get_uniform_location("light.color");
-        point_light_position_location_ = point_light_effect_->get_uniform_location("light.position");
-        point_light_radius_location_ = point_light_effect_->get_uniform_location("light.radius");
-        point_light_falloff_location_ = point_light_effect_->get_uniform_location("light.falloff");
-        point_light_intensity_location_ = point_light_effect_->get_uniform_location("light.intensity");
+
+        //TODO were should these go?
+        point_light_color_location_ = EFFECT_PTR(point_light_effect_)->get_uniform_location("light.color");
+        point_light_position_location_ = EFFECT_PTR(point_light_effect_)->get_uniform_location("light.position");
+        point_light_radius_location_ = EFFECT_PTR(point_light_effect_)->get_uniform_location("light.radius");
+        point_light_falloff_location_ = EFFECT_PTR(point_light_effect_)->get_uniform_location("light.falloff");
+        point_light_intensity_location_ = EFFECT_PTR(point_light_effect_)->get_uniform_location("light.intensity");
         point_light_stencil_effect_ = effects_.get(POINT_LIGHT_STENCIL_EFFECT);
 
         directional_light_effect_ = effects_.get(DIRECTIONAL_LIGHT_EFFECT);
         // TODO were should these go?
-        directional_light_color_location_ = directional_light_effect_->get_uniform_location("light.color");
-        directional_light_direction_location_ = directional_light_effect_->get_uniform_location("light.direction");
-        directional_light_intensity_location_ = directional_light_effect_->get_uniform_location("light.intensity");
+        directional_light_color_location_ = EFFECT_PTR(directional_light_effect_)->get_uniform_location("light.color");
+        directional_light_direction_location_ = EFFECT_PTR(directional_light_effect_)->get_uniform_location("light.direction");
+        directional_light_intensity_location_ = EFFECT_PTR(directional_light_effect_)->get_uniform_location("light.intensity");
 
         vignette_effect_ = effects_.get(VIGNETTE_EFFECT);
 
@@ -51,6 +51,31 @@ namespace opengl {
 
     renderer::~renderer()
     {
+    }
+
+    graphics::texture_manager& renderer::textures()
+    {
+        return textures_;
+    }
+
+    graphics::shader_manager& renderer::shaders()
+    {
+        return shaders_;
+    }
+
+    graphics::material_manager& renderer::materials()
+    {
+        return materials_;
+    }
+
+    graphics::static_mesh_manager& renderer::static_meshes()
+    {
+        return static_meshes_;
+    }
+
+    graphics::post_process_effect_manager& renderer::effects()
+    {
+        return effects_;
     }
 
     void renderer::resize(glm::uvec2 size)
@@ -77,7 +102,7 @@ namespace opengl {
             if (viewport.transforms.has(e)) {
                 auto& txform = viewport.transforms.get(e); // TODO const
                 if (viewport.static_mesh_instances.has(e)) {
-                    auto mesh = static_meshes_.get(viewport.static_mesh_instances.get(e));
+                    auto mesh = STATIC_MESH_PTR(viewport.static_mesh_instances.get(e));
 
                     matrices_.model_matrix = txform.matrix();
 
@@ -158,7 +183,7 @@ namespace opengl {
         gbuffer_.swap_input_image();
         gbuffer_.bind_for_effect_pass();
         default_fbo_.bind(frame_buffer::target::DRAW);
-        fullscreen_blit_->apply(&matrices_);
+        EFFECT_PTR(fullscreen_blit_)->apply(&matrices_);
     }
 
     void renderer::point_light_pass(const transform& txform, const graphics::point_light& light)
@@ -186,7 +211,7 @@ namespace opengl {
             GL_CHECK(glDepthFunc(GL_GEQUAL));
             GL_CHECK(glCullFace(GL_FRONT));
 
-            point_light_stencil_effect_->apply(&matrices_);
+            EFFECT_PTR(point_light_stencil_effect_)->apply(&matrices_);
 
             GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP));
             GL_CHECK(glStencilFunc(GL_LEQUAL, 5, 0xFF));
@@ -196,7 +221,7 @@ namespace opengl {
         }
 
         gbuffer_.bind_for_effect_pass();
-        point_light_effect_->bind();
+        EFFECT_PTR(point_light_effect_)->bind();
 
         // TODO this should be abstracted away better
         GL_CHECK(glUniform3fv(point_light_color_location_, 1, glm::value_ptr(light.color)));
@@ -205,7 +230,7 @@ namespace opengl {
         GL_CHECK(glUniform1f(point_light_falloff_location_, light.falloff));
         GL_CHECK(glUniform1f(point_light_intensity_location_, light.intensity));
 
-        point_light_effect_->apply(&matrices_);
+        EFFECT_PTR(point_light_effect_)->apply(&matrices_);
 
         GL_CHECK(glDepthFunc(GL_LESS));
         GL_CHECK(glDisable(GL_STENCIL_TEST));
@@ -220,12 +245,12 @@ namespace opengl {
 
         auto view_space_direction = matrices_.model_view_matrix * glm::vec4(0, 1, 0, 0);
 
-        directional_light_effect_->bind();
+        EFFECT_PTR(directional_light_effect_)->bind();
         GL_CHECK(glUniform3fv(directional_light_color_location_, 1, glm::value_ptr(light.color)));
         GL_CHECK(glUniform3fv(directional_light_direction_location_, 1, glm::value_ptr(view_space_direction)));
         GL_CHECK(glUniform1f(directional_light_intensity_location_, light.intensity));
 
-        directional_light_effect_->apply(&matrices_);
+        EFFECT_PTR(directional_light_effect_)->apply(&matrices_);
     }
 }
 }

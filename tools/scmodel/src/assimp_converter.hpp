@@ -26,7 +26,7 @@ namespace convert {
 
         virtual const std::set<std::string>& scene_object_names() const;
 
-        virtual void convert_static_mesh(std::string name, graphics::static_mesh& mesh) const;
+        virtual void convert_static_mesh(std::string name, graphics::static_mesh_data &mesh) const;
 
         virtual void convert_object(std::string name, Json::Value& entity) const;
 

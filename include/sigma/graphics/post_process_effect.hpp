@@ -14,62 +14,38 @@
 
 namespace sigma {
 namespace graphics {
+    struct post_process_effect_data {
+        std::unordered_map<shader_type,resource::identifier> shaders{{shader_type::vertex,resource::identifier{"vertex://fullscreen_quad"}}};
+        std::unordered_map<std::string,resource::identifier> textures;
+        resource::identifier mesh = "static_mesh://fullscreen_quad:plane";
 
-    class SIGMA_API post_process_effect {
-    public:
-        post_process_effect();
-
-        post_process_effect(post_process_effect&&) = default;
-
-        post_process_effect& operator=(post_process_effect&&) = default;
-
-        static_mesh_cache::instance mesh() const;
-
-        void set_mesh(static_mesh_cache::instance mesh);
-
-        std::unordered_map<shader_type, shader_cache::instance> shaders;
-        std::unordered_map<std::string, texture_cache::instance> textures;
-
-    private:
-        post_process_effect(const post_process_effect&) = delete;
-        post_process_effect& operator=(const post_process_effect&) = delete;
-
-        friend class boost::serialization::access;
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
         {
             ar& shaders;
             ar& textures;
-            ar& mesh_;
+            ar& mesh;
         }
-
-        static_mesh_cache::instance mesh_;
     };
 
-    class post_process_effect_cache : public resource::cache<post_process_effect> {
+    class SIGMA_API post_process_effect {
     public:
-        post_process_effect_cache(boost::filesystem::path cache_directory, texture_cache& textures, shader_cache& shaders, static_mesh_cache& static_meshes)
-            : resource::cache<post_process_effect>(cache_directory)
-            , textures_(textures)
-            , shaders_(shaders)
-            , static_meshes_(static_meshes)
-        {
-        }
+        using resource_data = post_process_effect_data;
 
-        virtual void patch(std::shared_ptr<post_process_effect> effect) override
-        {
-            for (auto& tex : effect->textures)
-                tex.second = textures_.get(tex.second);
-            for (auto& shd : effect->shaders)
-                shd.second = shaders_.get(shd.second);
-            effect->set_mesh(static_meshes_.get(effect->mesh()));
-        }
+        post_process_effect() = default;
 
+        post_process_effect(post_process_effect&&) = default;
+
+        post_process_effect& operator=(post_process_effect&&) = default;
+
+        virtual ~post_process_effect() = default;
     private:
-        texture_cache& textures_;
-        shader_cache& shaders_;
-        static_mesh_cache& static_meshes_;
+        post_process_effect(const post_process_effect&) = delete;
+        post_process_effect& operator=(const post_process_effect&) = delete;
     };
+
+
+    using post_process_effect_manager = resource::manager<post_process_effect>;
 }
 }
 

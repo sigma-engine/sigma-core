@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-simple_game::simple_game(sigma::context* ctx)
-    : sigma::game(ctx)
+simple_game::simple_game(sigma::graphics::renderer* renderer)
+    : sigma::game(renderer)
 {
     load("../data/water_packed.scn");
 }

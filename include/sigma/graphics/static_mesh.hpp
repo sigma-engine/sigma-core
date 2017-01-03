@@ -1,56 +1,43 @@
 #ifndef SIGMA_GRAPHICS_STATIC_MESH_HPP
 #define SIGMA_GRAPHICS_STATIC_MESH_HPP
 
-#include <sigma/component.hpp>
 #include <sigma/config.hpp>
-#include <sigma/graphics/material.hpp>
-#include <sigma/reflect/reflect.hpp>
-#include <sigma/resource/identifier.hpp>
+#include <sigma/resource/manager.hpp>
 #include <sigma/util/glm_serialize.hpp>
 
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
-#include <boost/serialization/access.hpp>
 #include <boost/serialization/array.hpp>
 #include <boost/serialization/vector.hpp>
 
 #include <array>
-#include <utility>
 #include <vector>
 
 namespace sigma {
 namespace graphics {
 
-    RCLASS()
-    class SIGMA_API static_mesh {
-    public:
+    struct static_mesh_data {
         struct vertex {
             glm::vec3 position;
             glm::vec3 normal;
             glm::vec3 tangent;
             glm::vec2 texcoord;
+            template <class Archive>
+            void serialize(Archive& ar, const unsigned int version)
+            {
+                ar& position;
+                ar& normal;
+                ar& tangent;
+                ar& texcoord;
+            }
         };
-
         typedef std::array<unsigned int, 3> triangle;
-
-        static_mesh() = default;
-
-        static_mesh(static_mesh&&) = default;
-
-        static_mesh& operator=(static_mesh&&) = default;
-
-        ~static_mesh() = default;
 
         std::vector<vertex> vertices;
         std::vector<triangle> triangles;
-        material_cache::instance material;
+        resource::identifier material;
 
-    private:
-        static_mesh(const static_mesh&) = delete;
-        static_mesh& operator=(const static_mesh&) = delete;
-
-        friend class boost::serialization::access;
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
         {
@@ -60,35 +47,23 @@ namespace graphics {
         }
     };
 
-    class static_mesh_cache : public resource::cache<static_mesh> {
+    class SIGMA_API static_mesh {
     public:
-        static_mesh_cache(boost::filesystem::path cache_directory,material_cache &materials)
-            : resource::cache<static_mesh>(cache_directory)
-            , materials_(materials)
-        {
-        }
+        using resource_data = static_mesh_data;
 
-        virtual void patch(std::shared_ptr<static_mesh> mesh) override
-        {
-            mesh->material = materials_.get(mesh->material.id());
-        }
+        static_mesh() = default;
+
+        static_mesh(static_mesh&&) = default;
+
+        static_mesh& operator=(static_mesh&&) = default;
+
+        virtual ~static_mesh() = default;
     private:
-        material_cache &materials_;
+        static_mesh(const static_mesh&) = delete;
+        static_mesh& operator=(const static_mesh&) = delete;
     };
-}
-}
 
-namespace boost {
-namespace serialization {
-    template <class Archive>
-    void serialize(Archive& ar, sigma::graphics::static_mesh::vertex& vertex,
-        const unsigned int version)
-    {
-        ar& vertex.position;
-        ar& vertex.normal;
-        ar& vertex.tangent;
-        ar& vertex.texcoord;
-    }
+    using static_mesh_manager = resource::manager<static_mesh>;
 }
 }
 

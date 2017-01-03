@@ -7,18 +7,19 @@ set(SOURCES
     src/sigma/opengl/gl_core_4_2.c
     src/sigma/opengl/renderer.cpp
     src/sigma/opengl/texture.cpp
-    src/sigma/opengl/texture_manager.cpp
     src/sigma/opengl/shader.cpp
-    src/sigma/opengl/shader_manager.cpp
     src/sigma/opengl/material.cpp
-    src/sigma/opengl/material_manager.cpp
     src/sigma/opengl/static_mesh.cpp
-    src/sigma/opengl/static_mesh_manager.cpp
     src/sigma/opengl/frame_buffer.cpp
     src/sigma/opengl/geometry_buffer.cpp
     src/sigma/opengl/shader_technique.cpp
     src/sigma/opengl/post_process_effect.cpp
-    src/sigma/opengl/post_process_effect_manager.cpp
+
+#    src/sigma/opengl/texture_manager.cpp
+#    src/sigma/opengl/shader_manager.cpp
+#    src/sigma/opengl/material_manager.cpp
+#    src/sigma/opengl/static_mesh_manager.cpp
+#    src/sigma/opengl/post_process_effect_manager.cpp
 )
 
 set(HEADERS
@@ -28,19 +29,19 @@ set(HEADERS
     include/sigma/opengl/gl_core_4_2.h
     include/sigma/opengl/renderer.hpp
     include/sigma/opengl/texture.hpp
-    include/sigma/opengl/texture_manager.hpp
     include/sigma/opengl/shader.hpp
-    include/sigma/opengl/shader_manager.hpp
     include/sigma/opengl/material.hpp
-    include/sigma/opengl/material_manager.hpp
     include/sigma/opengl/static_mesh.hpp
-    include/sigma/opengl/static_mesh_manager.hpp
     include/sigma/opengl/frame_buffer.hpp
     include/sigma/opengl/geometry_buffer.hpp
     include/sigma/opengl/shader_technique.hpp
     include/sigma/opengl/post_process_effect.hpp
-    include/sigma/opengl/post_process_effect_manager.hpp
-    include/sigma/opengl/resource_manager.hpp
+
+#    include/sigma/opengl/texture_manager.hpp
+#    include/sigma/opengl/shader_manager.hpp
+#    include/sigma/opengl/material_manager.hpp
+#    include/sigma/opengl/static_mesh_manager.hpp
+#    include/sigma/opengl/post_process_effect_manager.hpp
 )
 
 add_library(sopengl SHARED ${SOURCES} ${HEADERS})
