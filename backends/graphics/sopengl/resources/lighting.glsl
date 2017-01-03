@@ -55,7 +55,7 @@ vec3 compute_lighting(surface s, vec3 L, vec3 V)
     vec3 albedoDiffuse = albedo / PI;
     vec3 specular = cook_torrance(NdotH, NdotV, VdotH, NdotL) * ggx(alpha, NdotH) * schlick(realSpecular, VdotH);
 
-    return NdotL * (albedoDiffuse*(1-specular) + specular);
+    return NdotL * (albedoDiffuse * (1 - specular) + specular);
 }
 
 #endif // SIGMA_GRAPHICS_OPENGL_LIGHTING_H

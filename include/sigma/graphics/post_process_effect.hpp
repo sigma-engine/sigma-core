@@ -15,8 +15,8 @@
 namespace sigma {
 namespace graphics {
     struct post_process_effect_data {
-        std::unordered_map<shader_type,resource::identifier> shaders{{shader_type::vertex,resource::identifier{"vertex://fullscreen_quad"}}};
-        std::unordered_map<std::string,resource::identifier> textures;
+        std::unordered_map<shader_type, resource::identifier> shaders{ { shader_type::vertex, resource::identifier{ "vertex://fullscreen_quad" } } };
+        std::unordered_map<std::string, resource::identifier> textures;
         resource::identifier mesh = "static_mesh://fullscreen_quad:plane";
 
         template <class Archive>
@@ -39,11 +39,11 @@ namespace graphics {
         post_process_effect& operator=(post_process_effect&&) = default;
 
         virtual ~post_process_effect() = default;
+
     private:
         post_process_effect(const post_process_effect&) = delete;
         post_process_effect& operator=(const post_process_effect&) = delete;
     };
-
 
     using post_process_effect_manager = resource::manager<post_process_effect>;
 }

@@ -1,10 +1,10 @@
 #ifndef SIGMA_GAME_HPP
 #define SIGMA_GAME_HPP
 
-#include <sigma/graphics/renderer.hpp>
 #include <sigma/entity_manager.hpp>
 #include <sigma/graphics/directional_light.hpp>
 #include <sigma/graphics/point_light.hpp>
+#include <sigma/graphics/renderer.hpp>
 #include <sigma/graphics/spot_light.hpp>
 #include <sigma/graphics/static_mesh_instance.hpp>
 #include <sigma/transform.hpp>
@@ -15,10 +15,10 @@
 #include <chrono>
 #include <memory>
 
-#define SIGMA_EXPORT_GAME_CLASS_I(r, data, i, elem)                                                     \
-    extern "C" BOOST_SYMBOL_EXPORT sigma::game_class game_class_##i;                                    \
-    sigma::game_class game_class_##i = {                                                                \
-        BOOST_PP_STRINGIZE(elem),                                                                       \
+#define SIGMA_EXPORT_GAME_CLASS_I(r, data, i, elem)                                                                          \
+    extern "C" BOOST_SYMBOL_EXPORT sigma::game_class game_class_##i;                                                         \
+    sigma::game_class game_class_##i = {                                                                                     \
+        BOOST_PP_STRINGIZE(elem),                                                                                            \
         [](sigma::graphics::renderer* renderer) -> std::shared_ptr<sigma::game> { return std::make_shared<elem>(renderer); } \
     };
 
@@ -46,7 +46,7 @@ public:
     RPROPERTY()
     graphics::static_mesh_instance_manager static_mesh_instances;
 
-    game(graphics::renderer *renderer);
+    game(graphics::renderer* renderer);
 
     virtual ~game() = default;
 

@@ -4,8 +4,8 @@
 #include <sigma/graphics/shader.hpp>
 #include <sigma/resource/manager.hpp>
 
-#include <boost/serialization/vector.hpp>
 #include <boost/serialization/unordered_map.hpp>
+#include <boost/serialization/vector.hpp>
 
 #include <string>
 #include <unordered_map>
@@ -14,8 +14,8 @@ namespace sigma {
 namespace graphics {
 
     struct material_data {
-        std::unordered_map<shader_type,resource::identifier> shaders;
-        std::unordered_map<std::string,resource::identifier> textures;
+        std::unordered_map<shader_type, resource::identifier> shaders;
+        std::unordered_map<std::string, resource::identifier> textures;
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
@@ -36,6 +36,7 @@ namespace graphics {
         material& operator=(material&&) = default;
 
         virtual ~material() = default;
+
     private:
         material(const material&) = delete;
         material& operator=(const material&) = delete;

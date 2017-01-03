@@ -58,6 +58,7 @@ namespace graphics {
         static_mesh& operator=(static_mesh&&) = default;
 
         virtual ~static_mesh() = default;
+
     private:
         static_mesh(const static_mesh&) = delete;
         static_mesh& operator=(const static_mesh&) = delete;

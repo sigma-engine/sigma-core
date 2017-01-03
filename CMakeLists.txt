@@ -35,13 +35,8 @@ set(LIBRARY_SOURCES
     src/sigma/trackball_controller.cpp
     src/sigma/transform.cpp
 
-    src/sigma/graphics/material.cpp
-    src/sigma/graphics/post_process_effect.cpp
     src/sigma/graphics/renderer.cpp
-    src/sigma/graphics/shader.cpp
     src/sigma/graphics/static_mesh_instance.cpp
-    src/sigma/graphics/static_mesh.cpp
-    src/sigma/graphics/texture.cpp
     src/sigma/resource/identifier.cpp
 
     src/sigma/util/filesystem.cpp
@@ -70,7 +65,6 @@ set(LIBRARY_HEADERS
 
     include/sigma/reflect/reflect.hpp
 
-    include/sigma/resource/cache.hpp
     include/sigma/resource/identifier.hpp
     include/sigma/resource/manager.hpp
 

@@ -2,8 +2,8 @@
 #define SIGMA_GRAPHICS_TEXTURE_HPP
 
 #include <sigma/config.hpp>
-#include <sigma/util/glm_serialize.hpp>
 #include <sigma/resource/manager.hpp>
+#include <sigma/util/glm_serialize.hpp>
 
 #include <glm/vec2.hpp>
 
@@ -35,6 +35,7 @@ namespace graphics {
         texture& operator=(texture&&) noexcept = default;
 
         virtual ~texture() = default;
+
     private:
         texture(const texture&) = delete;
         texture& operator=(const texture&) = delete;

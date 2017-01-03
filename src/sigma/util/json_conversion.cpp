@@ -38,6 +38,5 @@ namespace json {
         out[2] = v.z;
         return out;
     }
-
 }
 }

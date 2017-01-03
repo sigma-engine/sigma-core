@@ -8,8 +8,9 @@
 
 namespace sigma {
 namespace opengl {
-    shader_type convert(graphics::shader_type type) {
-        switch(type) {
+    shader_type convert(graphics::shader_type type)
+    {
+        switch (type) {
         case graphics::shader_type::vertex:
             return shader_type::VERTEX_SHADER;
         case graphics::shader_type::fragment:
@@ -45,7 +46,8 @@ namespace opengl {
     }
 
     shader::shader(graphics::shader_data data)
-        : shader(convert(data.type),data.source) {
+        : shader(convert(data.type), data.source)
+    {
     }
 
     shader::~shader()
@@ -58,7 +60,7 @@ namespace opengl {
         return object_;
     }
 
-    std::unique_ptr<graphics::shader> shader_manager::load(graphics::shader_data data, boost::archive::binary_iarchive &ia)
+    std::unique_ptr<graphics::shader> shader_manager::load(graphics::shader_data data, boost::archive::binary_iarchive& ia)
     {
         return std::make_unique<shader>(std::move(data));
     }

@@ -53,7 +53,8 @@ namespace opengl {
 
     void static_mesh::render(render_matrices* matrices, texture_unit first_texture_unit)
     {
-        MATERIAL_PTR(material_)->bind(matrices, first_texture_unit);
+        MATERIAL_PTR(material_)
+            ->bind(matrices, first_texture_unit);
         render();
     }
 
@@ -63,7 +64,7 @@ namespace opengl {
     {
     }
 
-    std::unique_ptr<graphics::static_mesh> static_mesh_manager::load(graphics::static_mesh_data data, boost::archive::binary_iarchive &ia)
+    std::unique_ptr<graphics::static_mesh> static_mesh_manager::load(graphics::static_mesh_data data, boost::archive::binary_iarchive& ia)
     {
         auto mat = materials_.get(data.material);
         auto mesh = std::make_unique<opengl::static_mesh>(std::move(data));

@@ -4,9 +4,9 @@
 #include <sigma/graphics/post_process_effect.hpp>
 #include <sigma/opengl/shader_technique.hpp>
 
-#include <sigma/opengl/texture.hpp>
 #include <sigma/opengl/shader.hpp>
 #include <sigma/opengl/static_mesh.hpp>
+#include <sigma/opengl/texture.hpp>
 
 #define EFFECT_CONST_PTR(x) static_cast<const sigma::opengl::post_process_effect*>(x.get())
 #define EFFECT_PTR(x) static_cast<sigma::opengl::post_process_effect*>(x.get())
@@ -42,9 +42,10 @@ namespace opengl {
 
     class post_process_effect_manager : public graphics::post_process_effect_manager {
     public:
-        post_process_effect_manager(boost::filesystem::path cache_directory, opengl::texture_manager& textures, opengl::shader_manager& shaders, opengl::static_mesh_manager &meshes);
+        post_process_effect_manager(boost::filesystem::path cache_directory, opengl::texture_manager& textures, opengl::shader_manager& shaders, opengl::static_mesh_manager& meshes);
 
-        virtual std::unique_ptr<graphics::post_process_effect> load(graphics::post_process_effect_data data, boost::archive::binary_iarchive &ia) override;
+        virtual std::unique_ptr<graphics::post_process_effect> load(graphics::post_process_effect_data data, boost::archive::binary_iarchive& ia) override;
+
     private:
         opengl::texture_manager& textures_;
         opengl::shader_manager& shaders_;

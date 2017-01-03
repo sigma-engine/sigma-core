@@ -5,9 +5,9 @@
 
 #include <boost/archive/binary_iarchive.hpp>
 
+#include <fstream>
 #include <iostream> // TODO this is bad
 #include <unordered_map>
-#include <fstream>
 
 namespace sigma {
 namespace resource {
@@ -20,7 +20,6 @@ namespace resource {
         handle()
             : manager_(nullptr)
         {
-
         }
 
         handle(identifier id, manager<Resource>* m)
@@ -34,52 +33,52 @@ namespace resource {
             : id_(other.id_)
             , manager_(other.manager_)
         {
-            if(manager_)
+            if (manager_)
                 manager_->reference(id_);
         }
 
         ~handle()
         {
-            if(manager_)
+            if (manager_)
                 manager_->dereference(id_);
         }
 
         handle<Resource>& operator=(const handle<Resource>& other)
         {
             if (id_ != other.id_) {
-                if(manager_)
+                if (manager_)
                     manager_->dereference(id_);
                 id_ = other.id_;
                 manager_ = other.manager_;
-                if(manager_)
+                if (manager_)
                     manager_->reference(id_);
             }
         }
 
         Resource* get()
         {
-            if(manager_)
+            if (manager_)
                 return manager_->acquire(id_);
             return nullptr;
         }
 
         const Resource* get() const
         {
-            if(manager_)
+            if (manager_)
                 return manager_->acquire(id_);
             return nullptr;
         }
 
         Resource* operator->()
         {
-            if(manager_)
+            if (manager_)
                 return manager_->acquire(id_);
             return nullptr;
         }
 
         const Resource* operator->() const
         {
-            if(manager_)
+            if (manager_)
                 return manager_->acquire(id_);
             return nullptr;
         }
@@ -96,7 +95,7 @@ namespace resource {
 
         explicit operator bool() const noexcept
         {
-            if(manager_)
+            if (manager_)
                 return manager_->is_loaded(id_);
             return false;
         }
@@ -113,14 +112,14 @@ namespace resource {
 
         bool operator==(std::nullptr_t) const noexcept
         {
-            if(manager_)
+            if (manager_)
                 return !manager_->is_loaded(id_);
             return true;
         }
 
         bool operator!=(std::nullptr_t) const noexcept
         {
-            if(manager_)
+            if (manager_)
                 return manager_->is_loaded(id_);
             return false;
         }
@@ -160,7 +159,7 @@ namespace resource {
 
         handle<Resource> get(identifier id)
         {
-            return handle<Resource>{id,this};
+            return handle<Resource>{ id, this };
         }
 
         Resource* acquire(identifier id)
@@ -190,12 +189,12 @@ namespace resource {
             return nullptr;
         }
 
-        /*const Resource* acquire(identifier id) const
+        const Resource* acquire(identifier id) const
         {
             if (is_loaded(id))
                 return resources_.at(id).get();
             return nullptr;
-        }*/
+        }
 
         void dereference(identifier id)
         {

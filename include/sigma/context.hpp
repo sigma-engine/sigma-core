@@ -33,7 +33,7 @@ public:
 
     std::shared_ptr<graphics::renderer> create_renderer(std::string renderer_class, glm::ivec2 size);
 
-    std::shared_ptr<game> create_game(std::string game_class,std::shared_ptr<graphics::renderer> renderer);
+    std::shared_ptr<game> create_game(std::string game_class, std::shared_ptr<graphics::renderer> renderer);
 
 protected:
     std::unordered_map<std::string, boost::shared_ptr<game_class> > game_classes;

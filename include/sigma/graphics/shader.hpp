@@ -44,7 +44,6 @@ namespace graphics {
     };
 
     using shader_manager = resource::manager<shader>;
-
 }
 }
 

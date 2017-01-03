@@ -10,26 +10,25 @@
 namespace sigma {
 namespace graphics {
     class SIGMA_API static_mesh_instance_manager {
-        public:
-            static_mesh_instance_manager() = default;
+    public:
+        static_mesh_instance_manager() = default;
 
-            virtual ~static_mesh_instance_manager() = default;
+        virtual ~static_mesh_instance_manager() = default;
 
-            virtual bool has(entity e) const;
+        virtual bool has(entity e) const;
 
-            virtual void add(entity e, resource::handle<static_mesh> mesh);
+        virtual void add(entity e, resource::handle<static_mesh> mesh);
 
-            virtual resource::handle<static_mesh> get(entity e) const;
+        virtual resource::handle<static_mesh> get(entity e) const;
 
-            virtual void remove(entity e);
+        virtual void remove(entity e);
 
-        private:
-            static_mesh_instance_manager(const static_mesh_instance_manager&) = delete;
-            static_mesh_instance_manager& operator=(const static_mesh_instance_manager&) = delete;
+    private:
+        static_mesh_instance_manager(const static_mesh_instance_manager&) = delete;
+        static_mesh_instance_manager& operator=(const static_mesh_instance_manager&) = delete;
 
-            std::unordered_map<entity, resource::handle<static_mesh>> instances_;
-        };
-
+        std::unordered_map<entity, resource::handle<static_mesh> > instances_;
+    };
 }
 }
 

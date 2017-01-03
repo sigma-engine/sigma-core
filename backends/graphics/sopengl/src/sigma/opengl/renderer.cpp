@@ -183,7 +183,8 @@ namespace opengl {
         gbuffer_.swap_input_image();
         gbuffer_.bind_for_effect_pass();
         default_fbo_.bind(frame_buffer::target::DRAW);
-        EFFECT_PTR(fullscreen_blit_)->apply(&matrices_);
+        EFFECT_PTR(fullscreen_blit_)
+            ->apply(&matrices_);
     }
 
     void renderer::point_light_pass(const transform& txform, const graphics::point_light& light)
@@ -211,7 +212,8 @@ namespace opengl {
             GL_CHECK(glDepthFunc(GL_GEQUAL));
             GL_CHECK(glCullFace(GL_FRONT));
 
-            EFFECT_PTR(point_light_stencil_effect_)->apply(&matrices_);
+            EFFECT_PTR(point_light_stencil_effect_)
+                ->apply(&matrices_);
 
             GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP));
             GL_CHECK(glStencilFunc(GL_LEQUAL, 5, 0xFF));
@@ -221,7 +223,8 @@ namespace opengl {
         }
 
         gbuffer_.bind_for_effect_pass();
-        EFFECT_PTR(point_light_effect_)->bind();
+        EFFECT_PTR(point_light_effect_)
+            ->bind();
 
         // TODO this should be abstracted away better
         GL_CHECK(glUniform3fv(point_light_color_location_, 1, glm::value_ptr(light.color)));
@@ -230,7 +233,8 @@ namespace opengl {
         GL_CHECK(glUniform1f(point_light_falloff_location_, light.falloff));
         GL_CHECK(glUniform1f(point_light_intensity_location_, light.intensity));
 
-        EFFECT_PTR(point_light_effect_)->apply(&matrices_);
+        EFFECT_PTR(point_light_effect_)
+            ->apply(&matrices_);
 
         GL_CHECK(glDepthFunc(GL_LESS));
         GL_CHECK(glDisable(GL_STENCIL_TEST));
@@ -245,12 +249,14 @@ namespace opengl {
 
         auto view_space_direction = matrices_.model_view_matrix * glm::vec4(0, 1, 0, 0);
 
-        EFFECT_PTR(directional_light_effect_)->bind();
+        EFFECT_PTR(directional_light_effect_)
+            ->bind();
         GL_CHECK(glUniform3fv(directional_light_color_location_, 1, glm::value_ptr(light.color)));
         GL_CHECK(glUniform3fv(directional_light_direction_location_, 1, glm::value_ptr(view_space_direction)));
         GL_CHECK(glUniform1f(directional_light_intensity_location_, light.intensity));
 
-        EFFECT_PTR(directional_light_effect_)->apply(&matrices_);
+        EFFECT_PTR(directional_light_effect_)
+            ->apply(&matrices_);
     }
 }
 }

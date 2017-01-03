@@ -27,10 +27,11 @@ namespace opengl {
         GL_CHECK(glUniform1i(in_normal_location_, geometry_buffer::NORMAL_METALNESS_LOCATION));
         GL_CHECK(glUniform1i(in_image_location_, geometry_buffer::INPUT_IMAGE_LOCATION));
         GL_CHECK(glUniform1i(in_depth_stencil_location_, geometry_buffer::DEPTH_STENCIL_LOCATION));
-        STATIC_MESH_PTR(mesh_)->render();
+        STATIC_MESH_PTR(mesh_)
+            ->render();
     }
 
-    post_process_effect_manager::post_process_effect_manager(boost::filesystem::path cache_directory, opengl::texture_manager &textures, opengl::shader_manager &shaders,opengl::static_mesh_manager &meshes)
+    post_process_effect_manager::post_process_effect_manager(boost::filesystem::path cache_directory, opengl::texture_manager& textures, opengl::shader_manager& shaders, opengl::static_mesh_manager& meshes)
         : graphics::post_process_effect_manager(cache_directory)
         , textures_(textures)
         , shaders_(shaders)
@@ -38,14 +39,14 @@ namespace opengl {
     {
     }
 
-    std::unique_ptr<graphics::post_process_effect> post_process_effect_manager::load(graphics::post_process_effect_data data, boost::archive::binary_iarchive &ia)
+    std::unique_ptr<graphics::post_process_effect> post_process_effect_manager::load(graphics::post_process_effect_data data, boost::archive::binary_iarchive& ia)
     {
         auto effect = std::make_unique<opengl::post_process_effect>(meshes_.get(data.mesh));
-        for(const auto &shdr: data.shaders)
+        for (const auto& shdr : data.shaders)
             effect->attach(shaders_.get(shdr.second));
         effect->link();
-        for(const auto &txt: data.textures)
-            effect->set_texture(txt.first,textures_.get(txt.second));
+        for (const auto& txt : data.textures)
+            effect->set_texture(txt.first, textures_.get(txt.second));
         return std::move(effect);
     }
 }

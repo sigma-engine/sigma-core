@@ -36,8 +36,8 @@ void compile_technique(T& technique, const Json::Value& technique_data)
                 geometry_shader = "geometry://" + geometry_shader;
             technique.shaders[sigma::graphics::shader_type::geometry] = geometry_shader; // TODO warn if tring to set shader more that once
         } else if (it.key() == "textures") {
-            const auto &texture_object = *it;
-            for(auto it2 = texture_object.begin(); it2 != texture_object.end(); ++it2) {
+            const auto& texture_object = *it;
+            for (auto it2 = texture_object.begin(); it2 != texture_object.end(); ++it2) {
                 auto texture_source = (*it2).asString();
                 if (!boost::starts_with(texture_source, "texture://"))
                     texture_source = "texture://" + texture_source;

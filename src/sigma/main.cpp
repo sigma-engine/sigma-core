@@ -13,7 +13,7 @@
 int main(int argc, char const* argv[])
 {
     sigma::context ctx;
-    sigma::window window(glm::ivec2{1920,1080});
+    sigma::window window(glm::ivec2{ 1920, 1080 });
 
     ctx.load_plugin("sopengl");
     auto renderer = ctx.create_renderer("sigma::opengl::renderer", window.size());
@@ -45,28 +45,28 @@ int main(int argc, char const* argv[])
                 break;
             }
             case SDL_MOUSEMOTION: {
-                controller.update(float(event.motion.x)/window.size().x,float(event.motion.y)/window.size().y);
+                controller.update(float(event.motion.x) / window.size().x, float(event.motion.y) / window.size().y);
                 break;
             }
             case SDL_MOUSEBUTTONDOWN: {
-                if(!controller.is_rotating())
-                    controller.beginRotate(float(event.motion.x)/window.size().x,float(event.motion.y)/window.size().y);
+                if (!controller.is_rotating())
+                    controller.beginRotate(float(event.motion.x) / window.size().x, float(event.motion.y) / window.size().y);
                 break;
             }
             case SDL_MOUSEBUTTONUP: {
-                if(controller.is_rotating())
-                    controller.endRotate(float(event.motion.x)/window.size().x,float(event.motion.y)/window.size().y);
-                if(controller.isPanning())
+                if (controller.is_rotating())
+                    controller.endRotate(float(event.motion.x) / window.size().x, float(event.motion.y) / window.size().y);
+                if (controller.isPanning())
                     controller.endPan();
                 break;
             }
             case SDL_KEYDOWN: {
-                if(!controller.isPanning())
+                if (!controller.isPanning())
                     controller.beginPan();
                 break;
             }
             case SDL_KEYUP: {
-                if(controller.isPanning())
+                if (controller.isPanning())
                     controller.endPan();
                 break;
             }
@@ -76,10 +76,10 @@ int main(int argc, char const* argv[])
                     window.close();
                     break;
                 }
-                case SDL_WINDOWEVENT_RESIZED: {
-                    break;
-                }
-                }
+            case SDL_WINDOWEVENT_RESIZED: {
+                break;
+            }
+            }
             }
         }
 

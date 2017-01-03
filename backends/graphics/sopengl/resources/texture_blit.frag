@@ -1,12 +1,11 @@
 #version 330
 
 #include <post_process_effect.glsl>
+#include <test/test.glsl>
 #include <uniforms.glsl>
 #include <vertex.glsl>
-#include <test/test.glsl>
 
 const vec4 gamma_correction = vec4(0.45454545454);
-
 
 void main()
 {

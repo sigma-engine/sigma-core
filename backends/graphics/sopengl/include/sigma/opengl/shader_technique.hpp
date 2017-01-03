@@ -1,9 +1,9 @@
 #ifndef SIGMA_GRAPHICS_OPENGL_SHADER_TECHNIQUE_HPP
 #define SIGMA_GRAPHICS_OPENGL_SHADER_TECHNIQUE_HPP
 
+#include <sigma/opengl/gl_core_4_2.h>
 #include <sigma/opengl/shader.hpp>
 #include <sigma/opengl/texture.hpp>
-#include <sigma/opengl/gl_core_4_2.h>
 
 #include <memory>
 #include <string>

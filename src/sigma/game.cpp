@@ -10,12 +10,10 @@
 #include <fstream>
 
 namespace sigma {
-game::game(graphics::renderer *renderer)
+game::game(graphics::renderer* renderer)
     : renderer_(renderer)
 {
 }
-
-
 
 void game::load(boost::filesystem::path file_path)
 {
@@ -41,13 +39,11 @@ void game::load(boost::filesystem::path file_path)
                         glm::vec3 position;
                         json::from_json(value, position);
                         txform.set_position(position);
-                    }
-                    else if (value_name == "scale") {
+                    } else if (value_name == "scale") {
                         glm::vec3 scale;
-                        json::from_json(value,scale);
+                        json::from_json(value, scale);
                         txform.set_scale(scale);
-                    }
-                    else if (value_name == "rotation") {
+                    } else if (value_name == "rotation") {
                         glm::quat rotation;
                         json::from_json(value, rotation);
                         txform.set_rotation(rotation);

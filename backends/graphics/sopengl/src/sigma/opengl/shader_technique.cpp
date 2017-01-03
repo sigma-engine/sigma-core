@@ -88,7 +88,8 @@ namespace opengl {
         for (uint32_t i = 0; i < size; ++i) {
             GL_CHECK(glUniform1i(textures_[i].first, i));
             GL_CHECK(glActiveTexture(GLenum(first_texture_unit) + i));
-            TEXTURE_PTR(textures_[i].second)->bind();
+            TEXTURE_PTR(textures_[i].second)
+                ->bind();
         }
 
         GL_CHECK(glUniformMatrix4fv(projection_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->projection_matrix)));

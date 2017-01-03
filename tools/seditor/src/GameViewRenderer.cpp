@@ -33,12 +33,12 @@ QOpenGLFramebufferObject* GameViewRenderer::createFramebufferObject(const QSize&
     auto frameBuffer = new QOpenGLFramebufferObject(size, format);
     frameBuffer->bind();
 
-    game_ = nullptr;  // Kill the game first
+    game_ = nullptr; // Kill the game first
 
     //Then create the renderer
     size_ = glm::vec2{ size.width(), size.height() };
     renderer_ = ctx_->create_renderer("sigma::opengl::renderer", size_);
-    game_ = ctx_->create_game("simple_game",renderer_);
+    game_ = ctx_->create_game("simple_game", renderer_);
 
     // Setup the viewport projection
     // TODO do not hard code z near, far and fov

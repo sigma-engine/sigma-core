@@ -10,5 +10,4 @@ EditorContext::EditorContext(QObject* parent)
     load_plugin("sopengl");
     load_plugin("simple-game");
 }
-
 }

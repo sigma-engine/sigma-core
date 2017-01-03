@@ -1,4 +1,4 @@
 {
     "vertex" : "skybox",
-    "fragment" : "skybox"
+               "fragment" : "skybox"
 }

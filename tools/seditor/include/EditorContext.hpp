@@ -9,6 +9,7 @@ class EditorContext : public QObject, public sigma::context {
     Q_OBJECT
 public:
     explicit EditorContext(QObject* parent = nullptr);
+
 private:
 };
 }

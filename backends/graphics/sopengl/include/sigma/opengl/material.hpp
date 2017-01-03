@@ -4,8 +4,8 @@
 #include <sigma/graphics/material.hpp>
 #include <sigma/opengl/shader_technique.hpp>
 
-#include <sigma/opengl/texture.hpp>
 #include <sigma/opengl/shader.hpp>
+#include <sigma/opengl/texture.hpp>
 
 #define MATERIAL_CONST_PTR(x) static_cast<const sigma::opengl::material*>(x.get())
 #define MATERIAL_PTR(x) static_cast<sigma::opengl::material*>(x.get())
@@ -31,7 +31,8 @@ namespace opengl {
     public:
         material_manager(boost::filesystem::path cache_directory, opengl::texture_manager& textures, opengl::shader_manager& shaders);
 
-        virtual std::unique_ptr<graphics::material> load(graphics::material_data data, boost::archive::binary_iarchive &ia) override;
+        virtual std::unique_ptr<graphics::material> load(graphics::material_data data, boost::archive::binary_iarchive& ia) override;
+
     private:
         opengl::texture_manager& textures_;
         opengl::shader_manager& shaders_;

@@ -7,7 +7,6 @@
 
 #include <vector>
 
-
 #define TEXTURE_CONST_PTR(x) static_cast<const sigma::opengl::texture*>(x.get())
 #define TEXTURE_PTR(x) static_cast<sigma::opengl::texture*>(x.get())
 
@@ -151,7 +150,7 @@ namespace opengl {
     public:
         using graphics::texture_manager::texture_manager;
 
-        virtual std::unique_ptr<graphics::texture> load(graphics::texture_data data, boost::archive::binary_iarchive &ia) override;
+        virtual std::unique_ptr<graphics::texture> load(graphics::texture_data data, boost::archive::binary_iarchive& ia) override;
     };
 }
 }

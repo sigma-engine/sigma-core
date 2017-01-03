@@ -66,7 +66,7 @@ int main(int argc, char const* argv[])
                 }
 
                 sigma::graphics::texture_data texture;
-                texture.size = glm::ivec2{image.width(),image.height()};
+                texture.size = glm::ivec2{ image.width(), image.height() };
                 texture.pixels.reserve(image.width() * image.height() * 4);
 
                 auto f = [&texture](boost::gil::rgba8_pixel_t p) {

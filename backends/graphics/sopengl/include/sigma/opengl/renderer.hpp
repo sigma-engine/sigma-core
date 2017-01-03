@@ -4,14 +4,14 @@
 #include <sigma/graphics/renderer.hpp>
 
 #include <sigma/opengl/config.hpp>
-#include <sigma/opengl/texture.hpp>
-#include <sigma/opengl/shader.hpp>
-#include <sigma/opengl/material.hpp>
-#include <sigma/opengl/static_mesh.hpp>
-#include <sigma/opengl/post_process_effect.hpp>
 #include <sigma/opengl/frame_buffer.hpp>
 #include <sigma/opengl/geometry_buffer.hpp>
+#include <sigma/opengl/material.hpp>
+#include <sigma/opengl/post_process_effect.hpp>
 #include <sigma/opengl/render_uniforms.hpp>
+#include <sigma/opengl/shader.hpp>
+#include <sigma/opengl/static_mesh.hpp>
+#include <sigma/opengl/texture.hpp>
 
 namespace sigma {
 
