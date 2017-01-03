@@ -1,7 +1,9 @@
 #version 330
 
-#include "lighting.glsl"
+// clang-format off
 #include <post_process_effect.glsl>
+#include <lighting.glsl>
+// clang-format on
 
 uniform point_light light;
 

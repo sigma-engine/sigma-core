@@ -6,10 +6,10 @@ namespace sigma {
 namespace opengl {
     geometry_buffer::geometry_buffer(glm::ivec2 size)
         : frame_buffer(size)
-        , diffuse_texture_(internal_format::RGBA8, size) // TODO filp roughness and metalness
+        , diffuse_texture_(internal_format::RGBA32F, size) // TODO filp roughness and metalness
         , normal_texture_(internal_format::RGBA32F, size)
         , depth_stencil_texture_(internal_format::DEPTH32F_STENCIL8, size)
-        , images_{ texture{ internal_format::RGB16F, size }, texture{ internal_format::RGB16F, size } }
+        , images_{ texture{ internal_format::RGBA32F, size }, texture{ internal_format::RGBA32F, size } }
         , input_image_(0)
         , output_image_(1)
     {

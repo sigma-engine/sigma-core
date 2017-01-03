@@ -3,7 +3,7 @@
 
 #include <geometry_buffer.glsl>
 
-#define PI 3.1415926535897932384626433832795028841971
+#define PI 3.1415926535897932
 
 struct directional_light {
     vec3 color;

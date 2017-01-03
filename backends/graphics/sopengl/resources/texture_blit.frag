@@ -1,9 +1,10 @@
 #version 330
 
+// clang-format off
 #include <post_process_effect.glsl>
-#include <test/test.glsl>
 #include <uniforms.glsl>
 #include <vertex.glsl>
+// clang-format on
 
 const vec4 gamma_correction = vec4(0.45454545454);
 

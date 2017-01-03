@@ -23,7 +23,7 @@ namespace opengl {
     }
 
     texture::texture(graphics::texture_data data)
-        : texture(internal_format::RGBA8, data.size, data.pixels)
+        : texture(internal_format::RGBA32F, data.size, data.pixels)
     {
     }
 

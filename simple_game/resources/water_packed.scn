@@ -3,14 +3,14 @@
 	{
 		"sigma::graphics::point_light" :
 		{
-			"intensity" : 2
+			"intensity" : 0.8
 		}
 	},
 	"Sun" :
 	{
 		"sigma::graphics::directional_light" :
 		{
-			"intensity" : 1
+			"intensity" : 0
 		}
 	}
 }

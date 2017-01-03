@@ -1,11 +1,10 @@
 {
     "vertex" : "default",
-               "fragment" : "default",
-                            "textures":
-    {
+    "fragment" : "default",
+    "textures": {
         "basecolor_map" : "yellow",
-                          "metallic_map" : "nonemetal",
-                                           "normal_map" : "proprietary/rustediron2_normal",
-                                                          "roughness_map" : "roughness"
+        "metallic_map" : "nonemetal",
+        "normal_map" : "proprietary/rustediron2_normal",
+        "roughness_map" : "roughness"
     }
 }
