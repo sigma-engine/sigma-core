@@ -28,50 +28,54 @@ foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
 endforeach(OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES)
 
 set(LIBRARY_SOURCES
-    src/sigma/game.cpp
-    src/sigma/entity.cpp
     src/sigma/context.cpp
     src/sigma/entity_manager.cpp
-    src/sigma/util/filesystem.cpp
-    src/sigma/graphics/shader.cpp
-    src/sigma/graphics/renderer.cpp
-    src/sigma/graphics/texture.cpp
-    src/sigma/graphics/material.cpp
-    src/sigma/resource/identifier.cpp
-    src/sigma/graphics/static_mesh.cpp
-    src/sigma/graphics/static_mesh_instance.cpp
-    src/sigma/graphics/shader_technique.cpp
-    src/sigma/graphics/post_process_effect.cpp
+    src/sigma/entity.cpp
+    src/sigma/game.cpp
     src/sigma/trackball_controller.cpp
     src/sigma/transform.cpp
+
+    src/sigma/graphics/material.cpp
+    src/sigma/graphics/post_process_effect.cpp
+    src/sigma/graphics/renderer.cpp
+    src/sigma/graphics/shader.cpp
+    src/sigma/graphics/static_mesh_instance.cpp
+    src/sigma/graphics/static_mesh.cpp
+    src/sigma/graphics/texture.cpp
+    src/sigma/resource/identifier.cpp
+
+    src/sigma/util/filesystem.cpp
     src/sigma/util/json_conversion.cpp
 )
 set(LIBRARY_HEADERS
-    include/sigma/game.hpp
+    include/sigma/component.hpp
     include/sigma/config.hpp
-    include/sigma/entity.hpp
     include/sigma/context.hpp
     include/sigma/entity_manager.hpp
-    include/sigma/component.hpp
-    include/sigma/transform.hpp
-    include/sigma/util/filesystem.hpp
-    include/sigma/graphics/shader.hpp
-    include/sigma/graphics/renderer.hpp
-    include/sigma/graphics/texture.hpp
-    include/sigma/reflect/reflect.hpp
-    include/sigma/graphics/material.hpp
-    include/sigma/graphics/spot_light.hpp
-    include/sigma/resource/identifier.hpp
-    include/sigma/resource/cache.hpp
-    include/sigma/graphics/point_light.hpp
-    include/sigma/graphics/static_mesh.hpp
-    include/sigma/util/glm_serialize.hpp
-    include/sigma/graphics/directional_light.hpp
-    include/sigma/util/compile_time_hash.hpp
-    include/sigma/graphics/static_mesh_instance.hpp
-    include/sigma/graphics/shader_technique.hpp
-    include/sigma/graphics/post_process_effect.hpp
+    include/sigma/entity.hpp
+    include/sigma/game.hpp
     include/sigma/trackball_controller.hpp
+    include/sigma/transform.hpp
+
+    include/sigma/graphics/directional_light.hpp
+    include/sigma/graphics/material.hpp
+    include/sigma/graphics/point_light.hpp
+    include/sigma/graphics/post_process_effect.hpp
+    include/sigma/graphics/renderer.hpp
+    include/sigma/graphics/shader.hpp
+    include/sigma/graphics/spot_light.hpp
+    include/sigma/graphics/static_mesh_instance.hpp
+    include/sigma/graphics/static_mesh.hpp
+    include/sigma/graphics/texture.hpp
+
+    include/sigma/reflect/reflect.hpp
+
+    include/sigma/resource/cache.hpp
+    include/sigma/resource/identifier.hpp
+
+    include/sigma/util/compile_time_hash.hpp
+    include/sigma/util/filesystem.hpp
+    include/sigma/util/glm_serialize.hpp
     include/sigma/util/json_conversion.hpp
 )
 

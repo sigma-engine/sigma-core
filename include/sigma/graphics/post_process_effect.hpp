@@ -1,14 +1,21 @@
 #ifndef SIGMA_ENGINE_GRAPHICS_POST_PROCESS_EFFECT_HPP
 #define SIGMA_ENGINE_GRAPHICS_POST_PROCESS_EFFECT_HPP
 
-#include <sigma/graphics/shader_technique.hpp>
-
+#include <sigma/graphics/shader.hpp>
 #include <sigma/graphics/static_mesh.hpp>
+#include <sigma/graphics/texture.hpp>
+
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/unordered_map.hpp>
+#include <boost/serialization/utility.hpp>
+
+#include <string>
+#include <unordered_map>
 
 namespace sigma {
 namespace graphics {
 
-    class SIGMA_API post_process_effect : public shader_technique {
+    class SIGMA_API post_process_effect {
     public:
         post_process_effect();
 
@@ -20,6 +27,9 @@ namespace graphics {
 
         void set_mesh(static_mesh_cache::instance mesh);
 
+        std::unordered_map<shader_type, shader_cache::instance> shaders;
+        std::unordered_map<std::string, texture_cache::instance> textures;
+
     private:
         post_process_effect(const post_process_effect&) = delete;
         post_process_effect& operator=(const post_process_effect&) = delete;
@@ -28,28 +38,37 @@ namespace graphics {
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
         {
-            ar& boost::serialization::base_object<shader_technique>(*this);
+            ar& shaders;
+            ar& textures;
             ar& mesh_;
         }
 
         static_mesh_cache::instance mesh_;
     };
 
-    class post_process_effect_cache : public shader_technique_cache<post_process_effect> {
+    class post_process_effect_cache : public resource::cache<post_process_effect> {
     public:
-        post_process_effect_cache(boost::filesystem::path cache_directory,texture_cache &textures,shader_cache &shaders, static_mesh_cache &static_meshes)
-            : shader_technique_cache<post_process_effect>(cache_directory,textures,shaders)
+        post_process_effect_cache(boost::filesystem::path cache_directory, texture_cache& textures, shader_cache& shaders, static_mesh_cache& static_meshes)
+            : resource::cache<post_process_effect>(cache_directory)
+            , textures_(textures)
+            , shaders_(shaders)
             , static_meshes_(static_meshes)
         {
         }
 
         virtual void patch(std::shared_ptr<post_process_effect> effect) override
         {
-            shader_technique_cache<post_process_effect>::patch(effect);
-            effect->set_mesh(static_meshes_.get(effect->mesh().id()));
+            for (auto& tex : effect->textures)
+                tex.second = textures_.get(tex.second);
+            for (auto& shd : effect->shaders)
+                shd.second = shaders_.get(shd.second);
+            effect->set_mesh(static_meshes_.get(effect->mesh()));
         }
+
     private:
-        static_mesh_cache &static_meshes_;
+        texture_cache& textures_;
+        shader_cache& shaders_;
+        static_mesh_cache& static_meshes_;
     };
 }
 }
