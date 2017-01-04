@@ -4,6 +4,7 @@
 #include <geometry_buffer.glsl>
 
 #define PI 3.1415926535897932
+#define NO_DIV_BY_ZERO 1e-5
 
 struct directional_light {
     vec3 color;
@@ -19,43 +20,57 @@ struct point_light {
     float intensity;
 };
 
-vec3 schlick(vec3 F0, float LdotH)
+float D_ggx(float NdotH, float alpha2)
 {
-    return F0 + (1 - F0) * (pow(1 - LdotH, 5));
+    float denom = NdotH * NdotH * (alpha2 - 1) + 1;
+    return alpha2 / (PI * denom * denom);
 }
 
-float ggx(float alpha, float NdotH)
+vec3 F_schlick(float VdotH, vec3 F0)
 {
+    return F0 + (1 - F0) * pow((1 - VdotH), 5);
+}
+
+float G1_schlick(float NdotV, float k)
+{
+    return NdotV / (NdotV * (1 - k) + k);
+}
+
+float G_schlick(float NdotL, float NdotV, float alpha)
+{
+    float k = alpha / 2; //*sqrt(2/PI);
+    return G1_schlick(NdotL, k) * G1_schlick(NdotV, k);
+}
+
+vec3 BRDF_specular(vec3 L, vec3 V, vec3 N, vec3 F0, float alpha)
+{
+    vec3 H = normalize(V + L);
+    float NdotV = abs(dot(N, V)) + NO_DIV_BY_ZERO;
+    float LdotH = clamp(dot(L, H), 0.0, 1.0);
+    float NdotH = clamp(dot(N, H), 0.0, 1.0);
+    float NdotL = clamp(dot(N, L), 0.0, 1.0) + NO_DIV_BY_ZERO;
+
     float alpha2 = alpha * alpha;
-    float dnom = NdotH * NdotH * (alpha2 - 1) + 1;
-    return alpha2 / (PI * dnom * dnom);
+    return D_ggx(NdotH, alpha2) * F_schlick(LdotH, F0) * G_schlick(NdotL, NdotV, alpha) / (4 * NdotL * NdotV);
 }
 
-float cook_torrance(float NdotH, float NdotV, float VdotH, float NdotL)
+vec3 BRDF_diffuse(vec3 albedo)
 {
-    float v = min(2 * NdotH * NdotV / VdotH, 2 * NdotH * NdotL / VdotH);
-    return min(v, 1);
+    return albedo / PI;
 }
 
 vec3 compute_lighting(surface s, vec3 L, vec3 V)
 {
-    vec3 N = s.normal;
-    vec3 H = normalize(V + L);
-    float LdotH = clamp(dot(L, H), 0, 1);
-    float NdotH = clamp(dot(N, H), 0, 1);
-    float VdotH = clamp(dot(V, H), 0, 1);
-    float NdotL = clamp(dot(N, L), 0, 1);
-    float NdotV = clamp(dot(N, V), 0, 1);
-
-    float alpha = s.roughness * s.roughness;
+    vec3 N = normalize(s.normal);
+    float NdotL = clamp(dot(N, L), 0.0, 1.0);
 
     vec3 albedo = s.diffuse - s.diffuse * s.metalness;
-    vec3 realSpecular = mix(vec3(0.03f), s.diffuse, s.metalness);
+    vec3 F0 = mix(vec3(0.04f), s.diffuse, s.metalness);
 
-    vec3 albedoDiffuse = albedo / PI;
-    vec3 specular = cook_torrance(NdotH, NdotV, VdotH, NdotL) * ggx(alpha, NdotH) * schlick(realSpecular, VdotH);
+    vec3 specular = BRDF_specular(L, V, N, F0, s.roughness);
+    vec3 diffuse = BRDF_diffuse(albedo);
 
-    return NdotL * (albedoDiffuse * (1 - specular) + specular);
+    return NdotL * (specular + diffuse * (1 - specular));
 }
 
 #endif // SIGMA_GRAPHICS_OPENGL_LIGHTING_H

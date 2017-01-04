@@ -172,10 +172,10 @@ namespace opengl {
             }
         }
 
-        /*GL_CHECK(glDisable(GL_DEPTH_TEST));
+        GL_CHECK(glDisable(GL_DEPTH_TEST));
         GL_CHECK(glDisable(GL_STENCIL_TEST));
         GL_CHECK(glDisable(GL_BLEND));
-        GL_CHECK(glDisable(GL_CULL_FACE));*/
+        GL_CHECK(glDisable(GL_CULL_FACE));
         // gbuffer_.swap_input_image();
         // gbuffer_.bind_for_effect_pass();
         // vignette_effect_->apply(&matrices_);

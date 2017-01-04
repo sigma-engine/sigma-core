@@ -53,6 +53,7 @@ namespace resource {
                 if (manager_)
                     manager_->reference(id_);
             }
+			return *this;
         }
 
         Resource* get()

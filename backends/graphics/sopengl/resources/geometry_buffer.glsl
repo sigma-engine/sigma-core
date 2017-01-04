@@ -3,6 +3,8 @@
 
 #include <uniforms.glsl>
 
+#define MIN_ROUGHNESS .08
+
 struct surface {
 #if defined(SIGMA_ENGINE_POST_PROCESS_EFFECT)
     vec3 position;
@@ -50,7 +52,8 @@ out vec4 out_normal_metalness;
 
 void write_geometry_buffer(surface s)
 {
-    out_diffuse_roughness = vec4(s.diffuse, s.roughness);
+    float r = MIN_ROUGHNESS+s.roughness;
+    out_diffuse_roughness = vec4(s.diffuse, r*r);
     out_normal_metalness = vec4(s.normal, s.metalness);
 }
 #endif
