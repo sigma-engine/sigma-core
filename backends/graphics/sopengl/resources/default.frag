@@ -12,10 +12,12 @@ uniform sampler2D roughness_map;
 void main()
 {
     surface s;
+    mat3 tbn = mat3(in_vertex.tangent, in_vertex.binormal, in_vertex.normal);
+
     // TODO do this conversion on the cpu
     s.diffuse = pow(texture(basecolor_map, in_vertex.texcoord).rgb, vec3(2.2));
     s.metalness = texture(metallic_map, in_vertex.texcoord).r;
     s.roughness = texture(roughness_map, in_vertex.texcoord).r;
-    s.normal = in_vertex.normal.xyz; // TODO normal map
+    s.normal = normalize(tbn * (texture(normal_map, in_vertex.texcoord).xyz * 2.0 - 1.0));
     write_geometry_buffer(s);
 }

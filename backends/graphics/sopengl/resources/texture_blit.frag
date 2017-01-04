@@ -6,7 +6,7 @@
 #include <vertex.glsl>
 // clang-format on
 
-const vec4 gamma_correction = vec4(1.0/2.2);
+const vec4 gamma_correction = vec4(1.0 / 2.2);
 
 void main()
 {

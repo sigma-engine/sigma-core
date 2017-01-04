@@ -70,7 +70,8 @@ namespace convert {
         , importer_(std::make_unique<Assimp::Importer>())
     {
         auto filename = source_file_.string();
-        const aiScene* scene = importer_->ReadFile(filename.c_str(), aiProcess_CalcTangentSpace
+        const aiScene* scene = importer_->ReadFile(filename.c_str(), 
+				aiProcess_CalcTangentSpace
                 | aiProcess_JoinIdenticalVertices
                 | aiProcess_Triangulate
                 | aiProcess_LimitBoneWeights

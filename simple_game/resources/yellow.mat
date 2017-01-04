@@ -4,7 +4,7 @@
     "textures": {
         "basecolor_map" : "yellow",
         "metallic_map" : "nonemetal",
-        "normal_map" : "proprietary/rustediron2_normal",
+        "normal_map" : "default_normal",
         "roughness_map" : "roughness"
     }
 }
