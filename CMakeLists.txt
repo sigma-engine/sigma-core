@@ -38,6 +38,8 @@ set(LIBRARY_SOURCES
     src/sigma/graphics/renderer.cpp
     src/sigma/graphics/static_mesh_instance.cpp
     src/sigma/resource/identifier.cpp
+    src/sigma/graphics/material.cpp
+    src/sigma/graphics/static_mesh.cpp
 
     src/sigma/util/filesystem.cpp
     src/sigma/util/json_conversion.cpp

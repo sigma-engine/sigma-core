@@ -103,13 +103,15 @@ namespace opengl {
                 auto& txform = viewport.transforms.get(e); // TODO const
                 if (viewport.static_mesh_instances.has(e)) {
                     auto mesh = STATIC_MESH_PTR(viewport.static_mesh_instances.get(e));
+                    auto mat = MATERIAL_PTR(mesh->material());
 
                     matrices_.model_matrix = txform.matrix();
 
                     matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
                     matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
 
-                    mesh->render(&matrices_, texture_unit::TEXTURE0);
+                    mat->bind(&matrices_, texture_unit::TEXTURE0);
+                    mesh->render();
                 }
             }
         }

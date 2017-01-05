@@ -76,7 +76,7 @@ int main(int argc, char const* argv[])
     auto outputdir = vm["output"].as<boost::filesystem::path>();
     boost::filesystem::create_directories(outputdir);
 
-    for (auto file_path : vm["input-files"].as<std::vector<boost::filesystem::path> >()) {
+    for (auto file_path : vm["input-files"].as<std::vector<boost::filesystem::path>>()) {
         file_path = boost::filesystem::absolute(file_path);
         if (sigma::filesystem::contains_file(boost::filesystem::current_path(), file_path)) {
             if (boost::filesystem::exists(file_path)) {
@@ -88,6 +88,9 @@ int main(int argc, char const* argv[])
                     std::cout << "Compiling material: " << file_path << std::endl;
                     sigma::graphics::material_data material;
                     compile_technique(material, technique_data);
+
+                    if (technique_data.isMember("transparent"))
+                        material.transparent = technique_data["transparent"].asBool();
 
                     // TODO check for errors like no vertex or fragment shader
 

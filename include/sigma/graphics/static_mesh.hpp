@@ -2,6 +2,7 @@
 #define SIGMA_GRAPHICS_STATIC_MESH_HPP
 
 #include <sigma/config.hpp>
+#include <sigma/graphics/material.hpp>
 #include <sigma/resource/manager.hpp>
 #include <sigma/util/glm_serialize.hpp>
 
@@ -59,9 +60,15 @@ namespace graphics {
 
         virtual ~static_mesh() = default;
 
-    private:
+        resource::handle<graphics::material> material();
+
+        void set_material(resource::handle<graphics::material> mat);
+
+    protected:
         static_mesh(const static_mesh&) = delete;
         static_mesh& operator=(const static_mesh&) = delete;
+
+        resource::handle<graphics::material> material_;
     };
 
     using static_mesh_manager = resource::manager<static_mesh>;

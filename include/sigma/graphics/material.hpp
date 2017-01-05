@@ -14,12 +14,14 @@ namespace sigma {
 namespace graphics {
 
     struct material_data {
+        bool transparent = false;
         std::unordered_map<shader_type, resource::identifier> shaders;
         std::unordered_map<std::string, resource::identifier> textures;
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
         {
+            ar& transparent;
             ar& shaders;
             ar& textures;
         }
@@ -31,15 +33,21 @@ namespace graphics {
 
         material() = default;
 
+        material(material_data data);
+
         material(material&&) = default;
 
         material& operator=(material&&) = default;
 
         virtual ~material() = default;
 
+        bool is_transparent() const;
+
     private:
         material(const material&) = delete;
         material& operator=(const material&) = delete;
+
+        material_data data_;
     };
 
     using material_manager = resource::manager<material>;

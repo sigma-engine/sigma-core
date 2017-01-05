@@ -5,6 +5,10 @@
 
 namespace sigma {
 namespace opengl {
+    material::material(graphics::material_data data)
+        : graphics::material(std::move(data))
+    {
+    }
 
     void material::link()
     {
@@ -22,7 +26,7 @@ namespace opengl {
 
     std::unique_ptr<graphics::material> material_manager::load(graphics::material_data data, boost::archive::binary_iarchive& ia)
     {
-        auto mat = std::make_unique<opengl::material>();
+        auto mat = std::make_unique<opengl::material>(data);
         for (const auto& shdr : data.shaders)
             mat->attach(shaders_.get(shdr.second));
         mat->link();

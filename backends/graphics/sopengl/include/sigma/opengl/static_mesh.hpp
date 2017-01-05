@@ -24,11 +24,7 @@ namespace opengl {
 
         ~static_mesh();
 
-        void set_material(resource::handle<graphics::material> mat);
-
         void render();
-
-        void render(render_matrices* matrices, texture_unit first_texture_unit);
 
     private:
         static_mesh(const static_mesh&) = delete;
@@ -38,7 +34,6 @@ namespace opengl {
         GLuint vertex_buffer_ = 0;
         GLuint index_buffer_ = 0;
         GLuint index_count_ = 0;
-        resource::handle<graphics::material> material_;
     };
 
     class static_mesh_manager : public graphics::static_mesh_manager {

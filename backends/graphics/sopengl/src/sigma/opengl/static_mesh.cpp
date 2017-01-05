@@ -39,23 +39,11 @@ namespace opengl {
         glDeleteVertexArrays(1, &vertex_array_);
     }
 
-    void static_mesh::set_material(resource::handle<graphics::material> mat)
-    {
-        material_ = mat;
-    }
-
     void static_mesh::render()
     {
         GL_CHECK(glBindVertexArray(vertex_array_));
         GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_));
         GL_CHECK(glDrawElements(GL_TRIANGLES, index_count_, GL_UNSIGNED_INT, nullptr));
-    }
-
-    void static_mesh::render(render_matrices* matrices, texture_unit first_texture_unit)
-    {
-        MATERIAL_PTR(material_)
-            ->bind(matrices, first_texture_unit);
-        render();
     }
 
     static_mesh_manager::static_mesh_manager(boost::filesystem::path cache_directory, opengl::material_manager& materials)
