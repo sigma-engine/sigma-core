@@ -35,11 +35,9 @@ namespace opengl {
 
         geometry_buffer(glm::ivec2 size);
 
-        void bind_for_geometry_pass();
+        void bind_for_geometry_write();
 
-        void bind_for_stencil_pass();
-
-        void bind_for_effect_pass();
+        void bind_for_geometry_read();
 
         void swap_input_image();
 

@@ -34,7 +34,7 @@ namespace opengl {
 
         virtual void resize(glm::uvec2 size) override;
 
-        void geometry_pass(const graphics::view_port& viewport);
+        void geometry_pass(const graphics::view_port& viewport, bool transparent);
 
 		void light_pass(const graphics::view_port& viewport);
 
@@ -51,7 +51,7 @@ namespace opengl {
         static const resource::identifier POINT_LIGHT_STENCIL_EFFECT;
         static const resource::identifier DIRECTIONAL_LIGHT_EFFECT;
         static const resource::identifier VIGNETTE_EFFECT;
-        static const resource::identifier TEXTURE_BLIT_EFFECT;
+        static const resource::identifier GAMMA_CONVERSION_EFFECT;
 
         renderer(const renderer&) = delete;
         renderer& operator=(const renderer&) = delete;
@@ -65,6 +65,9 @@ namespace opengl {
         opengl::static_mesh_manager static_meshes_;
         opengl::post_process_effect_manager effects_;
         render_matrices matrices_;
+
+		resource::handle<graphics::post_process_effect> stencil_clear_effect_;
+		resource::handle<graphics::post_process_effect> texture_blit_effect_;
 
         // TODO were should these go?
         GLint point_light_color_location_;
@@ -83,7 +86,7 @@ namespace opengl {
 
         resource::handle<graphics::post_process_effect> vignette_effect_;
 
-        resource::handle<graphics::post_process_effect> fullscreen_blit_;
+        resource::handle<graphics::post_process_effect> gamma_conversion_;
     };
 }
 }

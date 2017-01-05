@@ -1,6 +1,6 @@
 {
     "vertex" : "default",
-    "fragment" : "default",
+    "fragment" : "glass",
     "transparent": true,
     "textures": {
         "basecolor_map" : "glass_basecolor",

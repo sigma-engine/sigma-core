@@ -61,10 +61,14 @@ namespace opengl {
         GLint view_port_size_location_ = -1;
         GLint time_location_ = -1;
 
+		
+
         GLint linked_ = GL_FALSE;
         std::vector<resource::handle<graphics::shader> > shaders_;
         std::unordered_map<std::string, std::size_t> texture_map_;
         std::vector<std::pair<GLint, resource::handle<graphics::texture> > > textures_;
+	private:
+		GLint in_image_location_ = -1;
 
     private:
         shader_technique(const shader_technique&) = delete;

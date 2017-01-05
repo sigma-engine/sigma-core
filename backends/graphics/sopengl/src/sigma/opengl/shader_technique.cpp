@@ -1,5 +1,6 @@
 #include <sigma/opengl/shader_technique.hpp>
 
+#include <sigma/opengl/geometry_buffer.hpp>
 #include <sigma/opengl/render_uniforms.hpp>
 #include <sigma/opengl/shader.hpp>
 #include <sigma/opengl/texture.hpp>
@@ -51,6 +52,8 @@ namespace opengl {
         GL_CHECK(z_far_location_ = glGetUniformLocation(object_, Z_FAR_NAME));
         GL_CHECK(view_port_size_location_ = glGetUniformLocation(object_, VIEW_PORT_SIZE_NAME));
         GL_CHECK(time_location_ = glGetUniformLocation(object_, TIME_NAME));
+
+		GL_CHECK(in_image_location_ = glGetUniformLocation(object_, geometry_buffer::IMAGE_INPUT_NAME));
     }
 
     GLint shader_technique::get_uniform_location(const char* name)
@@ -79,17 +82,17 @@ namespace opengl {
     void shader_technique::bind()
     {
         GL_CHECK(glUseProgram(object_));
+		GL_CHECK(glUniform1i(in_image_location_, geometry_buffer::INPUT_IMAGE_LOCATION));
     }
 
     void shader_technique::bind(render_matrices* matrices, texture_unit first_texture_unit)
     {
-        GL_CHECK(glUseProgram(object_));
+		bind();
         auto size = textures_.size();
         for (uint32_t i = 0; i < size; ++i) {
             GL_CHECK(glUniform1i(textures_[i].first, i));
             GL_CHECK(glActiveTexture(GLenum(first_texture_unit) + i));
-            TEXTURE_PTR(textures_[i].second)
-                ->bind();
+            TEXTURE_PTR(textures_[i].second)->bind();
         }
 
         GL_CHECK(glUniformMatrix4fv(projection_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->projection_matrix)));

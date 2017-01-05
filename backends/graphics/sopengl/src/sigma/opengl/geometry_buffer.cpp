@@ -20,17 +20,14 @@ namespace opengl {
         attach(frame_buffer::attachment::DEPTH_STENCIL, depth_stencil_texture_);
     }
 
-    void geometry_buffer::bind_for_geometry_pass()
+    void geometry_buffer::bind_for_geometry_write()
     {
-        draw_buffers(DIFFUSE_ROUGHNESS_ATTACHMENT, NORMAL_METALNESS_ATTACHMENT);
+        draw_buffers(DIFFUSE_ROUGHNESS_ATTACHMENT, NORMAL_METALNESS_ATTACHMENT, IMAGE_ATTACHMENTS[output_image_]);
+		GL_CHECK(glActiveTexture(GLenum(INPUT_IMAGE_TEXTURE_UINT)));
+		images_[input_image_].bind();
     }
 
-    void geometry_buffer::bind_for_stencil_pass()
-    {
-        draw_buffers(attachment::NONE);
-    }
-
-    void geometry_buffer::bind_for_effect_pass()
+    void geometry_buffer::bind_for_geometry_read()
     {
         draw_buffers(IMAGE_ATTACHMENTS[output_image_]);
 

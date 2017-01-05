@@ -16,7 +16,7 @@ namespace opengl {
     const resource::identifier renderer::POINT_LIGHT_STENCIL_EFFECT{ "post_process_effect://point_light_stencil" };
     const resource::identifier renderer::DIRECTIONAL_LIGHT_EFFECT{ "post_process_effect://directional_light" };
     const resource::identifier renderer::VIGNETTE_EFFECT{ "post_process_effect://vignette" };
-    const resource::identifier renderer::TEXTURE_BLIT_EFFECT{ "post_process_effect://texture_blit" };
+    const resource::identifier renderer::GAMMA_CONVERSION_EFFECT{ "post_process_effect://gamma_conversion" };
 
     renderer::renderer(glm::ivec2 size)
         : graphics::renderer(size)
@@ -28,6 +28,9 @@ namespace opengl {
         , static_meshes_(boost::filesystem::current_path() / ".." / "data", materials_)
         , effects_(boost::filesystem::current_path() / ".." / "data", textures_, shaders_, static_meshes_)
     {
+		stencil_clear_effect_ = effects_.get("post_process_effect://stencil_clear");
+		texture_blit_effect_ = effects_.get("post_process_effect://texture_blit");
+
         point_light_effect_ = effects_.get(POINT_LIGHT_EFFECT);
 
         //TODO were should these go?
@@ -46,7 +49,7 @@ namespace opengl {
 
         vignette_effect_ = effects_.get(VIGNETTE_EFFECT);
 
-        fullscreen_blit_ = effects_.get(TEXTURE_BLIT_EFFECT);
+        gamma_conversion_ = effects_.get(GAMMA_CONVERSION_EFFECT);
     }
 
     renderer::~renderer()
@@ -83,18 +86,14 @@ namespace opengl {
         GL_CHECK(glViewport(0, 0, size.x, size.y));
     }
 
-    void renderer::geometry_pass(const graphics::view_port& viewport)
-    {
-        gbuffer_.bind_for_geometry_pass();
-
-        GL_CHECK(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
-        GL_CHECK(glClearStencil(0));
-        GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));        
-
-        /*GL_CHECK(glStencilMask(0xFF));
-        GL_CHECK(glStencilFunc(GL_ALWAYS, 5, 0xFF));
+    void renderer::geometry_pass(const graphics::view_port& viewport, bool transparent)
+    {     		
+        GL_CHECK(glStencilMask(0xFF));
+        GL_CHECK(glStencilFunc(GL_ALWAYS, 1, 0xFF));
         GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE));
-        GL_CHECK(glEnable(GL_STENCIL_TEST));*/
+        GL_CHECK(glEnable(GL_STENCIL_TEST));
+
+		GL_CHECK(glClear(GL_STENCIL_BUFFER_BIT));
 		
 		GL_CHECK(glDisable(GL_BLEND));
 
@@ -108,17 +107,18 @@ namespace opengl {
         for (auto e : viewport.entities) { // TODO use a filter here
             if (viewport.static_mesh_instances.has(e) && viewport.transforms.has(e)) {
                 auto& txform = viewport.transforms.get(e);
-
                 auto mesh = STATIC_MESH_PTR(viewport.static_mesh_instances.get(e));
                 auto mat = MATERIAL_PTR(mesh->material());
 
-                matrices_.model_matrix = txform.matrix();
+				if (transparent == mat->is_transparent()) {
+					matrices_.model_matrix = txform.matrix();
 
-                matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
-                matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
+					matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
+					matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
 
-                mat->bind(&matrices_, texture_unit::TEXTURE0);
-                mesh->render();
+					mat->bind(&matrices_, texture_unit::TEXTURE0);
+					mesh->render();
+				}
             }
         }
         GL_CHECK(glDepthMask(GL_FALSE));
@@ -127,14 +127,10 @@ namespace opengl {
 
 	void renderer::light_pass(const graphics::view_port& viewport)
 	{
-		gbuffer_.bind_for_effect_pass();
-		GL_CHECK(glClearColor(0,0,0,1));
-		GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
-
-		/*GL_CHECK(glStencilMask(0x00));
-		GL_CHECK(glStencilFunc(GL_EQUAL, 5, 0xFF));
-		GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP));*/
-		GL_CHECK(glDisable(GL_STENCIL_TEST));
+		GL_CHECK(glStencilMask(0x00));
+		GL_CHECK(glStencilFunc(GL_EQUAL, 1, 0xFF));
+		GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP));
+		GL_CHECK(glEnable(GL_STENCIL_TEST));
 
 		GL_CHECK(glBlendEquation(GL_FUNC_ADD));
 		GL_CHECK(glBlendFunc(GL_ONE, GL_ONE));
@@ -192,24 +188,52 @@ namespace opengl {
         matrices_.model_view_matrix = glm::mat4(1);
         matrices_.normal_matrix = glm::mat3(1);
 
-        geometry_pass(viewport);
+		GL_CHECK(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+		GL_CHECK(glClearStencil(0));
 
+		// Opaque objects
+		gbuffer_.bind_for_geometry_write();
+		GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+        geometry_pass(viewport, false);
+
+		gbuffer_.bind_for_geometry_read();
+		GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
 		light_pass(viewport);
 
+
+
+		// Transparent objects
+		gbuffer_.swap_input_image();
+		gbuffer_.bind_for_geometry_write();
+		geometry_pass(viewport, true);
+
+		gbuffer_.bind_for_geometry_read();
+		GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
+		light_pass(viewport);
+		
+
+		gbuffer_.bind_for_geometry_read();
+		GL_CHECK(glStencilFunc(GL_NOTEQUAL, 1, 0xFF));
+		GL_CHECK(glDisable(GL_DEPTH_TEST));
+		GL_CHECK(glDisable(GL_CULL_FACE));
+		EFFECT_PTR(texture_blit_effect_)->apply(&matrices_);
+
         GL_CHECK(glDisable(GL_BLEND));
+		GL_CHECK(glDisable(GL_STENCIL_TEST));
+		GL_CHECK(glDisable(GL_DEPTH_TEST));
 
         // gbuffer_.swap_input_image();
 		// gbuffer_.bind_for_effect_pass(glm::vec4(0, 0, 0, 1));
 		// EFFECT_PTR(vignette_effect_)->apply(&matrices_);
 
         gbuffer_.swap_input_image();
-        gbuffer_.bind_for_effect_pass();
+        gbuffer_.bind_for_geometry_read();
 
         default_fbo_.bind(frame_buffer::target::DRAW);
         GL_CHECK(glClearColor(0, 0, 0, 1));
         GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
 
-        EFFECT_PTR(fullscreen_blit_)->apply(&matrices_);
+        EFFECT_PTR(gamma_conversion_)->apply(&matrices_);
     }
 
     void renderer::point_light_pass(const transform& txform, const graphics::point_light& light)

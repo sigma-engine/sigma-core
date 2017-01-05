@@ -47,8 +47,13 @@ surface read_geometry_buffer()
 }
 #else
 
+#ifdef SIGMA_ENGINE_TRANSPARENT
+uniform sampler2D in_image;
+#endif
+
 out vec4 out_diffuse_roughness;
 out vec4 out_normal_metalness;
+
 
 void write_geometry_buffer(surface s)
 {
