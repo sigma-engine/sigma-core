@@ -11,7 +11,7 @@ simple_game::simple_game(sigma::graphics::renderer* renderer)
 	, rotation_distribution_{ glm::vec3{ 0.0f }, glm::vec3{ 2.0f * boost::math::constants::pi<float>() } }
 {
     load("../data/water_packed.scn");
-	/*std::uniform_int_distribution<int> count_distribution_{100,200};
+	/*std::uniform_int_distribution<int> count_distribution_{200,500};
 	int c = count_distribution_(generator_);
 	std::cout << c << std::endl;
 	for (int i = 0; i < c;++i) {

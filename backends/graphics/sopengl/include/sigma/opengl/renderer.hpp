@@ -12,6 +12,7 @@
 #include <sigma/opengl/shader.hpp>
 #include <sigma/opengl/static_mesh.hpp>
 #include <sigma/opengl/texture.hpp>
+#include <sigma/opengl/uniform_buffer.hpp>
 
 namespace sigma {
 
@@ -36,11 +37,11 @@ namespace opengl {
 
         void geometry_pass(const graphics::view_port& viewport, bool transparent);
 
-		void light_pass(const graphics::view_port& viewport);
+        void light_pass(const graphics::view_port& viewport);
 
         void point_light_pass(const transform& txform, const graphics::point_light& light);
 
-		// void point_light_outside_stencil_optimization(glm::vec3 view_space_position, float radius);
+        // void point_light_outside_stencil_optimization(glm::vec3 view_space_position, float radius);
 
         void directional_light_pass(const transform& txform, const graphics::directional_light& light);
 
@@ -58,6 +59,7 @@ namespace opengl {
 
         default_frame_buffer default_fbo_;
         geometry_buffer gbuffer_;
+        uniform_buffer<standard_uniforms> standard_uniforms_;
 
         opengl::texture_manager textures_;
         opengl::shader_manager shaders_;
@@ -66,8 +68,8 @@ namespace opengl {
         opengl::post_process_effect_manager effects_;
         render_matrices matrices_;
 
-		resource::handle<graphics::post_process_effect> stencil_clear_effect_;
-		resource::handle<graphics::post_process_effect> texture_blit_effect_;
+        resource::handle<graphics::post_process_effect> stencil_clear_effect_;
+        resource::handle<graphics::post_process_effect> texture_blit_effect_;
 
         // TODO were should these go?
         GLint point_light_color_location_;

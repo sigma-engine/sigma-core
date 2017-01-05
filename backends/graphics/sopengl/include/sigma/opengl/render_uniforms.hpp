@@ -5,15 +5,19 @@
 
 namespace sigma {
 namespace opengl {
-    struct render_matrices {
+    struct standard_uniforms {
         glm::mat4 projection_matrix;
         glm::mat4 view_matrix;
+        glm::vec2 view_port_size;
+        float time;
+        float z_near;
+        float z_far;
+    };
+
+    struct render_matrices {
         glm::mat4 model_matrix;
         glm::mat4 model_view_matrix;
         glm::mat3 normal_matrix;
-        float z_near;
-        float z_far;
-        glm::vec2 size;
     };
 }
 }

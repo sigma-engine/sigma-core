@@ -43,17 +43,15 @@ namespace opengl {
         }
 
         GL_CHECK(glUseProgram(object_));
-        GL_CHECK(projection_matrix_location_ = glGetUniformLocation(object_, PROJECTION_MATRIX_NAME));
-        GL_CHECK(view_matrix_location_ = glGetUniformLocation(object_, VIEW_MATRIX_NAME));
+        GL_CHECK(standard_uniform_block_index_ = glGetUniformBlockIndex(object_, STANDARD_UNIFORM_BLOCK_NAME));
+
+        GL_CHECK(glUniformBlockBinding(object_, standard_uniform_block_index_, STANDARD_UNIFORM_BLOCK_BINDING));
+
         GL_CHECK(model_matrix_location_ = glGetUniformLocation(object_, MODEL_MATRIX_NAME));
         GL_CHECK(model_view_matrix_location_ = glGetUniformLocation(object_, MODEL_VIEW_MATRIX_NAME));
         GL_CHECK(normal_matrix_location_ = glGetUniformLocation(object_, NORMAL_MATRIX_NAME));
-        GL_CHECK(z_near_location_ = glGetUniformLocation(object_, Z_NEAR_NAME));
-        GL_CHECK(z_far_location_ = glGetUniformLocation(object_, Z_FAR_NAME));
-        GL_CHECK(view_port_size_location_ = glGetUniformLocation(object_, VIEW_PORT_SIZE_NAME));
-        GL_CHECK(time_location_ = glGetUniformLocation(object_, TIME_NAME));
 
-		GL_CHECK(in_image_location_ = glGetUniformLocation(object_, geometry_buffer::IMAGE_INPUT_NAME));
+        GL_CHECK(in_image_location_ = glGetUniformLocation(object_, geometry_buffer::IMAGE_INPUT_NAME));
     }
 
     GLint shader_technique::get_uniform_location(const char* name)
@@ -82,12 +80,12 @@ namespace opengl {
     void shader_technique::bind()
     {
         GL_CHECK(glUseProgram(object_));
-		GL_CHECK(glUniform1i(in_image_location_, geometry_buffer::INPUT_IMAGE_LOCATION));
+        GL_CHECK(glUniform1i(in_image_location_, geometry_buffer::INPUT_IMAGE_LOCATION));
     }
 
     void shader_technique::bind(render_matrices* matrices, texture_unit first_texture_unit)
     {
-		bind();
+        bind();
         auto size = textures_.size();
         for (uint32_t i = 0; i < size; ++i) {
             GL_CHECK(glUniform1i(textures_[i].first, i));
@@ -95,14 +93,9 @@ namespace opengl {
             TEXTURE_PTR(textures_[i].second)->bind();
         }
 
-        GL_CHECK(glUniformMatrix4fv(projection_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->projection_matrix)));
-        GL_CHECK(glUniformMatrix4fv(view_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->view_matrix)));
         GL_CHECK(glUniformMatrix4fv(model_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->model_matrix)));
         GL_CHECK(glUniformMatrix4fv(model_view_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->model_view_matrix)));
         GL_CHECK(glUniformMatrix3fv(normal_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->normal_matrix)));
-        GL_CHECK(glUniform1f(z_near_location_, matrices->z_near));
-        GL_CHECK(glUniform1f(z_far_location_, matrices->z_far));
-        GL_CHECK(glUniform2fv(view_port_size_location_, 1, glm::value_ptr(matrices->size)));
     }
 }
 }

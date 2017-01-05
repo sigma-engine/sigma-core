@@ -36,6 +36,7 @@ set(HEADERS
     include/sigma/opengl/geometry_buffer.hpp
     include/sigma/opengl/shader_technique.hpp
     include/sigma/opengl/post_process_effect.hpp
+    include/sigma/opengl/uniform_buffer.hpp
 
 #    include/sigma/opengl/texture_manager.hpp
 #    include/sigma/opengl/shader_manager.hpp

@@ -28,6 +28,8 @@ namespace opengl {
         , static_meshes_(boost::filesystem::current_path() / ".." / "data", materials_)
         , effects_(boost::filesystem::current_path() / ".." / "data", textures_, shaders_, static_meshes_)
     {
+        standard_uniforms_.set_binding_point(shader_technique::STANDARD_UNIFORM_BLOCK_BINDING);
+
         stencil_clear_effect_ = effects_.get("post_process_effect://stencil_clear");
         texture_blit_effect_ = effects_.get("post_process_effect://texture_blit");
 
@@ -178,11 +180,15 @@ namespace opengl {
 
     void renderer::render(const graphics::view_port& viewport)
     {
-        matrices_.projection_matrix = viewport.projection_matrix;
-        matrices_.view_matrix = viewport.view_matrix;
-        matrices_.z_near = viewport.z_near;
-        matrices_.z_far = viewport.z_far;
-        matrices_.size = viewport.size;
+        standard_uniforms data;
+        data.projection_matrix = viewport.projection_matrix;
+        data.view_matrix = viewport.view_matrix;
+        data.view_port_size = viewport.size;
+        data.time = 0; // TODO time
+        data.z_near = viewport.z_near;
+        data.z_far = viewport.z_far;
+        standard_uniforms_.set_data(data);
+
         matrices_.model_matrix = glm::mat4(1);
         matrices_.model_view_matrix = glm::mat4(1);
         matrices_.normal_matrix = glm::mat3(1);
