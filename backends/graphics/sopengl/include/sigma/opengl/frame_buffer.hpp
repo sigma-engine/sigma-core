@@ -2,11 +2,11 @@
 #define SIGMA_ENGINE_OPENGL_FRAME_BUFFER_HPP
 
 #include <sigma/opengl/gl_core_4_2.h>
+#include <sigma/opengl/util.hpp>
 
 #include <glm/vec2.hpp>
 
-#include <memory>
-#include <vector>
+#include <array>
 
 namespace sigma {
 namespace opengl {
@@ -66,7 +66,12 @@ namespace opengl {
 
         void read_buffer(attachment att);
 
-        void draw_buffers(std::vector<attachment> atts);
+		template<class... Args>
+		void draw_buffers(Args... atts) {
+			std::array<attachment, sizeof...(Args)> real = { atts... };
+			GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, object_));
+			GL_CHECK(glDrawBuffers(sizeof...(Args), (GLenum*)real.data()));
+		}
 
     private:
         frame_buffer(const frame_buffer&) = delete;

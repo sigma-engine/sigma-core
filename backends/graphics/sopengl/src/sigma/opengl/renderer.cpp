@@ -89,14 +89,14 @@ namespace opengl {
 
         GL_CHECK(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
         GL_CHECK(glClearStencil(0));
-        GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
-
-        GL_CHECK(glDisable(GL_BLEND));
+        GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));        
 
         /*GL_CHECK(glStencilMask(0xFF));
         GL_CHECK(glStencilFunc(GL_ALWAYS, 5, 0xFF));
         GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE));
         GL_CHECK(glEnable(GL_STENCIL_TEST));*/
+		
+		GL_CHECK(glDisable(GL_BLEND));
 
         GL_CHECK(glDepthMask(GL_TRUE));
         GL_CHECK(glDepthFunc(GL_LESS));
@@ -125,6 +125,62 @@ namespace opengl {
         GL_CHECK(glStencilMask(0x00));
     }
 
+	void renderer::light_pass(const graphics::view_port& viewport)
+	{
+		gbuffer_.bind_for_effect_pass();
+		GL_CHECK(glClearColor(0,0,0,1));
+		GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
+
+		/*GL_CHECK(glStencilMask(0x00));
+		GL_CHECK(glStencilFunc(GL_EQUAL, 5, 0xFF));
+		GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP));*/
+		GL_CHECK(glDisable(GL_STENCIL_TEST));
+
+		GL_CHECK(glBlendEquation(GL_FUNC_ADD));
+		GL_CHECK(glBlendFunc(GL_ONE, GL_ONE));
+		GL_CHECK(glEnable(GL_BLEND));
+
+		GL_CHECK(glCullFace(GL_FRONT));
+		GL_CHECK(glEnable(GL_CULL_FACE));
+
+		GL_CHECK(glDepthFunc(GL_GREATER));
+		GL_CHECK(glEnable(GL_DEPTH_TEST));
+
+		for (auto e : viewport.entities) { // TODO use a filter here
+			if (viewport.point_lights.has(e) && viewport.transforms.has(e)) {
+				auto& txform = viewport.transforms.get(e);
+				const auto& light = viewport.point_lights.get(e);
+
+				// TODO non uniform scale on point light???
+				matrices_.model_matrix = txform.matrix();
+
+				matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
+				matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
+
+				point_light_pass(txform, light);
+			}
+		}
+
+		GL_CHECK(glDisable(GL_DEPTH_TEST));
+		GL_CHECK(glDisable(GL_CULL_FACE));
+
+		// TODO directional lights
+		for (auto e : viewport.entities) { // TODO use a filter here
+			if (viewport.directional_lights.has(e) && viewport.transforms.has(e)) {
+				auto& txform = viewport.transforms.get(e);
+				const auto& light = viewport.directional_lights.get(e);
+
+				// TODO scale on directional light???
+				matrices_.model_matrix = txform.matrix();
+
+				matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
+				matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
+
+				directional_light_pass(txform, light);
+			}
+		}
+	}
+
     void renderer::render(const graphics::view_port& viewport)
     {
         matrices_.projection_matrix = viewport.projection_matrix;
@@ -136,66 +192,15 @@ namespace opengl {
         matrices_.model_view_matrix = glm::mat4(1);
         matrices_.normal_matrix = glm::mat3(1);
 
-        gbuffer_.clear_input_image(glm::vec4(0, 0, 0, 1));
-
         geometry_pass(viewport);
 
-        gbuffer_.bind_for_effect_pass();
-
-        /*GL_CHECK(glStencilMask(0x00));
-		GL_CHECK(glStencilFunc(GL_EQUAL, 5, 0xFF));
-		GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP));*/
-        GL_CHECK(glDisable(GL_STENCIL_TEST));
-
-        GL_CHECK(glBlendEquation(GL_FUNC_ADD));
-        GL_CHECK(glBlendFunc(GL_ONE, GL_ONE));
-        GL_CHECK(glEnable(GL_BLEND));
-
-        GL_CHECK(glCullFace(GL_FRONT));
-        GL_CHECK(glEnable(GL_CULL_FACE));
-
-        GL_CHECK(glDepthFunc(GL_GREATER));
-        GL_CHECK(glEnable(GL_DEPTH_TEST));
-
-        for (auto e : viewport.entities) { // TODO use a filter here
-            if (viewport.point_lights.has(e) && viewport.transforms.has(e)) {
-                auto& txform = viewport.transforms.get(e);
-                const auto& light = viewport.point_lights.get(e);
-
-                // TODO non uniform scale on point light???
-                matrices_.model_matrix = txform.matrix();
-
-                matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
-                matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
-
-                point_light_pass(txform, light);
-            }
-        }
-
-        GL_CHECK(glDisable(GL_DEPTH_TEST));
-        GL_CHECK(glDisable(GL_CULL_FACE));
-
-        // TODO directional lights
-        for (auto e : viewport.entities) { // TODO use a filter here
-            if (viewport.directional_lights.has(e) && viewport.transforms.has(e)) {
-                auto& txform = viewport.transforms.get(e);
-                const auto& light = viewport.directional_lights.get(e);
-
-                // TODO scale on directional light???
-                matrices_.model_matrix = txform.matrix();
-
-                matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
-                matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
-
-                directional_light_pass(txform, light);
-            }
-        }
+		light_pass(viewport);
 
         GL_CHECK(glDisable(GL_BLEND));
 
         // gbuffer_.swap_input_image();
-        // gbuffer_.bind_for_effect_pass();
-        // EFFECT_PTR(vignette_effect_)->apply(&matrices_);
+		// gbuffer_.bind_for_effect_pass(glm::vec4(0, 0, 0, 1));
+		// EFFECT_PTR(vignette_effect_)->apply(&matrices_);
 
         gbuffer_.swap_input_image();
         gbuffer_.bind_for_effect_pass();

@@ -36,6 +36,8 @@ namespace opengl {
 
         void geometry_pass(const graphics::view_port& viewport);
 
+		void light_pass(const graphics::view_port& viewport);
+
         void point_light_pass(const transform& txform, const graphics::point_light& light);
 
 		// void point_light_outside_stencil_optimization(glm::vec3 view_space_position, float radius);

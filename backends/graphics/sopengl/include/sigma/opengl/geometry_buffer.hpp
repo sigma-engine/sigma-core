@@ -12,7 +12,7 @@ namespace opengl {
     public:
         static constexpr const attachment DIFFUSE_ROUGHNESS_ATTACHMENT = attachment::COLOR0;
         static constexpr const attachment NORMAL_METALNESS_ATTACHMENT = attachment::COLOR1;
-        static constexpr const attachment OUTPUT_IMAGE_ATTACHMENT = attachment::COLOR2;
+		static constexpr const attachment IMAGE_ATTACHMENTS[] = { attachment::COLOR2, attachment::COLOR3 };
 
         static constexpr const texture_unit DIFFUSE_ROUGHNESS_TEXTURE_UINT = texture_unit::TEXTURE0;
         static constexpr const texture_unit NORMAL_METALNESS_TEXTURE_UINT = texture_unit::TEXTURE1;
@@ -41,9 +41,9 @@ namespace opengl {
 
         void bind_for_effect_pass();
 
-        void clear_input_image(glm::vec4 color);
-
         void swap_input_image();
+
+		// TODO glClearBuffer{i|f}{v|i}
 
     private:
         geometry_buffer(const geometry_buffer&) = delete;

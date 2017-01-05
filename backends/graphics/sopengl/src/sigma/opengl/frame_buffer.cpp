@@ -58,11 +58,5 @@ namespace opengl {
         GL_CHECK(glBindFramebuffer(GL_READ_FRAMEBUFFER, object_));
         GL_CHECK(glReadBuffer(GLenum(att)));
     }
-
-    void frame_buffer::draw_buffers(std::vector<attachment> atts)
-    {
-        GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, object_));
-        GL_CHECK(glDrawBuffers(atts.size(), (GLenum*)atts.data()));
-    }
 }
 }
