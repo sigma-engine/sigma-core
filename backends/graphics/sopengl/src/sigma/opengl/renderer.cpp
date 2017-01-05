@@ -99,20 +99,19 @@ namespace opengl {
         GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
         for (auto e : viewport.entities) { // TODO use a filter here
-            if (viewport.transforms.has(e)) {
+            if (viewport.static_mesh_instances.has(e) && viewport.transforms.has(e)) {
                 auto& txform = viewport.transforms.get(e); // TODO const
-                if (viewport.static_mesh_instances.has(e)) {
-                    auto mesh = STATIC_MESH_PTR(viewport.static_mesh_instances.get(e));
-                    auto mat = MATERIAL_PTR(mesh->material());
 
-                    matrices_.model_matrix = txform.matrix();
+                auto mesh = STATIC_MESH_PTR(viewport.static_mesh_instances.get(e));
+                auto mat = MATERIAL_PTR(mesh->material());
 
-                    matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
-                    matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
+                matrices_.model_matrix = txform.matrix();
 
-                    mat->bind(&matrices_, texture_unit::TEXTURE0);
-                    mesh->render();
-                }
+                matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
+                matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
+
+                mat->bind(&matrices_, texture_unit::TEXTURE0);
+                mesh->render();
             }
         }
 
@@ -143,7 +142,7 @@ namespace opengl {
         GL_CHECK(glBlendFunc(GL_ONE, GL_ONE));
 
         for (auto e : viewport.entities) { // TODO use a filter here
-            if (viewport.transforms.has(e) && viewport.point_lights.has(e)) {
+            if (viewport.point_lights.has(e) && viewport.transforms.has(e)) {
                 auto& txform = viewport.transforms.get(e); // TODO const
                 const auto& light = viewport.point_lights.get(e);
 
@@ -160,7 +159,7 @@ namespace opengl {
 
         // TODO directional lights
         for (auto e : viewport.entities) { // TODO use a filter here
-            if (viewport.transforms.has(e) && viewport.directional_lights.has(e)) {
+            if (viewport.directional_lights.has(e) && viewport.transforms.has(e)) {
                 auto& txform = viewport.transforms.get(e); // TODO const
                 const auto& light = viewport.directional_lights.get(e);
 
@@ -178,32 +177,49 @@ namespace opengl {
         GL_CHECK(glDisable(GL_STENCIL_TEST));
         GL_CHECK(glDisable(GL_BLEND));
         GL_CHECK(glDisable(GL_CULL_FACE));
+
         // gbuffer_.swap_input_image();
         // gbuffer_.bind_for_effect_pass();
-        // vignette_effect_->apply(&matrices_);
+        // EFFECT_PTR(vignette_effect_)->apply(&matrices_);
 
         gbuffer_.swap_input_image();
         gbuffer_.bind_for_effect_pass();
         default_fbo_.bind(frame_buffer::target::DRAW);
-        EFFECT_PTR(fullscreen_blit_)
-            ->apply(&matrices_);
+        EFFECT_PTR(fullscreen_blit_)->apply(&matrices_);
     }
 
     void renderer::point_light_pass(const transform& txform, const graphics::point_light& light)
     {
-        // TODO this should be pre calculated
-        //glm::vec3 cpos(glm::inverse(matrices_.view_matrix) * glm::vec4(0, 0, 0, 1));
-
         GL_CHECK(glEnable(GL_DEPTH_TEST));
+        GL_CHECK(glCullFace(GL_FRONT));
+        GL_CHECK(glDepthFunc(GL_GREATER));
 
         auto view_space_position = matrices_.model_view_matrix * glm::vec4(0, 0, 0, 1);
-        if (glm::length(view_space_position) <= 1.1 * txform.scale().x) {
-            GL_CHECK(glCullFace(GL_FRONT));
-            GL_CHECK(glDepthFunc(GL_GREATER));
-        } else {
+
+        gbuffer_.bind_for_effect_pass();
+        EFFECT_PTR(point_light_effect_)->bind();
+
+        // TODO this should be abstracted away better
+        GL_CHECK(glUniform3fv(point_light_color_location_, 1, glm::value_ptr(light.color)));
+        GL_CHECK(glUniform3fv(point_light_position_location_, 1, glm::value_ptr(view_space_position)));
+        GL_CHECK(glUniform1f(point_light_radius_location_, std::abs(txform.scale().x))); // TODO non uniform scale on point light???
+        GL_CHECK(glUniform1f(point_light_falloff_location_, light.falloff));
+        GL_CHECK(glUniform1f(point_light_intensity_location_, light.intensity));
+
+        EFFECT_PTR(point_light_effect_)->apply(&matrices_);
+
+        GL_CHECK(glDepthFunc(GL_LESS));
+        GL_CHECK(glDisable(GL_STENCIL_TEST));
+        GL_CHECK(glCullFace(GL_BACK));
+    }
+
+    void renderer::point_light_outside_stencil_optimization(glm::vec3 view_space_position, float radius)
+    {
+        // http://forum.devmaster.net/t/deferred-lighting-rendering-light-volumes/14998/5
+
+        if (glm::length(view_space_position) > 1.1 * radius) {
             gbuffer_.bind_for_stencil_pass();
 
-            // http://forum.devmaster.net/t/deferred-lighting-rendering-light-volumes/14998/5
             GL_CHECK(glEnable(GL_STENCIL_TEST));
             GL_CHECK(glClearStencil(4));
             GL_CHECK(glClear(GL_STENCIL_BUFFER_BIT));
@@ -214,8 +230,7 @@ namespace opengl {
             GL_CHECK(glDepthFunc(GL_GEQUAL));
             GL_CHECK(glCullFace(GL_FRONT));
 
-            EFFECT_PTR(point_light_stencil_effect_)
-                ->apply(&matrices_);
+            EFFECT_PTR(point_light_stencil_effect_)->apply(&matrices_);
 
             GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP));
             GL_CHECK(glStencilFunc(GL_LEQUAL, 5, 0xFF));
@@ -223,24 +238,6 @@ namespace opengl {
             GL_CHECK(glDepthFunc(GL_LEQUAL));
             GL_CHECK(glCullFace(GL_BACK));
         }
-
-        gbuffer_.bind_for_effect_pass();
-        EFFECT_PTR(point_light_effect_)
-            ->bind();
-
-        // TODO this should be abstracted away better
-        GL_CHECK(glUniform3fv(point_light_color_location_, 1, glm::value_ptr(light.color)));
-        GL_CHECK(glUniform3fv(point_light_position_location_, 1, glm::value_ptr(view_space_position)));
-        GL_CHECK(glUniform1f(point_light_radius_location_, std::abs(txform.scale().x))); // TODO non uniform scale on point light???
-        GL_CHECK(glUniform1f(point_light_falloff_location_, light.falloff));
-        GL_CHECK(glUniform1f(point_light_intensity_location_, light.intensity));
-
-        EFFECT_PTR(point_light_effect_)
-            ->apply(&matrices_);
-
-        GL_CHECK(glDepthFunc(GL_LESS));
-        GL_CHECK(glDisable(GL_STENCIL_TEST));
-        GL_CHECK(glCullFace(GL_BACK));
     }
 
     void renderer::directional_light_pass(const transform& txform, const graphics::directional_light& light)
@@ -251,14 +248,12 @@ namespace opengl {
 
         auto view_space_direction = matrices_.model_view_matrix * glm::vec4(0, 1, 0, 0);
 
-        EFFECT_PTR(directional_light_effect_)
-            ->bind();
+        EFFECT_PTR(directional_light_effect_)->bind();
         GL_CHECK(glUniform3fv(directional_light_color_location_, 1, glm::value_ptr(light.color)));
         GL_CHECK(glUniform3fv(directional_light_direction_location_, 1, glm::value_ptr(view_space_direction)));
         GL_CHECK(glUniform1f(directional_light_intensity_location_, light.intensity));
 
-        EFFECT_PTR(directional_light_effect_)
-            ->apply(&matrices_);
+        EFFECT_PTR(directional_light_effect_)->apply(&matrices_);
     }
 }
 }
