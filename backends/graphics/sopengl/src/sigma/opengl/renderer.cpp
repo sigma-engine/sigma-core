@@ -28,8 +28,8 @@ namespace opengl {
         , static_meshes_(boost::filesystem::current_path() / ".." / "data", materials_)
         , effects_(boost::filesystem::current_path() / ".." / "data", textures_, shaders_, static_meshes_)
     {
-		stencil_clear_effect_ = effects_.get("post_process_effect://stencil_clear");
-		texture_blit_effect_ = effects_.get("post_process_effect://texture_blit");
+        stencil_clear_effect_ = effects_.get("post_process_effect://stencil_clear");
+        texture_blit_effect_ = effects_.get("post_process_effect://texture_blit");
 
         point_light_effect_ = effects_.get(POINT_LIGHT_EFFECT);
 
@@ -87,15 +87,14 @@ namespace opengl {
     }
 
     void renderer::geometry_pass(const graphics::view_port& viewport, bool transparent)
-    {     		
+    {
         GL_CHECK(glStencilMask(0xFF));
         GL_CHECK(glStencilFunc(GL_ALWAYS, 1, 0xFF));
         GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE));
         GL_CHECK(glEnable(GL_STENCIL_TEST));
+        GL_CHECK(glClear(GL_STENCIL_BUFFER_BIT));
 
-		GL_CHECK(glClear(GL_STENCIL_BUFFER_BIT));
-		
-		GL_CHECK(glDisable(GL_BLEND));
+        GL_CHECK(glDisable(GL_BLEND));
 
         GL_CHECK(glDepthMask(GL_TRUE));
         GL_CHECK(glDepthFunc(GL_LESS));
@@ -110,72 +109,72 @@ namespace opengl {
                 auto mesh = STATIC_MESH_PTR(viewport.static_mesh_instances.get(e));
                 auto mat = MATERIAL_PTR(mesh->material());
 
-				if (transparent == mat->is_transparent()) {
-					matrices_.model_matrix = txform.matrix();
+                if (transparent == mat->is_transparent()) {
+                    matrices_.model_matrix = txform.matrix();
 
-					matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
-					matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
+                    matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
+                    matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
 
-					mat->bind(&matrices_, texture_unit::TEXTURE0);
-					mesh->render();
-				}
+                    mat->bind(&matrices_, texture_unit::TEXTURE0);
+                    mesh->render();
+                }
             }
         }
         GL_CHECK(glDepthMask(GL_FALSE));
         GL_CHECK(glStencilMask(0x00));
     }
 
-	void renderer::light_pass(const graphics::view_port& viewport)
-	{
-		GL_CHECK(glStencilMask(0x00));
-		GL_CHECK(glStencilFunc(GL_EQUAL, 1, 0xFF));
-		GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP));
-		GL_CHECK(glEnable(GL_STENCIL_TEST));
+    void renderer::light_pass(const graphics::view_port& viewport)
+    {
+        GL_CHECK(glStencilMask(0x00));
+        GL_CHECK(glStencilFunc(GL_EQUAL, 1, 0xFF));
+        GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP));
+        GL_CHECK(glEnable(GL_STENCIL_TEST));
 
-		GL_CHECK(glBlendEquation(GL_FUNC_ADD));
-		GL_CHECK(glBlendFunc(GL_ONE, GL_ONE));
-		GL_CHECK(glEnable(GL_BLEND));
+        GL_CHECK(glBlendEquation(GL_FUNC_ADD));
+        GL_CHECK(glBlendFunc(GL_ONE, GL_ONE));
+        GL_CHECK(glEnable(GL_BLEND));
 
-		GL_CHECK(glCullFace(GL_FRONT));
-		GL_CHECK(glEnable(GL_CULL_FACE));
+        GL_CHECK(glCullFace(GL_FRONT));
+        GL_CHECK(glEnable(GL_CULL_FACE));
 
-		GL_CHECK(glDepthFunc(GL_GREATER));
-		GL_CHECK(glEnable(GL_DEPTH_TEST));
+        GL_CHECK(glDepthFunc(GL_GREATER));
+        GL_CHECK(glEnable(GL_DEPTH_TEST));
 
-		for (auto e : viewport.entities) { // TODO use a filter here
-			if (viewport.point_lights.has(e) && viewport.transforms.has(e)) {
-				auto& txform = viewport.transforms.get(e);
-				const auto& light = viewport.point_lights.get(e);
+        for (auto e : viewport.entities) { // TODO use a filter here
+            if (viewport.point_lights.has(e) && viewport.transforms.has(e)) {
+                auto& txform = viewport.transforms.get(e);
+                const auto& light = viewport.point_lights.get(e);
 
-				// TODO non uniform scale on point light???
-				matrices_.model_matrix = txform.matrix();
+                // TODO non uniform scale on point light???
+                matrices_.model_matrix = txform.matrix();
 
-				matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
-				matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
+                matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
+                matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
 
-				point_light_pass(txform, light);
-			}
-		}
+                point_light_pass(txform, light);
+            }
+        }
 
-		GL_CHECK(glDisable(GL_DEPTH_TEST));
-		GL_CHECK(glDisable(GL_CULL_FACE));
+        GL_CHECK(glDisable(GL_DEPTH_TEST));
+        GL_CHECK(glDisable(GL_CULL_FACE));
 
-		// TODO directional lights
-		for (auto e : viewport.entities) { // TODO use a filter here
-			if (viewport.directional_lights.has(e) && viewport.transforms.has(e)) {
-				auto& txform = viewport.transforms.get(e);
-				const auto& light = viewport.directional_lights.get(e);
+        // TODO directional lights
+        for (auto e : viewport.entities) { // TODO use a filter here
+            if (viewport.directional_lights.has(e) && viewport.transforms.has(e)) {
+                auto& txform = viewport.transforms.get(e);
+                const auto& light = viewport.directional_lights.get(e);
 
-				// TODO scale on directional light???
-				matrices_.model_matrix = txform.matrix();
+                // TODO scale on directional light???
+                matrices_.model_matrix = txform.matrix();
 
-				matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
-				matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
+                matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
+                matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
 
-				directional_light_pass(txform, light);
-			}
-		}
-	}
+                directional_light_pass(txform, light);
+            }
+        }
+    }
 
     void renderer::render(const graphics::view_port& viewport)
     {
@@ -188,43 +187,40 @@ namespace opengl {
         matrices_.model_view_matrix = glm::mat4(1);
         matrices_.normal_matrix = glm::mat3(1);
 
-		GL_CHECK(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
-		GL_CHECK(glClearStencil(0));
+        GL_CHECK(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+        GL_CHECK(glClearStencil(0));
 
-		// Opaque objects
-		gbuffer_.bind_for_geometry_write();
-		GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+        // Opaque objects
+        gbuffer_.bind_for_geometry_write();
+        GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
         geometry_pass(viewport, false);
 
-		gbuffer_.bind_for_geometry_read();
-		GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
-		light_pass(viewport);
+        gbuffer_.bind_for_geometry_read();
+        GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
+        light_pass(viewport);
 
+        // Transparent objects
+        gbuffer_.swap_input_image();
+        gbuffer_.bind_for_geometry_write();
+        geometry_pass(viewport, true);
 
+        gbuffer_.bind_for_geometry_read();
+        GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
+        light_pass(viewport);
 
-		// Transparent objects
-		gbuffer_.swap_input_image();
-		gbuffer_.bind_for_geometry_write();
-		geometry_pass(viewport, true);
-
-		gbuffer_.bind_for_geometry_read();
-		GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
-		light_pass(viewport);
-		
-
-		gbuffer_.bind_for_geometry_read();
-		GL_CHECK(glStencilFunc(GL_NOTEQUAL, 1, 0xFF));
-		GL_CHECK(glDisable(GL_DEPTH_TEST));
-		GL_CHECK(glDisable(GL_CULL_FACE));
-		EFFECT_PTR(texture_blit_effect_)->apply(&matrices_);
+        gbuffer_.bind_for_geometry_read();
+        GL_CHECK(glStencilFunc(GL_NOTEQUAL, 1, 0xFF));
+        GL_CHECK(glDisable(GL_DEPTH_TEST));
+        GL_CHECK(glDisable(GL_CULL_FACE));
+        EFFECT_PTR(texture_blit_effect_)->apply(&matrices_);
 
         GL_CHECK(glDisable(GL_BLEND));
-		GL_CHECK(glDisable(GL_STENCIL_TEST));
-		GL_CHECK(glDisable(GL_DEPTH_TEST));
+        GL_CHECK(glDisable(GL_STENCIL_TEST));
+        GL_CHECK(glDisable(GL_DEPTH_TEST));
 
         // gbuffer_.swap_input_image();
-		// gbuffer_.bind_for_effect_pass(glm::vec4(0, 0, 0, 1));
-		// EFFECT_PTR(vignette_effect_)->apply(&matrices_);
+        // gbuffer_.bind_for_effect_pass(glm::vec4(0, 0, 0, 1));
+        // EFFECT_PTR(vignette_effect_)->apply(&matrices_);
 
         gbuffer_.swap_input_image();
         gbuffer_.bind_for_geometry_read();
