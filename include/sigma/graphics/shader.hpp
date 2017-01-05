@@ -57,4 +57,6 @@ struct hash<sigma::graphics::shader_type> {
 };
 }
 
+BOOST_CLASS_VERSION(sigma::graphics::shader_data, 1);
+
 #endif // SIGMA_GRAPHICS_SHADER_HPP

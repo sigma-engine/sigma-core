@@ -49,4 +49,6 @@ namespace graphics {
 }
 }
 
+BOOST_CLASS_VERSION(sigma::graphics::post_process_effect_data, 1);
+
 #endif //SIGMA_ENGINE_GRAPHICS_POST_PROCESS_EFFECT_HPP

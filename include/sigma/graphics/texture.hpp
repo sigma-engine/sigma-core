@@ -45,4 +45,6 @@ namespace graphics {
 }
 }
 
+BOOST_CLASS_VERSION(sigma::graphics::texture_data, 1);
+
 #endif // SIGMA_GRAPHICS_TEXTURE_HPP

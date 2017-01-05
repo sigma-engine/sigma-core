@@ -46,4 +46,6 @@ namespace graphics {
 }
 }
 
+BOOST_CLASS_VERSION(sigma::graphics::material_data, 1);
+
 #endif // SIGMA_GRAPHICS_MATERIAL_HPP

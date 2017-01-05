@@ -68,4 +68,6 @@ namespace graphics {
 }
 }
 
+BOOST_CLASS_VERSION(sigma::graphics::static_mesh_data, 1);
+
 #endif // SIGMA_GRAPHICS_STATIC_MESH_HPP
