@@ -52,8 +52,7 @@ out vec4 out_normal_metalness;
 
 void write_geometry_buffer(surface s)
 {
-    float r = MIN_ROUGHNESS+s.roughness;
-    out_diffuse_roughness = vec4(s.diffuse, r*r);
+    out_diffuse_roughness = vec4(s.diffuse, s.roughness + MIN_ROUGHNESS);
     out_normal_metalness = vec4(s.normal, s.metalness);
 }
 #endif
