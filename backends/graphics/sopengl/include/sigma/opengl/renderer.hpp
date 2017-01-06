@@ -39,11 +39,7 @@ namespace opengl {
 
         void light_pass(const graphics::view_port& viewport);
 
-        void point_light_pass(const transform& txform, const graphics::point_light& light);
-
         // void point_light_outside_stencil_optimization(glm::vec3 view_space_position, float radius);
-
-        void directional_light_pass(const transform& txform, const graphics::directional_light& light);
 
         virtual void render(const graphics::view_port& viewport) override;
 
@@ -66,7 +62,6 @@ namespace opengl {
         opengl::material_manager materials_;
         opengl::static_mesh_manager static_meshes_;
         opengl::post_process_effect_manager effects_;
-        render_matrices matrices_;
 
         resource::handle<graphics::post_process_effect> stencil_clear_effect_;
         resource::handle<graphics::post_process_effect> texture_blit_effect_;
