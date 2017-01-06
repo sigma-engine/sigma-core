@@ -6,19 +6,41 @@
 #define PI 3.1415926535897932
 #define NO_DIV_BY_ZERO 1e-5
 
+#ifdef SIGMA_ENGINE_VERTEX_SHADER
+
+// per-instance attributes.
+layout(location = 4) in vec4 position_radius;
+layout(location = 5) in vec4 color_intensity;
+
+out point_light
+{
+    vec3 position;
+    float radius;
+    vec3 color;
+    float intensity;
+}
+out_light;
+
+#elif SIGMA_ENGINE_FRAGMENT_SHADER
+
+in point_light
+{
+    vec3 position;
+    float radius;
+    vec3 color;
+    float intensity;
+}
+in_light;
+
+#else
+#error "This shader type is not supported"
+#endif
+
 struct directional_light {
     vec3 color;
     vec3 direction;
     float intensity;
 };
-
-/*struct point_light {
-    vec3 color;
-    vec3 position;
-    float radius;
-    float falloff;
-    float intensity;
-};*/
 
 float D_ggx(float NdotH, float alpha2)
 {

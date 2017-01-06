@@ -74,12 +74,6 @@ namespace opengl {
         resource::handle<graphics::post_process_effect> stencil_clear_effect_;
         resource::handle<graphics::post_process_effect> texture_blit_effect_;
 
-        // TODO were should these go?
-        GLint point_light_color_location_;
-        GLint point_light_position_location_;
-        GLint point_light_radius_location_;
-        GLint point_light_falloff_location_;
-        GLint point_light_intensity_location_;
         resource::handle<graphics::post_process_effect> point_light_effect_;
         resource::handle<graphics::post_process_effect> point_light_stencil_effect_;
 

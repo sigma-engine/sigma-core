@@ -2,18 +2,7 @@
 
 #include <uniforms.glsl>
 #include <vertex.glsl>
-
-layout(location = 4) in vec4 position_radius;
-layout(location = 5) in vec4 color_intensity;
-
-
-out point_light
-{
-    vec3 position;
-    float radius;
-    vec3 color;
-    float intensity;
-} out_light;
+#include <lighting.glsl>
 
 void main()
 {

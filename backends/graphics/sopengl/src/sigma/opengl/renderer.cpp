@@ -35,13 +35,6 @@ namespace opengl {
         texture_blit_effect_ = effects_.get("post_process_effect://texture_blit");
 
         point_light_effect_ = effects_.get(POINT_LIGHT_EFFECT);
-
-        //TODO were should these go?
-        point_light_color_location_ = EFFECT_PTR(point_light_effect_)->get_uniform_location("light.color");
-        point_light_position_location_ = EFFECT_PTR(point_light_effect_)->get_uniform_location("light.position");
-        point_light_radius_location_ = EFFECT_PTR(point_light_effect_)->get_uniform_location("light.radius");
-        point_light_falloff_location_ = EFFECT_PTR(point_light_effect_)->get_uniform_location("light.falloff");
-        point_light_intensity_location_ = EFFECT_PTR(point_light_effect_)->get_uniform_location("light.intensity");
         point_light_stencil_effect_ = effects_.get(POINT_LIGHT_STENCIL_EFFECT);
 
         directional_light_effect_ = effects_.get(DIRECTIONAL_LIGHT_EFFECT);
@@ -145,13 +138,12 @@ namespace opengl {
         GL_CHECK(glBlendFunc(GL_ONE, GL_ONE));
         GL_CHECK(glEnable(GL_BLEND));
 
+        // Render point lights
         GL_CHECK(glCullFace(GL_FRONT));
         GL_CHECK(glEnable(GL_CULL_FACE));
 
         GL_CHECK(glDepthFunc(GL_GREATER));
         GL_CHECK(glEnable(GL_DEPTH_TEST));
-
-        auto point_mesh = STATIC_MESH_PTR(EFFECT_PTR(point_light_effect_)->mesh_);
 
         render_matrices matrices_;
         matrices_.model_matrix = glm::mat4(1);
@@ -161,34 +153,13 @@ namespace opengl {
         EFFECT_PTR(point_light_effect_)->bind();
         EFFECT_PTR(point_light_effect_)->set_instance_matrices(&standard_uniform_data_, &matrices_);
 
+        // TODO this is a hack
+        auto point_mesh = STATIC_MESH_PTR(EFFECT_PTR(point_light_effect_)->mesh_);
         GL_CHECK(glBindVertexArray(point_mesh->vertex_array_));
         GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, point_mesh->index_buffer_));
         GL_CHECK(glDrawElementsInstanced(GL_TRIANGLES, point_mesh->index_count_, GL_UNSIGNED_INT, nullptr, internal_point_lights_.size()));
 
-        /*for (auto e : viewport.entities) { // TODO use a filter here
-            if (viewport.point_lights.has(e) && viewport.transforms.has(e)) {
-                auto& txform = viewport.transforms.get(e);
-                const auto& light = viewport.point_lights.get(e);
-
-                // TODO non uniform scale on point light???
-                render_matrices matrices_;
-                matrices_.model_matrix = txform.matrix();
-                matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
-                matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
-
-                auto view_space_position = matrices_.model_view_matrix * glm::vec4(0, 0, 0, 1);
-
-                // TODO this should be abstracted away better
-                GL_CHECK(glUniform3fv(point_light_color_location_, 1, glm::value_ptr(light.color)));
-                GL_CHECK(glUniform3fv(point_light_position_location_, 1, glm::value_ptr(view_space_position)));
-                GL_CHECK(glUniform1f(point_light_radius_location_, std::abs(txform.scale().x))); // TODO non uniform scale on point light???
-                GL_CHECK(glUniform1f(point_light_falloff_location_, light.falloff));
-                GL_CHECK(glUniform1f(point_light_intensity_location_, light.intensity));
-                EFFECT_PTR(point_light_effect_)->set_instance_matrices(&matrices_);
-                EFFECT_PTR(point_light_effect_)->apply();
-            }
-        }*/
-
+        // Render directional lights
         GL_CHECK(glDisable(GL_DEPTH_TEST));
         GL_CHECK(glDisable(GL_CULL_FACE));
 
@@ -218,6 +189,7 @@ namespace opengl {
 
     void renderer::render(const graphics::view_port& viewport)
     {
+        // TODO remove this hack
         if (!point_light_buffer_filled_) {
             point_light_buffer_filled_ = true;
 
@@ -252,13 +224,6 @@ namespace opengl {
         standard_uniform_data_.z_near = viewport.z_near;
         standard_uniform_data_.z_far = viewport.z_far;
         //standard_uniforms_.set_data(standard_uniform_data_);
-
-        // standard_uniforms_.projection_matrix = viewport.projection_matrix;
-        // standard_uniforms_.view_matrix = viewport.view_matrix;
-        // standard_uniforms_.view_port_size = viewport.size;
-        // standard_uniforms_.time = 0; // TODO time
-        // standard_uniforms_.z_near = viewport.z_near;
-        // standard_uniforms_.z_far = viewport.z_far;
 
         GL_CHECK(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
         GL_CHECK(glClearStencil(0));
