@@ -16,15 +16,15 @@ namespace opengl {
         attach(DIFFUSE_ROUGHNESS_ATTACHMENT, diffuse_texture_);
         attach(NORMAL_METALNESS_ATTACHMENT, normal_texture_);
         attach(IMAGE_ATTACHMENTS[0], images_[0]);
-		attach(IMAGE_ATTACHMENTS[1], images_[1]);
+        attach(IMAGE_ATTACHMENTS[1], images_[1]);
         attach(frame_buffer::attachment::DEPTH_STENCIL, depth_stencil_texture_);
     }
 
     void geometry_buffer::bind_for_geometry_write()
     {
         draw_buffers(DIFFUSE_ROUGHNESS_ATTACHMENT, NORMAL_METALNESS_ATTACHMENT, IMAGE_ATTACHMENTS[output_image_]);
-		GL_CHECK(glActiveTexture(GLenum(INPUT_IMAGE_TEXTURE_UINT)));
-		images_[input_image_].bind();
+        GL_CHECK(glActiveTexture(GLenum(INPUT_IMAGE_TEXTURE_UINT)));
+        images_[input_image_].bind();
     }
 
     void geometry_buffer::bind_for_geometry_read()

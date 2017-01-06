@@ -17,6 +17,11 @@
 namespace sigma {
 
 namespace opengl {
+    struct internal_point_light {
+        glm::vec4 position_radius;
+        glm::vec4 color_intensity;
+    };
+
     class renderer : public graphics::renderer {
     public:
         renderer(glm::ivec2 size);
@@ -32,6 +37,8 @@ namespace opengl {
         virtual graphics::static_mesh_manager& static_meshes() override;
 
         virtual graphics::post_process_effect_manager& effects() override;
+
+        virtual std::shared_ptr<graphics::scene> create_scene() override;
 
         virtual void resize(glm::uvec2 size) override;
 
@@ -55,7 +62,8 @@ namespace opengl {
 
         default_frame_buffer default_fbo_;
         geometry_buffer gbuffer_;
-        uniform_buffer<standard_uniforms> standard_uniforms_;
+        standard_uniforms standard_uniform_data_;
+        //uniform_buffer<standard_uniforms> standard_uniforms_;
 
         opengl::texture_manager textures_;
         opengl::shader_manager shaders_;
@@ -84,6 +92,10 @@ namespace opengl {
         resource::handle<graphics::post_process_effect> vignette_effect_;
 
         resource::handle<graphics::post_process_effect> gamma_conversion_;
+
+        bool point_light_buffer_filled_ = false;
+        std::vector<internal_point_light> internal_point_lights_;
+        GLuint point_light_data_buffer_ = -1;
     };
 }
 }

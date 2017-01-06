@@ -25,17 +25,18 @@ namespace opengl {
 
         void link();
 
-		void bind();
+        void bind();
 
         void apply();
+
+        // TODO make private
+        resource::handle<graphics::static_mesh> mesh_;
 
     private:
         GLint in_position_location_ = -1;
         GLint in_diffuse_location_ = -1;
         GLint in_normal_location_ = -1;
         GLint in_depth_stencil_location_ = -1;
-
-        resource::handle<graphics::static_mesh> mesh_;
 
         post_process_effect(const post_process_effect&) = delete;
         post_process_effect& operator=(const post_process_effect&) = delete;

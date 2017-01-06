@@ -12,13 +12,13 @@ struct directional_light {
     float intensity;
 };
 
-struct point_light {
+/*struct point_light {
     vec3 color;
     vec3 position;
     float radius;
     float falloff;
     float intensity;
-};
+};*/
 
 float D_ggx(float NdotH, float alpha2)
 {

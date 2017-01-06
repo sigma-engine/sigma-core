@@ -1,5 +1,5 @@
 {
-    "vertex" : "default",
+    "vertex" : "point_light",
     "fragment" : "point_light",
     "static_mesh" : "point_light:sphere"
 }

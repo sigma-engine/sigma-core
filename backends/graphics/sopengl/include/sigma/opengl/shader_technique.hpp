@@ -16,10 +16,18 @@ namespace opengl {
     class texture;
     enum class texture_unit : GLenum;
     struct render_matrices;
+    struct standard_uniforms;
     class shader_technique {
     public:
-        static constexpr const char* STANDARD_UNIFORM_BLOCK_NAME = "standard_uniforms";
-        static constexpr const int STANDARD_UNIFORM_BLOCK_BINDING = 0;
+        // static constexpr const char* STANDARD_UNIFORM_BLOCK_NAME = "standard_uniforms";
+        // static constexpr const int STANDARD_UNIFORM_BLOCK_BINDING = 0;
+
+        static constexpr const char* PROJECTION_MATRIX_NAME = "projection_matrix";
+        static constexpr const char* VIEW_MATRIX_NAME = "view_matrix";
+        static constexpr const char* Z_NEAR_NAME = "z_near";
+        static constexpr const char* Z_FAR_NAME = "z_far";
+        static constexpr const char* VIEW_PORT_SIZE_NAME = "view_port_size";
+        static constexpr const char* TIME_NAME = "time";
 
         static constexpr const char* MODEL_MATRIX_NAME = "model_matrix";
         static constexpr const char* MODEL_VIEW_MATRIX_NAME = "model_view_matrix";
@@ -41,7 +49,7 @@ namespace opengl {
 
         void set_texture(std::string name, resource::handle<graphics::texture> txt);
 
-		void set_instance_matrices(render_matrices* matrices);
+        void set_instance_matrices(standard_uniforms* standard, render_matrices* matrices);
 
         void bind();
 
@@ -50,7 +58,14 @@ namespace opengl {
         GLuint object_;
 
     protected:
-        GLint standard_uniform_block_index_ = -1;
+        // GLint standard_uniform_block_index_ = -1;
+
+        GLint projection_matrix_location_ = -1;
+        GLint view_matrix_location_ = -1;
+        GLint z_near_location_ = -1;
+        GLint z_far_location_ = -1;
+        GLint view_port_size_location_ = -1;
+        GLint time_location_ = -1;
 
         GLint model_matrix_location_ = -1;
         GLint model_view_matrix_location_ = -1;

@@ -43,8 +43,15 @@ namespace opengl {
         }
 
         GL_CHECK(glUseProgram(object_));
-        GL_CHECK(standard_uniform_block_index_ = glGetUniformBlockIndex(object_, STANDARD_UNIFORM_BLOCK_NAME));
-        GL_CHECK(glUniformBlockBinding(object_, standard_uniform_block_index_, STANDARD_UNIFORM_BLOCK_BINDING));
+        // GL_CHECK(standard_uniform_block_index_ = glGetUniformBlockIndex(object_, STANDARD_UNIFORM_BLOCK_NAME));
+        // GL_CHECK(glUniformBlockBinding(object_, standard_uniform_block_index_, STANDARD_UNIFORM_BLOCK_BINDING));
+
+        GL_CHECK(projection_matrix_location_ = glGetUniformLocation(object_, PROJECTION_MATRIX_NAME));
+        GL_CHECK(view_matrix_location_ = glGetUniformLocation(object_, VIEW_MATRIX_NAME));
+        GL_CHECK(z_near_location_ = glGetUniformLocation(object_, Z_NEAR_NAME));
+        GL_CHECK(z_far_location_ = glGetUniformLocation(object_, Z_FAR_NAME));
+        GL_CHECK(view_port_size_location_ = glGetUniformLocation(object_, VIEW_PORT_SIZE_NAME));
+        GL_CHECK(time_location_ = glGetUniformLocation(object_, TIME_NAME));
 
         GL_CHECK(model_matrix_location_ = glGetUniformLocation(object_, MODEL_MATRIX_NAME));
         GL_CHECK(model_view_matrix_location_ = glGetUniformLocation(object_, MODEL_VIEW_MATRIX_NAME));
@@ -76,11 +83,18 @@ namespace opengl {
         textures_[texture_map_[name]].second = txt;
     }
 
-	void shader_technique::set_instance_matrices(render_matrices* matrices) {
-		GL_CHECK(glUniformMatrix4fv(model_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->model_matrix)));
-		GL_CHECK(glUniformMatrix4fv(model_view_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->model_view_matrix)));
-		GL_CHECK(glUniformMatrix3fv(normal_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->normal_matrix)));
-	}
+    void shader_technique::set_instance_matrices(standard_uniforms* standard, render_matrices* matrices)
+    {
+        GL_CHECK(glUniformMatrix4fv(projection_matrix_location_, 1, GL_FALSE, glm::value_ptr(standard->projection_matrix)));
+        GL_CHECK(glUniformMatrix4fv(view_matrix_location_, 1, GL_FALSE, glm::value_ptr(standard->view_matrix)));
+        GL_CHECK(glUniform1f(z_near_location_, standard->z_near));
+        GL_CHECK(glUniform1f(z_far_location_, standard->z_far));
+        GL_CHECK(glUniform2fv(view_port_size_location_, 1, glm::value_ptr(standard->view_port_size)));
+
+        GL_CHECK(glUniformMatrix4fv(model_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->model_matrix)));
+        GL_CHECK(glUniformMatrix4fv(model_view_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->model_view_matrix)));
+        GL_CHECK(glUniformMatrix3fv(normal_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->normal_matrix)));
+    }
 
     void shader_technique::bind()
     {

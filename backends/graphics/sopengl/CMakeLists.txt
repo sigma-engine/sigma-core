@@ -14,6 +14,7 @@ set(SOURCES
     src/sigma/opengl/geometry_buffer.cpp
     src/sigma/opengl/shader_technique.cpp
     src/sigma/opengl/post_process_effect.cpp
+    src/sigma/opengl/scene.cpp
 
 #    src/sigma/opengl/texture_manager.cpp
 #    src/sigma/opengl/shader_manager.cpp
@@ -37,6 +38,7 @@ set(HEADERS
     include/sigma/opengl/shader_technique.hpp
     include/sigma/opengl/post_process_effect.hpp
     include/sigma/opengl/uniform_buffer.hpp
+    include/sigma/opengl/scene.hpp
 
 #    include/sigma/opengl/texture_manager.hpp
 #    include/sigma/opengl/shader_manager.hpp

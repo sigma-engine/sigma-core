@@ -3,7 +3,8 @@
 	{
 		"sigma::graphics::point_light" :
 		{
-			"intensity" : 10
+			"intensity" : 10,
+			"color": [1.0,0.0,0.0]
 		}
 	},
 	"Sun" :

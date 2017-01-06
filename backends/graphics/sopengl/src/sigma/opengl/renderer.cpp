@@ -1,6 +1,7 @@
 #include <sigma/opengl/renderer.hpp>
 
 #include <sigma/opengl/gl_core_4_2.h>
+#include <sigma/opengl/scene.hpp>
 #include <sigma/opengl/shader.hpp>
 #include <sigma/opengl/texture.hpp>
 #include <sigma/opengl/util.hpp>
@@ -28,7 +29,7 @@ namespace opengl {
         , static_meshes_(boost::filesystem::current_path() / ".." / "data", materials_)
         , effects_(boost::filesystem::current_path() / ".." / "data", textures_, shaders_, static_meshes_)
     {
-        standard_uniforms_.set_binding_point(shader_technique::STANDARD_UNIFORM_BLOCK_BINDING);
+        //standard_uniforms_.set_binding_point(shader_technique::STANDARD_UNIFORM_BLOCK_BINDING);
 
         stencil_clear_effect_ = effects_.get("post_process_effect://stencil_clear");
         texture_blit_effect_ = effects_.get("post_process_effect://texture_blit");
@@ -56,6 +57,7 @@ namespace opengl {
 
     renderer::~renderer()
     {
+        glDeleteBuffers(1, &point_light_data_buffer_);
     }
 
     graphics::texture_manager& renderer::textures()
@@ -81,6 +83,11 @@ namespace opengl {
     graphics::post_process_effect_manager& renderer::effects()
     {
         return effects_;
+    }
+
+    std::shared_ptr<graphics::scene> renderer::create_scene()
+    {
+        return std::make_shared<opengl::scene>();
     }
 
     void renderer::resize(glm::uvec2 size)
@@ -118,7 +125,7 @@ namespace opengl {
                     matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
 
                     mat->bind(texture_unit::TEXTURE0);
-                    mat->set_instance_matrices(&matrices_);
+                    mat->set_instance_matrices(&standard_uniform_data_, &matrices_);
                     mesh->render();
                 }
             }
@@ -144,8 +151,21 @@ namespace opengl {
         GL_CHECK(glDepthFunc(GL_GREATER));
         GL_CHECK(glEnable(GL_DEPTH_TEST));
 
+        auto point_mesh = STATIC_MESH_PTR(EFFECT_PTR(point_light_effect_)->mesh_);
+
+        render_matrices matrices_;
+        matrices_.model_matrix = glm::mat4(1);
+        matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
+        matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
+
         EFFECT_PTR(point_light_effect_)->bind();
-        for (auto e : viewport.entities) { // TODO use a filter here
+        EFFECT_PTR(point_light_effect_)->set_instance_matrices(&standard_uniform_data_, &matrices_);
+
+        GL_CHECK(glBindVertexArray(point_mesh->vertex_array_));
+        GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, point_mesh->index_buffer_));
+        GL_CHECK(glDrawElementsInstanced(GL_TRIANGLES, point_mesh->index_count_, GL_UNSIGNED_INT, nullptr, internal_point_lights_.size()));
+
+        /*for (auto e : viewport.entities) { // TODO use a filter here
             if (viewport.point_lights.has(e) && viewport.transforms.has(e)) {
                 auto& txform = viewport.transforms.get(e);
                 const auto& light = viewport.point_lights.get(e);
@@ -167,7 +187,7 @@ namespace opengl {
                 EFFECT_PTR(point_light_effect_)->set_instance_matrices(&matrices_);
                 EFFECT_PTR(point_light_effect_)->apply();
             }
-        }
+        }*/
 
         GL_CHECK(glDisable(GL_DEPTH_TEST));
         GL_CHECK(glDisable(GL_CULL_FACE));
@@ -190,7 +210,7 @@ namespace opengl {
                 GL_CHECK(glUniform3fv(directional_light_color_location_, 1, glm::value_ptr(light.color)));
                 GL_CHECK(glUniform3fv(directional_light_direction_location_, 1, glm::value_ptr(view_space_direction)));
                 GL_CHECK(glUniform1f(directional_light_intensity_location_, light.intensity));
-                EFFECT_PTR(directional_light_effect_)->set_instance_matrices(&matrices_);
+                EFFECT_PTR(directional_light_effect_)->set_instance_matrices(&standard_uniform_data_, &matrices_);
                 EFFECT_PTR(directional_light_effect_)->apply();
             }
         }
@@ -198,14 +218,47 @@ namespace opengl {
 
     void renderer::render(const graphics::view_port& viewport)
     {
-        standard_uniforms data;
-        data.projection_matrix = viewport.projection_matrix;
-        data.view_matrix = viewport.view_matrix;
-        data.view_port_size = viewport.size;
-        data.time = 0; // TODO time
-        data.z_near = viewport.z_near;
-        data.z_far = viewport.z_far;
-        standard_uniforms_.set_data(data);
+        if (!point_light_buffer_filled_) {
+            point_light_buffer_filled_ = true;
+
+            for (auto e : viewport.entities) { // TODO use a filter here
+                if (viewport.point_lights.has(e) && viewport.transforms.has(e)) {
+                    auto& txform = viewport.transforms.get(e);
+                    const auto& light = viewport.point_lights.get(e);
+                    internal_point_lights_.push_back({ glm::vec4(txform.position(), txform.scale().x), glm::vec4(light.color, light.intensity) });
+                }
+            }
+
+            auto point_mesh = STATIC_MESH_PTR(EFFECT_PTR(point_light_effect_)->mesh_);
+            GL_CHECK(glBindVertexArray(point_mesh->vertex_array_));
+            GL_CHECK(glGenBuffers(1, &point_light_data_buffer_));
+            GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, point_light_data_buffer_));
+            GL_CHECK(glBufferData(GL_ARRAY_BUFFER, internal_point_lights_.size() * sizeof(internal_point_light), internal_point_lights_.data(), GL_STATIC_DRAW));
+
+            GL_CHECK(glEnableVertexAttribArray(4));
+            GL_CHECK(glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(internal_point_light), 0));
+
+            GL_CHECK(glEnableVertexAttribArray(5));
+            GL_CHECK(glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(internal_point_light), reinterpret_cast<const void*>(sizeof(glm::vec4))));
+
+            GL_CHECK(glVertexAttribDivisor(4, 1));
+            GL_CHECK(glVertexAttribDivisor(5, 1));
+        }
+
+        standard_uniform_data_.projection_matrix = viewport.projection_matrix;
+        standard_uniform_data_.view_matrix = viewport.view_matrix;
+        standard_uniform_data_.view_port_size = viewport.size;
+        standard_uniform_data_.time = 0; // TODO time
+        standard_uniform_data_.z_near = viewport.z_near;
+        standard_uniform_data_.z_far = viewport.z_far;
+        //standard_uniforms_.set_data(standard_uniform_data_);
+
+        // standard_uniforms_.projection_matrix = viewport.projection_matrix;
+        // standard_uniforms_.view_matrix = viewport.view_matrix;
+        // standard_uniforms_.view_port_size = viewport.size;
+        // standard_uniforms_.time = 0; // TODO time
+        // standard_uniforms_.z_near = viewport.z_near;
+        // standard_uniforms_.z_far = viewport.z_far;
 
         GL_CHECK(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
         GL_CHECK(glClearStencil(0));
@@ -241,7 +294,7 @@ namespace opengl {
         GL_CHECK(glDisable(GL_CULL_FACE));
 
         EFFECT_PTR(texture_blit_effect_)->bind();
-        EFFECT_PTR(texture_blit_effect_)->set_instance_matrices(&matrices_);
+        EFFECT_PTR(texture_blit_effect_)->set_instance_matrices(&standard_uniform_data_, &matrices_);
         EFFECT_PTR(texture_blit_effect_)->apply();
 
         GL_CHECK(glDisable(GL_BLEND));
@@ -262,7 +315,7 @@ namespace opengl {
         GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
 
         EFFECT_PTR(gamma_conversion_)->bind();
-        EFFECT_PTR(gamma_conversion_)->set_instance_matrices(&matrices_);
+        EFFECT_PTR(gamma_conversion_)->set_instance_matrices(&standard_uniform_data_, &matrices_);
         EFFECT_PTR(gamma_conversion_)->apply();
     }
 

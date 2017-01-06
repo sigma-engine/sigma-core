@@ -38,8 +38,9 @@ public:
 private:
 	std::default_random_engine generator_;
 	uniform_vec3_distribution position_distribution_;
-	uniform_vec3_distribution scale_distribution_;
 	uniform_vec3_distribution rotation_distribution_;
+	std::uniform_real_distribution<float> scale_distribution_;
+	uniform_vec3_distribution color_distribution_;
 };
 
 #endif // SIMPLE_GAME_HPP
