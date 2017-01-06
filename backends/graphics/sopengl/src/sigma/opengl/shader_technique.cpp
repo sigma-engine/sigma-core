@@ -44,7 +44,6 @@ namespace opengl {
 
         GL_CHECK(glUseProgram(object_));
         GL_CHECK(standard_uniform_block_index_ = glGetUniformBlockIndex(object_, STANDARD_UNIFORM_BLOCK_NAME));
-
         GL_CHECK(glUniformBlockBinding(object_, standard_uniform_block_index_, STANDARD_UNIFORM_BLOCK_BINDING));
 
         GL_CHECK(model_matrix_location_ = glGetUniformLocation(object_, MODEL_MATRIX_NAME));
@@ -77,13 +76,19 @@ namespace opengl {
         textures_[texture_map_[name]].second = txt;
     }
 
+	void shader_technique::set_instance_matrices(render_matrices* matrices) {
+		GL_CHECK(glUniformMatrix4fv(model_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->model_matrix)));
+		GL_CHECK(glUniformMatrix4fv(model_view_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->model_view_matrix)));
+		GL_CHECK(glUniformMatrix3fv(normal_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->normal_matrix)));
+	}
+
     void shader_technique::bind()
     {
         GL_CHECK(glUseProgram(object_));
         GL_CHECK(glUniform1i(in_image_location_, geometry_buffer::INPUT_IMAGE_LOCATION));
     }
 
-    void shader_technique::bind(render_matrices* matrices, texture_unit first_texture_unit)
+    void shader_technique::bind(texture_unit first_texture_unit)
     {
         bind();
         auto size = textures_.size();
@@ -92,10 +97,6 @@ namespace opengl {
             GL_CHECK(glActiveTexture(GLenum(first_texture_unit) + i));
             TEXTURE_PTR(textures_[i].second)->bind();
         }
-
-        GL_CHECK(glUniformMatrix4fv(model_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->model_matrix)));
-        GL_CHECK(glUniformMatrix4fv(model_view_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->model_view_matrix)));
-        GL_CHECK(glUniformMatrix3fv(normal_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->normal_matrix)));
     }
 }
 }

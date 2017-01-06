@@ -19,12 +19,16 @@ namespace opengl {
         GL_CHECK(in_depth_stencil_location_ = glGetUniformLocation(object_, geometry_buffer::DEPTH_STENCIL_INPUT_NAME));
     }
 
-    void post_process_effect::apply(render_matrices* matrices)
+	void post_process_effect::bind()
+	{
+		shader_technique::bind(geometry_buffer::NEXT_FREE_TEXTURE_UINT);
+		GL_CHECK(glUniform1i(in_diffuse_location_, geometry_buffer::DIFFUSE_ROUGHNESS_OUTPUT_LOCATION));
+		GL_CHECK(glUniform1i(in_normal_location_, geometry_buffer::NORMAL_METALNESS_LOCATION));
+		GL_CHECK(glUniform1i(in_depth_stencil_location_, geometry_buffer::DEPTH_STENCIL_LOCATION));
+	}
+
+    void post_process_effect::apply()
     {
-        this->bind(matrices, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
-        GL_CHECK(glUniform1i(in_diffuse_location_, geometry_buffer::DIFFUSE_ROUGHNESS_OUTPUT_LOCATION));
-        GL_CHECK(glUniform1i(in_normal_location_, geometry_buffer::NORMAL_METALNESS_LOCATION));
-        GL_CHECK(glUniform1i(in_depth_stencil_location_, geometry_buffer::DEPTH_STENCIL_LOCATION));
         STATIC_MESH_PTR(mesh_)->render();
     }
 

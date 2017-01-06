@@ -25,7 +25,9 @@ namespace opengl {
 
         void link();
 
-        void apply(render_matrices* matrices);
+		void bind();
+
+        void apply();
 
     private:
         GLint in_position_location_ = -1;
