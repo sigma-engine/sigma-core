@@ -49,7 +49,7 @@ set(HEADERS
 
 add_library(sopengl SHARED ${SOURCES} ${HEADERS})
 
-target_include_directories(sopengl PUBLIC include PRIVATE ${OPENGL_INCLUDE_DIR})
+target_include_directories(sopengl PUBLIC include resources PRIVATE ${OPENGL_INCLUDE_DIR})
 
 target_compile_definitions(sopengl PRIVATE -DSIGMA_ENGINE_OPENGL_EXPORT)
 
