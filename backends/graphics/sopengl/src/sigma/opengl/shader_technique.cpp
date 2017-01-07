@@ -110,9 +110,10 @@ namespace opengl {
     {
         bind();
         auto size = textures_.size();
+		auto start = GLenum(first_texture_unit) - GL_TEXTURE0;
         for (uint32_t i = 0; i < size; ++i) {
-            GL_CHECK(glUniform1i(textures_[i].first, i));
             GL_CHECK(glActiveTexture(GLenum(first_texture_unit) + i));
+			GL_CHECK(glUniform1i(textures_[i].first, i+start));
             TEXTURE_PTR(textures_[i].second)->bind();
         }
     }

@@ -18,8 +18,10 @@ void main()
     mat3 tbn = mat3(in_vertex.tangent, in_vertex.binormal, in_vertex.normal);
 
     // TODO do this conversion on the cpu
-    vec3 color = pow(texture(basecolor_map, in_vertex.texcoord).rgb, vec3(2.2)) ;
-    s.diffuse = texture(in_image,uv).rgb;
+    vec4 base_texture = texture(basecolor_map, in_vertex.texcoord);
+    vec3 surface_color = pow(base_texture.rgb, vec3(2.2));
+    vec3 background_color = texture(in_image, uv).rgb;
+    s.diffuse = mix(surface_color * background_color, surface_color, base_texture.a);
     s.metalness = texture(metallic_map, in_vertex.texcoord).r;
     s.roughness = texture(roughness_map, in_vertex.texcoord).r;
     s.normal = normalize(tbn * (texture(normal_map, in_vertex.texcoord).xyz * 2.0 - 1.0));

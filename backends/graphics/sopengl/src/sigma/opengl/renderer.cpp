@@ -29,7 +29,7 @@ namespace opengl {
         directional_light_effect_ = effects_.get("post_process_effect://pbr/deffered/lights/directional");
         texture_blit_effect_ = effects_.get("post_process_effect://pbr/deffered/texture_blit");
 
-        //vignette_effect_ = effects_.get(VIGNETTE_EFFECT);
+        vignette_effect_ = effects_.get("post_process_effect://vignette");
         gamma_conversion_ = effects_.get("post_process_effect://pbr/deffered/gamma_conversion");
     }
 
@@ -248,6 +248,7 @@ namespace opengl {
         gbuffer_.bind_for_geometry_write();
         geometry_pass(viewport, true);
 
+		// TODO is energy conserved here??
         gbuffer_.bind_for_geometry_read();
         GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
         light_pass(viewport);
@@ -273,9 +274,9 @@ namespace opengl {
         GL_CHECK(glDisable(GL_DEPTH_TEST));
 
         // gbuffer_.swap_input_image();
-        // gbuffer_.bind_for_effect_pass(glm::vec4(0, 0, 0, 1));
+        // gbuffer_.bind_for_geometry_read();
         // EFFECT_PTR(vignette_effect_)->bind();
-        // EFFECT_PTR(vignette_effect_)->set_instance_matrices(&matrices_);
+        // EFFECT_PTR(vignette_effect_)->set_instance_matrices(&standard_uniform_data_, &matrices_);
         // EFFECT_PTR(vignette_effect_)->apply();
 
         gbuffer_.swap_input_image();
@@ -363,7 +364,7 @@ namespace opengl {
     {
         for (auto& mat_bucket : material_buckets) { // TODO const
             auto mat = MATERIAL_PTR(mat_bucket.active_material);
-            mat->bind(texture_unit::TEXTURE0);
+            mat->bind(geometry_buffer::NEXT_FREE_TEXTURE_UINT);
             mat->set_standard_uniforms(&standard_uniform_data_);
             for (auto& mesh_bucket : mat_bucket.mesh_buckets) {
                 GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, mesh_instance_data_buffer_));

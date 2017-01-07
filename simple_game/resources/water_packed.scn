@@ -7,6 +7,14 @@
 			"color": [1.0,0.0,0.0]
 		}
 	},
+	"Point.001" :
+	{
+		"sigma::graphics::point_light" :
+		{
+			"intensity" : 10,
+			"color": [1.0,0.0,0.0]
+		}
+	},
 	"Sun" :
 	{
 		"sigma::graphics::directional_light" :
