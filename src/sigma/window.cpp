@@ -39,9 +39,7 @@ window::window(glm::ivec2 size)
     //    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, context_attributes_.samples);
     //}
 
-    //SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, context_attributes_.double_buffer);
-
-    //SDL_GL_SetSwapInterval(context_attributes_.vsync);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, true);
 
     //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, context_attributes_.major);
     //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, context_attributes_.minor);
@@ -53,7 +51,7 @@ window::window(glm::ivec2 size)
 
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
-    window_ = SDL_CreateWindow(title_.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, size_.x, size_.y, SDL_WINDOW_OPENGL);
+    window_ = SDL_CreateWindow(title_.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, size_.x, size_.y, SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN);
     if (!window_)
         throw std::runtime_error(SDL_GetError());
 
@@ -62,6 +60,8 @@ window::window(glm::ivec2 size)
         throw std::runtime_error(SDL_GetError());
 
     SDL_GL_MakeCurrent(window_, gl_context_);
+
+    SDL_GL_SetSwapInterval(0); //context_attributes_.vsync
 
     good_ = true;
     detail::created_windows[SDL_GetWindowID(window_)] = this;
@@ -95,9 +95,6 @@ bool window::good()
         }
     }*/
 
-    SDL_GL_MakeCurrent(window_, gl_context_);
-    //if(context_attributes_.double_buffer)
-    SDL_GL_SwapWindow(window_);
     return good_;
 }
 

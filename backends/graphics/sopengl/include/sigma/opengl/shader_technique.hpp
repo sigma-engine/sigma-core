@@ -49,6 +49,8 @@ namespace opengl {
 
         void set_texture(std::string name, resource::handle<graphics::texture> txt);
 
+		void set_standard_uniforms(standard_uniforms* standard);
+
         void set_instance_matrices(standard_uniforms* standard, render_matrices* matrices);
 
         void bind();

@@ -27,6 +27,20 @@ namespace opengl {
         glm::vec3 direction;
     };
 
+    struct mesh_instance_data {
+        glm::mat4 model_matrix;
+    };
+
+    struct mesh_bucket {
+        resource::handle<graphics::static_mesh> active_mesh;
+        std::vector<mesh_instance_data> instances;
+    };
+
+    struct material_bucket {
+        resource::handle<graphics::material> active_material;
+        std::vector<mesh_bucket> mesh_buckets;
+    };
+
     class renderer : public graphics::renderer {
     public:
         renderer(glm::ivec2 size);
@@ -93,6 +107,10 @@ namespace opengl {
         bool directional_light_buffer_filled_ = false;
         std::vector<internal_directional_light> internal_directional_lights_;
         GLuint directional_light_data_buffer_ = -1;
+
+        bool material_buckets_filled_ = false;
+        std::vector<material_bucket> material_buckets_;
+        GLuint mesh_instance_data_buffer_ = -1;
     };
 }
 }

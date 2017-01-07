@@ -35,12 +35,13 @@ public:
 
     void close();
 
-private:
     std::string title_;
     glm::ivec2 size_;
     SDL_Window* window_;
     void* gl_context_;
     bool good_;
+
+private:
 };
 }
 

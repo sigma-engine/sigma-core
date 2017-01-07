@@ -23,8 +23,8 @@ void main()
     out_light.intensity = color_intensity.a;
 
     out_vertex.position = view_matrix * vec4(position_radius.xyz + position_radius.w * in_position,1);
-    out_vertex.normal = normalize(normal_matrix * in_normal); // TODO this is junk normal_matrix is not defined
-    out_vertex.tangent = normalize(normal_matrix * in_tangent); // TODO this is junk normal_matrix is not defined
+    out_vertex.normal = normalize(in_normal);
+    out_vertex.tangent = normalize(in_tangent);
     out_vertex.binormal = normalize(cross(out_vertex.tangent, out_vertex.normal));
     out_vertex.texcoord = in_texcoord;
 

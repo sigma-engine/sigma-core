@@ -1,6 +1,8 @@
 #ifndef SIGMA_TRACKBALL_CONTROLLER_HPP
 #define SIGMA_TRACKBALL_CONTROLLER_HPP
 
+#include <sigma/config.hpp>
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -13,7 +15,7 @@ static const glm::vec3 RIGHT = { 1, 0, 0 };
 static const glm::vec3 UP = { 0, 1, 0 };
 static const glm::vec3 VIEW = { 0, 0, -1 };
 
-class trackball_controller {
+class SIGMA_API trackball_controller {
 public:
     trackball_controller();
 

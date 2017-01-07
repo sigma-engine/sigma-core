@@ -83,14 +83,18 @@ namespace opengl {
         textures_[texture_map_[name]].second = txt;
     }
 
+	void shader_technique::set_standard_uniforms(standard_uniforms* standard)
+	{
+		GL_CHECK(glUniformMatrix4fv(projection_matrix_location_, 1, GL_FALSE, glm::value_ptr(standard->projection_matrix)));
+		GL_CHECK(glUniformMatrix4fv(view_matrix_location_, 1, GL_FALSE, glm::value_ptr(standard->view_matrix)));
+		GL_CHECK(glUniform1f(z_near_location_, standard->z_near));
+		GL_CHECK(glUniform1f(z_far_location_, standard->z_far));
+		GL_CHECK(glUniform2fv(view_port_size_location_, 1, glm::value_ptr(standard->view_port_size)));
+	}
+
     void shader_technique::set_instance_matrices(standard_uniforms* standard, render_matrices* matrices)
     {
-        GL_CHECK(glUniformMatrix4fv(projection_matrix_location_, 1, GL_FALSE, glm::value_ptr(standard->projection_matrix)));
-        GL_CHECK(glUniformMatrix4fv(view_matrix_location_, 1, GL_FALSE, glm::value_ptr(standard->view_matrix)));
-        GL_CHECK(glUniform1f(z_near_location_, standard->z_near));
-        GL_CHECK(glUniform1f(z_far_location_, standard->z_far));
-        GL_CHECK(glUniform2fv(view_port_size_location_, 1, glm::value_ptr(standard->view_port_size)));
-
+		set_standard_uniforms(standard); // TODO remove this
         GL_CHECK(glUniformMatrix4fv(model_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->model_matrix)));
         GL_CHECK(glUniformMatrix4fv(model_view_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->model_view_matrix)));
         GL_CHECK(glUniformMatrix3fv(normal_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->normal_matrix)));

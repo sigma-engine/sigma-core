@@ -8,9 +8,11 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+using namespace std::chrono_literals;
+
 #include <iostream>
 
-int main(int argc, char const* argv[])
+int main(int argc, char* argv[])
 {
     sigma::context ctx;
     sigma::window window(glm::ivec2{ 1920, 1080 });
@@ -35,8 +37,15 @@ int main(int argc, char const* argv[])
         window.size()
     };
     sigma::trackball_controller controller;
+    auto start = std::chrono::high_resolution_clock::now();
+    std::size_t count = 0;
     while (window.good()) {
         viewport.view_matrix = controller.matrix();
+        if (renderer) {
+            SDL_GL_MakeCurrent(window.window_, window.gl_context_);
+            renderer->render(viewport);
+        }
+
         SDL_Event event;
         while (SDL_PollEvent(&event) != 0) {
             switch (event.type) {
@@ -61,6 +70,11 @@ int main(int argc, char const* argv[])
                 break;
             }
             case SDL_KEYDOWN: {
+                if (event.key.keysym.sym == SDLK_ESCAPE) {
+                    game = nullptr;
+                    renderer = nullptr;
+                    window.close();
+                }
                 if (!controller.isPanning())
                     controller.beginPan();
                 break;
@@ -73,6 +87,8 @@ int main(int argc, char const* argv[])
             case SDL_WINDOWEVENT: {
                 switch (event.window.event) {
                 case SDL_WINDOWEVENT_CLOSE:
+                    game = nullptr;
+                    renderer = nullptr;
                     window.close();
                     break;
                 }
@@ -83,7 +99,17 @@ int main(int argc, char const* argv[])
             }
         }
 
-        renderer->render(viewport);
+        SDL_GL_SwapWindow(window.window_);
+        count++;
+        auto end = std::chrono::high_resolution_clock::now();
+        auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+        if (dt > 1000ms) {
+            auto fps = count / std::chrono::duration_cast<std::chrono::duration<float>>(dt).count();
+            std::cout << "Frame time: " << (dt.count() / count) << " ms" << std::endl;
+            std::cout << "FPS: " << fps << std::endl;
+            start = end;
+            count = 0;
+        }
     }
     return 0;
 }
