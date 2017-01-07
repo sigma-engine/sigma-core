@@ -19,7 +19,7 @@ int main(int argc, char const* argv[])
     auto renderer = ctx.create_renderer("sigma::opengl::renderer", window.size());
 
     ctx.load_plugin("simple-game");
-    auto game = ctx.create_game("simple_game");
+    auto game = ctx.create_game("simple_game", renderer);
 
     sigma::graphics::view_port viewport{
         game->entities,

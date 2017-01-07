@@ -240,6 +240,7 @@ namespace opengl {
 
         // Opaque objects
         gbuffer_.bind_for_geometry_write();
+        GL_CHECK(glDepthMask(GL_TRUE));
         GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
         geometry_pass(viewport, false);
 

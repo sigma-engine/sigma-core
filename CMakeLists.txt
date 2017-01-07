@@ -83,16 +83,16 @@ target_link_libraries(sigma-core PUBLIC ${CMAKE_DL_LIBS} ${CONAN_LIBS})
 target_compile_definitions(sigma-core PUBLIC -DSIGMA_SHARED)
 target_compile_options(sigma-core PRIVATE -DSIGMA_EXPORT)
 
-#set(MAIN_SOURCES
-#    src/sigma/main.cpp
-#    src/sigma/window.cpp
-#)
-#set(MAIN_HEADERS
-#    include/sigma/window.hpp
-#)
+set(MAIN_SOURCES
+    src/sigma/main.cpp
+    src/sigma/window.cpp
+)
+set(MAIN_HEADERS
+    include/sigma/window.hpp
+)
 
-#add_executable(sigma-runner ${MAIN_SOURCES} ${MAIN_HEADERS})
-#target_link_libraries(sigma-runner PUBLIC sigma-core)
+add_executable(sigma-runner ${MAIN_SOURCES} ${MAIN_HEADERS})
+target_link_libraries(sigma-runner PUBLIC sigma-core)
 
 add_subdirectory(tools/scmaterial)
 add_subdirectory(tools/scmodel)

@@ -4,6 +4,8 @@
 
 namespace sigma {
 namespace opengl {
+    constexpr const frame_buffer::attachment geometry_buffer::IMAGE_ATTACHMENTS[];
+
     geometry_buffer::geometry_buffer(glm::ivec2 size)
         : frame_buffer(size)
         , diffuse_texture_(internal_format::RGBA8, size) // TODO filp roughness and metalness
