@@ -13,12 +13,6 @@
 
 namespace sigma {
 namespace opengl {
-    const resource::identifier renderer::POINT_LIGHT_EFFECT{ "post_process_effect://point_light" };
-    const resource::identifier renderer::POINT_LIGHT_STENCIL_EFFECT{ "post_process_effect://point_light_stencil" };
-    const resource::identifier renderer::DIRECTIONAL_LIGHT_EFFECT{ "post_process_effect://directional_light" };
-    const resource::identifier renderer::VIGNETTE_EFFECT{ "post_process_effect://vignette" };
-    const resource::identifier renderer::GAMMA_CONVERSION_EFFECT{ "post_process_effect://gamma_conversion" };
-
     renderer::renderer(glm::ivec2 size)
         : graphics::renderer(size)
         , default_fbo_(size)
@@ -31,15 +25,12 @@ namespace opengl {
     {
         //standard_uniforms_.set_binding_point(shader_technique::STANDARD_UNIFORM_BLOCK_BINDING);
 
-        point_light_effect_ = effects_.get(POINT_LIGHT_EFFECT);
-        point_light_stencil_effect_ = effects_.get(POINT_LIGHT_STENCIL_EFFECT);
+        point_light_effect_ = effects_.get("post_process_effect://pbr/deffered/lights/point");
+        directional_light_effect_ = effects_.get("post_process_effect://pbr/deffered/lights/directional");
+        texture_blit_effect_ = effects_.get("post_process_effect://pbr/deffered/texture_blit");
 
-        directional_light_effect_ = effects_.get(DIRECTIONAL_LIGHT_EFFECT);
-
-        texture_blit_effect_ = effects_.get("post_process_effect://texture_blit");
-
-        vignette_effect_ = effects_.get(VIGNETTE_EFFECT);
-        gamma_conversion_ = effects_.get(GAMMA_CONVERSION_EFFECT);
+        //vignette_effect_ = effects_.get(VIGNETTE_EFFECT);
+        gamma_conversion_ = effects_.get("post_process_effect://pbr/deffered/gamma_conversion");
     }
 
     renderer::~renderer()
@@ -100,39 +91,11 @@ namespace opengl {
         GL_CHECK(glCullFace(GL_BACK));
         GL_CHECK(glEnable(GL_CULL_FACE));
 
-		for (auto &mat_bucket : material_buckets_) { // TODO const
-			auto mat = MATERIAL_PTR(mat_bucket.active_material);
-			mat->bind(texture_unit::TEXTURE0);
-			mat->set_standard_uniforms(&standard_uniform_data_);
-			for (auto &mesh_bucket : mat_bucket.mesh_buckets) {
-				GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, mesh_instance_data_buffer_));
-				GL_CHECK(glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(mesh_instance_data) * mesh_bucket.instances.size(), mesh_bucket.instances.data()));
+        if (transparent)
+            render_material_buckets(transparent_material_buckets_);
+        else
+            render_material_buckets(material_buckets_);
 
-				auto mesh = STATIC_MESH_PTR(mesh_bucket.active_mesh);
-				GL_CHECK(glBindVertexArray(mesh->vertex_array_));
-				GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->index_buffer_));
-				GL_CHECK(glDrawElementsInstanced(GL_TRIANGLES, mesh->index_count_, GL_UNSIGNED_INT, nullptr, mesh_bucket.instances.size()));
-			}
-		}
-
-        /*for (auto e : viewport.entities) { // TODO use a filter here
-            if (viewport.static_mesh_instances.has(e) && viewport.transforms.has(e)) {
-                auto& txform = viewport.transforms.get(e);
-                auto mesh = STATIC_MESH_PTR(viewport.static_mesh_instances.get(e));
-                auto mat = MATERIAL_PTR(mesh->material());
-
-                if (transparent == mat->is_transparent()) {
-                    render_matrices matrices_;
-                    matrices_.model_matrix = txform.matrix();
-                    matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
-                    matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
-
-                    mat->bind(texture_unit::TEXTURE0);
-                    mat->set_instance_matrices(&standard_uniform_data_, &matrices_);
-                    mesh->render();
-                }
-            }
-        }*/
         GL_CHECK(glDepthMask(GL_FALSE));
         GL_CHECK(glStencilMask(0x00));
     }
@@ -250,74 +213,19 @@ namespace opengl {
             GL_CHECK(glVertexAttribDivisor(5, 1));
         }
 
+        // TODO remove this hack
         if (!material_buckets_filled_) {
             material_buckets_filled_ = true;
 
-			std::size_t max_instances = 0;
-            for (auto e : viewport.entities) { // TODO use a filter here
-                if (viewport.static_mesh_instances.has(e) && viewport.transforms.has(e)) {
-                    auto& txform = viewport.transforms.get(e);
-                    auto mesh = viewport.static_mesh_instances.get(e);
-                    auto mat = mesh->material();
+            std::size_t max_instances = fill_material_buckets(viewport, material_buckets_, false);
+            max_instances = std::max(max_instances, fill_material_buckets(viewport, transparent_material_buckets_, true));
 
-                    if (!mat->is_transparent()) {
-                        // find the material bucket if it exist
-                        auto mat_it = std::find_if(material_buckets_.begin(), material_buckets_.end(), [&](const auto& bucket) {
-                            return bucket.active_material == mat;
-                        });
-                        // create the material bucket if it does not exist
-                        if (mat_it == material_buckets_.end())
-                            mat_it = material_buckets_.insert(mat_it,{ mat, {} });
+            GL_CHECK(glGenBuffers(1, &mesh_instance_data_buffer_));
+            GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, mesh_instance_data_buffer_));
+            GL_CHECK(glBufferData(GL_ARRAY_BUFFER, max_instances * sizeof(mesh_instance_data), nullptr, GL_DYNAMIC_DRAW));
 
-                        // find the mesh bucket if it exist
-                        auto mesh_it = std::find_if(mat_it->mesh_buckets.begin(), mat_it->mesh_buckets.end(), [&](const auto& bucket) {
-                            return bucket.active_mesh == mesh;
-                        });
-
-                        if (mesh_it == mat_it->mesh_buckets.end())
-                            mesh_it = mat_it->mesh_buckets.insert(mesh_it, { mesh, {} });
-
-						mesh_it->instances.push_back({ txform.matrix() });
-
-						max_instances = std::max(max_instances, mesh_it->instances.size());
-                    }
-                }
-            }
-
-			GL_CHECK(glGenBuffers(1, &mesh_instance_data_buffer_));
-			GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, mesh_instance_data_buffer_));
-			GL_CHECK(glBufferData(GL_ARRAY_BUFFER, max_instances * sizeof(mesh_instance_data), nullptr, GL_DYNAMIC_DRAW));
-			for (auto &mat_bucket : material_buckets_) {
-				for (auto &mesh_bucket : mat_bucket.mesh_buckets) {
-					auto mesh = STATIC_MESH_PTR(mesh_bucket.active_mesh);
-					GL_CHECK(glBindVertexArray(mesh->vertex_array_));
-
-					auto vec4_size = sizeof(glm::vec4);
-					auto vec3_size = sizeof(glm::vec3);
-
-					//model_matrix[0]
-					GL_CHECK(glEnableVertexAttribArray(4));
-					GL_CHECK(glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(mesh_instance_data), 0));
-
-					//model_matrix[1]
-					GL_CHECK(glEnableVertexAttribArray(5));
-					GL_CHECK(glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(mesh_instance_data), reinterpret_cast<const void*>(1 * vec4_size)));
-
-					//model_matrix[2]
-					GL_CHECK(glEnableVertexAttribArray(6));
-					GL_CHECK(glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(mesh_instance_data), reinterpret_cast<const void*>(2 * vec4_size)));
-
-					//model_matrix[3]
-					GL_CHECK(glEnableVertexAttribArray(7));
-					GL_CHECK(glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(mesh_instance_data), reinterpret_cast<const void*>(3 * vec4_size)));
-
-					GL_CHECK(glVertexAttribDivisor(4, 1));
-					GL_CHECK(glVertexAttribDivisor(5, 1));
-					GL_CHECK(glVertexAttribDivisor(6, 1));
-					GL_CHECK(glVertexAttribDivisor(7, 1));
-
-				}
-			}
+            setup_material_buckets(material_buckets_);
+            setup_material_buckets(transparent_material_buckets_);
         }
 
         // Begin rendering
@@ -335,14 +243,14 @@ namespace opengl {
         GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
         light_pass(viewport);
 
-        /*// Transparent objects
+        // Transparent objects
         gbuffer_.swap_input_image();
         gbuffer_.bind_for_geometry_write();
         geometry_pass(viewport, true);
 
         gbuffer_.bind_for_geometry_read();
         GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
-        light_pass(viewport);*/
+        light_pass(viewport);
 
         // Final composition
 
@@ -351,14 +259,14 @@ namespace opengl {
         matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_view_matrix;
         matrices_.normal_matrix = glm::mat3(1);
 
-        /*gbuffer_.bind_for_geometry_read();
+        gbuffer_.bind_for_geometry_read();
         GL_CHECK(glStencilFunc(GL_NOTEQUAL, 1, 0xFF));
         GL_CHECK(glDisable(GL_DEPTH_TEST));
         GL_CHECK(glDisable(GL_CULL_FACE));
 
         EFFECT_PTR(texture_blit_effect_)->bind();
         EFFECT_PTR(texture_blit_effect_)->set_instance_matrices(&standard_uniform_data_, &matrices_);
-        EFFECT_PTR(texture_blit_effect_)->apply();*/
+        EFFECT_PTR(texture_blit_effect_)->apply();
 
         GL_CHECK(glDisable(GL_BLEND));
         GL_CHECK(glDisable(GL_STENCIL_TEST));
@@ -380,6 +288,93 @@ namespace opengl {
         EFFECT_PTR(gamma_conversion_)->bind();
         EFFECT_PTR(gamma_conversion_)->set_instance_matrices(&standard_uniform_data_, &matrices_);
         EFFECT_PTR(gamma_conversion_)->apply();
+    }
+
+    std::size_t renderer::fill_material_buckets(const graphics::view_port& viewport, std::vector<material_bucket>& material_buckets, bool transparent)
+    {
+        std::size_t max_instances = 0;
+        for (auto e : viewport.entities) { // TODO use a filter here
+            if (viewport.static_mesh_instances.has(e) && viewport.transforms.has(e)) {
+                auto& txform = viewport.transforms.get(e);
+                auto mesh = viewport.static_mesh_instances.get(e);
+                auto mat = mesh->material();
+
+                if (mat->is_transparent() == transparent) {
+                    // find the material bucket if it exist
+                    auto mat_it = std::find_if(material_buckets.begin(), material_buckets.end(), [&](const auto& bucket) {
+                        return bucket.active_material == mat;
+                    });
+                    // create the material bucket if it does not exist
+                    if (mat_it == material_buckets.end())
+                        mat_it = material_buckets.insert(mat_it, { mat, {} });
+
+                    // find the mesh bucket if it exist
+                    auto mesh_it = std::find_if(mat_it->mesh_buckets.begin(), mat_it->mesh_buckets.end(), [&](const auto& bucket) {
+                        return bucket.active_mesh == mesh;
+                    });
+
+                    if (mesh_it == mat_it->mesh_buckets.end())
+                        mesh_it = mat_it->mesh_buckets.insert(mesh_it, { mesh, {} });
+
+                    mesh_it->instances.push_back({ txform.matrix() });
+
+                    max_instances = std::max(max_instances, mesh_it->instances.size());
+                }
+            }
+        }
+        return max_instances;
+    }
+
+    void renderer::setup_material_buckets(std::vector<material_bucket>& material_buckets)
+    {
+        for (auto& mat_bucket : material_buckets) {
+            for (auto& mesh_bucket : mat_bucket.mesh_buckets) {
+                auto mesh = STATIC_MESH_PTR(mesh_bucket.active_mesh);
+                GL_CHECK(glBindVertexArray(mesh->vertex_array_));
+
+                auto vec4_size = sizeof(glm::vec4);
+                auto vec3_size = sizeof(glm::vec3);
+
+                //model_matrix[0]
+                GL_CHECK(glEnableVertexAttribArray(4));
+                GL_CHECK(glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(mesh_instance_data), 0));
+
+                //model_matrix[1]
+                GL_CHECK(glEnableVertexAttribArray(5));
+                GL_CHECK(glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(mesh_instance_data), reinterpret_cast<const void*>(1 * vec4_size)));
+
+                //model_matrix[2]
+                GL_CHECK(glEnableVertexAttribArray(6));
+                GL_CHECK(glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(mesh_instance_data), reinterpret_cast<const void*>(2 * vec4_size)));
+
+                //model_matrix[3]
+                GL_CHECK(glEnableVertexAttribArray(7));
+                GL_CHECK(glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(mesh_instance_data), reinterpret_cast<const void*>(3 * vec4_size)));
+
+                GL_CHECK(glVertexAttribDivisor(4, 1));
+                GL_CHECK(glVertexAttribDivisor(5, 1));
+                GL_CHECK(glVertexAttribDivisor(6, 1));
+                GL_CHECK(glVertexAttribDivisor(7, 1));
+            }
+        }
+    }
+
+    void renderer::render_material_buckets(std::vector<material_bucket>& material_buckets)
+    {
+        for (auto& mat_bucket : material_buckets) { // TODO const
+            auto mat = MATERIAL_PTR(mat_bucket.active_material);
+            mat->bind(texture_unit::TEXTURE0);
+            mat->set_standard_uniforms(&standard_uniform_data_);
+            for (auto& mesh_bucket : mat_bucket.mesh_buckets) {
+                GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, mesh_instance_data_buffer_));
+                GL_CHECK(glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(mesh_instance_data) * mesh_bucket.instances.size(), mesh_bucket.instances.data()));
+
+                auto mesh = STATIC_MESH_PTR(mesh_bucket.active_mesh);
+                GL_CHECK(glBindVertexArray(mesh->vertex_array_));
+                GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->index_buffer_));
+                GL_CHECK(glDrawElementsInstanced(GL_TRIANGLES, mesh->index_count_, GL_UNSIGNED_INT, nullptr, mesh_bucket.instances.size()));
+            }
+        }
     }
 
     /*void renderer::point_light_outside_stencil_optimization(glm::vec3 view_space_position, float radius)

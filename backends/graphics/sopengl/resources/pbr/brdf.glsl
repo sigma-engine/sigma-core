@@ -1,7 +1,7 @@
-#ifndef SIGMA_GRAPHICS_OPENGL_LIGHTING_H
-#define SIGMA_GRAPHICS_OPENGL_LIGHTING_H
+#ifndef SIGMA_PBR_DEFFERED_BRDF_GLSL
+#define SIGMA_PBR_DEFFERED_BRDF_GLSL
 
-#include <geometry_buffer.glsl>
+#include <pbr/deffered/geometry_buffer.glsl>
 
 #define PI 3.1415926535897932
 #define NO_DIV_BY_ZERO 1e-5
@@ -61,4 +61,4 @@ vec3 compute_lighting(surface s, vec3 L, vec3 V)
     return NdotL * (specular + diffuse * (1 - specular));
 }
 
-#endif // SIGMA_GRAPHICS_OPENGL_LIGHTING_H
+#endif // SIGMA_PBR_DEFFERED_BRDF_GLSL

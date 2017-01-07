@@ -38,7 +38,7 @@ function(generate_type_regex_and_glob name)
     endforeach()
     string(REPLACE ";" "|" regx "${ARGN}")
     set(SIGMA_ENGINE_${name}_GLOB ${globs} PARENT_SCOPE)
-    set(SIGMA_ENGINE_${name}_REGEX ".*\.(${regx})" PARENT_SCOPE)
+    set(SIGMA_ENGINE_${name}_REGEX ".*\\.(${regx})" PARENT_SCOPE)
 endfunction()
 
 generate_type_regex_and_glob(TEXTURE png jpeg jpg jpeg jpe jif jfif jfi tiff tif)

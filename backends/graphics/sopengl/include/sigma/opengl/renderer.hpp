@@ -70,12 +70,6 @@ namespace opengl {
         virtual void render(const graphics::view_port& viewport) override;
 
     private:
-        static const resource::identifier POINT_LIGHT_EFFECT;
-        static const resource::identifier POINT_LIGHT_STENCIL_EFFECT;
-        static const resource::identifier DIRECTIONAL_LIGHT_EFFECT;
-        static const resource::identifier VIGNETTE_EFFECT;
-        static const resource::identifier GAMMA_CONVERSION_EFFECT;
-
         renderer(const renderer&) = delete;
         renderer& operator=(const renderer&) = delete;
 
@@ -91,14 +85,12 @@ namespace opengl {
         opengl::post_process_effect_manager effects_;
 
         resource::handle<graphics::post_process_effect> point_light_effect_;
-        resource::handle<graphics::post_process_effect> point_light_stencil_effect_;
-
         resource::handle<graphics::post_process_effect> directional_light_effect_;
-
         resource::handle<graphics::post_process_effect> texture_blit_effect_;
 
-        resource::handle<graphics::post_process_effect> vignette_effect_;
         resource::handle<graphics::post_process_effect> gamma_conversion_;
+
+        resource::handle<graphics::post_process_effect> vignette_effect_;
 
         bool point_light_buffer_filled_ = false;
         std::vector<internal_point_light> internal_point_lights_;
@@ -110,7 +102,12 @@ namespace opengl {
 
         bool material_buckets_filled_ = false;
         std::vector<material_bucket> material_buckets_;
+        std::vector<material_bucket> transparent_material_buckets_;
         GLuint mesh_instance_data_buffer_ = -1;
+
+        std::size_t fill_material_buckets(const graphics::view_port& viewport, std::vector<material_bucket>& material_buckets, bool transparent);
+        void setup_material_buckets(std::vector<material_bucket>& material_buckets);
+        void render_material_buckets(std::vector<material_bucket>& material_buckets);
     };
 }
 }

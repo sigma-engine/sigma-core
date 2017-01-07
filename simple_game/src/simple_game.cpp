@@ -9,7 +9,7 @@
 simple_game::simple_game(sigma::graphics::renderer* renderer)
     : sigma::game(renderer)
     , generator_(6546534512354)
-    , position_distribution_{ { -20, 0, -20 }, { 20.0f, 2.5, 20.0f } }
+    , position_distribution_{ { -20, 0, -20 }, { 20.0f, .5, 20.0f } }
     , rotation_distribution_{ glm::vec3{ 0.0f }, glm::vec3{ 2.0f * boost::math::constants::pi<float>() } }
     , scale_distribution_{ 0.1f, 10.0f }
     , color_distribution_{ glm::vec3{ 0.0f }, glm::vec3{ 1.0f } }
@@ -20,7 +20,7 @@ simple_game::simple_game(sigma::graphics::renderer* renderer)
     int number_of_point_lights = 100; //point_light_count_distribution_(generator_);
     for (int i = 0; i < number_of_point_lights; ++i) {
         auto e = entities.create();
-        auto& txform = random_trasnform(e);
+        auto& txform = random_transform(e);
         auto& light = point_lights.add(e);
         light.color = color_distribution_(generator_);
         light.intensity = scale_distribution_(generator_);
@@ -43,7 +43,7 @@ simple_game::simple_game(sigma::graphics::renderer* renderer)
     std::uniform_int_distribution<std::size_t> static_mesh_distribution_{ 0, static_mesh_ids.size() - 1 };
     for (int i = 0; i < number_of_static_meshes; ++i) {
         auto e = entities.create();
-        auto& txform = random_trasnform(e);
+        auto& txform = random_transform(e);
         auto random_mesh_id = static_mesh_ids[static_mesh_distribution_(generator_)];
         static_mesh_instances.add(e, renderer_->static_meshes().get(random_mesh_id));
     }
@@ -52,7 +52,7 @@ simple_game::simple_game(sigma::graphics::renderer* renderer)
     std::cout << "Rendering " << number_of_static_meshes << " static meshes." << std::endl;
 }
 
-sigma::transform& simple_game::random_trasnform(sigma::entity e)
+sigma::transform& simple_game::random_transform(sigma::entity e)
 {
     auto& txform = transforms.add(e);
     txform.set_position(position_distribution_(generator_));

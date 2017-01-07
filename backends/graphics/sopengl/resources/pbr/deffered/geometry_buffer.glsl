@@ -1,21 +1,21 @@
-#ifndef SIGMA_ENGINE_OPENGL_GEOMETRY_BUFFER_GLSL
-#define SIGMA_ENGINE_OPENGL_GEOMETRY_BUFFER_GLSL
+#ifndef SIGMA_PBR_DEFFERED_GEOMETRY_BUFFER_GLSL
+#define SIGMA_PBR_DEFFERED_GEOMETRY_BUFFER_GLSL
 
 #include <uniforms.glsl>
 
 #define MIN_ROUGHNESS .08
 
 struct surface {
-#if defined(SIGMA_ENGINE_POST_PROCESS_EFFECT)
+#if defined(SIGMA_PBR_DEFFERED_POST_PROCESS_EFFECT)
     vec3 position;
-#endif // SIGMA_ENGINE_POST_PROCESS_EFFECT
+#endif // SIGMA_PBR_DEFFERED_POST_PROCESS_EFFECT
     vec3 normal;
     vec3 diffuse;
     float roughness;
     float metalness;
 };
 
-#if defined(SIGMA_ENGINE_POST_PROCESS_EFFECT)
+#if defined(SIGMA_PBR_DEFFERED_POST_PROCESS_EFFECT)
 uniform sampler2D in_diffuse_roughness;
 uniform sampler2D in_normal_metalness;
 uniform sampler2D in_depth_stencil;
@@ -62,4 +62,4 @@ void write_geometry_buffer(surface s)
 }
 #endif
 
-#endif // SIGMA_ENGINE_OPENGL_GEOMETRY_BUFFER_GLSL
+#endif // SIGMA_PBR_DEFFERED_GEOMETRY_BUFFER_GLSL

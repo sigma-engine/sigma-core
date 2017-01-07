@@ -1,0 +1,5 @@
+{
+    "vertex" : "pbr/deffered/lights/point",
+    "fragment" : "pbr/deffered/lights/point",
+    "static_mesh" : "pbr/deffered/lights/point:sphere"
+}

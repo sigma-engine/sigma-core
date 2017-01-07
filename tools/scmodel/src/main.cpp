@@ -19,7 +19,7 @@ namespace po = boost::program_options;
 int main(int argc, char const* argv[])
 {
     po::options_description global_options("Options");
-    global_options.add_options()("help,h", "Show this help message")("output,o", po::value<boost::filesystem::path>()->default_value(boost::filesystem::current_path()), "output directory")("input-files", po::value<std::vector<boost::filesystem::path> >(), "input model files");
+    global_options.add_options()("help,h", "Show this help message")("output,o", po::value<boost::filesystem::path>()->default_value(boost::filesystem::current_path()), "output directory")("input-files", po::value<std::vector<boost::filesystem::path>>(), "input model files");
 
     po::positional_options_description positional_options;
     positional_options.add("input-files", -1);
@@ -41,7 +41,7 @@ int main(int argc, char const* argv[])
     boost::filesystem::create_directories(outputdir);
 
     for (auto file_path :
-        vm["input-files"].as<std::vector<boost::filesystem::path> >()) {
+        vm["input-files"].as<std::vector<boost::filesystem::path>>()) {
         file_path = boost::filesystem::absolute(file_path);
         if (sigma::filesystem::contains_file(boost::filesystem::current_path(), file_path)) {
             if (boost::filesystem::exists(file_path)) {
@@ -65,6 +65,7 @@ int main(int argc, char const* argv[])
                 Json::Value scene;
                 if (boost::filesystem::exists(scene_path)) {
                     std::ifstream in_scene(scene_path.string());
+                    std::cout << "^^^^^^^ " << scene_path << std::endl;
                     in_scene >> scene;
                 }
 

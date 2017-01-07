@@ -1,8 +1,8 @@
 #version 330
 
 // clang-format off
-#include <post_process_effect.glsl>
-#include <lighting.glsl>
+#include <pbr/deffered/post_process_effect.glsl>
+#include <pbr/brdf.glsl>
 // clang-format on
 
 in directional_light

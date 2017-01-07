@@ -1,7 +1,7 @@
 #version 330
 
 // clang-format off
-#include <post_process_effect.glsl>
+#include <pbr/deffered/post_process_effect.glsl>
 #include <uniforms.glsl>
 #include <vertex.glsl>
 // clang-format on

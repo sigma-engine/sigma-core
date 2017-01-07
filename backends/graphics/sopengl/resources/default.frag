@@ -1,6 +1,6 @@
 #version 330
 
-#include <geometry_buffer.glsl>
+#include <pbr/deffered/geometry_buffer.glsl>
 #include <uniforms.glsl>
 #include <vertex.glsl>
 

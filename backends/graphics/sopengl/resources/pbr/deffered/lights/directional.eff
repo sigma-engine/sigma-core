@@ -1,0 +1,4 @@
+{
+    "fragment" : "pbr/deffered/lights/directional",
+    "vertex" : "pbr/deffered/lights/directional"
+}
