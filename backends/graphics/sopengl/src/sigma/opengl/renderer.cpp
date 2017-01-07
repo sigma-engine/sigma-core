@@ -31,25 +31,20 @@ namespace opengl {
     {
         //standard_uniforms_.set_binding_point(shader_technique::STANDARD_UNIFORM_BLOCK_BINDING);
 
-        stencil_clear_effect_ = effects_.get("post_process_effect://stencil_clear");
-        texture_blit_effect_ = effects_.get("post_process_effect://texture_blit");
-
         point_light_effect_ = effects_.get(POINT_LIGHT_EFFECT);
         point_light_stencil_effect_ = effects_.get(POINT_LIGHT_STENCIL_EFFECT);
 
         directional_light_effect_ = effects_.get(DIRECTIONAL_LIGHT_EFFECT);
-        // TODO were should these go?
-        directional_light_color_location_ = EFFECT_PTR(directional_light_effect_)->get_uniform_location("light.color");
-        directional_light_direction_location_ = EFFECT_PTR(directional_light_effect_)->get_uniform_location("light.direction");
-        directional_light_intensity_location_ = EFFECT_PTR(directional_light_effect_)->get_uniform_location("light.intensity");
+
+        texture_blit_effect_ = effects_.get("post_process_effect://texture_blit");
 
         vignette_effect_ = effects_.get(VIGNETTE_EFFECT);
-
         gamma_conversion_ = effects_.get(GAMMA_CONVERSION_EFFECT);
     }
 
     renderer::~renderer()
     {
+        glDeleteBuffers(1, &directional_light_data_buffer_);
         glDeleteBuffers(1, &point_light_data_buffer_);
     }
 
@@ -164,27 +159,13 @@ namespace opengl {
         GL_CHECK(glDisable(GL_CULL_FACE));
 
         EFFECT_PTR(directional_light_effect_)->bind();
-        for (auto e : viewport.entities) { // TODO use a filter here
-            if (viewport.directional_lights.has(e) && viewport.transforms.has(e)) {
-                auto& txform = viewport.transforms.get(e);
-                const auto& light = viewport.directional_lights.get(e);
+        EFFECT_PTR(directional_light_effect_)->set_instance_matrices(&standard_uniform_data_, &matrices_);
 
-                // TODO scale on directional light???
-                render_matrices matrices_;
-                matrices_.model_matrix = txform.matrix();
-                matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
-                matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
-
-                auto view_space_direction = matrices_.model_view_matrix * glm::vec4(0, 1, 0, 0);
-
-                // TODO this should be abstracted away better
-                GL_CHECK(glUniform3fv(directional_light_color_location_, 1, glm::value_ptr(light.color)));
-                GL_CHECK(glUniform3fv(directional_light_direction_location_, 1, glm::value_ptr(view_space_direction)));
-                GL_CHECK(glUniform1f(directional_light_intensity_location_, light.intensity));
-                EFFECT_PTR(directional_light_effect_)->set_instance_matrices(&standard_uniform_data_, &matrices_);
-                EFFECT_PTR(directional_light_effect_)->apply();
-            }
-        }
+        // TODO this is a hack
+        auto directional_mesh = STATIC_MESH_PTR(EFFECT_PTR(directional_light_effect_)->mesh_);
+        GL_CHECK(glBindVertexArray(directional_mesh->vertex_array_));
+        GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, directional_mesh->index_buffer_));
+        GL_CHECK(glDrawElementsInstanced(GL_TRIANGLES, directional_mesh->index_count_, GL_UNSIGNED_INT, nullptr, internal_directional_lights_.size()));
     }
 
     void renderer::render(const graphics::view_port& viewport)
@@ -197,7 +178,7 @@ namespace opengl {
                 if (viewport.point_lights.has(e) && viewport.transforms.has(e)) {
                     auto& txform = viewport.transforms.get(e);
                     const auto& light = viewport.point_lights.get(e);
-                    internal_point_lights_.push_back({ glm::vec4(txform.position(), txform.scale().x), glm::vec4(light.color, light.intensity) });
+                    internal_point_lights_.push_back({ glm::vec4(light.color, light.intensity), glm::vec4(txform.position(), txform.scale().x) });
                 }
             }
 
@@ -212,6 +193,35 @@ namespace opengl {
 
             GL_CHECK(glEnableVertexAttribArray(5));
             GL_CHECK(glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(internal_point_light), reinterpret_cast<const void*>(sizeof(glm::vec4))));
+
+            GL_CHECK(glVertexAttribDivisor(4, 1));
+            GL_CHECK(glVertexAttribDivisor(5, 1));
+        }
+
+        // TODO remove this hack
+        if (!directional_light_buffer_filled_) {
+            directional_light_buffer_filled_ = true;
+
+            for (auto e : viewport.entities) { // TODO use a filter here
+                if (viewport.directional_lights.has(e) && viewport.transforms.has(e)) {
+                    auto& txform = viewport.transforms.get(e);
+                    const auto& light = viewport.directional_lights.get(e);
+                    auto direction = glm::vec3(txform.matrix() * glm::vec4(0, 1, 0, 0));
+                    internal_directional_lights_.push_back({ glm::vec4(light.color, light.intensity), direction });
+                }
+            }
+
+            auto directional_mesh = STATIC_MESH_PTR(EFFECT_PTR(directional_light_effect_)->mesh_);
+            GL_CHECK(glBindVertexArray(directional_mesh->vertex_array_));
+            GL_CHECK(glGenBuffers(1, &directional_light_data_buffer_));
+            GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, directional_light_data_buffer_));
+            GL_CHECK(glBufferData(GL_ARRAY_BUFFER, internal_directional_lights_.size() * sizeof(internal_directional_light), internal_directional_lights_.data(), GL_STATIC_DRAW));
+
+            GL_CHECK(glEnableVertexAttribArray(4));
+            GL_CHECK(glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(internal_directional_light), 0));
+
+            GL_CHECK(glEnableVertexAttribArray(5));
+            GL_CHECK(glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(internal_directional_light), reinterpret_cast<const void*>(sizeof(glm::vec4))));
 
             GL_CHECK(glVertexAttribDivisor(4, 1));
             GL_CHECK(glVertexAttribDivisor(5, 1));

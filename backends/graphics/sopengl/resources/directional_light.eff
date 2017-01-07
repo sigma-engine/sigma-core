@@ -1,3 +1,4 @@
 {
-    "fragment" : "directional_light"
+    "fragment" : "directional_light",
+    "vertex" : "directional_light"
 }

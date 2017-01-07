@@ -5,6 +5,14 @@
 #include <lighting.glsl>
 // clang-format on
 
+in point_light
+{
+    vec3 position;
+    float radius;
+    vec3 color;
+    float intensity;
+} in_light;
+
 void main()
 {
     surface s = read_geometry_buffer();
@@ -14,7 +22,7 @@ void main()
     float light_distance = length(L);
     L = normalize(L);
 
-    // TODO Use eq (9)
+    // TODO Use eq (9) from
     // http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
     float att = smoothstep(1, 0, light_distance / in_light.radius) / (light_distance * light_distance);
 

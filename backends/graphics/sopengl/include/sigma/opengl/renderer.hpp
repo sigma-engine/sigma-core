@@ -18,8 +18,13 @@ namespace sigma {
 
 namespace opengl {
     struct internal_point_light {
-        glm::vec4 position_radius;
         glm::vec4 color_intensity;
+        glm::vec4 position_radius;
+    };
+
+    struct internal_directional_light {
+        glm::vec4 color_intensity;
+        glm::vec3 direction;
     };
 
     class renderer : public graphics::renderer {
@@ -71,25 +76,23 @@ namespace opengl {
         opengl::static_mesh_manager static_meshes_;
         opengl::post_process_effect_manager effects_;
 
-        resource::handle<graphics::post_process_effect> stencil_clear_effect_;
-        resource::handle<graphics::post_process_effect> texture_blit_effect_;
-
         resource::handle<graphics::post_process_effect> point_light_effect_;
         resource::handle<graphics::post_process_effect> point_light_stencil_effect_;
 
-        // TODO were should these go?
-        GLint directional_light_color_location_;
-        GLint directional_light_direction_location_;
-        GLint directional_light_intensity_location_;
         resource::handle<graphics::post_process_effect> directional_light_effect_;
 
-        resource::handle<graphics::post_process_effect> vignette_effect_;
+        resource::handle<graphics::post_process_effect> texture_blit_effect_;
 
+        resource::handle<graphics::post_process_effect> vignette_effect_;
         resource::handle<graphics::post_process_effect> gamma_conversion_;
 
         bool point_light_buffer_filled_ = false;
         std::vector<internal_point_light> internal_point_lights_;
         GLuint point_light_data_buffer_ = -1;
+
+        bool directional_light_buffer_filled_ = false;
+        std::vector<internal_directional_light> internal_directional_lights_;
+        GLuint directional_light_data_buffer_ = -1;
     };
 }
 }
