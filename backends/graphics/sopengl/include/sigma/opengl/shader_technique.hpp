@@ -15,7 +15,7 @@ namespace opengl {
     class shader;
     class texture;
     enum class texture_unit : GLenum;
-    struct render_matrices;
+    struct instance_matrices;
     struct standard_uniforms;
     class shader_technique {
     public:
@@ -51,7 +51,7 @@ namespace opengl {
 
 		void set_standard_uniforms(standard_uniforms* standard);
 
-        void set_instance_matrices(standard_uniforms* standard, render_matrices* matrices);
+        void set_instance_matrices(instance_matrices* matrices);
 
         void bind();
 

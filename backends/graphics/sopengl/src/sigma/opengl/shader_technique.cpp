@@ -92,9 +92,8 @@ namespace opengl {
 		GL_CHECK(glUniform2fv(view_port_size_location_, 1, glm::value_ptr(standard->view_port_size)));
 	}
 
-    void shader_technique::set_instance_matrices(standard_uniforms* standard, render_matrices* matrices)
+    void shader_technique::set_instance_matrices(instance_matrices* matrices)
     {
-		set_standard_uniforms(standard); // TODO remove this
         GL_CHECK(glUniformMatrix4fv(model_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->model_matrix)));
         GL_CHECK(glUniformMatrix4fv(model_view_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->model_view_matrix)));
         GL_CHECK(glUniformMatrix3fv(normal_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->normal_matrix)));

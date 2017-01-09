@@ -13,7 +13,7 @@
 
 namespace sigma {
 namespace opengl {
-    struct render_matrices;
+    struct instance_matrices;
 
     class post_process_effect : public graphics::post_process_effect, public shader_technique {
     public:

@@ -14,7 +14,7 @@ namespace opengl {
         float z_far;
     };
 
-    struct render_matrices {
+    struct instance_matrices {
         glm::mat4 model_matrix;
         glm::mat4 model_view_matrix;
         glm::mat3 normal_matrix;

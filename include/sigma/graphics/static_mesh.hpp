@@ -34,17 +34,18 @@ namespace graphics {
             }
         };
         typedef std::array<unsigned int, 3> triangle;
+		
 
         std::vector<vertex> vertices;
-        std::vector<triangle> triangles;
-        resource::identifier material;
+		std::vector<triangle> triangles;
+		std::unordered_map<resource::identifier,std::pair<std::size_t,std::size_t>> materials;
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
         {
             ar& vertices;
             ar& triangles;
-            ar& material;
+            ar& materials;
         }
     };
 

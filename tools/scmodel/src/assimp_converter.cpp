@@ -70,8 +70,8 @@ namespace convert {
         , importer_(std::make_unique<Assimp::Importer>())
     {
         auto filename = source_file_.string();
-        const aiScene* scene = importer_->ReadFile(filename.c_str(), 
-				aiProcess_CalcTangentSpace
+        const aiScene* scene = importer_->ReadFile(filename.c_str(),
+            aiProcess_CalcTangentSpace
                 | aiProcess_JoinIdenticalVertices
                 | aiProcess_Triangulate
                 | aiProcess_LimitBoneWeights
@@ -109,8 +109,8 @@ namespace convert {
             std::string name = get_name(scene->mMeshes[i]);
             if (!scene->mMeshes[i]->HasBones())
                 static_mesh_names_.insert(name);
-            else
-                static_mesh_names_.erase(name);
+			else
+				static_mesh_names_.erase(name);
         }
 
         // TODO recursive
@@ -146,11 +146,6 @@ namespace convert {
             if (name != get_name(aimesh))
                 continue;
 
-            std::string material_name = get_name(aiScene->mMaterials[aimesh->mMaterialIndex]);
-            if (!boost::starts_with(material_name, "material://"))
-                material_name = "material://" + material_name;
-            mesh.material = material_name;
-
             std::vector<sigma::graphics::static_mesh_data::vertex> submesh_vertices(aimesh->mNumVertices);
             for (unsigned int j = 0; j < aimesh->mNumVertices; ++j) {
                 auto pos = aimesh->mVertices[j];
@@ -178,6 +173,12 @@ namespace convert {
                     submesh_triangles[j][k] = f.mIndices[k] + static_cast<unsigned int>(mesh.vertices.size());
             }
 
+			std::string material_name = get_name(aiScene->mMaterials[aimesh->mMaterialIndex]);
+			if (!boost::starts_with(material_name, "material://"))
+				material_name = "material://" + material_name;
+			// TODO warn if material slot has been used.
+			mesh.materials[material_name] = std::make_pair(mesh.triangles.size(), aimesh->mNumFaces);
+
             mesh.vertices.reserve(mesh.vertices.size() + aimesh->mNumVertices);
             mesh.vertices.insert(mesh.vertices.end(), submesh_vertices.begin(), submesh_vertices.end());
 
@@ -186,7 +187,6 @@ namespace convert {
         }
         mesh.vertices.shrink_to_fit();
         mesh.triangles.shrink_to_fit();
-        // TODO materials
     }
 
     void assimp_converter::convert_object(std::string name, Json::Value& entity) const

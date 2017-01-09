@@ -61,12 +61,6 @@ namespace opengl {
 
         virtual void resize(glm::uvec2 size) override;
 
-        void geometry_pass(const graphics::view_port& viewport, bool transparent);
-
-        void light_pass(const graphics::view_port& viewport);
-
-        // void point_light_outside_stencil_optimization(glm::vec3 view_space_position, float radius);
-
         virtual void render(const graphics::view_port& viewport) override;
 
     private:
@@ -103,11 +97,19 @@ namespace opengl {
         bool material_buckets_filled_ = false;
         std::vector<material_bucket> material_buckets_;
         std::vector<material_bucket> transparent_material_buckets_;
-        GLuint mesh_instance_data_buffer_ = -1;
+        // GLuint mesh_instance_data_buffer_ = -1;
+
+        void geometry_pass(const graphics::view_port& viewport, bool transparent);
+
+        void render_material_buckets(std::vector<material_bucket>& material_buckets);
+
+        void light_pass(const graphics::view_port& viewport);
+
+        // void point_light_outside_stencil_optimization(glm::vec3 view_space_position, float radius);
 
         std::size_t fill_material_buckets(const graphics::view_port& viewport, std::vector<material_bucket>& material_buckets, bool transparent);
-        void setup_material_buckets(std::vector<material_bucket>& material_buckets);
-        void render_material_buckets(std::vector<material_bucket>& material_buckets);
+
+        void setup_instanced_material_buckets(std::vector<material_bucket>& material_buckets);
     };
 }
 }

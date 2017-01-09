@@ -17,14 +17,14 @@ uniform float time;
 uniform float z_near;
 uniform float z_far;
 
-#ifdef SIGMA_ENGINE_VERTEX_SHADER
-//uniform mat4 model_matrix;
-//uniform mat4 model_view_matrix;
-//uniform mat3 normal_matrix;
+uniform mat4 model_matrix;
+uniform mat4 model_view_matrix;
+uniform mat3 normal_matrix;
 
-// per-instance attributes.
-layout(location = 4) in mat4 model_matrix;
-#endif // SIGMA_ENGINE_VERTEX_SHADER
+// #ifdef SIGMA_ENGINE_VERTEX_SHADER
+// // per-instance attributes.
+// layout(location = 4) in mat4 model_matrix;
+// #endif // SIGMA_ENGINE_VERTEX_SHADER
 
 
 #endif // SIGMA_ENGINE_OPENGL_UNIFORM_GLSL

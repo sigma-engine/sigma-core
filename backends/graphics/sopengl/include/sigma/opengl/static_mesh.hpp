@@ -11,7 +11,7 @@
 
 namespace sigma {
 namespace opengl {
-    struct render_matrices;
+    struct instance_matrices;
     class shader_technique;
     enum class texture_unit : GLenum;
     class static_mesh : public graphics::static_mesh {
