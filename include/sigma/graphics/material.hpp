@@ -33,7 +33,7 @@ namespace graphics {
 
         material() = default;
 
-        material(material_data data);
+        material(const material_data &data);
 
         material(material&&) = default;
 

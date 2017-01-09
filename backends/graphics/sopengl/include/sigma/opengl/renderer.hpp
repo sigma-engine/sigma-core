@@ -33,6 +33,7 @@ namespace opengl {
 
     struct mesh_bucket {
         resource::handle<graphics::static_mesh> active_mesh;
+		unsigned int material_slot;
         std::vector<mesh_instance_data> instances;
     };
 

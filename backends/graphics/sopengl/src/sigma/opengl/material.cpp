@@ -5,8 +5,8 @@
 
 namespace sigma {
 namespace opengl {
-    material::material(graphics::material_data data)
-        : graphics::material(std::move(data))
+    material::material(const graphics::material_data &data)
+        : graphics::material(data)
     {
     }
 

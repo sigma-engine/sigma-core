@@ -7,6 +7,7 @@
 
 #include <fstream>
 #include <iostream> // TODO this is bad
+#include <cassert>
 #include <unordered_map>
 
 namespace sigma {
@@ -22,11 +23,18 @@ namespace resource {
         {
         }
 
+		handle(identifier id)
+			: id_(id)
+			, manager_(nullptr)
+		{
+		}
+
         handle(identifier id, manager<Resource>* m)
             : id_(id)
             , manager_(m)
         {
-            manager_->reference(id_);
+			assert(is_valid() && "Must fully construct a handle.");
+			manager_->reference(id_);
         }
 
         handle(const handle<Resource>& other)
@@ -46,57 +54,69 @@ namespace resource {
         handle<Resource>& operator=(const handle<Resource>& other)
         {
             if (id_ != other.id_) {
+				id_ = other.id_;
                 if (manager_)
                     manager_->dereference(id_);
-                id_ = other.id_;
-                manager_ = other.manager_;
-                if (manager_)
-                    manager_->reference(id_);
+				if (other.manager_) {
+					manager_ = other.manager_;
+					manager_->reference(id_);
+				}
             }
 			return *this;
         }
 
+		bool is_valid() const {
+			return manager_ != nullptr;
+		}
+
+		void set_manager(manager<Resource>* m) 
+		{
+			assert(m != nullptr && "Must set a valid manager.");
+			if (manager_)
+				manager_->dereference(id_);
+			manager_ = m;
+			manager_->reference(id_);
+		}
+
         Resource* get()
         {
-            if (manager_)
-                return manager_->acquire(id_);
-            return nullptr;
+			assert(is_valid() && "Resource handle is not valid.");
+			return manager_->acquire(id_);
         }
 
         const Resource* get() const
         {
-            if (manager_)
-                return manager_->acquire(id_);
-            return nullptr;
+			assert(is_valid() && "Resource handle is not valid.");
+			return manager_->acquire(id_);
         }
 
         Resource* operator->()
         {
-            if (manager_)
-                return manager_->acquire(id_);
-            return nullptr;
+			assert(is_valid() && "Resource handle is not valid.");
+            return manager_->acquire(id_);
         }
 
         const Resource* operator->() const
         {
-            if (manager_)
-                return manager_->acquire(id_);
-            return nullptr;
+			assert(is_valid() && "Resource handle is not valid.");
+			return manager_->acquire(id_);
         }
 
         Resource& operator*()
         {
+			assert(is_valid() && "Resource handle is not valid.");
             return *manager_->acquire(id_);
         }
 
         const Resource& operator*() const
         {
+			assert(is_valid() && "Resource handle is not valid.");
             return *manager_->acquire(id_);
         }
 
         explicit operator bool() const noexcept
         {
-            if (manager_)
+            if (is_valid())
                 return manager_->is_loaded(id_);
             return false;
         }

@@ -65,7 +65,6 @@ int main(int argc, char const* argv[])
                 Json::Value scene;
                 if (boost::filesystem::exists(scene_path)) {
                     std::ifstream in_scene(scene_path.string());
-                    std::cout << "^^^^^^^ " << scene_path << std::endl;
                     in_scene >> scene;
                 }
 

@@ -2,8 +2,8 @@
 
 namespace sigma {
 namespace graphics {
-    material::material(material_data data)
-        : data_(std::move(data))
+    material::material(const material_data &data)
+        : data_(data)
     {
     }
 

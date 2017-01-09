@@ -29,7 +29,7 @@ namespace opengl {
 
     void post_process_effect::apply()
     {
-        STATIC_MESH_PTR(mesh_)->render();
+		STATIC_MESH_PTR(mesh_)->render();
     }
 
     post_process_effect_manager::post_process_effect_manager(boost::filesystem::path cache_directory, opengl::texture_manager& textures, opengl::shader_manager& shaders, opengl::static_mesh_manager& meshes)

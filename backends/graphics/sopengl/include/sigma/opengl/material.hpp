@@ -16,7 +16,7 @@ namespace opengl {
     public:
         material() = default;
 
-        material(graphics::material_data data);
+        material(const graphics::material_data &data);
 
         material(material&&) = default;
 

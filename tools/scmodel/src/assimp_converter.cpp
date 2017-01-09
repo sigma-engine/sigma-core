@@ -213,7 +213,7 @@ namespace convert {
         if (ainode->mMetaData)
             std::cout << ainode->mMetaData->mNumProperties << std::endl;
 
-        for (auto i = 0; i < aiScene->mNumLights; ++i) {
+        for (unsigned int i = 0; i < aiScene->mNumLights; ++i) {
             const aiLight* ailight = aiScene->mLights[i];
             if (name == ailight->mName.C_Str()) {
                 switch (ailight->mType) {

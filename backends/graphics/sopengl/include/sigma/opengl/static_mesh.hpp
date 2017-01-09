@@ -16,7 +16,12 @@ namespace opengl {
     enum class texture_unit : GLenum;
     class static_mesh : public graphics::static_mesh {
     public:
-        static_mesh(graphics::static_mesh_data data);
+		struct material_slot {
+			resource::handle<graphics::material> material;
+			std::size_t start, end;
+		};
+
+        static_mesh(const graphics::static_mesh_data &data);
 
         static_mesh(static_mesh&&) = default;
 
@@ -24,7 +29,9 @@ namespace opengl {
 
         ~static_mesh();
 
-        void render();
+		void render();
+
+        void render(unsigned int material_slot);
 
         // TODO make private
         GLuint vertex_array_ = 0;

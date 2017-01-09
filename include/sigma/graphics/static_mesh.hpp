@@ -55,21 +55,26 @@ namespace graphics {
 
         static_mesh() = default;
 
+		static_mesh(const static_mesh_data &data);
+
         static_mesh(static_mesh&&) = default;
 
         static_mesh& operator=(static_mesh&&) = default;
 
         virtual ~static_mesh() = default;
 
-        resource::handle<graphics::material> material();
+		unsigned int material_count() const;
 
-        void set_material(resource::handle<graphics::material> mat);
+        resource::handle<graphics::material>& material(unsigned int slot);
+
+        void set_material(unsigned int slot, resource::handle<graphics::material> mat);
 
     protected:
         static_mesh(const static_mesh&) = delete;
         static_mesh& operator=(const static_mesh&) = delete;
 
-        resource::handle<graphics::material> material_;
+		 std::vector<resource::handle<graphics::material>> materials_;
+		 std::vector<std::pair<unsigned int, unsigned int>> material_slots_;
     };
 
     using static_mesh_manager = resource::manager<static_mesh>;
