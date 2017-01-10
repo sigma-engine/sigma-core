@@ -41,7 +41,7 @@ namespace opengl {
 
     class post_process_effect_manager : public shader_technique_manager<post_process_effect, graphics::post_process_effect_manager> {
     public:
-        post_process_effect_manager(boost::filesystem::path cache_directory, opengl::texture_manager& textures, opengl::shader_manager& shaders, opengl::static_mesh_manager& meshes);
+        post_process_effect_manager(boost::filesystem::path cache_directory, opengl::shader_manager& shaders, opengl::texture_manager& textures, opengl::cubemap_manager& cubemaps, opengl::static_mesh_manager& meshes);
 
         virtual std::unique_ptr<graphics::post_process_effect> load(graphics::post_process_effect_data data, boost::archive::binary_iarchive& ia) override;
 

@@ -8,9 +8,8 @@ namespace graphics {
             shaders_[shdr.first] = resource::handle<graphics::shader>{ shdr.second };
         for (const auto& txt : data.textures)
             textures_.push_back(std::make_pair(txt.first, resource::handle<graphics::texture>{ txt.second }));
-        // TODO cubemap
-        // for (const auto& cube : data.cubemaps)
-        //     textures_.push_back(std::make_pair(cube.first, resource::handle<cubemap>{ cube.second }));
+        for (const auto& cube : data.cubemaps)
+            cubemaps_.push_back(std::make_pair(cube.first, resource::handle<graphics::cubemap>{ cube.second }));
     }
 
     bool shader_technique::has_shader(graphics::shader_type type) const
@@ -49,6 +48,25 @@ namespace graphics {
         // copy the manager into the invalid handle.
         if (textures_[index].second != txt)
             textures_[index].second = txt;
+    }
+
+    std::size_t shader_technique::cubemap_count() const
+    {
+        return cubemaps_.size();
+    }
+
+    resource::handle<graphics::cubemap>& shader_technique::cubemap(std::size_t index)
+    {
+        return cubemaps_[index].second;
+    }
+
+    void shader_technique::set_cubemap(std::size_t index, resource::handle<graphics::cubemap> cube)
+    {
+        // TODO maybe if the cubemap handle passed in is not valid
+        // and one of the other cubemaps have is valid
+        // copy the manager into the invalid handle.
+        if (cubemaps_[index].second != cube)
+            cubemaps_[index].second = cube;
     }
 }
 }

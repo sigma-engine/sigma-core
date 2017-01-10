@@ -4,6 +4,7 @@
 #include <sigma/graphics/cubemap.hpp>
 #include <sigma/graphics/shader.hpp>
 #include <sigma/graphics/texture.hpp>
+#include <sigma/graphics/cubemap.hpp>
 
 #include <boost/serialization/unordered_map.hpp>
 
@@ -53,11 +54,16 @@ namespace graphics {
 
         void set_texture(std::size_t index, resource::handle<graphics::texture> txt);
 
+        std::size_t cubemap_count() const;
+
+        resource::handle<graphics::cubemap>& cubemap(std::size_t index);
+
+        void set_cubemap(std::size_t index, resource::handle<graphics::cubemap> cube);
+
     protected:
         std::unordered_map<shader_type, resource::handle<graphics::shader>> shaders_;
         std::vector<std::pair<std::string, resource::handle<graphics::texture>>> textures_;
-        // TODO cubemap
-        // std::vector<std::pair<std::string, resource::handle<cubemap>>> cubemaps_;
+        std::vector<std::pair<std::string, resource::handle<graphics::cubemap>>> cubemaps_;
 
     private:
         shader_technique(const shader_technique&) = delete;

@@ -8,6 +8,7 @@
 struct surface {
 #if defined(SIGMA_PBR_DEFFERED_POST_PROCESS_EFFECT)
     vec3 position;
+    float depth;
 #endif // SIGMA_PBR_DEFFERED_POST_PROCESS_EFFECT
     vec3 normal;
     vec3 diffuse;
@@ -37,6 +38,7 @@ surface read_geometry_buffer()
     vec4 view_space_position = inverse(projection_matrix) * vec4(2 * uv - 1, 2 * depth - 1, 1);
 
     s.position = (view_space_position / view_space_position.w).xyz;
+    s.depth = depth;
     s.normal = normal_metalness.xyz;
 
     s.diffuse = diffuse_roughness.rgb;

@@ -76,9 +76,9 @@ namespace opengl {
         standard_uniforms standard_uniform_data_;
         //uniform_buffer<standard_uniforms> standard_uniforms_;
 
+        opengl::shader_manager shaders_;
         opengl::texture_manager textures_;
         opengl::cubemap_manager cubemaps_;
-        opengl::shader_manager shaders_;
         opengl::material_manager materials_;
         opengl::static_mesh_manager static_meshes_;
         opengl::post_process_effect_manager effects_;

@@ -30,6 +30,10 @@ void compile_technique(T& technique, const Json::Value& technique_data)
             const auto& texture_object = *it;
             for (auto it2 = texture_object.begin(); it2 != texture_object.end(); ++it2)
                 technique.textures[it2.key().asString()] = sigma::resource::identifier{ "texture", (*it2).asString() }; // TODO warn if tring to set texture more than once
+        } else if (it.key() == "cubemaps") {
+            const auto& cubemap_object = *it;
+            for (auto it2 = cubemap_object.begin(); it2 != cubemap_object.end(); ++it2)
+                technique.cubemaps[it2.key().asString()] = sigma::resource::identifier{ "cubemap", (*it2).asString() }; // TODO warn if tring to set cubemap more than once
         }
     }
 

@@ -1,3 +1,6 @@
 {
-    "fragment" : "pbr/deffered/gamma_conversion"
+    "fragment" : "pbr/deffered/gamma_conversion",
+    "cubemaps": {
+        "cubemap_texture": "NissiBeach"
+    }
 }

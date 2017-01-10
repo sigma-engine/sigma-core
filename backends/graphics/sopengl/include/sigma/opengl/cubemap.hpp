@@ -12,7 +12,6 @@
 
 namespace sigma {
 namespace opengl {
-
     class cubemap : public graphics::cubemap {
     public:
         cubemap(graphics::cubemap_data data);

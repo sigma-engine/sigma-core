@@ -32,8 +32,8 @@ namespace opengl {
         STATIC_MESH_PTR(mesh_)->render();
     }
 
-    post_process_effect_manager::post_process_effect_manager(boost::filesystem::path cache_directory, opengl::texture_manager& textures, opengl::shader_manager& shaders, opengl::static_mesh_manager& meshes)
-        : shader_technique_manager<post_process_effect, graphics::post_process_effect_manager>(cache_directory, textures, shaders)
+    post_process_effect_manager::post_process_effect_manager(boost::filesystem::path cache_directory, opengl::shader_manager& shaders, opengl::texture_manager& textures, opengl::cubemap_manager& cubemaps, opengl::static_mesh_manager& meshes)
+        : shader_technique_manager<post_process_effect, graphics::post_process_effect_manager>(cache_directory, shaders, textures, cubemaps)
         , meshes_(meshes)
     {
     }

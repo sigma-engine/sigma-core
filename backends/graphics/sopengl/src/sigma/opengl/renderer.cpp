@@ -17,12 +17,12 @@ namespace opengl {
         : graphics::renderer(size)
         , default_fbo_(size)
         , gbuffer_(size)
-		, textures_(boost::filesystem::current_path() / ".." / "data")
-        , cubemaps_(boost::filesystem::current_path() / ".." / "data")
         , shaders_(boost::filesystem::current_path() / ".." / "data")
-        , materials_(boost::filesystem::current_path() / ".." / "data", textures_, shaders_)
+        , textures_(boost::filesystem::current_path() / ".." / "data")
+        , cubemaps_(boost::filesystem::current_path() / ".." / "data")
+        , materials_(boost::filesystem::current_path() / ".." / "data", shaders_, textures_, cubemaps_)
         , static_meshes_(boost::filesystem::current_path() / ".." / "data", materials_)
-        , effects_(boost::filesystem::current_path() / ".." / "data", textures_, shaders_, static_meshes_)
+        , effects_(boost::filesystem::current_path() / ".." / "data", shaders_, textures_, cubemaps_, static_meshes_)
     {
         //standard_uniforms_.set_binding_point(shader_technique::STANDARD_UNIFORM_BLOCK_BINDING);
 
