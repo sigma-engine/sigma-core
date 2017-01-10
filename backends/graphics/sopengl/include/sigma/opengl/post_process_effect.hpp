@@ -17,7 +17,7 @@ namespace opengl {
 
     class post_process_effect : public shader_technique<graphics::post_process_effect> {
     public:
-		post_process_effect(const graphics::post_process_effect_data& data);
+        post_process_effect(const graphics::post_process_effect_data& data);
 
         post_process_effect(post_process_effect&&) = default;
 
@@ -39,15 +39,13 @@ namespace opengl {
         post_process_effect& operator=(const post_process_effect&) = delete;
     };
 
-    class post_process_effect_manager : public graphics::post_process_effect_manager {
+    class post_process_effect_manager : public shader_technique_manager<post_process_effect, graphics::post_process_effect_manager> {
     public:
         post_process_effect_manager(boost::filesystem::path cache_directory, opengl::texture_manager& textures, opengl::shader_manager& shaders, opengl::static_mesh_manager& meshes);
 
         virtual std::unique_ptr<graphics::post_process_effect> load(graphics::post_process_effect_data data, boost::archive::binary_iarchive& ia) override;
 
     private:
-        opengl::texture_manager& textures_;
-        opengl::shader_manager& shaders_;
         opengl::static_mesh_manager& meshes_;
     };
 }

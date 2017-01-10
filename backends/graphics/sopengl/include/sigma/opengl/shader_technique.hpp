@@ -2,9 +2,9 @@
 #define SIGMA_GRAPHICS_OPENGL_SHADER_TECHNIQUE_HPP
 
 #include <sigma/opengl/gl_core_4_2.h>
-#include <sigma/opengl/util.hpp>
 #include <sigma/opengl/shader.hpp>
 #include <sigma/opengl/texture.hpp>
+#include <sigma/opengl/util.hpp>
 
 #include <memory>
 #include <string>
@@ -37,8 +37,8 @@ namespace opengl {
         static constexpr const char* MODEL_VIEW_MATRIX_NAME = "model_view_matrix";
         static constexpr const char* NORMAL_MATRIX_NAME = "normal_matrix";
 
-        shader_technique(const typename T::resource_data &data)
-			: T(data)
+        shader_technique(const typename T::resource_data& data)
+            : T(data)
         {
             GL_CHECK(object_ = glCreateProgram());
         }
@@ -158,6 +158,35 @@ namespace opengl {
     private:
         shader_technique(const shader_technique&) = delete;
         shader_technique& operator=(const shader_technique&) = delete;
+    };
+
+    template <class InternalType, class Cache>
+    class shader_technique_manager : public Cache {
+    public:
+        shader_technique_manager(boost::filesystem::path cache_directory, opengl::texture_manager& textures, opengl::shader_manager& shaders)
+            : Cache(cache_directory)
+            , textures_(textures)
+            , shaders_(shaders)
+        {
+        }
+
+        virtual std::unique_ptr<typename Cache::resource_type> load(typename Cache::resource_data data, boost::archive::binary_iarchive& ia) override
+        {
+            auto tech = std::make_unique<InternalType>(data);
+            for (auto type : graphics::all_shader_types()) {
+                if (tech->has_shader(type))
+                    tech->shader(type).set_manager(&shaders_);
+            }
+            tech->link();
+            for (unsigned int i = 0; i < tech->texture_count(); ++i)
+                tech->texture(i).set_manager(&textures_);
+            // TODO cubemap
+            return std::move(tech);
+        }
+
+    private:
+        opengl::texture_manager& textures_;
+        opengl::shader_manager& shaders_;
     };
 }
 }

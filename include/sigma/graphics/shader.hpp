@@ -14,6 +14,11 @@ namespace graphics {
         geometry
     };
 
+	static constexpr std::array<shader_type,3> all_shader_types()
+    {
+        return { shader_type::vertex, shader_type::fragment, shader_type::geometry };
+    }
+
     struct shader_data {
         shader_type type;
         std::string source;

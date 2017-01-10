@@ -33,29 +33,14 @@ namespace opengl {
     }
 
     post_process_effect_manager::post_process_effect_manager(boost::filesystem::path cache_directory, opengl::texture_manager& textures, opengl::shader_manager& shaders, opengl::static_mesh_manager& meshes)
-        : graphics::post_process_effect_manager(cache_directory)
-        , textures_(textures)
-        , shaders_(shaders)
+        : shader_technique_manager<post_process_effect, graphics::post_process_effect_manager>(cache_directory, textures, shaders)
         , meshes_(meshes)
     {
     }
 
     std::unique_ptr<graphics::post_process_effect> post_process_effect_manager::load(graphics::post_process_effect_data data, boost::archive::binary_iarchive& ia)
     {
-        // TODO copy and pasted
-
-        auto effect = std::make_unique<opengl::post_process_effect>(data);
-
-        // TODO add other shader types here
-        for (auto type : { graphics::shader_type::vertex, graphics::shader_type::fragment, graphics::shader_type::geometry }) {
-            if (effect->has_shader(type))
-                effect->shader(type).set_manager(&shaders_);
-        }
-        effect->link();
-        for (unsigned int i = 0; i < effect->texture_count(); ++i)
-            effect->texture(i).set_manager(&textures_);
-        // TODO cubemap
-
+        auto effect = shader_technique_manager<post_process_effect, graphics::post_process_effect_manager>::load(std::move(data), ia);
         effect->mesh().set_manager(&meshes_);
         return std::move(effect);
     }
