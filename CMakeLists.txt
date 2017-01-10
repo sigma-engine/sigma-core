@@ -39,6 +39,7 @@ set(LIBRARY_SOURCES
     src/sigma/graphics/static_mesh_instance.cpp
     src/sigma/resource/identifier.cpp
     src/sigma/graphics/material.cpp
+    src/sigma/graphics/shader_technique.cpp
     src/sigma/graphics/post_process_effect.cpp
     src/sigma/graphics/static_mesh.cpp
 
@@ -58,6 +59,7 @@ set(LIBRARY_HEADERS
     include/sigma/graphics/cubemap.hpp
     include/sigma/graphics/directional_light.hpp
     include/sigma/graphics/material.hpp
+    include/sigma/graphics/shader_technique.hpp
     include/sigma/graphics/point_light.hpp
     include/sigma/graphics/post_process_effect.hpp
     include/sigma/graphics/renderer.hpp
