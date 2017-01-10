@@ -109,8 +109,8 @@ namespace convert {
             std::string name = get_name(scene->mMeshes[i]);
             if (!scene->mMeshes[i]->HasBones())
                 static_mesh_names_.insert(name);
-			else
-				static_mesh_names_.erase(name);
+            else
+                static_mesh_names_.erase(name);
         }
 
         // TODO recursive
@@ -173,11 +173,9 @@ namespace convert {
                     submesh_triangles[j][k] = f.mIndices[k] + static_cast<unsigned int>(mesh.vertices.size());
             }
 
-			std::string material_name = get_name(aiScene->mMaterials[aimesh->mMaterialIndex]);
-			if (!boost::starts_with(material_name, "material://"))
-				material_name = "material://" + material_name;
-			// TODO warn if material slot has been used.
-			mesh.materials[material_name] = std::make_pair(mesh.triangles.size(), aimesh->mNumFaces);
+            std::string material_name = get_name(aiScene->mMaterials[aimesh->mMaterialIndex]);
+            // TODO warn if material slot has been used.
+            mesh.materials[resource::identifier{ "material", material_name }.name()] = std::make_pair(mesh.triangles.size(), aimesh->mNumFaces);
 
             mesh.vertices.reserve(mesh.vertices.size() + aimesh->mNumVertices);
             mesh.vertices.insert(mesh.vertices.end(), submesh_vertices.begin(), submesh_vertices.end());

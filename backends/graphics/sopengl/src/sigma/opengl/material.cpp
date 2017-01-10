@@ -5,8 +5,8 @@
 
 namespace sigma {
 namespace opengl {
-    material::material(const graphics::material_data &data)
-        : graphics::material(data)
+    material::material(const graphics::material_data& data)
+        : shader_technique<graphics::material>(data)
     {
     }
 
@@ -27,11 +27,16 @@ namespace opengl {
     std::unique_ptr<graphics::material> material_manager::load(graphics::material_data data, boost::archive::binary_iarchive& ia)
     {
         auto mat = std::make_unique<opengl::material>(data);
-        for (const auto& shdr : data.shaders)
-            mat->attach(shaders_.get(shdr.second));
+
+		// TODO add other shader types here
+		for (auto type : { graphics::shader_type::vertex,graphics::shader_type::fragment,graphics::shader_type::geometry }) {
+			if(mat->has_shader(type))
+				mat->shader(type).set_manager(&shaders_);
+		}
         mat->link();
-        for (const auto& txt : data.textures)
-            mat->set_texture(txt.first, textures_.get(txt.second));
+        for (unsigned int i = 0; i < mat->texture_count(); ++i)
+            mat->texture(i).set_manager(&textures_);
+        // TODO cubemap
         return std::move(mat);
     }
 }

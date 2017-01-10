@@ -15,9 +15,9 @@ namespace sigma {
 namespace opengl {
     struct instance_matrices;
 
-    class post_process_effect : public graphics::post_process_effect, public shader_technique {
+    class post_process_effect : public shader_technique<graphics::post_process_effect> {
     public:
-        post_process_effect(resource::handle<graphics::static_mesh> mesh);
+		post_process_effect(const graphics::post_process_effect_data& data);
 
         post_process_effect(post_process_effect&&) = default;
 
@@ -28,9 +28,6 @@ namespace opengl {
         void bind();
 
         void apply();
-
-        // TODO make private
-        resource::handle<graphics::static_mesh> mesh_;
 
     private:
         GLint in_position_location_ = -1;

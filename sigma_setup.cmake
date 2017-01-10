@@ -42,6 +42,7 @@ function(generate_type_regex_and_glob name)
 endfunction()
 
 generate_type_regex_and_glob(TEXTURE png jpeg jpg jpeg jpe jif jfif jfi tiff tif)
+generate_type_regex_and_glob(CUBEMAP cub)
 generate_type_regex_and_glob(SHADER vert frag tesc geom comp)
 generate_type_regex_and_glob(MATERIAL mat eff)
 generate_type_regex_and_glob(MODEL 3ds blend dae fbx ifc-step ase dxf hmp md2 md3 md5 mdc mdl nff ply stl x obj opengex smd lwo lxo lws ter ac3d ms3d cob q3bsp xgl csm bvh b3d ndo q3d assbin gltf 3mf)
@@ -100,6 +101,27 @@ function(add_resources target)
                 SOURCES "${texture}"
             )
             set(TIME_STAMPS ${TIME_STAMPS} ${texture_time_stamp})
+        endforeach()
+
+        set(cubemap_files ${resource_files})
+        list(FILTER cubemap_files INCLUDE REGEX ${SIGMA_ENGINE_CUBEMAP_REGEX})
+        foreach(cubemap ${cubemap_files})
+            file(RELATIVE_PATH cubemap_time_stamp ${package_PACKAGE_ROOT} ${cubemap})
+            set(cubemap_time_stamp "${CMAKE_BINARY_DIR}/data/${cubemap_time_stamp}.stamp")
+
+            get_filename_component(directory ${cubemap_time_stamp} DIRECTORY)
+            file(MAKE_DIRECTORY ${directory})
+
+            add_custom_command(
+                OUTPUT "${cubemap_time_stamp}"
+                COMMAND ${TEXTURE_COMPILER} ARGS --output="${CMAKE_BINARY_DIR}/data" "${cubemap}"
+                COMMAND ${CMAKE_COMMAND} ARGS -E touch "${cubemap_time_stamp}"
+                MAIN_DEPENDENCY "${cubemap}"
+                WORKING_DIRECTORY "${package_PACKAGE_ROOT}"
+                COMMENT ""
+                SOURCES "${cubemap}"
+            )
+            set(TIME_STAMPS ${TIME_STAMPS} ${cubemap_time_stamp})
         endforeach()
 
         set(shader_files ${resource_files})

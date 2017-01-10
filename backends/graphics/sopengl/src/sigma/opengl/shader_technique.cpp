@@ -13,61 +13,8 @@
 
 namespace sigma {
 namespace opengl {
-    shader_technique::shader_technique()
-    {
-        GL_CHECK(object_ = glCreateProgram());
-    }
 
-    shader_technique::~shader_technique()
-    {
-        glDeleteProgram(object_);
-    }
-
-    void shader_technique::attach(resource::handle<graphics::shader> shdr)
-    {
-        assert(linked_ == GL_FALSE && "Can not add shaders to already linked programs");
-        GL_CHECK(glAttachShader(object_, SHADER_CONST_PTR(shdr)->get_object()));
-        shaders_.push_back(shdr);
-    }
-
-    void shader_technique::link()
-    {
-        assert(linked_ == GL_FALSE && "Program already linked");
-        GL_CHECK(glLinkProgram(object_));
-
-        glGetProgramiv(object_, GL_LINK_STATUS, &linked_);
-        if (linked_ == GL_FALSE) {
-            std::cerr << "shader program: link faild" << std::endl;
-            // TODO get the link message.
-            std::abort();
-        }
-
-        GL_CHECK(glUseProgram(object_));
-        // GL_CHECK(standard_uniform_block_index_ = glGetUniformBlockIndex(object_, STANDARD_UNIFORM_BLOCK_NAME));
-        // GL_CHECK(glUniformBlockBinding(object_, standard_uniform_block_index_, STANDARD_UNIFORM_BLOCK_BINDING));
-
-        GL_CHECK(projection_matrix_location_ = glGetUniformLocation(object_, PROJECTION_MATRIX_NAME));
-        GL_CHECK(view_matrix_location_ = glGetUniformLocation(object_, VIEW_MATRIX_NAME));
-        GL_CHECK(z_near_location_ = glGetUniformLocation(object_, Z_NEAR_NAME));
-        GL_CHECK(z_far_location_ = glGetUniformLocation(object_, Z_FAR_NAME));
-        GL_CHECK(view_port_size_location_ = glGetUniformLocation(object_, VIEW_PORT_SIZE_NAME));
-        GL_CHECK(time_location_ = glGetUniformLocation(object_, TIME_NAME));
-
-        GL_CHECK(model_matrix_location_ = glGetUniformLocation(object_, MODEL_MATRIX_NAME));
-        GL_CHECK(model_view_matrix_location_ = glGetUniformLocation(object_, MODEL_VIEW_MATRIX_NAME));
-        GL_CHECK(normal_matrix_location_ = glGetUniformLocation(object_, NORMAL_MATRIX_NAME));
-
-        GL_CHECK(in_image_location_ = glGetUniformLocation(object_, geometry_buffer::IMAGE_INPUT_NAME));
-    }
-
-    GLint shader_technique::get_uniform_location(const char* name)
-    {
-        GL_CHECK(glUseProgram(object_));
-        GL_CHECK(GLint loc = glGetUniformLocation(object_, name));
-        return loc;
-    }
-
-    void shader_technique::set_texture(std::string name, resource::handle<graphics::texture> txt)
+    /*void shader_technique::set_texture(std::string name, resource::handle<graphics::texture> txt)
     {
         auto it = texture_map_.find(name);
         if (it == texture_map_.end()) {
@@ -81,40 +28,6 @@ namespace opengl {
             return;
         }
         textures_[texture_map_[name]].second = txt;
-    }
-
-	void shader_technique::set_standard_uniforms(standard_uniforms* standard)
-	{
-		GL_CHECK(glUniformMatrix4fv(projection_matrix_location_, 1, GL_FALSE, glm::value_ptr(standard->projection_matrix)));
-		GL_CHECK(glUniformMatrix4fv(view_matrix_location_, 1, GL_FALSE, glm::value_ptr(standard->view_matrix)));
-		GL_CHECK(glUniform1f(z_near_location_, standard->z_near));
-		GL_CHECK(glUniform1f(z_far_location_, standard->z_far));
-		GL_CHECK(glUniform2fv(view_port_size_location_, 1, glm::value_ptr(standard->view_port_size)));
-	}
-
-    void shader_technique::set_instance_matrices(instance_matrices* matrices)
-    {
-        GL_CHECK(glUniformMatrix4fv(model_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->model_matrix)));
-        GL_CHECK(glUniformMatrix4fv(model_view_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->model_view_matrix)));
-        GL_CHECK(glUniformMatrix3fv(normal_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->normal_matrix)));
-    }
-
-    void shader_technique::bind()
-    {
-        GL_CHECK(glUseProgram(object_));
-        GL_CHECK(glUniform1i(in_image_location_, geometry_buffer::INPUT_IMAGE_LOCATION));
-    }
-
-    void shader_technique::bind(texture_unit first_texture_unit)
-    {
-        bind();
-        auto size = textures_.size();
-		auto start = GLenum(first_texture_unit) - GL_TEXTURE0;
-        for (uint32_t i = 0; i < size; ++i) {
-            GL_CHECK(glActiveTexture(GLenum(first_texture_unit) + i));
-			GL_CHECK(glUniform1i(textures_[i].first, i+start));
-            TEXTURE_PTR(textures_[i].second)->bind();
-        }
-    }
+    }*/
 }
 }

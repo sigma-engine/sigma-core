@@ -12,11 +12,11 @@
 
 namespace sigma {
 namespace opengl {
-    class material : public graphics::material, public shader_technique {
+    class material : public shader_technique<graphics::material> {
     public:
         material() = default;
 
-        material(const graphics::material_data &data);
+        material(const graphics::material_data& data);
 
         material(material&&) = default;
 

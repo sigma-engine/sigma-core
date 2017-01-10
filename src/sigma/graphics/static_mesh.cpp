@@ -11,17 +11,17 @@ namespace graphics {
 		}
 	}
 
-	unsigned int static_mesh::material_count() const 
+	std::size_t static_mesh::material_count() const
 	{
-		return unsigned int(materials_.size());
+		return materials_.size();
 	}
 
-    resource::handle<graphics::material>& static_mesh::material(unsigned int slot)
+    resource::handle<graphics::material>& static_mesh::material(std::size_t slot)
     {
         return materials_[slot];
     }
 
-    void static_mesh::set_material(unsigned int slot, resource::handle<graphics::material> mat)
+    void static_mesh::set_material(std::size_t slot, resource::handle<graphics::material> mat)
     {
 		// TODO maybe if the material handle passed in is not valid
 		// and one of the other materials have is valid 

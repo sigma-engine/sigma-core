@@ -8,13 +8,14 @@
 #include <sigma/graphics/material.hpp>
 #include <sigma/graphics/point_light.hpp>
 #include <sigma/graphics/post_process_effect.hpp>
+#include <sigma/graphics/scene.hpp>
 #include <sigma/graphics/shader.hpp>
 #include <sigma/graphics/spot_light.hpp>
 #include <sigma/graphics/static_mesh.hpp>
 #include <sigma/graphics/static_mesh_instance.hpp>
 #include <sigma/graphics/texture.hpp>
 #include <sigma/transform.hpp>
-#include <sigma/graphics/scene.hpp>
+#include <sigma/graphics/cubemap.hpp>
 
 #include <glm/mat4x4.hpp>
 #include <glm/vec2.hpp>
@@ -54,6 +55,8 @@ namespace graphics {
         virtual ~renderer();
 
         virtual texture_manager& textures() = 0;
+
+        virtual cubemap_manager& cubemaps() = 0;
 
         virtual shader_manager& shaders() = 0;
 

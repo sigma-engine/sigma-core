@@ -21,30 +21,19 @@ void compile_technique(T& technique, const Json::Value& technique_data)
     for (auto it = technique_data.begin(); it != technique_data.end(); ++it) {
         const auto& value = *it;
         if (it.key() == "vertex") {
-            auto vertex_shader = value.asString();
-            if (!boost::starts_with(vertex_shader, "vertex://"))
-                vertex_shader = "vertex://" + vertex_shader;
-            technique.shaders[sigma::graphics::shader_type::vertex] = vertex_shader; // TODO warn if tring to set shader more that once
+            technique.shaders[sigma::graphics::shader_type::vertex] = sigma::resource::identifier{ "vertex", value.asString() }; // TODO warn if tring to set shader more that once
         } else if (it.key() == "fragment") {
-            auto fragment_shader = value.asString();
-            if (!boost::starts_with(fragment_shader, "fragment://"))
-                fragment_shader = "fragment://" + fragment_shader;
-            technique.shaders[sigma::graphics::shader_type::fragment] = fragment_shader; // TODO warn if tring to set shader more that once
+            technique.shaders[sigma::graphics::shader_type::fragment] = sigma::resource::identifier{ "fragment", value.asString() }; // TODO warn if tring to set shader more that once
         } else if (it.key() == "geometry") {
-            auto geometry_shader = value.asString();
-            if (!boost::starts_with(geometry_shader, "geometry://"))
-                geometry_shader = "geometry://" + geometry_shader;
-            technique.shaders[sigma::graphics::shader_type::geometry] = geometry_shader; // TODO warn if tring to set shader more that once
+            technique.shaders[sigma::graphics::shader_type::geometry] = sigma::resource::identifier{ "geometry", value.asString() }; // TODO warn if tring to set shader more that once
         } else if (it.key() == "textures") {
             const auto& texture_object = *it;
-            for (auto it2 = texture_object.begin(); it2 != texture_object.end(); ++it2) {
-                auto texture_source = (*it2).asString();
-                if (!boost::starts_with(texture_source, "texture://"))
-                    texture_source = "texture://" + texture_source;
-                technique.textures[it2.key().asString()] = texture_source; // TODO warn if tring to set texture more than once
-            }
+            for (auto it2 = texture_object.begin(); it2 != texture_object.end(); ++it2)
+                technique.textures[it2.key().asString()] = sigma::resource::identifier{ "texture", (*it2).asString() }; // TODO warn if tring to set texture more than once
         }
     }
+
+    // TODO check for errors like no vertex or fragment shader
 }
 
 int main(int argc, char const* argv[])
@@ -103,14 +92,8 @@ int main(int argc, char const* argv[])
                     std::cout << "Compiling post process effect: " << file_path << std::endl;
                     sigma::graphics::post_process_effect_data effect;
                     compile_technique(effect, technique_data);
-                    if (technique_data.isMember("static_mesh")) {
-                        auto mesh_source = technique_data["static_mesh"].asString();
-                        if (!boost::starts_with(mesh_source, "static_mesh://"))
-                            mesh_source = "static_mesh://" + mesh_source;
-                        effect.mesh = mesh_source;
-                    }
-
-                    // TODO check for errors like no vertex or fragment shader
+                    if (technique_data.isMember("static_mesh"))
+                        effect.mesh = sigma::resource::identifier{ "static_mesh", technique_data["static_mesh"].asString() };
 
                     sigma::resource::development_identifier rid("post_process_effect", file_path);
                     auto final_path = outputdir / std::to_string(rid.value());

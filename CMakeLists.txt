@@ -39,6 +39,7 @@ set(LIBRARY_SOURCES
     src/sigma/graphics/static_mesh_instance.cpp
     src/sigma/resource/identifier.cpp
     src/sigma/graphics/material.cpp
+    src/sigma/graphics/post_process_effect.cpp
     src/sigma/graphics/static_mesh.cpp
 
     src/sigma/util/filesystem.cpp
@@ -54,17 +55,18 @@ set(LIBRARY_HEADERS
     include/sigma/trackball_controller.hpp
     include/sigma/transform.hpp
 
+    include/sigma/graphics/cubemap.hpp
     include/sigma/graphics/directional_light.hpp
     include/sigma/graphics/material.hpp
     include/sigma/graphics/point_light.hpp
     include/sigma/graphics/post_process_effect.hpp
     include/sigma/graphics/renderer.hpp
+    include/sigma/graphics/scene.hpp
     include/sigma/graphics/shader.hpp
+    include/sigma/graphics/static_mesh.hpp
     include/sigma/graphics/spot_light.hpp
     include/sigma/graphics/static_mesh_instance.hpp
-    include/sigma/graphics/static_mesh.hpp
     include/sigma/graphics/texture.hpp
-    include/sigma/graphics/scene.hpp
 
     include/sigma/reflect/reflect.hpp
 

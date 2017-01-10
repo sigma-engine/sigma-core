@@ -7,6 +7,7 @@ set(SOURCES
     src/sigma/opengl/gl_core_4_2.c
     src/sigma/opengl/renderer.cpp
     src/sigma/opengl/texture.cpp
+    src/sigma/opengl/cubemap.cpp
     src/sigma/opengl/shader.cpp
     src/sigma/opengl/material.cpp
     src/sigma/opengl/static_mesh.cpp
@@ -15,6 +16,7 @@ set(SOURCES
     src/sigma/opengl/shader_technique.cpp
     src/sigma/opengl/post_process_effect.cpp
     src/sigma/opengl/scene.cpp
+
 
 #    src/sigma/opengl/texture_manager.cpp
 #    src/sigma/opengl/shader_manager.cpp
@@ -30,6 +32,7 @@ set(HEADERS
     include/sigma/opengl/gl_core_4_2.h
     include/sigma/opengl/renderer.hpp
     include/sigma/opengl/texture.hpp
+    include/sigma/opengl/cubemap.hpp
     include/sigma/opengl/shader.hpp
     include/sigma/opengl/material.hpp
     include/sigma/opengl/static_mesh.hpp

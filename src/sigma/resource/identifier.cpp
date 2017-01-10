@@ -36,9 +36,7 @@ namespace resource {
     {
     }
 
-    development_identifier::development_identifier(
-        std::string type, boost::filesystem::path path,
-        boost::filesystem::path root_directroy)
+    development_identifier::development_identifier(std::string type, boost::filesystem::path path, boost::filesystem::path root_directroy)
     {
         // TODO error if path is not in root_directroy
         path = boost::filesystem::absolute(path, root_directroy);
@@ -46,13 +44,16 @@ namespace resource {
         auto resource_path = filesystem::make_relative(root_directroy, path);
         name_ = resource_path.string();
         boost::algorithm::replace_all(name_, "\\", "/");
+
+        auto s = boost::find_first(name_, "://").end();
+        if (s != name_.end())
+            name_ = std::string(s, name_.end());
+
         name_ = type + "://" + name_;
         value_ = util::compile_time_hash(name_.c_str());
     }
 
-    development_identifier::development_identifier(
-        std::string type, boost::filesystem::path path, std::string sub_name,
-        boost::filesystem::path root_directroy)
+    development_identifier::development_identifier(std::string type, boost::filesystem::path path, std::string sub_name, boost::filesystem::path root_directroy)
     {
         // TODO error if path is not in root_directroy
         path = boost::filesystem::absolute(path, root_directroy);
@@ -60,6 +61,11 @@ namespace resource {
         auto resource_path = filesystem::make_relative(root_directroy, path);
         name_ = resource_path.string() + ":" + sub_name;
         boost::algorithm::replace_all(name_, "\\", "/");
+
+        auto s = boost::find_first(name_, "://").end();
+        if (s != name_.end())
+            name_ = std::string(s, name_.end());
+
         name_ = type + "://" + name_;
         value_ = util::compile_time_hash(name_.c_str());
     }
@@ -81,14 +87,14 @@ namespace resource {
     std::ostream& operator<<(std::ostream& os, const constexpr_identifier& id)
     {
         os << "{"
-           << "\"value:\"" << id.value() << "}";
+           << "value: " << id.value() << "}";
         return os;
     }
 
     std::ostream& operator<<(std::ostream& os, const development_identifier& id)
     {
         os << "{"
-           << "\"value:\"" << id.value() << ",\"name:\"" << id.name() << "}";
+           << "value: " << id.value() << ", name: " << id.name() << "}";
         return os;
     }
 }

@@ -4,6 +4,7 @@
 #include <sigma/graphics/renderer.hpp>
 
 #include <sigma/opengl/config.hpp>
+#include <sigma/opengl/cubemap.hpp>
 #include <sigma/opengl/frame_buffer.hpp>
 #include <sigma/opengl/geometry_buffer.hpp>
 #include <sigma/opengl/material.hpp>
@@ -33,7 +34,7 @@ namespace opengl {
 
     struct mesh_bucket {
         resource::handle<graphics::static_mesh> active_mesh;
-		unsigned int material_slot;
+        unsigned int material_slot;
         std::vector<mesh_instance_data> instances;
     };
 
@@ -49,6 +50,8 @@ namespace opengl {
         virtual ~renderer();
 
         virtual graphics::texture_manager& textures() override;
+
+        virtual graphics::cubemap_manager& cubemaps() override;
 
         virtual graphics::shader_manager& shaders() override;
 
@@ -74,6 +77,7 @@ namespace opengl {
         //uniform_buffer<standard_uniforms> standard_uniforms_;
 
         opengl::texture_manager textures_;
+        opengl::cubemap_manager cubemaps_;
         opengl::shader_manager shaders_;
         opengl::material_manager materials_;
         opengl::static_mesh_manager static_meshes_;

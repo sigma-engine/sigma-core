@@ -2,6 +2,7 @@
 #define SIGMA_GRAPHICS_OPENGL_SHADER_TECHNIQUE_HPP
 
 #include <sigma/opengl/gl_core_4_2.h>
+#include <sigma/opengl/util.hpp>
 #include <sigma/opengl/shader.hpp>
 #include <sigma/opengl/texture.hpp>
 
@@ -14,10 +15,13 @@ namespace sigma {
 namespace opengl {
     class shader;
     class texture;
+    class cubemap;
     enum class texture_unit : GLenum;
     struct instance_matrices;
     struct standard_uniforms;
-    class shader_technique {
+
+    template <class T>
+    class shader_technique : public T {
     public:
         // static constexpr const char* STANDARD_UNIFORM_BLOCK_NAME = "standard_uniforms";
         // static constexpr const int STANDARD_UNIFORM_BLOCK_BINDING = 0;
@@ -33,33 +37,106 @@ namespace opengl {
         static constexpr const char* MODEL_VIEW_MATRIX_NAME = "model_view_matrix";
         static constexpr const char* NORMAL_MATRIX_NAME = "normal_matrix";
 
-        shader_technique();
+        shader_technique(const typename T::resource_data &data)
+			: T(data)
+        {
+            GL_CHECK(object_ = glCreateProgram());
+        }
 
         shader_technique(shader_technique&&) = default;
 
         shader_technique& operator=(shader_technique&&) = default;
 
-        ~shader_technique();
+        ~shader_technique()
+        {
+            glDeleteProgram(object_);
+        }
 
-        void attach(resource::handle<graphics::shader> shdr);
+        // void attach(resource::handle<graphics::shader> shdr)
+        // {
+        //     assert(linked_ == GL_FALSE && "Can not add shaders to already linked programs");
+        //     GL_CHECK(glAttachShader(object_, SHADER_CONST_PTR(shdr)->get_object()));
+        //     shaders_.push_back(shdr);
+        // }
 
-        void link();
+        void link()
+        {
+            assert(linked_ == GL_FALSE && "Program already linked");
 
-        GLint get_uniform_location(const char* name);
+            for (const auto& shdr : shaders_)
+                GL_CHECK(glAttachShader(object_, SHADER_CONST_PTR(shdr.second)->get_object()));
 
-        void set_texture(std::string name, resource::handle<graphics::texture> txt);
+            GL_CHECK(glLinkProgram(object_));
 
-		void set_standard_uniforms(standard_uniforms* standard);
+            glGetProgramiv(object_, GL_LINK_STATUS, &linked_);
+            if (linked_ == GL_FALSE) {
+                std::cerr << "shader program: link faild" << std::endl;
+                // TODO get the link message.
+                std::abort();
+            }
 
-        void set_instance_matrices(instance_matrices* matrices);
+            GL_CHECK(glUseProgram(object_));
+            // GL_CHECK(standard_uniform_block_index_ = glGetUniformBlockIndex(object_, STANDARD_UNIFORM_BLOCK_NAME));
+            // GL_CHECK(glUniformBlockBinding(object_, standard_uniform_block_index_, STANDARD_UNIFORM_BLOCK_BINDING));
 
-        void bind();
+            GL_CHECK(projection_matrix_location_ = glGetUniformLocation(object_, PROJECTION_MATRIX_NAME));
+            GL_CHECK(view_matrix_location_ = glGetUniformLocation(object_, VIEW_MATRIX_NAME));
+            GL_CHECK(z_near_location_ = glGetUniformLocation(object_, Z_NEAR_NAME));
+            GL_CHECK(z_far_location_ = glGetUniformLocation(object_, Z_FAR_NAME));
+            GL_CHECK(view_port_size_location_ = glGetUniformLocation(object_, VIEW_PORT_SIZE_NAME));
+            GL_CHECK(time_location_ = glGetUniformLocation(object_, TIME_NAME));
 
-        void bind(texture_unit first_texture_unit);
+            GL_CHECK(model_matrix_location_ = glGetUniformLocation(object_, MODEL_MATRIX_NAME));
+            GL_CHECK(model_view_matrix_location_ = glGetUniformLocation(object_, MODEL_VIEW_MATRIX_NAME));
+            GL_CHECK(normal_matrix_location_ = glGetUniformLocation(object_, NORMAL_MATRIX_NAME));
 
-        GLuint object_;
+            GL_CHECK(in_image_location_ = glGetUniformLocation(object_, geometry_buffer::IMAGE_INPUT_NAME));
+
+            texture_locations_.resize(textures_.size());
+            for (std::size_t i = 0; i < texture_locations_.size(); ++i) {
+                GL_CHECK(texture_locations_[i] = glGetUniformLocation(object_, textures_[i].first.c_str()));
+            }
+        }
+
+        //void set_texture(std::string name, resource::handle<graphics::texture> txt);
+
+        void set_standard_uniforms(standard_uniforms* standard)
+        {
+            GL_CHECK(glUniformMatrix4fv(projection_matrix_location_, 1, GL_FALSE, glm::value_ptr(standard->projection_matrix)));
+            GL_CHECK(glUniformMatrix4fv(view_matrix_location_, 1, GL_FALSE, glm::value_ptr(standard->view_matrix)));
+            GL_CHECK(glUniform1f(z_near_location_, standard->z_near));
+            GL_CHECK(glUniform1f(z_far_location_, standard->z_far));
+            GL_CHECK(glUniform2fv(view_port_size_location_, 1, glm::value_ptr(standard->view_port_size)));
+        }
+
+        void set_instance_matrices(instance_matrices* matrices)
+        {
+            GL_CHECK(glUniformMatrix4fv(model_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->model_matrix)));
+            GL_CHECK(glUniformMatrix4fv(model_view_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->model_view_matrix)));
+            GL_CHECK(glUniformMatrix3fv(normal_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->normal_matrix)));
+        }
+
+        void bind()
+        {
+            GL_CHECK(glUseProgram(object_));
+            GL_CHECK(glUniform1i(in_image_location_, geometry_buffer::INPUT_IMAGE_LOCATION));
+        }
+
+        void bind(texture_unit first_texture_unit)
+        {
+            bind();
+            auto start = GLenum(first_texture_unit) - GL_TEXTURE0;
+            for (std::size_t i = 0; i < textures_.size(); ++i) {
+                GL_CHECK(glActiveTexture(GLenum(first_texture_unit) + i));
+                TEXTURE_PTR(textures_[i].second)->bind();
+                GL_CHECK(glUniform1i(texture_locations_[i], i + start));
+            }
+        }
 
     protected:
+        GLuint object_;
+        GLint linked_ = GL_FALSE;
+
         // GLint standard_uniform_block_index_ = -1;
 
         GLint projection_matrix_location_ = -1;
@@ -73,12 +150,9 @@ namespace opengl {
         GLint model_view_matrix_location_ = -1;
         GLint normal_matrix_location_ = -1;
 
-        GLint linked_ = GL_FALSE;
-        std::vector<resource::handle<graphics::shader>> shaders_;
-        std::unordered_map<std::string, std::size_t> texture_map_;
-        std::vector<std::pair<GLint, resource::handle<graphics::texture>>> textures_;
+        std::vector<GLint> texture_locations_;
+        // std::vector<GLint> cubemap_locations_;
 
-    private:
         GLint in_image_location_ = -1;
 
     private:
