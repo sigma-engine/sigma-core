@@ -40,7 +40,8 @@ add_library(sopengl SHARED ${SOURCES} ${HEADERS})
 
 target_include_directories(sopengl PUBLIC include resources PRIVATE ${OPENGL_INCLUDE_DIR})
 
-target_compile_definitions(sopengl PRIVATE -DSIGMA_ENGINE_OPENGL_EXPORT)
+target_compile_definitions(sopengl PUBLIC -DSIGMA_SOPENGL_SHARED)
+target_compile_options(sopengl PRIVATE -DSIGMA_SOPENGL_EXPORT)
 
 target_link_libraries(sopengl sigma-core ${OPENGL_LIBRARIES})
 

@@ -1,8 +1,8 @@
-#include <sigma/context.hpp>
-#include <sigma/game.hpp>
-#include <sigma/graphics/renderer.hpp>
-#include <sigma/trackball_controller.hpp>
+#include <simple_game.hpp>
+
 #include <sigma/window.hpp>
+#include <sigma/trackball_controller.hpp>
+#include <sigma/opengl/renderer.hpp>
 
 #include <SDL.h>
 
@@ -14,14 +14,10 @@ using namespace std::chrono_literals;
 
 int main(int argc, char* argv[])
 {
-    sigma::context ctx;
     sigma::window window(glm::ivec2{ 1920, 1080 });
 
-    ctx.load_plugin("sopengl");
-    auto renderer = ctx.create_renderer("sigma::opengl::renderer", window.size());
-
-    ctx.load_plugin("simple-game");
-    auto game = ctx.create_game("simple_game", renderer);
+	auto renderer = std::make_unique<sigma::opengl::renderer>(window.size());
+	auto game = std::make_unique<simple_game>(renderer.get());
 
     sigma::graphics::view_port viewport{
         game->entities,

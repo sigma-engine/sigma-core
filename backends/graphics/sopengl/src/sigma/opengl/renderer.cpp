@@ -444,5 +444,3 @@ namespace opengl {
 	}*/
 }
 }
-
-SIGMA_EXPORT_RENDERER_CLASSES(sigma::opengl::renderer)

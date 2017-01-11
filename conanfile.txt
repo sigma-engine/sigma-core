@@ -12,7 +12,6 @@ SDL2/2.0.5@lasote/stable
 
 [options]
 Boost:fPIC=True
-Boost:shared=True
 jsoncpp:fPIC=True
 
 [generators]

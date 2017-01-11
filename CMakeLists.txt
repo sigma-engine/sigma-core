@@ -28,7 +28,6 @@ foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
 endforeach(OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES)
 
 set(LIBRARY_SOURCES
-    src/sigma/context.cpp
     src/sigma/entity_manager.cpp
     src/sigma/entity.cpp
     src/sigma/game.cpp
@@ -49,7 +48,6 @@ set(LIBRARY_SOURCES
 set(LIBRARY_HEADERS
     include/sigma/component.hpp
     include/sigma/config.hpp
-    include/sigma/context.hpp
     include/sigma/entity_manager.hpp
     include/sigma/entity.hpp
     include/sigma/game.hpp
@@ -92,7 +90,6 @@ add_subdirectory(tools/scmodel)
 add_subdirectory(tools/screflect)
 add_subdirectory(tools/scshader)
 add_subdirectory(tools/sctexture)
-add_subdirectory(tools/seditor)
 add_subdirectory(backends/graphics/sopengl)
 
 ## add_subdirectory(tests)
@@ -108,5 +105,4 @@ set(MAIN_HEADERS
 )
 
 add_executable(sigma-runner ${MAIN_SOURCES} ${MAIN_HEADERS})
-target_link_libraries(sigma-runner PUBLIC sigma-core)
-add_dependencies(sigma-runner simple-game sopengl)
+target_link_libraries(sigma-runner sigma-core sopengl simple-game)

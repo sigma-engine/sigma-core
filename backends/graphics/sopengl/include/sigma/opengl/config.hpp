@@ -1,18 +1,20 @@
 #ifndef SIGMA_ENGINE_OPENGL_CONFIG_HPP
 #define SIGMA_ENGINE_OPENGL_CONFIG_HPP
 
-#if defined _WIN32 || defined __CYGWIN__
-#if defined(SIGMA_ENGINE_OPENGL_EXPORT)
-#define SIGMA_ENGINE_OPENGL_API __declspec(dllexport)
+// clang-format off
+#if defined(SIGMA_SOPENGL_SHARED)
+    #if defined(_WIN32)
+        #if defined(SIGMA_SOPENGL_EXPORT)
+            #define SIGMA_SOPENGL_API __declspec(dllexport)
+        #else
+            #define SIGMA_SOPENGL_API __declspec(dllimport)
+        #endif // SIGMA_SOPENGL_EXPORT
+    #elif __GNUC__ >= 4
+        #define SIGMA_SOPENGL_API __attribute__((visibility("default")))
+    #endif
 #else
-#define SIGMA_ENGINE_OPENGL_API __declspec(dllimport)
-#endif
-#else
-#if __GNUC__ >= 4
-#define SIGMA_ENGINE_OPENGL_API __attribute__((visibility("default")))
-#else
-#define SIGMA_ENGINE_OPENGL_API
-#endif
-#endif //_WIN32
+    #define SIGMA_SOPENGL_API
+#endif // SIGMA_SHARED
+// clang-format on
 
 #endif // SIGMA_ENGINE_OPENGL_CONFIG_HPP

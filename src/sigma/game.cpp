@@ -1,6 +1,5 @@
 #include <sigma/game.hpp>
 
-#include <sigma/context.hpp>
 #include <sigma/util/json_conversion.hpp>
 
 #include <json/json.h>

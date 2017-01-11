@@ -43,7 +43,7 @@ namespace opengl {
         std::vector<mesh_bucket> mesh_buckets;
     };
 
-    class renderer : public graphics::renderer {
+    class SIGMA_SOPENGL_API renderer : public graphics::renderer {
     public:
         renderer(glm::ivec2 size);
 

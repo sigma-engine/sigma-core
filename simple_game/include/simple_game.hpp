@@ -1,8 +1,11 @@
 #ifndef SIMPLE_GAME_HPP
 #define SIMPLE_GAME_HPP
 
-#include <random>
+#include <simple_game_config.hpp>
+
 #include <sigma/game.hpp>
+
+#include <random>
 
 struct uniform_vec3_distribution {
     uniform_vec3_distribution(glm::vec3 min, glm::vec3 max)
@@ -24,7 +27,7 @@ private:
     std::uniform_real_distribution<float> z_distribution_;
 };
 
-class simple_game : public sigma::game {
+class SIMPLE_GAME_API simple_game : public sigma::game {
 public:
     simple_game(sigma::graphics::renderer* renderer);
 
