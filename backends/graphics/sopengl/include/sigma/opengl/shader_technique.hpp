@@ -1,15 +1,17 @@
 #ifndef SIGMA_GRAPHICS_OPENGL_SHADER_TECHNIQUE_HPP
 #define SIGMA_GRAPHICS_OPENGL_SHADER_TECHNIQUE_HPP
 
+#include <sigma/opengl/cubemap.hpp>
+#include <sigma/opengl/geometry_buffer.hpp>
+#include <sigma/opengl/render_uniforms.hpp>
 #include <sigma/opengl/shader.hpp>
 #include <sigma/opengl/texture.hpp>
-#include <sigma/opengl/cubemap.hpp>
 #include <sigma/opengl/util.hpp>
+
+#include <glm/gtc/type_ptr.hpp>
 
 namespace sigma {
 namespace opengl {
-    struct standard_uniforms;
-	struct instance_matrices;
 
     template <class T>
     class shader_technique : public T {
@@ -54,7 +56,7 @@ namespace opengl {
         {
             assert(linked_ == GL_FALSE && "Program already linked");
 
-            for (const auto& shdr : shaders_)
+            for (const auto& shdr : this->shaders_)
                 GL_CHECK(glAttachShader(object_, SHADER_CONST_PTR(shdr.second)->get_object()));
 
             GL_CHECK(glLinkProgram(object_));
@@ -83,14 +85,14 @@ namespace opengl {
 
             GL_CHECK(in_image_location_ = glGetUniformLocation(object_, geometry_buffer::IMAGE_INPUT_NAME));
 
-            texture_locations_.resize(textures_.size());
+            texture_locations_.resize(this->textures_.size());
             for (std::size_t i = 0; i < texture_locations_.size(); ++i) {
-                GL_CHECK(texture_locations_[i] = glGetUniformLocation(object_, textures_[i].first.c_str()));
+                GL_CHECK(texture_locations_[i] = glGetUniformLocation(object_, this->textures_[i].first.c_str()));
             }
 
-            cubemap_locations_.resize(cubemaps_.size());
+            cubemap_locations_.resize(this->cubemaps_.size());
             for (std::size_t i = 0; i < cubemap_locations_.size(); ++i) {
-                GL_CHECK(cubemap_locations_[i] = glGetUniformLocation(object_, cubemaps_[i].first.c_str()));
+                GL_CHECK(cubemap_locations_[i] = glGetUniformLocation(object_, this->cubemaps_[i].first.c_str()));
             }
         }
 
@@ -121,15 +123,15 @@ namespace opengl {
             bind();
             auto texture_unit = GLenum(first_texture_unit);
             auto unit_number = GLenum(first_texture_unit) - GL_TEXTURE0;
-            for (std::size_t i = 0; i < textures_.size(); ++i, ++texture_unit, ++unit_number) {
+            for (std::size_t i = 0; i < this->textures_.size(); ++i, ++texture_unit, ++unit_number) {
                 GL_CHECK(glActiveTexture(texture_unit));
-                TEXTURE_PTR(textures_[i].second)->bind();
+                TEXTURE_PTR(this->textures_[i].second)->bind();
                 GL_CHECK(glUniform1i(texture_locations_[i], unit_number));
             }
 
-            for (std::size_t i = 0; i < cubemaps_.size(); ++i, ++texture_unit, ++unit_number) {
+            for (std::size_t i = 0; i < this->cubemaps_.size(); ++i, ++texture_unit, ++unit_number) {
                 GL_CHECK(glActiveTexture(texture_unit));
-                CUBEMAP_PTR(cubemaps_[i].second)->bind();
+                CUBEMAP_PTR(this->cubemaps_[i].second)->bind();
                 GL_CHECK(glUniform1i(cubemap_locations_[i], unit_number));
             }
         }
@@ -164,19 +166,19 @@ namespace opengl {
     template <class InternalType, class Cache>
     class shader_technique_manager : public Cache {
     public:
-        shader_technique_manager(boost::filesystem::path cache_directory, opengl::shader_manager& shaders, opengl::texture_manager& textures, opengl::cubemap_manager &cubemaps)
+        shader_technique_manager(boost::filesystem::path cache_directory, opengl::shader_manager& shaders, opengl::texture_manager& textures, opengl::cubemap_manager& cubemaps)
             : Cache(cache_directory)
-			, shaders_(shaders)
+            , shaders_(shaders)
             , textures_(textures)
-			, cubemaps_(cubemaps)
+            , cubemaps_(cubemaps)
         {
         }
 
         virtual std::unique_ptr<typename Cache::resource_type> load(typename Cache::resource_data data, boost::archive::binary_iarchive& ia) override
         {
             auto tech = std::make_unique<InternalType>(data);
-           
-			for (auto type : graphics::all_shader_types()) {
+
+            for (auto type : graphics::all_shader_types()) {
                 if (tech->has_shader(type))
                     tech->shader(type).set_manager(&shaders_);
             }
@@ -185,16 +187,16 @@ namespace opengl {
             for (unsigned int i = 0; i < tech->texture_count(); ++i)
                 tech->texture(i).set_manager(&textures_);
 
-			for (unsigned int i = 0; i < tech->cubemap_count(); ++i)
-				tech->cubemap(i).set_manager(&cubemaps_);
+            for (unsigned int i = 0; i < tech->cubemap_count(); ++i)
+                tech->cubemap(i).set_manager(&cubemaps_);
 
             return std::move(tech);
         }
 
     private:
-		opengl::shader_manager& shaders_;
+        opengl::shader_manager& shaders_;
         opengl::texture_manager& textures_;
-		opengl::cubemap_manager& cubemaps_;
+        opengl::cubemap_manager& cubemaps_;
     };
 }
 }

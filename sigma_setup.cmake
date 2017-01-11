@@ -117,6 +117,7 @@ function(add_resources target)
                 COMMAND ${TEXTURE_COMPILER} ARGS --output="${CMAKE_BINARY_DIR}/data" "${cubemap}"
                 COMMAND ${CMAKE_COMMAND} ARGS -E touch "${cubemap_time_stamp}"
                 MAIN_DEPENDENCY "${cubemap}"
+                DEPENDS ${TIME_STAMPS} # TODO this is a hack that
                 WORKING_DIRECTORY "${package_PACKAGE_ROOT}"
                 COMMENT ""
                 SOURCES "${cubemap}"

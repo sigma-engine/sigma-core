@@ -51,7 +51,7 @@ window::window(glm::ivec2 size)
 
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
-    window_ = SDL_CreateWindow(title_.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, size_.x, size_.y, SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN);
+    window_ = SDL_CreateWindow(title_.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, size_.x, size_.y, SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_BORDERLESS); //
     if (!window_)
         throw std::runtime_error(SDL_GetError());
 

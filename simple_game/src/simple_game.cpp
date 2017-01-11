@@ -8,7 +8,7 @@
 
 simple_game::simple_game(sigma::graphics::renderer* renderer)
     : sigma::game(renderer)
-    , generator_(6546534512354)
+    , generator_(6546534)
     , position_distribution_{ { -20, 0, -20 }, { 20.0f, .5, 20.0f } }
     , rotation_distribution_{ glm::vec3{ 0.0f }, glm::vec3{ 2.0f * boost::math::constants::pi<float>() } }
     , scale_distribution_{ 0.1f, 10.0f }
@@ -17,7 +17,7 @@ simple_game::simple_game(sigma::graphics::renderer* renderer)
     load("../data/water_packed.scn");
 
     //std::uniform_int_distribution<int> point_light_count_distribution_{ 0,50};
-    int number_of_point_lights = 100; //point_light_count_distribution_(generator_);
+    int number_of_point_lights = 0; //point_light_count_distribution_(generator_);
     for (int i = 0; i < number_of_point_lights; ++i) {
         auto e = entities.create();
         auto& txform = random_transform(e);

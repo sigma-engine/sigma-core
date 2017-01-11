@@ -1,0 +1,8 @@
+{
+    "right": "proprietary/NissiBeach/posx",
+    "left": "proprietary/NissiBeach/negx",
+    "top": "proprietary/NissiBeach/posy",
+    "bottom": "proprietary/NissiBeach/negy",
+    "back": "proprietary/NissiBeach/posz",
+    "front": "proprietary/NissiBeach/negz"
+}
