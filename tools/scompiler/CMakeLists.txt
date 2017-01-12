@@ -25,8 +25,14 @@ set(HEADERS
     include/texture_compiler.hpp
 )
 
+set(ENABLE_AMD_EXTENSIONS  OFF)
+set(ENABLE_GLSLANG_BINARIES  OFF)
+set(ENABLE_NV_EXTENSIONS OFF)
+set(ENABLE_HLSL OFF)
+add_subdirectory(glslang)
+
 add_executable(scompiler ${SOURCES} ${HEADERS})
 
 target_include_directories(scompiler PUBLIC include)
 
-target_link_libraries(scompiler sigma-core)
+target_link_libraries(scompiler sigma-core glslang OSDependent  OGLCompiler)
