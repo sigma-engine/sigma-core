@@ -1,6 +1,3 @@
-cmake_minimum_required(VERSION 3.2)
-project(scompiler)
-
 set(SOURCES
     src/compiler_util.cpp
     src/assimp_converter.cpp
@@ -11,6 +8,7 @@ set(SOURCES
     src/post_process_effect_compiler.cpp
     src/shader_compiler.cpp
     src/texture_compiler.cpp
+    src/shader_validation.cpp
 )
 
 set(HEADERS
@@ -23,16 +21,22 @@ set(HEADERS
     include/shader_compiler.hpp
     include/shader_technique_compiler.hpp
     include/texture_compiler.hpp
+    include/shader_validation.hpp
 )
-
-set(ENABLE_AMD_EXTENSIONS  OFF)
-set(ENABLE_GLSLANG_BINARIES  OFF)
-set(ENABLE_NV_EXTENSIONS OFF)
-set(ENABLE_HLSL OFF)
-add_subdirectory(glslang)
 
 add_executable(scompiler ${SOURCES} ${HEADERS})
 
 target_include_directories(scompiler PUBLIC include)
 
-target_link_libraries(scompiler sigma-core glslang OSDependent  OGLCompiler)
+target_link_libraries(scompiler sigma-core)
+
+if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/glslang")
+    set(ENABLE_AMD_EXTENSIONS  OFF)
+    set(ENABLE_GLSLANG_BINARIES  OFF)
+    set(ENABLE_NV_EXTENSIONS OFF)
+    set(ENABLE_HLSL OFF)
+    add_subdirectory(glslang)
+    target_compile_definitions(scompiler PRIVATE USE_GLSLANG)
+    target_include_directories(scompiler PRIVATE glslang)
+    target_link_libraries(scompiler glslang OSDependent  OGLCompiler)
+endif()
