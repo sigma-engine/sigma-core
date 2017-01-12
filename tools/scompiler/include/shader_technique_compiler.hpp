@@ -3,7 +3,7 @@
 
 #include <sigma/graphics/shader_technique.hpp>
 
-#include <json/json-forwards.h>
+#include <json/json.h>
 
 namespace sigma {
 template <class T>
