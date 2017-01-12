@@ -85,14 +85,16 @@ target_link_libraries(sigma-core PUBLIC ${CMAKE_DL_LIBS} ${CONAN_LIBS})
 target_compile_definitions(sigma-core PUBLIC -DSIGMA_SHARED)
 target_compile_options(sigma-core PRIVATE -DSIGMA_EXPORT)
 
-add_subdirectory(tools/scmaterial)
-add_subdirectory(tools/scmodel)
-add_subdirectory(tools/screflect)
-add_subdirectory(tools/scshader)
-add_subdirectory(tools/sctexture)
+add_subdirectory(tools/scompiler)
+
+# add_subdirectory(tools/scmaterial)
+# add_subdirectory(tools/scmodel)
+# add_subdirectory(tools/screflect)
+# add_subdirectory(tools/scshader)
+# add_subdirectory(tools/sctexture)
 add_subdirectory(backends/graphics/sopengl)
 
-## add_subdirectory(tests)
+# add_subdirectory(tests)
 
 add_subdirectory(simple_game)
 

@@ -11,10 +11,11 @@ namespace graphics {
     enum class shader_type : size_t {
         vertex,
         fragment,
-        geometry
+        geometry,
+        header
     };
 
-	static constexpr std::array<shader_type,3> all_shader_types()
+    static constexpr std::array<shader_type, 3> all_shader_types()
     {
         return { shader_type::vertex, shader_type::fragment, shader_type::geometry };
     }

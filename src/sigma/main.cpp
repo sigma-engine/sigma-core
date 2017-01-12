@@ -8,8 +8,6 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-using namespace std::chrono_literals;
-
 #include <iostream>
 
 int main(int argc, char* argv[])
