@@ -3,6 +3,8 @@
 !/thirdparty/CMakeLists.txt
 !/thirdparty/licences.txt
 
+tools/scompiler/glslang
+
 .ycm_extra_conf*
 
 *.blend1
