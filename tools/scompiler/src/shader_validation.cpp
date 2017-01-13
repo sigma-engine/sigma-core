@@ -114,7 +114,7 @@ struct glsl_process {
         glslang::FinalizeProcess();
     }
 };
-bool sigma::validate_shader(const graphics::shader_data& shader, std::vector<std::string> source_filenames)
+bool sigma::validate_shader(const graphics::shader_data& shader, std::vector<boost::filesystem::path> source_filenames)
 {
     glsl_process validation_process;
 
@@ -154,7 +154,7 @@ bool sigma::validate_shader(const graphics::shader_data& shader, std::vector<std
 
         for (auto it = begin_iterator; it != end_iterator; ++it) {
             auto match = *it;
-            std::cerr << source_filenames[std::stoi(match[1])] << "(" << match[2] << "): error :" << match[3] << std::endl; // MSVC output
+            std::cerr << source_filenames[std::stoi(match[1])].string() << "(" << match[2] << "): error :" << match[3] << std::endl; // MSVC output
         }
 
         return false;
@@ -165,7 +165,7 @@ bool sigma::validate_shader(const graphics::shader_data& shader, std::vector<std
 
 #else // Do not use glslang
 
-bool sigma::validate_shader(const graphics::shader_data& shader, std::vector<std::string> source_filenames)
+bool sigma::validate_shader(const graphics::shader_data& shader, std::vector<boost::filesystem::path> source_filenames)
 {
     return true;
 }

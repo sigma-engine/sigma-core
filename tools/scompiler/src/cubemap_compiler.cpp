@@ -39,18 +39,30 @@ bool compile_cubemaps(boost::filesystem::path outputdir, std::vector<boost::file
             auto final_path = outputdir / std::to_string(rid.value());
 
             sigma::graphics::cubemap_data cube;
-            load_texture(outputdir, sigma::resource::identifier{ "texture", cubemap_json["right"].asString() }, cube.right);
-            load_texture(outputdir, sigma::resource::identifier{ "texture", cubemap_json["left"].asString() }, cube.left);
-            load_texture(outputdir, sigma::resource::identifier{ "texture", cubemap_json["top"].asString() }, cube.top);
-            load_texture(outputdir, sigma::resource::identifier{ "texture", cubemap_json["bottom"].asString() }, cube.bottom);
-            load_texture(outputdir, sigma::resource::identifier{ "texture", cubemap_json["back"].asString() }, cube.back);
-            load_texture(outputdir, sigma::resource::identifier{ "texture", cubemap_json["front"].asString() }, cube.front);
+            std::vector<boost::filesystem::path> dependencies;
+
+            for (auto it = cubemap_json.begin(); it != cubemap_json.end(); ++it) {
+                sigma::resource::identifier txt_id{ "texture", (*it).asString() };
+                dependencies.push_back(outputdir / std::to_string(txt_id.value()));
+                if (it.key() == "right")
+                    load_texture(outputdir, txt_id, cube.right);
+                else if (it.key() == "left")
+                    load_texture(outputdir, txt_id, cube.left);
+                else if (it.key() == "top")
+                    load_texture(outputdir, txt_id, cube.top);
+                else if (it.key() == "bottom")
+                    load_texture(outputdir, txt_id, cube.bottom);
+                else if (it.key() == "back")
+                    load_texture(outputdir, txt_id, cube.back);
+                else if (it.key() == "front")
+                    load_texture(outputdir, txt_id, cube.front);
+            }
 
             std::ofstream stream{ final_path.string(), std::ios::binary };
             boost::archive::binary_oarchive oa(stream);
             oa << cube;
 
-            touch_stamp_file(outputdir, file_path);
+            touch_stamp_file(outputdir, file_path, dependencies);
         } catch (...) { // TODO cacth the correct error types and get the messages
             all_good = false;
             std::cerr << "scompiler: error: could not compile cubemap '" << file_path << "'!\n";

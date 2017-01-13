@@ -18,7 +18,7 @@
 namespace sigma {
 class glsl_preprocessing_hooks : public boost::wave::context_policies::default_preprocessing_hooks {
 public:
-    std::vector<std::string> source_files;
+    std::vector<boost::filesystem::path> source_files;
 
     template <typename ContextT, typename ContainerT>
     bool found_unknown_directive(ContextT const& ctx, ContainerT const& line, ContainerT& pending)
@@ -78,7 +78,6 @@ bool compile_shaders(boost::filesystem::path outputdir, std::vector<boost::files
 {
     bool all_good = true;
     for (const auto& file_path : shaders) {
-        // TODO account for #include changes
         // TODO just skip .glsl for now
         if (!resource_has_changes(outputdir, file_path) || file_path.extension() == ".glsl")
             continue;
@@ -137,12 +136,13 @@ bool compile_shaders(boost::filesystem::path outputdir, std::vector<boost::files
                 ++first;
             }
 
-            if (validate_shader(shader, ctx.get_hooks().source_files)) {
+            auto hooks = ctx.get_hooks();
+            if (validate_shader(shader, hooks.source_files)) {
                 auto final_path = outputdir / std::to_string(rid.value());
                 std::ofstream stream{ final_path.string(), std::ios::binary | std::ios::out };
                 boost::archive::binary_oarchive oa{ stream };
                 oa << shader;
-                touch_stamp_file(outputdir, file_path);
+                touch_stamp_file(outputdir, file_path, hooks.source_files);
             } else {
                 all_good = false;
             }
