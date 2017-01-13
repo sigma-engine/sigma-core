@@ -3,6 +3,7 @@
 
 #include <sigma/config.hpp>
 #include <sigma/entity_manager.hpp>
+#include <sigma/graphics/cubemap.hpp>
 #include <sigma/graphics/directional_light.hpp>
 #include <sigma/graphics/material.hpp>
 #include <sigma/graphics/point_light.hpp>
@@ -14,7 +15,6 @@
 #include <sigma/graphics/static_mesh_instance.hpp>
 #include <sigma/graphics/texture.hpp>
 #include <sigma/transform.hpp>
-#include <sigma/graphics/cubemap.hpp>
 
 #include <glm/mat4x4.hpp>
 #include <glm/vec2.hpp>

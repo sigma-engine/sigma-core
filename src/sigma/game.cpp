@@ -16,7 +16,6 @@ game::game(graphics::renderer* renderer)
 
 void game::load(boost::filesystem::path file_path)
 {
-    // TODO load
     std::ifstream file{ file_path.string(), std::ios::in };
     Json::Value scene_data;
     file >> scene_data;

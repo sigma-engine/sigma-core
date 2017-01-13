@@ -27,7 +27,7 @@ namespace graphics {
         static_mesh_instance_manager(const static_mesh_instance_manager&) = delete;
         static_mesh_instance_manager& operator=(const static_mesh_instance_manager&) = delete;
 
-        std::unordered_map<entity, resource::handle<static_mesh> > instances_;
+        std::unordered_map<entity, resource::handle<static_mesh>> instances_;
     };
 }
 }

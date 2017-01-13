@@ -1,8 +1,8 @@
 #include <simple_game.hpp>
 
-#include <sigma/window.hpp>
-#include <sigma/trackball_controller.hpp>
 #include <sigma/opengl/renderer.hpp>
+#include <sigma/trackball_controller.hpp>
+#include <sigma/window.hpp>
 
 #include <SDL.h>
 
@@ -14,8 +14,8 @@ int main(int argc, char* argv[])
 {
     sigma::window window(glm::ivec2{ 1920, 1080 });
 
-	auto renderer = std::make_unique<sigma::opengl::renderer>(window.size());
-	auto game = std::make_unique<simple_game>(renderer.get());
+    auto renderer = std::make_unique<sigma::opengl::renderer>(window.size());
+    auto game = std::make_unique<simple_game>(renderer.get());
 
     sigma::graphics::view_port viewport{
         game->entities,

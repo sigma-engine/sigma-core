@@ -4,7 +4,6 @@
 #include <sigma/graphics/cubemap.hpp>
 #include <sigma/graphics/shader.hpp>
 #include <sigma/graphics/texture.hpp>
-#include <sigma/graphics/cubemap.hpp>
 
 #include <boost/serialization/unordered_map.hpp>
 

@@ -44,11 +44,12 @@ public:
         std::string file_name{ position.get_file().c_str() };
 
         auto it = std::find(source_files.begin(), source_files.end(), file_name);
-		auto size = source_files.size();
-        std::size_t file_index = it - source_files.end();
-        if (file_index >= size)
-			file_index = size;
-			source_files.push_back(position.get_file().c_str());
+        std::size_t file_index = it - source_files.begin();
+        std::size_t size = source_files.size();
+        if (file_index >= size) {
+            file_index = size;
+            source_files.push_back(position.get_file().c_str());
+        }
 
         auto line = "#line " + std::to_string(position.get_line()) + " " + std::to_string(file_index) + "\n";
         pending.push_back(boost::wave::cpplexer::lex_token<>(boost::wave::T_PP_LINE, line.c_str(), position));
@@ -88,14 +89,14 @@ bool compile_shaders(boost::filesystem::path outputdir, std::vector<boost::files
             std::ifstream source_file{ file_path.string() };
 
             source_file.unsetf(std::ios::skipws);
-			std::string input_source{ std::istreambuf_iterator<char>(source_file.rdbuf()), std::istreambuf_iterator<char>() };
+            std::string input_source{ std::istreambuf_iterator<char>(source_file.rdbuf()), std::istreambuf_iterator<char>() };
 
             sigma::graphics::shader_data shader;
             shader.type = ext_to_type[file_path.extension().string()];
             sigma::resource::development_identifier rid;
 
             auto file_name = file_path.string();
-			context_type ctx{ input_source.begin(), input_source.end(), file_name.c_str() };
+            context_type ctx{ input_source.begin(), input_source.end(), file_name.c_str() };
 
             ctx.add_macro_definition("SIGMA_ENGINE_SHADER");
 
@@ -139,7 +140,7 @@ bool compile_shaders(boost::filesystem::path outputdir, std::vector<boost::files
             if (validate_shader(shader, ctx.get_hooks().source_files)) {
                 auto final_path = outputdir / std::to_string(rid.value());
                 std::ofstream stream{ final_path.string(), std::ios::binary | std::ios::out };
-				boost::archive::binary_oarchive oa{ stream };
+                boost::archive::binary_oarchive oa{ stream };
                 oa << shader;
                 touch_stamp_file(outputdir, file_path);
             } else {

@@ -34,11 +34,10 @@ namespace graphics {
             }
         };
         typedef std::array<unsigned int, 3> triangle;
-		
 
         std::vector<vertex> vertices;
-		std::vector<triangle> triangles;
-		std::unordered_map<resource::identifier,std::pair<std::size_t,std::size_t>> materials;
+        std::vector<triangle> triangles;
+        std::unordered_map<resource::identifier, std::pair<std::size_t, std::size_t>> materials;
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
@@ -55,7 +54,7 @@ namespace graphics {
 
         static_mesh() = default;
 
-		static_mesh(const static_mesh_data &data);
+        static_mesh(const static_mesh_data& data);
 
         static_mesh(static_mesh&&) = default;
 
@@ -63,7 +62,7 @@ namespace graphics {
 
         virtual ~static_mesh() = default;
 
-		std::size_t material_count() const;
+        std::size_t material_count() const;
 
         resource::handle<graphics::material>& material(std::size_t slot);
 
@@ -73,8 +72,8 @@ namespace graphics {
         static_mesh(const static_mesh&) = delete;
         static_mesh& operator=(const static_mesh&) = delete;
 
-		 std::vector<resource::handle<graphics::material>> materials_;
-		 std::vector<std::pair<std::size_t, std::size_t>> material_slots_;
+        std::vector<resource::handle<graphics::material>> materials_;
+        std::vector<std::pair<std::size_t, std::size_t>> material_slots_;
     };
 
     using static_mesh_manager = resource::manager<static_mesh>;

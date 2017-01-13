@@ -11,14 +11,12 @@
 
 namespace sigma {
 namespace resource {
-    bool constexpr_identifier::operator==(const constexpr_identifier& other) const
-        noexcept
+    bool constexpr_identifier::operator==(const constexpr_identifier& other) const noexcept
     {
         return value_ == other.value_;
     }
 
-    bool constexpr_identifier::operator!=(const constexpr_identifier& other) const
-        noexcept
+    bool constexpr_identifier::operator!=(const constexpr_identifier& other) const noexcept
     {
         return value_ != other.value_;
     }
