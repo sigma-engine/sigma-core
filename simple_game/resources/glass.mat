@@ -1,11 +1,7 @@
 {
-    "vertex" : "default",
-    "fragment" : "glass",
+    "color": [0.33725, 0.83137, 0.90588, 0.0],
+    "roughness": 0.0,
     "transparent": true,
-    "textures": {
-        "basecolor_map" : "glass_basecolor",
-        "metallic_map" : "nonemetal",
-        "normal_map" : "default_normal",
-        "roughness_map" : "roughness"
-    }
+    "vertex" : "default",
+    "fragment" : "glass"
 }

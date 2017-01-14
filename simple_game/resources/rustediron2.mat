@@ -1,0 +1,11 @@
+{
+    "vertex" : "default",
+    "fragment" : "default",
+    "textures":
+    {
+        "basecolor_map" : "proprietary/rustediron2/rustediron2_basecolor",
+        "metallic_map" : "proprietary/rustediron2/rustediron2_metallic",
+        "normal_map" : "proprietary/rustediron2/rustediron2_normal",
+        "roughness_map" : "proprietary/rustediron2/rustediron2_roughness"
+    }
+}

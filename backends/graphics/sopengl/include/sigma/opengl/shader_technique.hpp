@@ -85,6 +85,26 @@ namespace opengl {
 
             GL_CHECK(in_image_location_ = glGetUniformLocation(object_, geometry_buffer::IMAGE_INPUT_NAME));
 
+            float_locations_.resize(this->floats_.size());
+            for (std::size_t i = 0; i < float_locations_.size(); ++i) {
+                GL_CHECK(float_locations_[i] = glGetUniformLocation(object_, this->floats_[i].first.c_str()));
+            }
+
+            vec2_locations_.resize(this->vec2s_.size());
+            for (std::size_t i = 0; i < vec2_locations_.size(); ++i) {
+                GL_CHECK(vec2_locations_[i] = glGetUniformLocation(object_, this->vec2s_[i].first.c_str()));
+            }
+
+            vec3_locations_.resize(this->vec3s_.size());
+            for (std::size_t i = 0; i < vec3_locations_.size(); ++i) {
+                GL_CHECK(vec3_locations_[i] = glGetUniformLocation(object_, this->vec3s_[i].first.c_str()));
+            }
+
+            vec4_locations_.resize(this->vec4s_.size());
+            for (std::size_t i = 0; i < vec4_locations_.size(); ++i) {
+                GL_CHECK(vec4_locations_[i] = glGetUniformLocation(object_, this->vec4s_[i].first.c_str()));
+            }
+
             texture_locations_.resize(this->textures_.size());
             for (std::size_t i = 0; i < texture_locations_.size(); ++i) {
                 GL_CHECK(texture_locations_[i] = glGetUniformLocation(object_, this->textures_[i].first.c_str()));
@@ -116,6 +136,18 @@ namespace opengl {
         {
             GL_CHECK(glUseProgram(object_));
             GL_CHECK(glUniform1i(in_image_location_, geometry_buffer::INPUT_IMAGE_LOCATION));
+
+            for (std::size_t i = 0; i < this->floats_.size(); ++i)
+                GL_CHECK(glUniform1f(float_locations_[i], this->floats_[i].second));
+
+            for (std::size_t i = 0; i < this->vec2s_.size(); ++i)
+                GL_CHECK(glUniform2fv(vec2_locations_[i], 1, glm::value_ptr(this->vec2s_[i].second)));
+
+            for (std::size_t i = 0; i < this->vec3s_.size(); ++i)
+                GL_CHECK(glUniform3fv(vec3_locations_[i], 1, glm::value_ptr(this->vec3s_[i].second)));
+
+            for (std::size_t i = 0; i < this->vec4s_.size(); ++i)
+                GL_CHECK(glUniform4fv(vec4_locations_[i], 1, glm::value_ptr(this->vec4s_[i].second)));
         }
 
         void bind(texture_unit first_texture_unit)
@@ -153,6 +185,10 @@ namespace opengl {
         GLint model_view_matrix_location_ = -1;
         GLint normal_matrix_location_ = -1;
 
+        std::vector<GLint> float_locations_;
+        std::vector<GLint> vec2_locations_;
+        std::vector<GLint> vec3_locations_;
+        std::vector<GLint> vec4_locations_;
         std::vector<GLint> texture_locations_;
         std::vector<GLint> cubemap_locations_;
 

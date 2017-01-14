@@ -2,6 +2,7 @@
 #define SIGMA_SHADER_TECHNIQUE_COMPILER_HPP
 
 #include <sigma/graphics/shader_technique.hpp>
+#include <sigma/util/json_conversion.hpp>
 
 #include <json/json.h>
 
@@ -25,6 +26,19 @@ void compile_shader_technique(T& technique, const Json::Value& technique_data)
             const auto& cubemap_object = *it;
             for (auto it2 = cubemap_object.begin(); it2 != cubemap_object.end(); ++it2)
                 technique.cubemaps[it2.key().asString()] = sigma::resource::identifier{ "cubemap", (*it2).asString() }; // TODO warn if tring to set cubemap more than once
+        } else {
+			float f;
+			glm::vec2 v2;
+			glm::vec3 v3;
+			glm::vec4 v4;
+			if (sigma::json::from_json(value, v4))
+				technique.vec4s[it.key().asString()] = v4;
+			else if (sigma::json::from_json(value, v3))
+				technique.vec3s[it.key().asString()] = v3;
+			else if (sigma::json::from_json(value, v2))
+				technique.vec2s[it.key().asString()] = v2;
+			else if (sigma::json::from_json(value, f))
+				technique.floats[it.key().asString()] = f;
         }
     }
 

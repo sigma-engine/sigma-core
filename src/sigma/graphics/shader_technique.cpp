@@ -6,8 +6,22 @@ namespace graphics {
     {
         for (const auto& shdr : data.shaders)
             shaders_[shdr.first] = resource::handle<graphics::shader>{ shdr.second };
+		
+		for (const auto& float_uniform : data.floats)
+			floats_.push_back(std::make_pair(float_uniform.first, float_uniform.second));
+
+		for (const auto& vec2_uniform : data.vec2s)
+			vec2s_.push_back(std::make_pair(vec2_uniform.first, vec2_uniform.second));
+
+		for (const auto& vec3_uniform : data.vec3s)
+			vec3s_.push_back(std::make_pair(vec3_uniform.first, vec3_uniform.second));
+
+		for (const auto& vec4_uniform : data.vec4s)
+			vec4s_.push_back(std::make_pair(vec4_uniform.first, vec4_uniform.second));
+
         for (const auto& txt : data.textures)
             textures_.push_back(std::make_pair(txt.first, resource::handle<graphics::texture>{ txt.second }));
+
         for (const auto& cube : data.cubemaps)
             cubemaps_.push_back(std::make_pair(cube.first, resource::handle<graphics::cubemap>{ cube.second }));
     }

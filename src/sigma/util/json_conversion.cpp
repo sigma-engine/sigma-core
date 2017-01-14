@@ -13,11 +13,23 @@ namespace json {
         return false;
     }
 
+	bool from_json(const Json::Value& value, glm::vec2& output)
+	{
+		// TODO support x,y
+		return value.isArray() && value.size() == 2 && from_json(value[0], output.x) && from_json(value[1], output.y);
+	}
+
     bool from_json(const Json::Value& value, glm::vec3& output)
     {
         // TODO support x,y,z
         return value.isArray() && value.size() == 3 && from_json(value[0], output.x) && from_json(value[1], output.y) && from_json(value[2], output.z);
     }
+
+	bool from_json(const Json::Value& value, glm::vec4& output)
+	{
+		// TODO support x,y,z,w
+		return value.isArray() && value.size() == 4 && from_json(value[0], output.x) && from_json(value[1], output.y) && from_json(value[2], output.z) && from_json(value[3], output.w);
+	}
 
     bool from_json(const Json::Value& value, glm::quat& output)
     {

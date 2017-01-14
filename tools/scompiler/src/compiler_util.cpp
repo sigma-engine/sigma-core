@@ -30,17 +30,16 @@ bool resource_has_changes(boost::filesystem::path outputdir, boost::filesystem::
         return true;
 
     auto stamp_time = boost::filesystem::last_write_time(stamp_path);
-	std::ifstream stamp_file(stamp_path.string());
+    std::ifstream stamp_file(stamp_path.string());
 
     std::size_t t;
     stamp_file >> t;
 
-    do {
-        std::string dep;
-        stamp_file >> dep;
+    std::string dep;
+    while (std::getline(stamp_file, dep)) {
         if (stamp_file.good() && stamp_time < boost::filesystem::last_write_time(dep))
             return true;
-    } while (stamp_file.good());
+    }
 
     return boost::filesystem::last_write_time(stamp_path) < boost::filesystem::last_write_time(resource);
 }

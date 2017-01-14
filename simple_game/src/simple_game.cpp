@@ -14,42 +14,55 @@ simple_game::simple_game(sigma::graphics::renderer* renderer)
     , scale_distribution_{ 0.1f, 10.0f }
     , color_distribution_{ glm::vec3{ 0.0f }, glm::vec3{ 1.0f } }
 {
-    load("../data/water_packed.scn");
+    load("../data/material_test_scene.scn");
 
-    //std::uniform_int_distribution<int> point_light_count_distribution_{ 0,50};
-    int number_of_point_lights = 0; //point_light_count_distribution_(generator_);
-    for (int i = 0; i < number_of_point_lights; ++i) {
-        auto e = entities.create();
-        auto& txform = random_transform(e);
-        auto& light = point_lights.add(e);
-        light.color = color_distribution_(generator_);
-        light.intensity = scale_distribution_(generator_);
+    auto material_ball = renderer->static_meshes().get(sigma::resource::identifier{ "static_mesh://material_ball:material_ball" });
+    for (int x = -5; x <= 5; ++x) {
+        for (int z = -5; z <= 5; ++z) {
+            auto e = entities.create();
+            auto& txform = transforms.add(e);
+            txform.set_position(glm::vec3{ 1.5 * x, 0, 1.5 * z });
+            static_mesh_instances.add(e, material_ball);
+        }
     }
 
-    //std::uniform_int_distribution<int> static_mesh_count_distribution_{ 0, 200 };
-    int number_of_static_meshes = 0; //static_mesh_count_distribution_(generator_);
-    std::vector<sigma::resource::identifier> static_mesh_ids = {
-        "static_mesh://water_packed:Torus",
-        "static_mesh://water_packed:cube",
-        "static_mesh://water_packed:piller.000",
-        "static_mesh://water_packed:piller.001",
-        "static_mesh://water_packed:piller.002",
-        "static_mesh://water_packed:piller.003",
-        "static_mesh://water_packed:piller.004",
-        "static_mesh://water_packed:shape",
-        "static_mesh://water_packed:sphere",
-        "static_mesh://water_packed:suzan",
-    };
-    std::uniform_int_distribution<std::size_t> static_mesh_distribution_{ 0, static_mesh_ids.size() - 1 };
-    for (int i = 0; i < number_of_static_meshes; ++i) {
-        auto e = entities.create();
-        auto& txform = random_transform(e);
-        auto random_mesh_id = static_mesh_ids[static_mesh_distribution_(generator_)];
-        static_mesh_instances.add(e, renderer_->static_meshes().get(random_mesh_id));
-    }
-
-    std::cout << "Rendering " << number_of_point_lights << " point lights." << std::endl;
-    std::cout << "Rendering " << number_of_static_meshes << " static meshes." << std::endl;
+    // load("../data/water_packed.scn");
+    //
+    // std::uniform_int_distribution<int> point_light_count_distribution_{ 0, 500 };
+    // int number_of_point_lights = point_light_count_distribution_(generator_);
+    // for (int i = 0; i < number_of_point_lights; ++i) {
+    //     auto e = entities.create();
+    //     auto& txform = random_transform(e);
+    //     auto& light = point_lights.add(e);
+    //     light.color = color_distribution_(generator_);
+    //     light.intensity = scale_distribution_(generator_);
+    // }
+    //
+    // std::vector<sigma::resource::identifier> static_mesh_ids = {
+    //     "static_mesh://water_packed:Torus",
+    //     "static_mesh://water_packed:cube",
+    //     "static_mesh://water_packed:piller.000",
+    //     "static_mesh://water_packed:piller.001",
+    //     "static_mesh://water_packed:piller.002",
+    //     "static_mesh://water_packed:piller.003",
+    //     "static_mesh://water_packed:piller.004",
+    //     "static_mesh://water_packed:shape",
+    //     "static_mesh://water_packed:sphere",
+    //     "static_mesh://water_packed:suzan",
+    // };
+    //
+    // std::uniform_int_distribution<int> static_mesh_count_distribution_{ 0, 1500 };
+    // int number_of_static_meshes = static_mesh_count_distribution_(generator_);
+    // std::uniform_int_distribution<std::size_t> static_mesh_distribution_{ 0, static_mesh_ids.size() - 1 };
+    // for (int i = 0; i < number_of_static_meshes; ++i) {
+    //     auto e = entities.create();
+    //     auto& txform = random_transform(e);
+    //     auto random_mesh_id = static_mesh_ids[static_mesh_distribution_(generator_)];
+    //     static_mesh_instances.add(e, renderer_->static_meshes().get(random_mesh_id));
+    // }
+    //
+    // std::cout << "Rendering " << number_of_point_lights << " point lights." << std::endl;
+    // std::cout << "Rendering " << number_of_static_meshes << " static meshes." << std::endl;
 }
 
 sigma::transform& simple_game::random_transform(sigma::entity e)

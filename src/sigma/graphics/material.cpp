@@ -10,7 +10,7 @@ namespace graphics {
 
     bool material::is_transparent() const
     {
-        return transparent_;
+        return transparent_;	
     }
 }
 }
