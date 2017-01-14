@@ -213,14 +213,18 @@ void assimp_converter::convert_object(std::string name, Json::Value& entity) con
     for (unsigned int i = 0; i < aiScene->mNumLights; ++i) {
         const aiLight* ailight = aiScene->mLights[i];
         if (name == ailight->mName.C_Str()) {
+			auto color = convert_color(ailight->mColorDiffuse);
+			float intensity = glm::length(color) / 3; // TOOD check intensity and color
+			color /= intensity;
+
             switch (ailight->mType) {
             case aiLightSource_POINT:
-                entity["sigma::graphics::point_light"]["color"] = json::to_json(convert_color(ailight->mColorDiffuse));
-                // TOOD intensity
+                entity["sigma::graphics::point_light"]["color"] = json::to_json(color);
+				entity["sigma::graphics::point_light"]["intensity"] = json::to_json(intensity);
                 break;
             case aiLightSource_DIRECTIONAL:
-                entity["sigma::graphics::directional_light"]["color"] = json::to_json(convert_color(ailight->mColorDiffuse));
-                // TOOD intensity
+                entity["sigma::graphics::directional_light"]["color"] = json::to_json(color);
+				entity["sigma::graphics::directional_light"]["intensity"] = json::to_json(intensity);
                 break;
             default: // TODO more lights
                 break;
