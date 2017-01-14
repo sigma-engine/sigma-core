@@ -8,6 +8,7 @@
 
 #include <functional>
 #include <iostream>
+#include <random>
 
 namespace sigma {
 namespace resource {

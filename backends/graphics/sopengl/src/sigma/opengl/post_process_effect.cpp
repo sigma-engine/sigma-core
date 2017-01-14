@@ -38,9 +38,9 @@ namespace opengl {
     {
     }
 
-    std::unique_ptr<graphics::post_process_effect> post_process_effect_manager::load(graphics::post_process_effect_data data, boost::archive::binary_iarchive& ia)
+    std::unique_ptr<graphics::post_process_effect> post_process_effect_manager::create(graphics::post_process_effect_data data)
     {
-        auto effect = shader_technique_manager<post_process_effect, graphics::post_process_effect_manager>::load(std::move(data), ia);
+        auto effect = shader_technique_manager<post_process_effect, graphics::post_process_effect_manager>::create(std::move(data));
         effect->mesh().set_manager(&meshes_);
         return std::move(effect);
     }

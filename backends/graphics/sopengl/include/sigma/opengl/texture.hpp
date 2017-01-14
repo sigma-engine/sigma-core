@@ -150,7 +150,7 @@ namespace opengl {
     public:
         using graphics::texture_manager::texture_manager;
 
-        virtual std::unique_ptr<graphics::texture> load(graphics::texture_data data, boost::archive::binary_iarchive& ia) override;
+        virtual std::unique_ptr<graphics::texture> create(graphics::texture_data data) override;
     };
 }
 }

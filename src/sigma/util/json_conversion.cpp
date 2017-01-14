@@ -42,6 +42,11 @@ namespace json {
         return false;
     }
 
+	Json::Value to_json(float v)
+	{
+		return Json::Value{v};
+	}
+
     Json::Value to_json(glm::vec3 v)
     {
         Json::Value out(Json::arrayValue);

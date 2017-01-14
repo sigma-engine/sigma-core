@@ -14,10 +14,10 @@ namespace sigma {
 namespace graphics {
 
     struct shader_technique_data {
-		std::unordered_map<std::string, float> floats;
-		std::unordered_map<std::string, glm::vec2> vec2s;
-		std::unordered_map<std::string, glm::vec3> vec3s;
-		std::unordered_map<std::string, glm::vec4> vec4s;
+        std::unordered_map<std::string, float> floats;
+        std::unordered_map<std::string, glm::vec2> vec2s;
+        std::unordered_map<std::string, glm::vec3> vec3s;
+        std::unordered_map<std::string, glm::vec4> vec4s;
         std::unordered_map<shader_type, resource::identifier> shaders;
         std::unordered_map<std::string, resource::identifier> textures;
         std::unordered_map<std::string, resource::identifier> cubemaps;
@@ -25,10 +25,10 @@ namespace graphics {
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
         {
-			ar& floats;
-			ar& vec2s;
-			ar& vec3s;
-			ar& vec4s;
+            ar& floats;
+            ar& vec2s;
+            ar& vec3s;
+            ar& vec4s;
             ar& shaders;
             ar& textures;
             ar& cubemaps;
@@ -67,12 +67,20 @@ namespace graphics {
 
         void set_cubemap(std::size_t index, resource::handle<graphics::cubemap> cube);
 
+        void set_uniform(const std::string& name, float value);
+
+        void set_uniform(const std::string& name, glm::vec2 value);
+
+        void set_uniform(const std::string& name, glm::vec3 value);
+
+        void set_uniform(const std::string& name, glm::vec4 value);
+
     protected:
         std::unordered_map<shader_type, resource::handle<graphics::shader>> shaders_;
-		std::vector<std::pair<std::string, float>> floats_;
-		std::vector<std::pair<std::string, glm::vec2>> vec2s_;
-		std::vector<std::pair<std::string, glm::vec3>> vec3s_;
-		std::vector<std::pair<std::string, glm::vec4>> vec4s_;
+        std::vector<std::pair<std::string, float>> floats_;
+        std::vector<std::pair<std::string, glm::vec2>> vec2s_;
+        std::vector<std::pair<std::string, glm::vec3>> vec3s_;
+        std::vector<std::pair<std::string, glm::vec4>> vec4s_;
         std::vector<std::pair<std::string, resource::handle<graphics::texture>>> textures_;
         std::vector<std::pair<std::string, resource::handle<graphics::cubemap>>> cubemaps_;
 

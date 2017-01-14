@@ -61,7 +61,7 @@ namespace opengl {
         return object_;
     }
 
-    std::unique_ptr<graphics::shader> shader_manager::load(graphics::shader_data data, boost::archive::binary_iarchive& ia)
+    std::unique_ptr<graphics::shader> shader_manager::create(graphics::shader_data data)
     {
         return std::make_unique<shader>(std::move(data));
     }

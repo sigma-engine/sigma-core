@@ -16,12 +16,21 @@ simple_game::simple_game(sigma::graphics::renderer* renderer)
 {
     load("../data/material_test_scene.scn");
 
-    auto material_ball = renderer->static_meshes().get(sigma::resource::identifier{ "static_mesh://material_ball:material_ball" });
-    for (int x = -5; x <= 5; ++x) {
-        for (int z = -5; z <= 5; ++z) {
+    int number = 0;
+    int MAX = 8;
+    for (int x = 0; x < MAX; ++x) {
+        for (int z = 0; z < MAX; ++z) {
+            number++;
+            auto material_ball = renderer->static_meshes().duplicate(sigma::resource::identifier{ "static_mesh://material_ball:material_ball" }, sigma::resource::identifier{ "static_mesh://material_ball:material_ball" + std::to_string(number) });
+            auto red_plastic = renderer->materials().duplicate(sigma::resource::identifier{ "material://white_plastic" }, sigma::resource::identifier{ "material://red_plastic" + std::to_string(number) });
+            material_ball->set_material(0, red_plastic);
+            red_plastic->set_uniform("basecolor", glm::vec3{ 1, 0, 0 });
+            red_plastic->set_uniform("roughness", x / float(MAX));
+            red_plastic->set_uniform("metalness", 1.0f - (z / float(MAX)));
+
             auto e = entities.create();
             auto& txform = transforms.add(e);
-            txform.set_position(glm::vec3{ 1.5 * x, 0, 1.5 * z });
+            txform.set_position(glm::vec3{ 1.5f * x, 0, 1.5f * z });
             static_mesh_instances.add(e, material_ball);
         }
     }

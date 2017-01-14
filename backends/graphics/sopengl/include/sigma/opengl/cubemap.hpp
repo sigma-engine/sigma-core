@@ -37,7 +37,7 @@ namespace opengl {
     public:
         using graphics::cubemap_manager::cubemap_manager;
 
-        virtual std::unique_ptr<graphics::cubemap> load(graphics::cubemap_data data, boost::archive::binary_iarchive& ia) override;
+        virtual std::unique_ptr<graphics::cubemap> create(graphics::cubemap_data data) override;
     };
 }
 }

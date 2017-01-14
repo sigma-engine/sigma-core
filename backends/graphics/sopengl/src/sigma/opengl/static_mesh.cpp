@@ -6,8 +6,8 @@
 
 namespace sigma {
 namespace opengl {
-	static_mesh::static_mesh(const graphics::static_mesh_data &data)
-		: graphics::static_mesh(data)
+    static_mesh::static_mesh(const graphics::static_mesh_data& data)
+        : graphics::static_mesh(data)
     {
         GL_CHECK(glGenVertexArrays(1, &vertex_array_));
         GL_CHECK(glBindVertexArray(vertex_array_));
@@ -27,10 +27,10 @@ namespace opengl {
         GL_CHECK(glEnableVertexAttribArray(3));
         GL_CHECK(glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(graphics::static_mesh_data::vertex), reinterpret_cast<const void*>(3 * sizeof(glm::vec3))));
 
-		index_count_ = 3 * data.triangles.size();
-		GL_CHECK(glGenBuffers(1, &index_buffer_));
-		GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_));
-		GL_CHECK(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * index_count_, data.triangles.data(), GL_STATIC_DRAW));
+        index_count_ = 3 * data.triangles.size();
+        GL_CHECK(glGenBuffers(1, &index_buffer_));
+        GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_));
+        GL_CHECK(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * index_count_, data.triangles.data(), GL_STATIC_DRAW));
     }
 
     static_mesh::~static_mesh()
@@ -40,18 +40,18 @@ namespace opengl {
         glDeleteVertexArrays(1, &vertex_array_);
     }
 
-	void static_mesh::render()
-	{
-		GL_CHECK(glBindVertexArray(vertex_array_));
-		GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_));
-		GL_CHECK(glDrawElements(GL_TRIANGLES, index_count_, GL_UNSIGNED_INT, nullptr));
-	}
+    void static_mesh::render()
+    {
+        GL_CHECK(glBindVertexArray(vertex_array_));
+        GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_));
+        GL_CHECK(glDrawElements(GL_TRIANGLES, index_count_, GL_UNSIGNED_INT, nullptr));
+    }
 
     void static_mesh::render(unsigned int material_slot)
     {
         GL_CHECK(glBindVertexArray(vertex_array_));
         GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_));
-		GL_CHECK(glDrawElements(GL_TRIANGLES, 3 * material_slots_[material_slot].second, GL_UNSIGNED_INT,reinterpret_cast<const void*>(sizeof(graphics::static_mesh_data::triangle)*material_slots_[material_slot].first)));
+        GL_CHECK(glDrawElements(GL_TRIANGLES, 3 * material_slots_[material_slot].second, GL_UNSIGNED_INT, reinterpret_cast<const void*>(sizeof(graphics::static_mesh_data::triangle) * material_slots_[material_slot].first)));
     }
 
     static_mesh_manager::static_mesh_manager(boost::filesystem::path cache_directory, opengl::material_manager& materials)
@@ -60,12 +60,11 @@ namespace opengl {
     {
     }
 
-    std::unique_ptr<graphics::static_mesh> static_mesh_manager::load(graphics::static_mesh_data data, boost::archive::binary_iarchive& ia)
+    std::unique_ptr<graphics::static_mesh> static_mesh_manager::create(graphics::static_mesh_data data)
     {
-	
         auto mesh = std::make_unique<opengl::static_mesh>(std::move(data));
-		for (unsigned int i = 0; i < mesh->material_count(); ++i)
-			mesh->material(i).set_manager(&materials_);
+        for (unsigned int i = 0; i < mesh->material_count(); ++i)
+            mesh->material(i).set_manager(&materials_);
         return std::move(mesh);
     }
 }

@@ -44,7 +44,7 @@ namespace opengl {
     public:
         using graphics::shader_manager::shader_manager;
 
-        virtual std::unique_ptr<graphics::shader> load(graphics::shader_data data, boost::archive::binary_iarchive& ia) override;
+        virtual std::unique_ptr<graphics::shader> create(graphics::shader_data data) override;
     };
 }
 }

@@ -13,12 +13,12 @@ namespace sigma {
 namespace opengl {
     class static_mesh : public graphics::static_mesh {
     public:
-		struct material_slot {
-			resource::handle<graphics::material> material;
-			std::size_t start, end;
-		};
+        struct material_slot {
+            resource::handle<graphics::material> material;
+            std::size_t start, end;
+        };
 
-        static_mesh(const graphics::static_mesh_data &data);
+        static_mesh(const graphics::static_mesh_data& data);
 
         static_mesh(static_mesh&&) = default;
 
@@ -26,7 +26,7 @@ namespace opengl {
 
         ~static_mesh();
 
-		void render();
+        void render();
 
         void render(unsigned int material_slot);
 
@@ -45,7 +45,7 @@ namespace opengl {
     public:
         static_mesh_manager(boost::filesystem::path cache_directory, opengl::material_manager& materials);
 
-        virtual std::unique_ptr<graphics::static_mesh> load(graphics::static_mesh_data data, boost::archive::binary_iarchive& ia) override;
+        virtual std::unique_ptr<graphics::static_mesh> create(graphics::static_mesh_data data) override;
 
     private:
         opengl::material_manager& materials_;

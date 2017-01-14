@@ -210,7 +210,7 @@ namespace opengl {
         {
         }
 
-        virtual std::unique_ptr<typename Cache::resource_type> load(typename Cache::resource_data data, boost::archive::binary_iarchive& ia) override
+        virtual std::unique_ptr<typename Cache::resource_type> create(typename Cache::resource_data data) override
         {
             auto tech = std::make_unique<InternalType>(data);
 

@@ -20,6 +20,8 @@ namespace json {
 
     bool SIGMA_API from_json(const Json::Value& value, glm::quat& output);
 
+	Json::Value SIGMA_API to_json(float v);
+
     Json::Value SIGMA_API to_json(glm::vec3 v);
 }
 }

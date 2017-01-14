@@ -54,9 +54,9 @@ namespace resource {
         handle<Resource>& operator=(const handle<Resource>& other)
         {
             if (id_ != other.id_) {
-                id_ = other.id_;
                 if (manager_)
                     manager_->dereference(id_);
+                id_ = other.id_;
                 if (other.manager_) {
                     manager_ = other.manager_;
                     manager_->reference(id_);
@@ -168,11 +168,16 @@ namespace resource {
 
         virtual ~manager() = default;
 
-        virtual std::unique_ptr<Resource> load(resource_data data, boost::archive::binary_iarchive& ia) = 0;
+        virtual std::unique_ptr<Resource> create(resource_data data) = 0;
 
         bool is_loaded(identifier id) const
         {
-            return reference_counts_.count(id) > 0 && resources_.count(id) > 0 && resources_.at(id) != nullptr;
+            return resources_data_.count(id) > 0; //reference_counts_.count(id) > 0 && resources_.count(id) > 0 && resources_.at(id) != nullptr;
+        }
+
+        bool is_created(identifier id) const
+        {
+            return resources_.count(id) > 0 && resources_.at(id) != nullptr;
         }
 
         void reference(identifier id)
@@ -185,31 +190,25 @@ namespace resource {
             return handle<Resource>{ id, this };
         }
 
+        handle<Resource> duplicate(identifier src_id, identifier dest_id)
+        {
+            if (!is_loaded(src_id))
+                load(src_id);
+            resources_data_[dest_id] = resources_data_[src_id];
+            return { dest_id, this };
+        }
+
         Resource* acquire(identifier id)
         {
-            if (is_loaded(id))
+            if (is_created(id))
                 return resources_[id].get();
-            if (reference_counts_[id] > 0) {
-                try {
-                    auto resource_path = cache_directory_ / std::to_string(id.value());
-                    std::ifstream file{ resource_path.string(), std::ios::binary | std::ios::in };
-                    boost::archive::binary_iarchive ia{ file };
-                    resource_data data;
-                    ia >> data;
-                    resources_[id] = std::move(load(std::move(data), ia));
-                    return resources_[id].get();
-                } catch (boost::archive::archive_exception& ex) {
-                    std::cout << "resource"
-                              << ": " << id << " " << ex.what() << std::endl;
-                } catch (std::exception& ex) {
-                    std::cout << "resource"
-                              << ": " << id << " " << ex.what() << std::endl;
-                } catch (...) { // TODO check for correct errors here
-                    std::cout << "resource"
-                              << ": " << id << "unknown exception" << std::endl;
-                }
-            }
-            return nullptr;
+
+            if (!is_loaded(id))
+                load(id);
+
+            resources_[id] = std::move(create(resources_data_[id]));
+
+            return resources_[id].get();
         }
 
         const Resource* acquire(identifier id) const
@@ -230,8 +229,31 @@ namespace resource {
         manager(const manager<Resource>&) = delete;
         manager& operator=(const manager<Resource>&) = delete;
 
+        void load(identifier id)
+        {
+            std::cout << "loading: " << id << std::endl;
+            try {
+                auto resource_path = cache_directory_ / std::to_string(id.value());
+                std::ifstream file{ resource_path.string(), std::ios::binary | std::ios::in };
+                boost::archive::binary_iarchive ia{ file };
+                resource_data data;
+                ia >> data;
+                resources_data_[id] = std::move(data);
+            } catch (boost::archive::archive_exception& ex) {
+                std::cout << "resource"
+                          << ": " << id << " " << ex.what() << std::endl;
+            } catch (std::exception& ex) {
+                std::cout << "resource"
+                          << ": " << id << " " << ex.what() << std::endl;
+            } catch (...) { // TODO check for correct errors here
+                std::cout << "resource"
+                          << ": " << id << "unknown exception" << std::endl;
+            }
+        }
+
         boost::filesystem::path cache_directory_;
         std::unordered_map<identifier, std::size_t> reference_counts_;
+        std::unordered_map<identifier, resource_data> resources_data_;
         std::unordered_map<identifier, std::unique_ptr<Resource>> resources_;
     };
 }

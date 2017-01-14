@@ -42,7 +42,7 @@ namespace opengl {
         GL_CHECK(glBindTexture(GL_TEXTURE_2D, object_));
     }
 
-    std::unique_ptr<graphics::texture> texture_manager::load(graphics::texture_data data, boost::archive::binary_iarchive& ia)
+    std::unique_ptr<graphics::texture> texture_manager::create(graphics::texture_data data)
     {
         return std::make_unique<texture>(std::move(data));
     }
