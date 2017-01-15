@@ -22,11 +22,11 @@ simple_game::simple_game(sigma::graphics::renderer* renderer)
         for (int z = 0; z < MAX; ++z) {
             number++;
             auto material_ball = renderer->static_meshes().duplicate("static_mesh://material_ball:material_ball", "static_mesh://material_ball:material_ball" + std::to_string(number));
-            auto red_plastic = renderer->materials().duplicate("material://white_plastic", "material://red_plastic" + std::to_string(number));
-            material_ball->set_material(0, red_plastic);
-            red_plastic->set_uniform("basecolor", glm::vec3{ 1, 1, 1 });
-            red_plastic->set_uniform("roughness", x / float(MAX - 1));
-            red_plastic->set_uniform("metalness", 1.0f - (z / float(MAX - 1)));
+            auto generated_mat = renderer->materials().duplicate("material://yellow_plastic", "material://generated" + std::to_string(number));
+            material_ball->set_material(0, generated_mat);
+            generated_mat->set_uniform("basecolor", glm::vec3{ 1, 1, 1 });
+            generated_mat->set_uniform("roughness", x / float(MAX - 1));
+            generated_mat->set_uniform("metalness", 1.0f - (z / float(MAX - 1)));
 
             auto e = entities.create();
             auto& txform = transforms.add(e);

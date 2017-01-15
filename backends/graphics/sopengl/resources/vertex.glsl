@@ -34,8 +34,16 @@ in vertex_data
     vec3 tangent;
     vec2 texcoord;
     vec3 binormal;
-}
-in_vertex[];
+} in_vertex[];
+
+out vertex_data
+{
+    vec4 position;
+    vec3 normal;
+    vec3 tangent;
+    vec2 texcoord;
+    vec3 binormal;
+} out_vertex;
 #else
 #error "This shader type is not supported"
 #endif
