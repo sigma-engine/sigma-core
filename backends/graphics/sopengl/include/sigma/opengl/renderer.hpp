@@ -83,6 +83,7 @@ namespace opengl {
         opengl::static_mesh_manager static_meshes_;
         opengl::post_process_effect_manager effects_;
 
+        resource::handle<graphics::post_process_effect> image_based_light_effect_;
         resource::handle<graphics::post_process_effect> point_light_effect_;
         resource::handle<graphics::post_process_effect> directional_light_effect_;
         resource::handle<graphics::post_process_effect> texture_blit_effect_;

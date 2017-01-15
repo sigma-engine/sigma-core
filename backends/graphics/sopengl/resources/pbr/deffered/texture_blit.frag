@@ -1,4 +1,4 @@
-#version 330
+#version 400
 
 // clang-format off
 #include <pbr/deffered/post_process_effect.glsl>
@@ -7,5 +7,5 @@
 
 void main()
 {
-    out_image = texture(in_image, in_vertex.texcoord);
+    out_image = texture(in_image, in_vertex.texcoord).rgb;
 }

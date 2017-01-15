@@ -17,16 +17,16 @@ simple_game::simple_game(sigma::graphics::renderer* renderer)
     load("../data/material_test_scene.scn");
 
     int number = 0;
-    int MAX = 8;
+    int MAX = 5;
     for (int x = 0; x < MAX; ++x) {
         for (int z = 0; z < MAX; ++z) {
             number++;
-            auto material_ball = renderer->static_meshes().duplicate(sigma::resource::identifier{ "static_mesh://material_ball:material_ball" }, sigma::resource::identifier{ "static_mesh://material_ball:material_ball" + std::to_string(number) });
-            auto red_plastic = renderer->materials().duplicate(sigma::resource::identifier{ "material://white_plastic" }, sigma::resource::identifier{ "material://red_plastic" + std::to_string(number) });
+            auto material_ball = renderer->static_meshes().duplicate("static_mesh://material_ball:material_ball", "static_mesh://material_ball:material_ball" + std::to_string(number));
+            auto red_plastic = renderer->materials().duplicate("material://white_plastic", "material://red_plastic" + std::to_string(number));
             material_ball->set_material(0, red_plastic);
-            red_plastic->set_uniform("basecolor", glm::vec3{ 1, 0, 0 });
-            red_plastic->set_uniform("roughness", x / float(MAX));
-            red_plastic->set_uniform("metalness", 1.0f - (z / float(MAX)));
+            red_plastic->set_uniform("basecolor", glm::vec3{ 1, 1, 1 });
+            red_plastic->set_uniform("roughness", x / float(MAX - 1));
+            red_plastic->set_uniform("metalness", 1.0f - (z / float(MAX - 1)));
 
             auto e = entities.create();
             auto& txform = transforms.add(e);
@@ -38,7 +38,7 @@ simple_game::simple_game(sigma::graphics::renderer* renderer)
     // load("../data/water_packed.scn");
     //
     // std::uniform_int_distribution<int> point_light_count_distribution_{ 0, 500 };
-    // int number_of_point_lights = point_light_count_distribution_(generator_);
+    // int number_of_point_lights = 0; //point_light_count_distribution_(generator_);
     // for (int i = 0; i < number_of_point_lights; ++i) {
     //     auto e = entities.create();
     //     auto& txform = random_transform(e);
@@ -61,7 +61,7 @@ simple_game::simple_game(sigma::graphics::renderer* renderer)
     // };
     //
     // std::uniform_int_distribution<int> static_mesh_count_distribution_{ 0, 1500 };
-    // int number_of_static_meshes = static_mesh_count_distribution_(generator_);
+    // int number_of_static_meshes = 0; //static_mesh_count_distribution_(generator_);
     // std::uniform_int_distribution<std::size_t> static_mesh_distribution_{ 0, static_mesh_ids.size() - 1 };
     // for (int i = 0; i < number_of_static_meshes; ++i) {
     //     auto e = entities.create();

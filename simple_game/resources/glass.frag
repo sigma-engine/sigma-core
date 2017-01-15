@@ -1,4 +1,4 @@
-#version 330
+#version 400
 
 #define SIGMA_ENGINE_TRANSPARENT
 #include <pbr/deffered/geometry_buffer.glsl>

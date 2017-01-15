@@ -99,8 +99,8 @@ int main(int argc, char* argv[])
         auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
         if (dt > 1000ms) {
             auto fps = count / std::chrono::duration_cast<std::chrono::duration<float>>(dt).count();
-            std::cout << "Frame time: " << (dt.count() / count) << " ms" << std::endl;
-            std::cout << "FPS: " << fps << std::endl;
+            // std::cout << "Frame time: " << (dt.count() / count) << " ms" << std::endl;
+            // std::cout << "FPS: " << fps << std::endl;
             start = end;
             count = 0;
         }

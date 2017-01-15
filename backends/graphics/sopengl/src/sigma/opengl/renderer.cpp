@@ -26,6 +26,7 @@ namespace opengl {
     {
         //standard_uniforms_.set_binding_point(shader_technique::STANDARD_UNIFORM_BLOCK_BINDING);
 
+        image_based_light_effect_ = effects_.get("post_process_effect://pbr/deffered/lights/image_based");
         point_light_effect_ = effects_.get("post_process_effect://pbr/deffered/lights/point");
         directional_light_effect_ = effects_.get("post_process_effect://pbr/deffered/lights/directional");
         texture_blit_effect_ = effects_.get("post_process_effect://pbr/deffered/texture_blit");
@@ -164,6 +165,11 @@ namespace opengl {
 
         // Begin rendering
 
+        instance_matrices matrices_;
+        matrices_.model_matrix = glm::mat4(1);
+        matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_view_matrix;
+        matrices_.normal_matrix = glm::mat3(1);
+
         GL_CHECK(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
         GL_CHECK(glClearStencil(0));
 
@@ -174,35 +180,40 @@ namespace opengl {
         geometry_pass(viewport, false);
 
         gbuffer_.bind_for_geometry_read();
-        GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
-        light_pass(viewport);
+        //GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
 
-        // Transparent objects
-        gbuffer_.swap_input_image();
-        gbuffer_.bind_for_geometry_write();
-        geometry_pass(viewport, true);
-
-        // TODO is energy conserved here??
-        gbuffer_.bind_for_geometry_read();
-        GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
-        light_pass(viewport);
-
-        // Final composition
-
-        instance_matrices matrices_;
-        matrices_.model_matrix = glm::mat4(1);
-        matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_view_matrix;
-        matrices_.normal_matrix = glm::mat3(1);
-
-        gbuffer_.bind_for_geometry_read();
-        GL_CHECK(glStencilFunc(GL_NOTEQUAL, 1, 0xFF));
+        // Render Image based lighting
+        GL_CHECK(glDisable(GL_BLEND));
+        GL_CHECK(glDisable(GL_STENCIL_TEST));
         GL_CHECK(glDisable(GL_DEPTH_TEST));
-        GL_CHECK(glDisable(GL_CULL_FACE));
+        EFFECT_PTR(image_based_light_effect_)->bind();
+        EFFECT_PTR(image_based_light_effect_)->set_standard_uniforms(&standard_uniform_data_);
+        EFFECT_PTR(image_based_light_effect_)->set_instance_matrices(&matrices_);
+        EFFECT_PTR(image_based_light_effect_)->apply();
 
-        EFFECT_PTR(texture_blit_effect_)->bind();
-        EFFECT_PTR(texture_blit_effect_)->set_standard_uniforms(&standard_uniform_data_);
-        EFFECT_PTR(texture_blit_effect_)->set_instance_matrices(&matrices_);
-        EFFECT_PTR(texture_blit_effect_)->apply();
+        light_pass(viewport);
+
+        // // Transparent objects
+        // gbuffer_.swap_input_image();
+        // gbuffer_.bind_for_geometry_write();
+        // geometry_pass(viewport, true);
+        //
+        // // TODO is energy conserved here??
+        // gbuffer_.bind_for_geometry_read();
+        // GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
+        // light_pass(viewport);
+        //
+        // // Final composition
+        //
+        // gbuffer_.bind_for_geometry_read();
+        // GL_CHECK(glStencilFunc(GL_NOTEQUAL, 1, 0xFF));
+        // GL_CHECK(glDisable(GL_DEPTH_TEST));
+        // GL_CHECK(glDisable(GL_CULL_FACE));
+        //
+        // EFFECT_PTR(texture_blit_effect_)->bind();
+        // EFFECT_PTR(texture_blit_effect_)->set_standard_uniforms(&standard_uniform_data_);
+        // EFFECT_PTR(texture_blit_effect_)->set_instance_matrices(&matrices_);
+        // EFFECT_PTR(texture_blit_effect_)->apply();
 
         GL_CHECK(glDisable(GL_BLEND));
         GL_CHECK(glDisable(GL_STENCIL_TEST));

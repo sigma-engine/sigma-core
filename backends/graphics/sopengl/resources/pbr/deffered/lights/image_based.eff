@@ -1,0 +1,6 @@
+{
+    "cubemaps": {
+        "environment_map": "NissiBeach"
+    },
+    "fragment" : "pbr/deffered/lights/image_based"
+}

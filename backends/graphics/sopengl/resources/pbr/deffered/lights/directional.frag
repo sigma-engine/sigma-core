@@ -1,4 +1,4 @@
-#version 330
+#version 400
 
 // clang-format off
 #include <pbr/deffered/post_process_effect.glsl>
@@ -19,7 +19,5 @@ void main()
     vec3 L = normalize(in_light.direction);
     vec3 V = -normalize(s.position);
 
-    vec3 final_color = in_light.intensity * in_light.color * compute_lighting(s, L, V);
-
-    out_image = vec4(final_color, 1);
+    out_image = in_light.intensity * in_light.color * compute_lighting(s, L, V);
 }

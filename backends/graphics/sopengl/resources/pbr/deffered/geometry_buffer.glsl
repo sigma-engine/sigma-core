@@ -22,7 +22,7 @@ uniform sampler2D in_normal_metalness;
 uniform sampler2D in_depth_stencil;
 uniform sampler2D in_image;
 
-out vec4 out_image;
+out vec3 out_image;
 
 surface read_geometry_buffer()
 {
