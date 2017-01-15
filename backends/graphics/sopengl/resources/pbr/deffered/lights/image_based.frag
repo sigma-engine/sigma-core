@@ -9,17 +9,22 @@
 uniform samplerCube environment_map;
 uniform uvec2 environment_map_size = uvec2(2048, 2048);
 
-#define SAMPLES 30
+// http://www.trentreed.net/blog/physically-based-shading-and-image-based-lighting/
+// http://blog.tobias-franke.eu/2014/03/30/notes_on_importance_sampling.html
+// http://http.developer.nvidia.com/GPUGems3/gpugems3_ch20.html
+// http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
+// https://placeholderart.wordpress.com/2015/07/28/implementation-notes-runtime-environment-map-filtering-for-image-based-lighting/
+
+#define SAMPLES 32
 
 float environment_map_lod(uvec2 size, uint N, float pdf)
 {
-    // http://http.developer.nvidia.com/GPUGems3/gpugems3_ch20.html
     return max(.5 * (log2(size.x * size.y / N) - log2(pdf)), 0);
 }
 
 vec3 importance_sample_ggx(vec2 xi, float alpha2)
 {
-    // http://blog.tobias-franke.eu/2014/03/30/notes_on_importance_sampling.html
+
     float cos_theta = sqrt((1.0f - xi.y) / ((alpha2 - 1.0f) * xi.y + 1.0f));
     float sin_theta = sqrt(1 - cos_theta * cos_theta);
     float phi = PI_2 * xi.x;
@@ -27,7 +32,6 @@ vec3 importance_sample_ggx(vec2 xi, float alpha2)
     return vec3(cos(phi) * sin_theta, sin(phi) * sin_theta, cos_theta);
 }
 
-// http://www.trentreed.net/blog/physically-based-shading-and-image-based-lighting/
 vec3 radiance(vec3 N, vec3 V, vec3 F0, float roughness)
 {
     vec3 up_vec = abs(N.z) < 0.999 ? vec3(0, 0, 1) : vec3(1, 0, 0);
@@ -55,7 +59,7 @@ vec3 radiance(vec3 N, vec3 V, vec3 F0, float roughness)
         float VdotH = clamp(dot(V, H), 0.0, 1.0);
 
         // Calculate the based on roughness
-        float pdf = D_ggx(NdotH, alpha2);
+        float pdf = D_ggx(NdotH, alpha2) * NdotH / (4 * VdotH);
         float lod = environment_map_lod(environment_map_size, SAMPLES, pdf);
 
         // Sample the environment map
@@ -70,6 +74,7 @@ vec3 radiance(vec3 N, vec3 V, vec3 F0, float roughness)
 
 void main()
 {
+
     surface s = read_geometry_buffer();
 
     mat4 inv_view_matrix = inverse(view_matrix); // TODO should be on the cpu
