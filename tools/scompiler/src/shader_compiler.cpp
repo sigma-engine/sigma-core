@@ -149,15 +149,15 @@ bool compile_shaders(boost::filesystem::path outputdir, std::vector<boost::files
 
         } catch (boost::wave::cpp_exception const& e) {
             all_good = false;
-            std::cerr << e.file_name() << "(" << e.line_no() << "): " << e.description() << std::endl;
+            std::cerr << e.file_name() << "(" << e.line_no() << "): " << e.description() << '\n';
         } catch (std::exception const& e) {
             all_good = false;
             std::cerr << current_position.get_file() << "(" << current_position.get_line() << "): "
-                      << "exception caught: " << e.what() << std::endl;
+                      << "exception caught: " << e.what() << '\n';
         } catch (...) {
             all_good = false;
             std::cerr << current_position.get_file() << "(" << current_position.get_line() << "): "
-                      << "unexpected exception caught." << std::endl;
+                      << "unexpected exception caught." << '\n';
         }
     }
     return all_good;

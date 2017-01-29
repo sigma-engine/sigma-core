@@ -154,13 +154,6 @@ namespace opengl {
 
             std::size_t max_instances = fill_material_buckets(viewport, material_buckets_, false);
             max_instances = std::max(max_instances, fill_material_buckets(viewport, transparent_material_buckets_, true));
-
-            // GL_CHECK(glGenBuffers(1, &mesh_instance_data_buffer_));
-            // GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, mesh_instance_data_buffer_));
-            // GL_CHECK(glBufferData(GL_ARRAY_BUFFER, max_instances * sizeof(mesh_instance_data), nullptr, GL_DYNAMIC_DRAW));
-            //
-            // setup_material_buckets(material_buckets_);
-            // setup_material_buckets(transparent_material_buckets_);
         }
 
         // Begin rendering
@@ -180,7 +173,7 @@ namespace opengl {
         geometry_pass(viewport, false);
 
         gbuffer_.bind_for_geometry_read();
-        //GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
+        // GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
 
         // Render Image based lighting
         GL_CHECK(glDisable(GL_BLEND));
@@ -282,14 +275,6 @@ namespace opengl {
                     mat->set_instance_matrices(&matrices);
                     mesh->render(material_slot);
                 }
-
-                // TODO add instancing just not on all meshes
-                // GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, mesh_instance_data_buffer_));
-                // GL_CHECK(glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(mesh_instance_data) * mesh_bucket.instances.size(), mesh_bucket.instances.data()));
-                //
-                // GL_CHECK(glBindVertexArray(mesh->vertex_array_));
-                // GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->index_buffer_));
-                // GL_CHECK(glDrawElementsInstanced(GL_TRIANGLES, mesh->index_count_, GL_UNSIGNED_INT, nullptr, mesh_bucket.instances.size()));
             }
         }
     }
@@ -392,40 +377,6 @@ namespace opengl {
             }
         }
         return max_instances;
-    }
-
-    void renderer::setup_instanced_material_buckets(std::vector<material_bucket>& material_buckets)
-    {
-        for (auto& mat_bucket : material_buckets) {
-            for (auto& mesh_bucket : mat_bucket.mesh_buckets) {
-                auto mesh = STATIC_MESH_PTR(mesh_bucket.active_mesh);
-                GL_CHECK(glBindVertexArray(mesh->vertex_array_));
-
-                auto vec4_size = sizeof(glm::vec4);
-                auto vec3_size = sizeof(glm::vec3);
-
-                //model_matrix[0]
-                GL_CHECK(glEnableVertexAttribArray(4));
-                GL_CHECK(glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(mesh_instance_data), 0));
-
-                //model_matrix[1]
-                GL_CHECK(glEnableVertexAttribArray(5));
-                GL_CHECK(glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(mesh_instance_data), reinterpret_cast<const void*>(1 * vec4_size)));
-
-                //model_matrix[2]
-                GL_CHECK(glEnableVertexAttribArray(6));
-                GL_CHECK(glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(mesh_instance_data), reinterpret_cast<const void*>(2 * vec4_size)));
-
-                //model_matrix[3]
-                GL_CHECK(glEnableVertexAttribArray(7));
-                GL_CHECK(glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(mesh_instance_data), reinterpret_cast<const void*>(3 * vec4_size)));
-
-                GL_CHECK(glVertexAttribDivisor(4, 1));
-                GL_CHECK(glVertexAttribDivisor(5, 1));
-                GL_CHECK(glVertexAttribDivisor(6, 1));
-                GL_CHECK(glVertexAttribDivisor(7, 1));
-            }
-        }
     }
 
     /*void renderer::point_light_outside_stencil_optimization(glm::vec3 view_space_position, float radius)

@@ -14,10 +14,10 @@ void touch_stamp_file(boost::filesystem::path outputdir, boost::filesystem::path
     stamp_path += ".stamp";
     boost::filesystem::create_directories(stamp_path.parent_path());
     std::ofstream stamp_file(stamp_path.string());
-    stamp_file << std::chrono::high_resolution_clock::now().time_since_epoch().count();
+    stamp_file << std::chrono::high_resolution_clock::now().time_since_epoch().count() << '\n';
 
     for (const auto& dep : dependencies)
-        stamp_file << dep.string() << std::endl;
+        stamp_file << dep.string() << '\n';
 }
 
 bool resource_has_changes(boost::filesystem::path outputdir, boost::filesystem::path resource)
@@ -32,15 +32,13 @@ bool resource_has_changes(boost::filesystem::path outputdir, boost::filesystem::
     auto stamp_time = boost::filesystem::last_write_time(stamp_path);
     std::ifstream stamp_file(stamp_path.string());
 
-    std::size_t t;
-    stamp_file >> t;
-
     std::string dep;
+    std::getline(stamp_file, dep);
     while (std::getline(stamp_file, dep)) {
-        if (stamp_file.good() && stamp_time < boost::filesystem::last_write_time(dep))
+        if (stamp_time < boost::filesystem::last_write_time(dep))
             return true;
     }
 
-    return boost::filesystem::last_write_time(stamp_path) < boost::filesystem::last_write_time(resource);
+    return stamp_time < boost::filesystem::last_write_time(resource);
 }
 }

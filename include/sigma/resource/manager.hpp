@@ -231,7 +231,7 @@ namespace resource {
 
         void load(identifier id)
         {
-            std::cout << "loading: " << id << std::endl;
+            std::cout << "loading: " << id << '\n';
             try {
                 auto resource_path = cache_directory_ / std::to_string(id.value());
                 std::ifstream file{ resource_path.string(), std::ios::binary | std::ios::in };
@@ -241,13 +241,13 @@ namespace resource {
                 resources_data_[id] = std::move(data);
             } catch (boost::archive::archive_exception& ex) {
                 std::cout << "resource"
-                          << ": " << id << " " << ex.what() << std::endl;
+                          << ": " << id << " " << ex.what() << '\n';
             } catch (std::exception& ex) {
                 std::cout << "resource"
-                          << ": " << id << " " << ex.what() << std::endl;
+                          << ": " << id << " " << ex.what() << '\n';
             } catch (...) { // TODO check for correct errors here
                 std::cout << "resource"
-                          << ": " << id << "unknown exception" << std::endl;
+                          << ": " << id << "unknown exception" << '\n';
             }
         }
 

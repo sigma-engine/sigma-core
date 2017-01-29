@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
 project(sopengl)
 
-find_package(OpenGL REQUIRED)
+#find_package(OpenGL REQUIRED)
 
 set(SOURCES
     src/sigma/opengl/cubemap.cpp
@@ -38,7 +38,7 @@ set(HEADERS
 
 add_library(sopengl SHARED ${SOURCES} ${HEADERS})
 
-target_include_directories(sopengl PUBLIC include resources PRIVATE ${OPENGL_INCLUDE_DIR})
+target_include_directories(sopengl PUBLIC include resources)#PRIVATE ${OPENGL_INCLUDE_DIR}
 
 target_compile_definitions(sopengl PUBLIC -DSIGMA_SOPENGL_SHARED)
 target_compile_options(sopengl PRIVATE -DSIGMA_SOPENGL_EXPORT)

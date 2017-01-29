@@ -154,7 +154,7 @@ bool sigma::validate_shader(const graphics::shader_data& shader, std::vector<boo
 
         for (auto it = begin_iterator; it != end_iterator; ++it) {
             auto match = *it;
-            std::cerr << source_filenames[std::stoi(match[1])].string() << "(" << match[2] << "): error :" << match[3] << std::endl; // MSVC output
+            std::cerr << source_filenames[std::stoi(match[1])].string() << "(" << match[2] << "): error :" << match[3] << '\n'; // MSVC output
         }
 
         return false;

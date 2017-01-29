@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.5)
 project(sigma-engine)
 
 include(${CMAKE_SOURCE_DIR}/sigma_setup.cmake)
@@ -87,11 +87,6 @@ target_compile_options(sigma-core PRIVATE -DSIGMA_EXPORT)
 
 add_subdirectory(tools/scompiler)
 
-# add_subdirectory(tools/scmaterial)
-# add_subdirectory(tools/scmodel)
-# add_subdirectory(tools/screflect)
-# add_subdirectory(tools/scshader)
-# add_subdirectory(tools/sctexture)
 add_subdirectory(backends/graphics/sopengl)
 
 # add_subdirectory(tests)

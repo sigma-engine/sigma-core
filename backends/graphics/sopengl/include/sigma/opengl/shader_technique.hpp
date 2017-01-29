@@ -63,7 +63,7 @@ namespace opengl {
 
             glGetProgramiv(object_, GL_LINK_STATUS, &linked_);
             if (linked_ == GL_FALSE) {
-                std::cerr << "shader program: link faild" << std::endl;
+                std::cerr << "shader program: link faild\n";
                 // TODO get the link message.
                 std::abort();
             }

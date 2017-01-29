@@ -32,12 +32,12 @@ int main(int argc, char const* argv[])
     po::store(po::command_line_parser(argc, argv).options(global_options).positional(positional_options).run(), vm);
 
     if (vm.count("help")) {
-        std::cout << global_options << std::endl;
+        std::cout << global_options << '\n';
         return 0;
     }
 
     if (vm.count("input-files") <= 0) {
-        std::cerr << "scompiler: fatal error: no input files." << std::endl;
+        std::cerr << "scompiler: fatal error: no input files.\n";
         return -1;
     }
 
@@ -73,7 +73,7 @@ int main(int argc, char const* argv[])
             else if (sigma::is_post_process_effect(file_path))
                 post_process_effects.push_back(file_path);
         } else {
-            std::cerr << "scompiler: error: file '" << file_path << "' is not contained in '" << boost::filesystem::current_path() << "'!" << std::endl;
+            std::cerr << "scompiler: error: file '" << file_path << "' is not contained in '" << boost::filesystem::current_path() << "'!\n";
             return -1;
         }
     }

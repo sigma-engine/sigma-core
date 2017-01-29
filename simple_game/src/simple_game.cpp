@@ -14,6 +14,7 @@ simple_game::simple_game(sigma::graphics::renderer* renderer)
     , scale_distribution_{ 0.1f, 10.0f }
     , color_distribution_{ glm::vec3{ 0.0f }, glm::vec3{ 1.0f } }
 {
+    //load("../data/proprietary/classroom/classroom.scn");
     load("../data/material_test_scene.scn");
 
     int number = 0;
@@ -34,6 +35,10 @@ simple_game::simple_game(sigma::graphics::renderer* renderer)
             static_mesh_instances.add(e, material_ball);
         }
     }
+
+    // auto e = entities.create();
+    // transforms.add(e);
+    // //static_mesh_instances.add(e, renderer_->static_meshes().get("static_mesh://proprietary/classroom/a:ChamferBox01"));
 
     // load("../data/water_packed.scn");
     //
@@ -70,8 +75,8 @@ simple_game::simple_game(sigma::graphics::renderer* renderer)
     //     static_mesh_instances.add(e, renderer_->static_meshes().get(random_mesh_id));
     // }
     //
-    // std::cout << "Rendering " << number_of_point_lights << " point lights." << std::endl;
-    // std::cout << "Rendering " << number_of_static_meshes << " static meshes." << std::endl;
+    // std::cout << "Rendering " << number_of_point_lights << " point lights." << '\n';
+    // std::cout << "Rendering " << number_of_static_meshes << " static meshes." << '\n';
 }
 
 sigma::transform& simple_game::random_transform(sigma::entity e)
@@ -85,7 +90,7 @@ sigma::transform& simple_game::random_transform(sigma::entity e)
 
 void simple_game::update(std::chrono::duration<float> dt)
 {
-    std::cout << " this is a test " << std::endl;
+    std::cout << " this is a test\n";
 }
 
 SIGMA_EXPORT_GAME_CLASSES(simple_game)
