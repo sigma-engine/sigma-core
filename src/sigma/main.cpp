@@ -35,9 +35,22 @@ int main(int argc, char* argv[])
     std::size_t count = 0;
     while (window.good()) {
         viewport.view_matrix = controller.matrix();
-        if (renderer) {
+
+        count++;
+        auto end = std::chrono::high_resolution_clock::now();
+        auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+        if (dt > 1000ms) {
+            auto fps = count / std::chrono::duration_cast<std::chrono::duration<float>>(dt).count();
+            std::cout << "Frame time: " << (dt.count() / count) << " ms\n";
+            std::cout << "FPS: " << fps << '\n';
+            start = end;
+            count = 0;
+        }
+
+        if (renderer && game) {
             SDL_GL_MakeCurrent(window.window_, window.gl_context_);
             renderer->render(viewport);
+            game->update(dt);
         }
 
         SDL_Event event;
@@ -94,16 +107,9 @@ int main(int argc, char* argv[])
         }
 
         SDL_GL_SwapWindow(window.window_);
-        count++;
-        auto end = std::chrono::high_resolution_clock::now();
-        auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-        if (dt > 1000ms) {
-            auto fps = count / std::chrono::duration_cast<std::chrono::duration<float>>(dt).count();
-            // std::cout << "Frame time: " << (dt.count() / count) << " ms\n";
-            // std::cout << "FPS: " << fps << '\n';
-            start = end;
-            count = 0;
-        }
     }
+
+    SDL_Quit();
+
     return 0;
 }

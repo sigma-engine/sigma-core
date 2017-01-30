@@ -5,8 +5,6 @@
 
 void main()
 {
-    // mat4 model_view_matrix = view_matrix * model_matrix;
-    // mat3 normal_matrix = transpose(inverse(mat3(model_view_matrix)));
     out_vertex.position = model_view_matrix * vec4(in_position, 1);
     out_vertex.normal = normalize(normal_matrix * in_normal);
     out_vertex.tangent = normalize(normal_matrix * in_tangent);

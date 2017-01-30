@@ -12,6 +12,8 @@
 
 uniform mat4 projection_matrix;
 uniform mat4 view_matrix;
+uniform mat4 inverse_projection_matrix;
+uniform mat4 inverse_view_matrix;
 uniform vec2 view_port_size;
 uniform float time;
 uniform float z_near;

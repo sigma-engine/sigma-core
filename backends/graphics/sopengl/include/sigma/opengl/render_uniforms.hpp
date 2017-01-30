@@ -8,6 +8,8 @@ namespace opengl {
     struct standard_uniforms {
         glm::mat4 projection_matrix;
         glm::mat4 view_matrix;
+        glm::mat4 inverse_projection_matrix;
+        glm::mat4 inverse_view_matrix;
         glm::vec2 view_port_size;
         float time;
         float z_near;

@@ -77,13 +77,12 @@ void main()
 
     surface s = read_geometry_buffer();
 
-    mat4 inv_view_matrix = inverse(view_matrix); // TODO should be on the cpu
-    vec3 V = normalize((inv_view_matrix * vec4(-s.position, 0.0)).xyz);
+    vec3 V = normalize((inverse_view_matrix * vec4(-s.position, 0.0)).xyz);
 
     if (s.depth == 1.0)
         out_image = pow(texture(environment_map, -V, 0.0).rgb, vec3(3));
     else {
-        vec3 N = normalize((inv_view_matrix * vec4(s.normal, 0.0)).xyz);
+        vec3 N = normalize((inverse_view_matrix * vec4(s.normal, 0.0)).xyz);
 
         vec3 F0 = mix(vec3(0.04f), s.diffuse, s.metalness);
 

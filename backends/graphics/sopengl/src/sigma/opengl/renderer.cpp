@@ -85,6 +85,8 @@ namespace opengl {
     {
         standard_uniform_data_.projection_matrix = viewport.projection_matrix;
         standard_uniform_data_.view_matrix = viewport.view_matrix;
+        standard_uniform_data_.inverse_projection_matrix = glm::inverse(viewport.projection_matrix);
+        standard_uniform_data_.inverse_view_matrix = glm::inverse(viewport.view_matrix);
         standard_uniform_data_.view_port_size = viewport.size;
         standard_uniform_data_.time = 0; // TODO time
         standard_uniform_data_.z_near = viewport.z_near;
