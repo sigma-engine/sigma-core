@@ -7,8 +7,8 @@ libpng/1.6.21@lasote/stable
 libtiff/4.0.6@bilke/stable
 libjpeg/9a@Kaosumaru/stable
 SDL2/2.0.5@lasote/stable
+gtest/master@smspillaz/gtest
 #glslang/master@siegelaaron94/develop
-#gtest/master@smspillaz/gtest
 
 [options]
 Boost:fPIC=True

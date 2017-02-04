@@ -89,7 +89,7 @@ add_subdirectory(tools/scompiler)
 
 add_subdirectory(backends/graphics/sopengl)
 
-# add_subdirectory(tests)
+add_subdirectory(tests)
 
 add_subdirectory(simple_game)
 

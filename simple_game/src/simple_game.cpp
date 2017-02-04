@@ -36,10 +36,6 @@ simple_game::simple_game(sigma::graphics::renderer* renderer)
         }
     }
 
-    // auto e = entities.create();
-    // transforms.add(e);
-    // //static_mesh_instances.add(e, renderer_->static_meshes().get("static_mesh://proprietary/classroom/a:ChamferBox01"));
-
     // load("../data/water_packed.scn");
     //
     // std::uniform_int_distribution<int> point_light_count_distribution_{ 0, 500 };

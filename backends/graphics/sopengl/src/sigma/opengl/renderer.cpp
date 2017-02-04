@@ -175,16 +175,6 @@ namespace opengl {
         geometry_pass(viewport, false);
 
         gbuffer_.bind_for_geometry_read();
-        // GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
-
-        // Render Image based lighting
-        GL_CHECK(glDisable(GL_BLEND));
-        GL_CHECK(glDisable(GL_STENCIL_TEST));
-        GL_CHECK(glDisable(GL_DEPTH_TEST));
-        EFFECT_PTR(image_based_light_effect_)->bind();
-        EFFECT_PTR(image_based_light_effect_)->set_standard_uniforms(&standard_uniform_data_);
-        EFFECT_PTR(image_based_light_effect_)->set_instance_matrices(&matrices_);
-        EFFECT_PTR(image_based_light_effect_)->apply();
 
         light_pass(viewport);
 
@@ -198,8 +188,7 @@ namespace opengl {
         // GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
         // light_pass(viewport);
         //
-        // // Final composition
-        //
+        // // Final transparancy composition
         // gbuffer_.bind_for_geometry_read();
         // GL_CHECK(glStencilFunc(GL_NOTEQUAL, 1, 0xFF));
         // GL_CHECK(glDisable(GL_DEPTH_TEST));
@@ -210,6 +199,7 @@ namespace opengl {
         // EFFECT_PTR(texture_blit_effect_)->set_instance_matrices(&matrices_);
         // EFFECT_PTR(texture_blit_effect_)->apply();
 
+        // Render final effects
         GL_CHECK(glDisable(GL_BLEND));
         GL_CHECK(glDisable(GL_STENCIL_TEST));
         GL_CHECK(glDisable(GL_DEPTH_TEST));
@@ -283,6 +273,24 @@ namespace opengl {
 
     void renderer::light_pass(const graphics::view_port& viewport)
     {
+        // GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
+        // Render Image based lighting
+        // TODO IBL breaks energy conservation of the environment map
+        // when transparancies are rendered.
+        instance_matrices matrices_;
+        matrices_.model_matrix = glm::mat4(1);
+        matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_view_matrix;
+        matrices_.normal_matrix = glm::mat3(1);
+
+        GL_CHECK(glDisable(GL_BLEND));
+        GL_CHECK(glDisable(GL_STENCIL_TEST));
+        GL_CHECK(glDisable(GL_DEPTH_TEST));
+        EFFECT_PTR(image_based_light_effect_)->bind();
+        EFFECT_PTR(image_based_light_effect_)->set_standard_uniforms(&standard_uniform_data_);
+        EFFECT_PTR(image_based_light_effect_)->set_instance_matrices(&matrices_);
+        EFFECT_PTR(image_based_light_effect_)->apply();
+
+        // Setup state for analytical lights
         GL_CHECK(glStencilMask(0x00));
         GL_CHECK(glStencilFunc(GL_EQUAL, 1, 0xFF));
         GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP));
@@ -291,8 +299,6 @@ namespace opengl {
         GL_CHECK(glBlendEquation(GL_FUNC_ADD));
         GL_CHECK(glBlendFunc(GL_ONE, GL_ONE));
         GL_CHECK(glEnable(GL_BLEND));
-
-        // TODO Render IBL lights http://www.trentreed.net/blog/physically-based-shading-and-image-based-lighting/
 
         // TODO:perf look into passing all analytical lights(directional,point,spot) into one shader
         // instead of rendering the geometry for each. This not only would reduce the number of polygons
@@ -306,14 +312,8 @@ namespace opengl {
         GL_CHECK(glDepthFunc(GL_GREATER));
         GL_CHECK(glEnable(GL_DEPTH_TEST));
 
-        instance_matrices matrices_;
-        matrices_.model_matrix = glm::mat4(1);
-        matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
-        matrices_.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices_.model_view_matrix)));
-
         EFFECT_PTR(point_light_effect_)->bind();
         EFFECT_PTR(point_light_effect_)->set_standard_uniforms(&standard_uniform_data_);
-        EFFECT_PTR(point_light_effect_)->set_instance_matrices(&matrices_);
 
         // TODO:perf re-incorporate the stencil test that limits the pixels being light see
         // http://forum.devmaster.net/t/deferred-lighting-rendering-light-volumes/14998/5
@@ -328,13 +328,14 @@ namespace opengl {
         GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, point_mesh->index_buffer_));
         GL_CHECK(glDrawElementsInstanced(GL_TRIANGLES, point_mesh->index_count_, GL_UNSIGNED_INT, nullptr, internal_point_lights_.size()));
 
+        // TODO Render spot lights
+
         // Render directional lights
         GL_CHECK(glDisable(GL_DEPTH_TEST));
         GL_CHECK(glDisable(GL_CULL_FACE));
 
         EFFECT_PTR(directional_light_effect_)->bind();
         EFFECT_PTR(directional_light_effect_)->set_standard_uniforms(&standard_uniform_data_);
-        EFFECT_PTR(directional_light_effect_)->set_instance_matrices(&matrices_);
 
         // TODO:perf we can use one fullscreen quad to render all of the directional lights and save on gbuffer lookups.
         // TODO this is a hack
