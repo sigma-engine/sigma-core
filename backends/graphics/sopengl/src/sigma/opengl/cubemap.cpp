@@ -8,7 +8,7 @@ namespace sigma {
 namespace opengl {
     cubemap::cubemap(graphics::cubemap_data data)
     {
-		int mip_levels = std::min(std::log2(data.right.size.x), std::log2(data.right.size.y));
+        int mip_levels = std::min(std::log2(data.right.size.x), std::log2(data.right.size.y));
 
         // TODO custom internal format
         GL_CHECK(glGenTextures(1, &object_));
@@ -43,7 +43,7 @@ namespace opengl {
         return object_;
     }
 
-    void cubemap::bind()
+    void cubemap::bind() const
     {
         GL_CHECK(glBindTexture(GL_TEXTURE_CUBE_MAP, object_));
     }

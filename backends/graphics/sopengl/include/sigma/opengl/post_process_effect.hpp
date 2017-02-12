@@ -25,9 +25,9 @@ namespace opengl {
 
         void link();
 
-        void bind();
+        void bind() const;
 
-        void apply();
+        void apply() const;
 
     private:
         GLint in_position_location_ = -1;

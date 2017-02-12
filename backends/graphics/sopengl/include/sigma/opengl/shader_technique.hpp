@@ -113,7 +113,7 @@ namespace opengl {
             }
         }
 
-        void set_standard_uniforms(standard_uniforms* standard)
+        void set_standard_uniforms(standard_uniforms* standard) const
         {
             GL_CHECK(glUniformMatrix4fv(projection_matrix_location_, 1, GL_FALSE, glm::value_ptr(standard->projection_matrix)));
             GL_CHECK(glUniformMatrix4fv(view_matrix_location_, 1, GL_FALSE, glm::value_ptr(standard->view_matrix)));
@@ -124,14 +124,14 @@ namespace opengl {
             GL_CHECK(glUniform2fv(view_port_size_location_, 1, glm::value_ptr(standard->view_port_size)));
         }
 
-        void set_instance_matrices(instance_matrices* matrices)
+        void set_instance_matrices(instance_matrices* matrices) const
         {
             GL_CHECK(glUniformMatrix4fv(model_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->model_matrix)));
             GL_CHECK(glUniformMatrix4fv(model_view_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->model_view_matrix)));
             GL_CHECK(glUniformMatrix3fv(normal_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->normal_matrix)));
         }
 
-        void bind()
+        void bind() const
         {
             GL_CHECK(glUseProgram(object_));
             GL_CHECK(glUniform1i(in_image_location_, geometry_buffer::INPUT_IMAGE_LOCATION));
@@ -149,20 +149,20 @@ namespace opengl {
                 GL_CHECK(glUniform4fv(vec4_locations_[i], 1, glm::value_ptr(this->vec4s_[i].second)));
         }
 
-        void bind(texture_unit first_texture_unit)
+        void bind(texture_unit first_texture_unit) const
         {
             bind();
             auto texture_unit = GLenum(first_texture_unit);
             auto unit_number = GLenum(first_texture_unit) - GL_TEXTURE0;
             for (std::size_t i = 0; i < this->textures_.size(); ++i, ++texture_unit, ++unit_number) {
                 GL_CHECK(glActiveTexture(texture_unit));
-                TEXTURE_PTR(this->textures_[i].second)->bind();
+                TEXTURE_CONST_PTR(this->textures_[i].second)->bind();
                 GL_CHECK(glUniform1i(texture_locations_[i], unit_number));
             }
 
             for (std::size_t i = 0; i < this->cubemaps_.size(); ++i, ++texture_unit, ++unit_number) {
                 GL_CHECK(glActiveTexture(texture_unit));
-                CUBEMAP_PTR(this->cubemaps_[i].second)->bind();
+                CUBEMAP_CONST_PTR(this->cubemaps_[i].second)->bind();
                 GL_CHECK(glUniform1i(cubemap_locations_[i], unit_number));
             }
         }

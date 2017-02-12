@@ -26,9 +26,9 @@ namespace opengl {
 
         ~static_mesh();
 
-        void render();
+        void render() const;
 
-        void render(unsigned int material_slot);
+        void render(unsigned int material_slot) const;
 
         // TODO make private
         GLuint vertex_array_ = 0;

@@ -19,7 +19,7 @@ namespace opengl {
         GL_CHECK(in_depth_stencil_location_ = glGetUniformLocation(object_, geometry_buffer::DEPTH_STENCIL_INPUT_NAME));
     }
 
-    void post_process_effect::bind()
+    void post_process_effect::bind() const
     {
         shader_technique::bind(geometry_buffer::NEXT_FREE_TEXTURE_UINT);
         GL_CHECK(glUniform1i(in_diffuse_location_, geometry_buffer::DIFFUSE_ROUGHNESS_OUTPUT_LOCATION));
@@ -27,9 +27,9 @@ namespace opengl {
         GL_CHECK(glUniform1i(in_depth_stencil_location_, geometry_buffer::DEPTH_STENCIL_LOCATION));
     }
 
-    void post_process_effect::apply()
+    void post_process_effect::apply() const
     {
-        STATIC_MESH_PTR(mesh_)->render();
+        STATIC_MESH_CONST_PTR(mesh_)->render();
     }
 
     post_process_effect_manager::post_process_effect_manager(boost::filesystem::path cache_directory, opengl::shader_manager& shaders, opengl::texture_manager& textures, opengl::cubemap_manager& cubemaps, opengl::static_mesh_manager& meshes)

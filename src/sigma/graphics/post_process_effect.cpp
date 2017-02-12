@@ -15,6 +15,11 @@ namespace graphics {
         return mesh_;
     }
 
+    const resource::handle<static_mesh>& post_process_effect::mesh() const
+    {
+        return mesh_;
+    }
+
     void post_process_effect::set_mesh(resource::handle<static_mesh> mesh)
     {
         // TODO maybe if the mesh handle passed in is not valid

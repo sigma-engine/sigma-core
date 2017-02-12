@@ -40,14 +40,14 @@ namespace opengl {
         glDeleteVertexArrays(1, &vertex_array_);
     }
 
-    void static_mesh::render()
+    void static_mesh::render() const
     {
         GL_CHECK(glBindVertexArray(vertex_array_));
         GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_));
         GL_CHECK(glDrawElements(GL_TRIANGLES, index_count_, GL_UNSIGNED_INT, nullptr));
     }
 
-    void static_mesh::render(unsigned int material_slot)
+    void static_mesh::render(unsigned int material_slot) const
     {
         GL_CHECK(glBindVertexArray(vertex_array_));
         GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_));

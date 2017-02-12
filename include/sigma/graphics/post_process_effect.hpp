@@ -33,6 +33,8 @@ namespace graphics {
 
         resource::handle<static_mesh>& mesh();
 
+        const resource::handle<static_mesh>& mesh() const;
+
         void set_mesh(resource::handle<static_mesh> mesh);
 
     protected:

@@ -37,7 +37,7 @@ namespace opengl {
         return object_;
     }
 
-    void texture::bind()
+    void texture::bind() const
     {
         GL_CHECK(glBindTexture(GL_TEXTURE_2D, object_));
     }

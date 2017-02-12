@@ -137,7 +137,7 @@ namespace opengl {
 
         GLuint get_object() const;
 
-        void bind();
+        void bind() const;
 
     private:
         texture(const texture&) = delete;

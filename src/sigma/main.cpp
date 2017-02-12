@@ -12,7 +12,7 @@
 
 int main(int argc, char* argv[])
 {
-    sigma::window window(glm::ivec2{ 1920, 1080 });
+    sigma::window window{glm::ivec2{ 1920, 1080 }};
 
     auto renderer = std::make_unique<sigma::opengl::renderer>(window.size());
     auto game = std::make_unique<simple_game>(renderer.get());

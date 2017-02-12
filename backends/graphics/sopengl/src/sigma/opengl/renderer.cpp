@@ -217,10 +217,10 @@ namespace opengl {
         GL_CHECK(glClearColor(0, 0, 0, 1));
         GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
 
-        EFFECT_PTR(gamma_conversion_)->bind();
-        EFFECT_PTR(gamma_conversion_)->set_standard_uniforms(&standard_uniform_data_);
-        EFFECT_PTR(gamma_conversion_)->set_instance_matrices(&matrices_);
-        EFFECT_PTR(gamma_conversion_)->apply();
+        EFFECT_CONST_PTR(gamma_conversion_)->bind();
+        EFFECT_CONST_PTR(gamma_conversion_)->set_standard_uniforms(&standard_uniform_data_);
+        EFFECT_CONST_PTR(gamma_conversion_)->set_instance_matrices(&matrices_);
+        EFFECT_CONST_PTR(gamma_conversion_)->apply();
     }
 
     void renderer::geometry_pass(const graphics::view_port& viewport, bool transparent)
@@ -251,12 +251,12 @@ namespace opengl {
 
     void renderer::render_material_buckets(std::vector<material_bucket>& material_buckets)
     {
-        for (auto& mat_bucket : material_buckets) { // TODO const
-            auto mat = MATERIAL_PTR(mat_bucket.active_material);
+        for (const auto& mat_bucket : material_buckets) { // TODO const
+            auto mat = MATERIAL_CONST_PTR(mat_bucket.active_material);
             mat->bind(geometry_buffer::NEXT_FREE_TEXTURE_UINT);
             mat->set_standard_uniforms(&standard_uniform_data_);
-            for (auto& mesh_bucket : mat_bucket.mesh_buckets) { // TODO const
-                auto mesh = STATIC_MESH_PTR(mesh_bucket.active_mesh);
+            for (const auto& mesh_bucket : mat_bucket.mesh_buckets) { // TODO const
+                auto mesh = STATIC_MESH_CONST_PTR(mesh_bucket.active_mesh);
                 auto material_slot = mesh_bucket.material_slot;
 
                 instance_matrices matrices;
@@ -285,10 +285,10 @@ namespace opengl {
         GL_CHECK(glDisable(GL_BLEND));
         GL_CHECK(glDisable(GL_STENCIL_TEST));
         GL_CHECK(glDisable(GL_DEPTH_TEST));
-        EFFECT_PTR(image_based_light_effect_)->bind();
-        EFFECT_PTR(image_based_light_effect_)->set_standard_uniforms(&standard_uniform_data_);
-        EFFECT_PTR(image_based_light_effect_)->set_instance_matrices(&matrices_);
-        EFFECT_PTR(image_based_light_effect_)->apply();
+        EFFECT_CONST_PTR(image_based_light_effect_)->bind();
+        EFFECT_CONST_PTR(image_based_light_effect_)->set_standard_uniforms(&standard_uniform_data_);
+        EFFECT_CONST_PTR(image_based_light_effect_)->set_instance_matrices(&matrices_);
+        EFFECT_CONST_PTR(image_based_light_effect_)->apply();
 
         // Setup state for analytical lights
         GL_CHECK(glStencilMask(0x00));
@@ -312,8 +312,8 @@ namespace opengl {
         GL_CHECK(glDepthFunc(GL_GREATER));
         GL_CHECK(glEnable(GL_DEPTH_TEST));
 
-        EFFECT_PTR(point_light_effect_)->bind();
-        EFFECT_PTR(point_light_effect_)->set_standard_uniforms(&standard_uniform_data_);
+        EFFECT_CONST_PTR(point_light_effect_)->bind();
+        EFFECT_CONST_PTR(point_light_effect_)->set_standard_uniforms(&standard_uniform_data_);
 
         // TODO:perf re-incorporate the stencil test that limits the pixels being light see
         // http://forum.devmaster.net/t/deferred-lighting-rendering-light-volumes/14998/5
@@ -323,7 +323,7 @@ namespace opengl {
         // TODO:perf look into using a fullscreen quad for all point lights and have just one pass
         // that does all point light lighting at once.
         // TODO this is a hack
-        auto point_mesh = STATIC_MESH_PTR(EFFECT_PTR(point_light_effect_)->mesh());
+        auto point_mesh = STATIC_MESH_CONST_PTR(EFFECT_PTR(point_light_effect_)->mesh());
         GL_CHECK(glBindVertexArray(point_mesh->vertex_array_));
         GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, point_mesh->index_buffer_));
         GL_CHECK(glDrawElementsInstanced(GL_TRIANGLES, point_mesh->index_count_, GL_UNSIGNED_INT, nullptr, internal_point_lights_.size()));
@@ -334,12 +334,12 @@ namespace opengl {
         GL_CHECK(glDisable(GL_DEPTH_TEST));
         GL_CHECK(glDisable(GL_CULL_FACE));
 
-        EFFECT_PTR(directional_light_effect_)->bind();
-        EFFECT_PTR(directional_light_effect_)->set_standard_uniforms(&standard_uniform_data_);
+        EFFECT_CONST_PTR(directional_light_effect_)->bind();
+        EFFECT_CONST_PTR(directional_light_effect_)->set_standard_uniforms(&standard_uniform_data_);
 
         // TODO:perf we can use one fullscreen quad to render all of the directional lights and save on gbuffer lookups.
         // TODO this is a hack
-        auto directional_mesh = STATIC_MESH_PTR(EFFECT_PTR(directional_light_effect_)->mesh());
+        auto directional_mesh = STATIC_MESH_CONST_PTR(EFFECT_CONST_PTR(directional_light_effect_)->mesh());
         GL_CHECK(glBindVertexArray(directional_mesh->vertex_array_));
         GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, directional_mesh->index_buffer_));
         GL_CHECK(glDrawElementsInstanced(GL_TRIANGLES, directional_mesh->index_count_, GL_UNSIGNED_INT, nullptr, internal_directional_lights_.size()));

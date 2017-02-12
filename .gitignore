@@ -12,6 +12,8 @@ tools/scompiler/glslang
 conanbuildinfo.cmake
 conaninfo.txt
 
+compile_commands.json
+
 __pycache__/
 
 build/
