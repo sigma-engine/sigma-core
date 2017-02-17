@@ -1,7 +1,7 @@
 #ifndef SIGMA_OPENGL_UNIFORM_BUFFER_HPP
 #define SIGMA_OPENGL_UNIFORM_BUFFER_HPP
 
-#include <sigma/opengl/gl_core_4_2.h>
+#include <glad/glad.h>
 #include <sigma/opengl/util.hpp>
 
 #include <cstring>

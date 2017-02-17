@@ -3,7 +3,7 @@
 
 #include <sigma/graphics/static_mesh.hpp>
 
-#include <sigma/opengl/gl_core_4_2.h>
+#include <glad/glad.h>
 #include <sigma/opengl/material.hpp>
 
 #define STATIC_MESH_CONST_PTR(x) static_cast<const sigma::opengl::static_mesh*>(x.get())

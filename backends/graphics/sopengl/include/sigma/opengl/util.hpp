@@ -1,7 +1,7 @@
 #ifndef SIGMA_ENGINE_OPENGL_UTIL_HPP
 #define SIGMA_ENGINE_OPENGL_UTIL_HPP
 
-#include <sigma/opengl/gl_core_4_2.h>
+#include <glad/glad.h>
 
 #include <sstream>
 #include <string>

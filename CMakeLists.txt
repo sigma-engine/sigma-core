@@ -9,7 +9,7 @@ endif()
 
 set (CMAKE_CXX_STANDARD 14)
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES ".*[cC][lL][aA][nN][gG]")
-    set(CMAKE_CXX_FLAGS "-fPIC")
+    add_compile_options(-fPIC)
 endif()
 
 if (MSVC)

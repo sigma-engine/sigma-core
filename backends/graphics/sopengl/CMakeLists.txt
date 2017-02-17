@@ -7,7 +7,6 @@ set(SOURCES
     src/sigma/opengl/cubemap.cpp
     src/sigma/opengl/frame_buffer.cpp
     src/sigma/opengl/geometry_buffer.cpp
-    src/sigma/opengl/gl_core_4_2.c
     src/sigma/opengl/material.cpp
     src/sigma/opengl/post_process_effect.cpp
     src/sigma/opengl/renderer.cpp
@@ -22,7 +21,6 @@ set(HEADERS
     include/sigma/opengl/cubemap.hpp
     include/sigma/opengl/frame_buffer.hpp
     include/sigma/opengl/geometry_buffer.hpp
-    include/sigma/opengl/gl_core_4_2.h
     include/sigma/opengl/material.hpp
     include/sigma/opengl/post_process_effect.hpp
     include/sigma/opengl/render_uniforms.hpp

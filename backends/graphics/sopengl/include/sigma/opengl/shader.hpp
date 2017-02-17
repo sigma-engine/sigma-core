@@ -3,7 +3,7 @@
 
 #include <sigma/graphics/shader.hpp>
 
-#include <sigma/opengl/gl_core_4_2.h>
+#include <glad/glad.h>
 
 #define SHADER_CONST_PTR(x) static_cast<const sigma::opengl::shader*>(x.get())
 #define SHADER_PTR(x) static_cast<sigma::opengl::shader*>(x.get())

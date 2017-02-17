@@ -9,6 +9,7 @@ libjpeg/9a@Kaosumaru/stable
 SDL2/2.0.5@lasote/stable
 gtest/master@smspillaz/gtest
 #glslang/master@siegelaaron94/develop
+glad/master@siegelaaron94/develop
 
 [options]
 Boost:fPIC=True

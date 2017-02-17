@@ -71,6 +71,7 @@ namespace opengl {
         renderer(const renderer&) = delete;
         renderer& operator=(const renderer&) = delete;
 
+        int loader_status_;
         default_frame_buffer default_fbo_;
         geometry_buffer gbuffer_;
         standard_uniforms standard_uniform_data_;

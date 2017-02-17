@@ -1,6 +1,6 @@
 #include <sigma/opengl/renderer.hpp>
 
-#include <sigma/opengl/gl_core_4_2.h>
+#include <glad/glad.h>
 #include <sigma/opengl/scene.hpp>
 #include <sigma/opengl/shader.hpp>
 #include <sigma/opengl/texture.hpp>
@@ -15,6 +15,7 @@ namespace sigma {
 namespace opengl {
     renderer::renderer(glm::ivec2 size)
         : graphics::renderer(size)
+        , loader_status_(gladLoadGL())
         , default_fbo_(size)
         , gbuffer_(size)
         , shaders_(boost::filesystem::current_path() / ".." / "data")
@@ -24,6 +25,9 @@ namespace opengl {
         , static_meshes_(boost::filesystem::current_path() / ".." / "data", materials_)
         , effects_(boost::filesystem::current_path() / ".." / "data", shaders_, textures_, cubemaps_, static_meshes_)
     {
+        if (!loader_status_)
+            throw std::runtime_error("error: could not load OpenGL");
+
         //standard_uniforms_.set_binding_point(shader_technique::STANDARD_UNIFORM_BLOCK_BINDING);
 
         image_based_light_effect_ = effects_.get("post_process_effect://pbr/deffered/lights/image_based");

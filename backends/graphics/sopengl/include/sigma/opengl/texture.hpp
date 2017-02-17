@@ -3,7 +3,7 @@
 
 #include <sigma/graphics/texture.hpp>
 
-#include <sigma/opengl/gl_core_4_2.h>
+#include <glad/glad.h>
 
 #include <vector>
 
