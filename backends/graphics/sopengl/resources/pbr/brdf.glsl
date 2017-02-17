@@ -25,7 +25,7 @@ float G1_schlick(float NdotV, float k)
 float G_schlick(float NdotL, float NdotV, float roughness)
 {
     float k = roughness + 1;
-    k = (k * k)/8;
+    k = (k * k) / 8;
     return G1_schlick(NdotL, k) * G1_schlick(NdotV, k);
 }
 

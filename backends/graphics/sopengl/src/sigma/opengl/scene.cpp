@@ -15,7 +15,7 @@ namespace opengl {
 
     void scene::remove_point_light(std::size_t light_id)
     {
-        // TODO do this        
+        // TODO do this
     }
 }
 }

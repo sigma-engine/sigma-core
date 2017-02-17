@@ -28,5 +28,4 @@ uniform mat3 normal_matrix;
 // layout(location = 4) in mat4 model_matrix;
 // #endif // SIGMA_ENGINE_VERTEX_SHADER
 
-
 #endif // SIGMA_ENGINE_OPENGL_UNIFORM_GLSL

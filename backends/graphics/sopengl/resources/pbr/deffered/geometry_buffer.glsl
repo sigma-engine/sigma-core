@@ -55,7 +55,6 @@ uniform sampler2D in_image;
 out vec4 out_diffuse_roughness;
 out vec4 out_normal_metalness;
 
-
 void write_geometry_buffer(surface s)
 {
     out_diffuse_roughness = vec4(s.diffuse, s.roughness + MIN_ROUGHNESS);

@@ -12,15 +12,15 @@ namespace sigma {
 namespace json {
     bool SIGMA_API from_json(const Json::Value& value, float& output);
 
-	bool SIGMA_API from_json(const Json::Value& value, glm::vec2& output);
+    bool SIGMA_API from_json(const Json::Value& value, glm::vec2& output);
 
     bool SIGMA_API from_json(const Json::Value& value, glm::vec3& output);
 
-	bool SIGMA_API from_json(const Json::Value& value, glm::vec4& output);
+    bool SIGMA_API from_json(const Json::Value& value, glm::vec4& output);
 
     bool SIGMA_API from_json(const Json::Value& value, glm::quat& output);
 
-	Json::Value SIGMA_API to_json(float v);
+    Json::Value SIGMA_API to_json(float v);
 
     Json::Value SIGMA_API to_json(glm::vec3 v);
 }
