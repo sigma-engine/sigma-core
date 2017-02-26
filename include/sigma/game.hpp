@@ -9,20 +9,8 @@
 #include <sigma/graphics/static_mesh_instance.hpp>
 #include <sigma/transform.hpp>
 
-#include <boost/preprocessor/seq/for_each_i.hpp>
-#include <boost/preprocessor/variadic/to_seq.hpp>
-
 #include <chrono>
 #include <memory>
-
-#define SIGMA_EXPORT_GAME_CLASS_I(r, data, i, elem)                                                                          \
-    extern "C" BOOST_SYMBOL_EXPORT sigma::game_class game_class_##i;                                                         \
-    sigma::game_class game_class_##i = {                                                                                     \
-        BOOST_PP_STRINGIZE(elem),                                                                                            \
-        [](sigma::graphics::renderer* renderer) -> std::shared_ptr<sigma::game> { return std::make_shared<elem>(renderer); } \
-    };
-
-#define SIGMA_EXPORT_GAME_CLASSES(...) BOOST_PP_SEQ_FOR_EACH_I(SIGMA_EXPORT_GAME_CLASS_I, _, BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__))
 
 namespace sigma {
 class context;

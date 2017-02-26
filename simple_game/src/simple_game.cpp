@@ -87,5 +87,3 @@ sigma::transform& simple_game::random_transform(sigma::entity e)
 void simple_game::update(std::chrono::duration<float> dt)
 {
 }
-
-SIGMA_EXPORT_GAME_CLASSES(simple_game)
