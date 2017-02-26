@@ -4,34 +4,32 @@ project(sopengl)
 #find_package(OpenGL REQUIRED)
 
 set(SOURCES
-    src/sigma/opengl/cubemap.cpp
-    src/sigma/opengl/frame_buffer.cpp
-    src/sigma/opengl/geometry_buffer.cpp
-    src/sigma/opengl/material.cpp
-    src/sigma/opengl/post_process_effect.cpp
-    src/sigma/opengl/renderer.cpp
-    src/sigma/opengl/scene.cpp
-    src/sigma/opengl/shader.cpp
-    src/sigma/opengl/static_mesh.cpp
-    src/sigma/opengl/texture.cpp
+    src/sigma/graphics/opengl/cubemap.cpp
+    src/sigma/graphics/opengl/frame_buffer.cpp
+    src/sigma/graphics/opengl/geometry_buffer.cpp
+    src/sigma/graphics/opengl/material.cpp
+    src/sigma/graphics/opengl/post_process_effect.cpp
+    src/sigma/graphics/opengl/renderer.cpp
+    src/sigma/graphics/opengl/shader.cpp
+    src/sigma/graphics/opengl/static_mesh.cpp
+    src/sigma/graphics/opengl/texture.cpp
 )
 
 set(HEADERS
-    include/sigma/opengl/config.hpp
-    include/sigma/opengl/cubemap.hpp
-    include/sigma/opengl/frame_buffer.hpp
-    include/sigma/opengl/geometry_buffer.hpp
-    include/sigma/opengl/material.hpp
-    include/sigma/opengl/post_process_effect.hpp
-    include/sigma/opengl/render_uniforms.hpp
-    include/sigma/opengl/renderer.hpp
-    include/sigma/opengl/scene.hpp
-    include/sigma/opengl/shader_technique.hpp
-    include/sigma/opengl/shader.hpp
-    include/sigma/opengl/static_mesh.hpp
-    include/sigma/opengl/texture.hpp
-    include/sigma/opengl/uniform_buffer.hpp
-    include/sigma/opengl/util.hpp
+    include/sigma/graphics/opengl/config.hpp
+    include/sigma/graphics/opengl/cubemap.hpp
+    include/sigma/graphics/opengl/frame_buffer.hpp
+    include/sigma/graphics/opengl/geometry_buffer.hpp
+    include/sigma/graphics/opengl/material.hpp
+    include/sigma/graphics/opengl/post_process_effect.hpp
+    include/sigma/graphics/opengl/render_uniforms.hpp
+    include/sigma/graphics/opengl/renderer.hpp
+    include/sigma/graphics/opengl/shader_technique.hpp
+    include/sigma/graphics/opengl/shader.hpp
+    include/sigma/graphics/opengl/static_mesh.hpp
+    include/sigma/graphics/opengl/texture.hpp
+    include/sigma/graphics/opengl/uniform_buffer.hpp
+    include/sigma/graphics/opengl/util.hpp
 )
 
 add_library(sopengl SHARED ${SOURCES} ${HEADERS})

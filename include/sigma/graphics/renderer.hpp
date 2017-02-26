@@ -8,7 +8,6 @@
 #include <sigma/graphics/material.hpp>
 #include <sigma/graphics/point_light.hpp>
 #include <sigma/graphics/post_process_effect.hpp>
-#include <sigma/graphics/scene.hpp>
 #include <sigma/graphics/shader.hpp>
 #include <sigma/graphics/spot_light.hpp>
 #include <sigma/graphics/static_mesh.hpp>
@@ -52,8 +51,6 @@ namespace graphics {
         virtual static_mesh_manager& static_meshes() = 0;
 
         virtual post_process_effect_manager& effects() = 0;
-
-        virtual std::shared_ptr<scene> create_scene() = 0;
 
         virtual void resize(glm::uvec2 size) = 0;
 

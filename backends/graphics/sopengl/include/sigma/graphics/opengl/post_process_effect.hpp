@@ -2,11 +2,11 @@
 #define SIGMA_GRAPHICS_OPENGL_POST_PROCESS_EFFECT_HPP
 
 #include <sigma/graphics/post_process_effect.hpp>
-#include <sigma/opengl/shader_technique.hpp>
+#include <sigma/graphics/opengl/shader_technique.hpp>
 
-#include <sigma/opengl/shader.hpp>
-#include <sigma/opengl/static_mesh.hpp>
-#include <sigma/opengl/texture.hpp>
+#include <sigma/graphics/opengl/shader.hpp>
+#include <sigma/graphics/opengl/static_mesh.hpp>
+#include <sigma/graphics/opengl/texture.hpp>
 
 #define EFFECT_CONST_PTR(x) static_cast<const sigma::opengl::post_process_effect*>(x.get())
 #define EFFECT_PTR(x) static_cast<sigma::opengl::post_process_effect*>(x.get())

@@ -1,6 +1,6 @@
-#include <sigma/opengl/cubemap.hpp>
+#include <sigma/graphics/opengl/cubemap.hpp>
 
-#include <sigma/opengl/util.hpp>
+#include <sigma/graphics/opengl/util.hpp>
 
 #include <cmath>
 

@@ -1,6 +1,6 @@
 #include <simple_game.hpp>
 
-#include <sigma/opengl/renderer.hpp>
+#include <sigma/graphics/opengl/renderer.hpp>
 #include <sigma/trackball_controller.hpp>
 #include <sigma/window.hpp>
 

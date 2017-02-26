@@ -1,6 +1,6 @@
-#include <sigma/opengl/shader.hpp>
+#include <sigma/graphics/opengl/shader.hpp>
 
-#include <sigma/opengl/util.hpp>
+#include <sigma/graphics/opengl/util.hpp>
 
 #include <cassert>
 #include <iostream>

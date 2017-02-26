@@ -1,10 +1,9 @@
-#include <sigma/opengl/renderer.hpp>
+#include <sigma/graphics/opengl/renderer.hpp>
 
 #include <glad/glad.h>
-#include <sigma/opengl/scene.hpp>
-#include <sigma/opengl/shader.hpp>
-#include <sigma/opengl/texture.hpp>
-#include <sigma/opengl/util.hpp>
+#include <sigma/graphics/opengl/shader.hpp>
+#include <sigma/graphics/opengl/texture.hpp>
+#include <sigma/graphics/opengl/util.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -73,11 +72,6 @@ namespace opengl {
     graphics::post_process_effect_manager& renderer::effects()
     {
         return effects_;
-    }
-
-    std::shared_ptr<graphics::scene> renderer::create_scene()
-    {
-        return std::make_shared<opengl::scene>();
     }
 
     void renderer::resize(glm::uvec2 size)

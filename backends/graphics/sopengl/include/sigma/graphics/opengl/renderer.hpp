@@ -3,17 +3,17 @@
 
 #include <sigma/graphics/renderer.hpp>
 
-#include <sigma/opengl/config.hpp>
-#include <sigma/opengl/cubemap.hpp>
-#include <sigma/opengl/frame_buffer.hpp>
-#include <sigma/opengl/geometry_buffer.hpp>
-#include <sigma/opengl/material.hpp>
-#include <sigma/opengl/post_process_effect.hpp>
-#include <sigma/opengl/render_uniforms.hpp>
-#include <sigma/opengl/shader.hpp>
-#include <sigma/opengl/static_mesh.hpp>
-#include <sigma/opengl/texture.hpp>
-#include <sigma/opengl/uniform_buffer.hpp>
+#include <sigma/graphics/opengl/config.hpp>
+#include <sigma/graphics/opengl/cubemap.hpp>
+#include <sigma/graphics/opengl/frame_buffer.hpp>
+#include <sigma/graphics/opengl/geometry_buffer.hpp>
+#include <sigma/graphics/opengl/material.hpp>
+#include <sigma/graphics/opengl/post_process_effect.hpp>
+#include <sigma/graphics/opengl/render_uniforms.hpp>
+#include <sigma/graphics/opengl/shader.hpp>
+#include <sigma/graphics/opengl/static_mesh.hpp>
+#include <sigma/graphics/opengl/texture.hpp>
+#include <sigma/graphics/opengl/uniform_buffer.hpp>
 
 namespace sigma {
 
@@ -60,8 +60,6 @@ namespace opengl {
         virtual graphics::static_mesh_manager& static_meshes() override;
 
         virtual graphics::post_process_effect_manager& effects() override;
-
-        virtual std::shared_ptr<graphics::scene> create_scene() override;
 
         virtual void resize(glm::uvec2 size) override;
 

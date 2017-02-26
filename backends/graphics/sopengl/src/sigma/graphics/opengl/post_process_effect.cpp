@@ -1,8 +1,8 @@
-#include <sigma/opengl/post_process_effect.hpp>
+#include <sigma/graphics/opengl/post_process_effect.hpp>
 
-#include <sigma/opengl/geometry_buffer.hpp>
-#include <sigma/opengl/static_mesh.hpp>
-#include <sigma/opengl/util.hpp>
+#include <sigma/graphics/opengl/geometry_buffer.hpp>
+#include <sigma/graphics/opengl/static_mesh.hpp>
+#include <sigma/graphics/opengl/util.hpp>
 
 namespace sigma {
 namespace opengl {

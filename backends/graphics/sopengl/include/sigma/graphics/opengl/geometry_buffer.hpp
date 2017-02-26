@@ -1,8 +1,8 @@
 #ifndef SIGMA_ENGINE_OPENGL_GEOMETRY_BUFFER
 #define SIGMA_ENGINE_OPENGL_GEOMETRY_BUFFER
 
-#include <sigma/opengl/frame_buffer.hpp>
-#include <sigma/opengl/texture.hpp>
+#include <sigma/graphics/opengl/frame_buffer.hpp>
+#include <sigma/graphics/opengl/texture.hpp>
 
 #include <glm/vec4.hpp>
 

@@ -1,6 +1,6 @@
-#include <sigma/opengl/texture.hpp>
+#include <sigma/graphics/opengl/texture.hpp>
 
-#include <sigma/opengl/util.hpp>
+#include <sigma/graphics/opengl/util.hpp>
 
 namespace sigma {
 namespace opengl {

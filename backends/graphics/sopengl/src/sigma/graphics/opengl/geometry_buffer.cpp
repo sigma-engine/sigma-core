@@ -1,6 +1,6 @@
-#include <sigma/opengl/geometry_buffer.hpp>
+#include <sigma/graphics/opengl/geometry_buffer.hpp>
 
-#include <sigma/opengl/util.hpp>
+#include <sigma/graphics/opengl/util.hpp>
 
 namespace sigma {
 namespace opengl {

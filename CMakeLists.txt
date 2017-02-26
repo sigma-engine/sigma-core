@@ -62,7 +62,6 @@ set(LIBRARY_HEADERS
     include/sigma/graphics/point_light.hpp
     include/sigma/graphics/post_process_effect.hpp
     include/sigma/graphics/renderer.hpp
-    include/sigma/graphics/scene.hpp
     include/sigma/graphics/shader.hpp
     include/sigma/graphics/static_mesh.hpp
     include/sigma/graphics/spot_light.hpp

@@ -1,12 +1,12 @@
 #ifndef SIGMA_GRAPHICS_OPENGL_SHADER_TECHNIQUE_HPP
 #define SIGMA_GRAPHICS_OPENGL_SHADER_TECHNIQUE_HPP
 
-#include <sigma/opengl/cubemap.hpp>
-#include <sigma/opengl/geometry_buffer.hpp>
-#include <sigma/opengl/render_uniforms.hpp>
-#include <sigma/opengl/shader.hpp>
-#include <sigma/opengl/texture.hpp>
-#include <sigma/opengl/util.hpp>
+#include <sigma/graphics/opengl/cubemap.hpp>
+#include <sigma/graphics/opengl/geometry_buffer.hpp>
+#include <sigma/graphics/opengl/render_uniforms.hpp>
+#include <sigma/graphics/opengl/shader.hpp>
+#include <sigma/graphics/opengl/texture.hpp>
+#include <sigma/graphics/opengl/util.hpp>
 
 #include <glm/gtc/type_ptr.hpp>
 
