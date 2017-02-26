@@ -1,5 +1,5 @@
-#ifndef SIGMA_ENGINE_OPENGL_UNIFORM_GLSL
-#define SIGMA_ENGINE_OPENGL_UNIFORM_GLSL
+#ifndef SIGMA_GRAPHICS_OPENGL_UNIFORM_GLSL
+#define SIGMA_GRAPHICS_OPENGL_UNIFORM_GLSL
 
 // layout (std140) uniform standard_uniforms {
 //     mat4 projection_matrix;
@@ -28,4 +28,4 @@ uniform mat3 normal_matrix;
 // layout(location = 4) in mat4 model_matrix;
 // #endif // SIGMA_ENGINE_VERTEX_SHADER
 
-#endif // SIGMA_ENGINE_OPENGL_UNIFORM_GLSL
+#endif // SIGMA_GRAPHICS_OPENGL_UNIFORM_GLSL

@@ -1,5 +1,5 @@
-#ifndef SIGMA_ENGINE_OPENGL_CUBEMAP_HPP
-#define SIGMA_ENGINE_OPENGL_CUBEMAP_HPP
+#ifndef SIGMA_GRAPHICS_OPENGL_CUBEMAP_HPP
+#define SIGMA_GRAPHICS_OPENGL_CUBEMAP_HPP
 
 #include <sigma/graphics/cubemap.hpp>
 
@@ -42,4 +42,4 @@ namespace opengl {
 }
 }
 
-#endif // SIGMA_ENGINE_OPENGL_CUBEMAP_HPP
+#endif // SIGMA_GRAPHICS_OPENGL_CUBEMAP_HPP

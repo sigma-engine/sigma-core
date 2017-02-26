@@ -3,7 +3,8 @@
 
 #include <sigma/graphics/renderer.hpp>
 
-#include <sigma/graphics/opengl/config.hpp>
+#include <sigma/config.hpp>
+
 #include <sigma/graphics/opengl/cubemap.hpp>
 #include <sigma/graphics/opengl/frame_buffer.hpp>
 #include <sigma/graphics/opengl/geometry_buffer.hpp>
@@ -43,7 +44,7 @@ namespace opengl {
         std::vector<mesh_bucket> mesh_buckets;
     };
 
-    class SIGMA_SOPENGL_API renderer : public graphics::renderer {
+    class SIGMA_API renderer : public graphics::renderer {
     public:
         renderer(glm::ivec2 size);
 

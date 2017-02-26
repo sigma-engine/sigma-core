@@ -1,5 +1,5 @@
-#ifndef SIGMA_ENGINE_OPENGL_GEOMETRY_BUFFER
-#define SIGMA_ENGINE_OPENGL_GEOMETRY_BUFFER
+#ifndef SIGMA_GRAPHICS_OPENGL_GEOMETRY_BUFFER
+#define SIGMA_GRAPHICS_OPENGL_GEOMETRY_BUFFER
 
 #include <sigma/graphics/opengl/frame_buffer.hpp>
 #include <sigma/graphics/opengl/texture.hpp>
@@ -56,4 +56,4 @@ namespace opengl {
 }
 }
 
-#endif // SIGMA_ENGINE_OPENGL_GEOMETRY_BUFFER
+#endif // SIGMA_GRAPHICS_OPENGL_GEOMETRY_BUFFER

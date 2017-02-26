@@ -1,5 +1,5 @@
-#ifndef SIGMA_ENGINE_OPENGL_FRAME_BUFFER_HPP
-#define SIGMA_ENGINE_OPENGL_FRAME_BUFFER_HPP
+#ifndef SIGMA_GRAPHICS_OPENGL_FRAME_BUFFER_HPP
+#define SIGMA_GRAPHICS_OPENGL_FRAME_BUFFER_HPP
 
 #include <glad/glad.h>
 #include <sigma/graphics/opengl/util.hpp>
@@ -81,4 +81,4 @@ namespace opengl {
 }
 }
 
-#endif // SIGMA_ENGINE_OPENGL_FRAME_BUFFER_HPP
+#endif // SIGMA_GRAPHICS_OPENGL_FRAME_BUFFER_HPP

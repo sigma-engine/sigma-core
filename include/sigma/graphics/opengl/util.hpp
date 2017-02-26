@@ -1,5 +1,5 @@
-#ifndef SIGMA_ENGINE_OPENGL_UTIL_HPP
-#define SIGMA_ENGINE_OPENGL_UTIL_HPP
+#ifndef SIGMA_GRAPHICS_OPENGL_UTIL_HPP
+#define SIGMA_GRAPHICS_OPENGL_UTIL_HPP
 
 #include <glad/glad.h>
 
@@ -90,4 +90,4 @@ namespace opengl {
 }
 }
 
-#endif // SIGMA_ENGINE_OPENGL_UTIL_HPP
+#endif // SIGMA_GRAPHICS_OPENGL_UTIL_HPP

@@ -1,5 +1,5 @@
-#ifndef SIGMA_ENGINE_OPENGL_VERTEX_GLSL
-#define SIGMA_ENGINE_OPENGL_VERTEX_GLSL
+#ifndef SIGMA_GRAPHICS_OPENGL_VERTEX_GLSL
+#define SIGMA_GRAPHICS_OPENGL_VERTEX_GLSL
 
 #if defined(SIGMA_ENGINE_VERTEX_SHADER)
 layout(location = 0) in vec3 in_position;
@@ -46,4 +46,4 @@ out vertex_data
 #error "This shader type is not supported"
 #endif
 
-#endif // SIGMA_ENGINE_OPENGL_VERTEX_GLSL
+#endif // SIGMA_GRAPHICS_OPENGL_VERTEX_GLSL
