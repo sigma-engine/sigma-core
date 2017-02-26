@@ -1,6 +1,7 @@
 set(SOURCES
     main.cpp
     entity_manager_tests.cpp
+    world_tests.cpp
 )
 
 set(HEADERS

@@ -47,6 +47,7 @@ set(LIBRARY_SOURCES
 )
 set(LIBRARY_HEADERS
     include/sigma/component.hpp
+    include/sigma/world.hpp
     include/sigma/config.hpp
     include/sigma/entity_manager.hpp
     include/sigma/entity.hpp
@@ -77,6 +78,7 @@ set(LIBRARY_HEADERS
     include/sigma/util/filesystem.hpp
     include/sigma/util/glm_serialize.hpp
     include/sigma/util/json_conversion.hpp
+    include/sigma/util/variadic.hpp
 )
 
 add_library(sigma-core SHARED ${LIBRARY_SOURCES} ${LIBRARY_HEADERS})
