@@ -172,8 +172,8 @@ void assimp_converter::convert_static_mesh(std::string name, graphics::static_me
         }
 
         std::string material_name = get_name(aiScene->mMaterials[aimesh->mMaterialIndex]);
+
         // TODO warn if material slot has been used.
-        std::cout << mesh.materials.size() << ": " << material_name << '\n';
         mesh.materials[resource::identifier{ "material", material_name }.name()] = std::make_pair(mesh.triangles.size(), aimesh->mNumFaces);
 
         mesh.vertices.reserve(mesh.vertices.size() + aimesh->mNumVertices);
