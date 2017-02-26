@@ -68,8 +68,6 @@ set(LIBRARY_HEADERS
     include/sigma/graphics/static_mesh_instance.hpp
     include/sigma/graphics/texture.hpp
 
-    include/sigma/reflect/reflect.hpp
-
     include/sigma/resource/identifier.hpp
     include/sigma/resource/manager.hpp
 

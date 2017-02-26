@@ -4,12 +4,10 @@
 #include <glm/vec3.hpp>
 #include <sigma/component.hpp>
 #include <sigma/config.hpp>
-#include <sigma/reflect/reflect.hpp>
 
 namespace sigma {
 namespace graphics {
 
-    RCLASS()
     struct SIGMA_API point_light {
         float falloff = .25f;
         float intensity = 1.0f;

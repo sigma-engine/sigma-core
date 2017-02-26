@@ -28,22 +28,16 @@ namespace sigma {
 class context;
 class SIGMA_API game {
 public:
-    RPROPERTY()
     sigma::entity_manager entities;
 
-    RPROPERTY()
     transform_manager transforms;
 
-    RPROPERTY()
     graphics::directional_light_manager directional_lights;
 
-    RPROPERTY()
     graphics::point_light_manager point_lights;
 
-    RPROPERTY()
     graphics::spot_light_manager spot_lights;
 
-    RPROPERTY()
     graphics::static_mesh_instance_manager static_mesh_instances;
 
     game(graphics::renderer* renderer);
