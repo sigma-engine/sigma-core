@@ -4,6 +4,14 @@
 
 namespace sigma {
 
+transform::transform(glm::vec3 position, glm::quat rotation, glm::vec3 scale)
+    : position_(position)
+    , rotation_(rotation)
+    , scale_(scale)
+{
+    dirty_ = true;
+}
+
 glm::vec3 transform::position() const
 {
     return position_;

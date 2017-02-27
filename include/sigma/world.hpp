@@ -45,7 +45,7 @@ struct component_storage {
     {
         if (index >= size)
             resize<T>(index + 1);
-        return new (get<T>(index)) T(std::forward<Arguments>(args)...);
+        return new (get<T>(index)) T{ std::forward<Arguments>(args)... };
     }
 
     template <class T>

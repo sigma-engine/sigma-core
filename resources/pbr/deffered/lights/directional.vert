@@ -3,9 +3,12 @@
 #include <uniforms.glsl>
 #include <vertex.glsl>
 
+uniform vec4 color_intensity;
+uniform vec3 direction;
+
 // per-instance attributes.
-layout(location = 4) in vec4 color_intensity;
-layout(location = 5) in vec3 direction;
+// layout(location = 4) in vec4 color_intensity;
+// layout(location = 5) in vec3 direction;
 
 out directional_light
 {

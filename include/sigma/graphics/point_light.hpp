@@ -1,20 +1,17 @@
 #ifndef SIGMA_GRAPHICS_POINT_LIGHT_HPP
 #define SIGMA_GRAPHICS_POINT_LIGHT_HPP
 
-#include <glm/vec3.hpp>
-#include <sigma/component.hpp>
 #include <sigma/config.hpp>
+
+#include <glm/vec3.hpp>
 
 namespace sigma {
 namespace graphics {
 
-    struct SIGMA_API point_light {
-        float falloff = .25f;
-        float intensity = 1.0f;
+    struct point_light {
         glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
+        float intensity = 1.0f;
     };
-
-    using point_light_manager = basic_component_manager<point_light>;
 }
 }
 

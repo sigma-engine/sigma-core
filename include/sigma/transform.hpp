@@ -1,7 +1,6 @@
 #ifndef SIGMA_TRANSFORM_HPP
 #define SIGMA_TRANSFORM_HPP
 
-#include <sigma/component.hpp>
 #include <sigma/config.hpp>
 
 #include <glm/gtc/quaternion.hpp>
@@ -11,6 +10,10 @@ namespace sigma {
 
 struct SIGMA_API transform {
 public:
+    transform() = default;
+
+    transform(glm::vec3 position, glm::quat rotation = glm::quat{}, glm::vec3 scale = glm::vec3{ 1 });
+
     glm::vec3 position() const;
 
     void set_position(const glm::vec3& position);
@@ -36,8 +39,6 @@ private:
     bool dirty_;
     glm::mat4 matrix_;
 };
-
-using transform_manager = basic_component_manager<transform>;
 }
 
 #endif // SIGMA_TRANSFORM_HPP

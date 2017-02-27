@@ -1,7 +1,6 @@
 #ifndef SIGMA_GRAPHICS_DIRECTIONAL_LIGHT_HPP
 #define SIGMA_GRAPHICS_DIRECTIONAL_LIGHT_HPP
 
-#include <sigma/component.hpp>
 #include <sigma/config.hpp>
 
 #include <glm/vec3.hpp>
@@ -12,8 +11,6 @@ namespace graphics {
         glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
         float intensity = 1.0f;
     };
-
-    using directional_light_manager = basic_component_manager<directional_light>;
 }
 }
 
