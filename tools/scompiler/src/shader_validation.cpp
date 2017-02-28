@@ -2,7 +2,6 @@
 
 #include <sigma/graphics/shader.hpp>
 
-#ifdef USE_GLSLANG
 #include <glslang/Public/ShaderLang.h>
 #include <regex>
 
@@ -162,12 +161,3 @@ bool sigma::validate_shader(const graphics::shader_data& shader, std::vector<boo
 
     return true;
 }
-
-#else // Do not use glslang
-
-bool sigma::validate_shader(const graphics::shader_data& shader, std::vector<boost::filesystem::path> source_filenames)
-{
-    return true;
-}
-
-#endif // USE_GLSLANG
