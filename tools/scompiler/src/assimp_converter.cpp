@@ -82,20 +82,20 @@ assimp_converter::assimp_converter(boost::filesystem::path source_file)
             | aiProcess_GenUVCoords
             | aiProcess_FindInstances
             | aiProcess_FlipUVs
-        //| aiProcess_MakeLeftHanded
-        //| aiProcess_RemoveComponent
-        //| aiProcess_GenNormals
-        //| aiProcess_GenSmoothNormals
-        //| aiProcess_SplitLargeMeshes
-        //| aiProcess_PreTransformVertices
-        //| aiProcess_FixInfacingNormals
-        //| aiProcess_TransformUVCoords
-        //| aiProcess_ConvertToLeftHanded
-        //| aiProcess_OptimizeMeshes
-        //| aiProcess_OptimizeGraph
-        //| aiProcess_FlipWindingOrder
-        //| aiProcess_SplitByBoneCount
-        //| aiProcess_Debone
+        // | aiProcess_MakeLeftHanded
+        // | aiProcess_RemoveComponent
+        // | aiProcess_GenNormals
+        // | aiProcess_GenSmoothNormals
+        // | aiProcess_SplitLargeMeshes
+        // | aiProcess_PreTransformVertices
+        // | aiProcess_FixInfacingNormals
+        // | aiProcess_TransformUVCoords
+        // | aiProcess_ConvertToLeftHanded
+        // | aiProcess_OptimizeMeshes
+        // | aiProcess_OptimizeGraph
+        // | aiProcess_FlipWindingOrder
+        // | aiProcess_SplitByBoneCount
+        // | aiProcess_Debone
         );
     if (scene == nullptr) {
         // TODO error handling

@@ -7,6 +7,7 @@
 
 #include <json/json.h>
 
+#include <boost/algorithm/string/predicate.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 
 #include <iostream>
@@ -69,15 +70,17 @@ bool compile_models(boost::filesystem::path outputdir, std::vector<boost::filesy
         try {
             sigma::assimp_converter imported{ file_path };
             for (auto mesh_name : imported.static_mesh_names()) {
-                sigma::resource::development_identifier rid("static_mesh", file_path, mesh_name);
-                auto final_path = outputdir / std::to_string(rid.value());
+                if (!boost::algorithm::ends_with(mesh_name, "_high")) {
+                    sigma::resource::development_identifier rid("static_mesh", file_path, mesh_name);
+                    auto final_path = outputdir / std::to_string(rid.value());
 
-                sigma::graphics::static_mesh_data mesh;
-                imported.convert_static_mesh(mesh_name, mesh);
+                    sigma::graphics::static_mesh_data mesh;
+                    imported.convert_static_mesh(mesh_name, mesh);
 
-                std::ofstream stream(final_path.string(), std::ios::binary | std::ios::out);
-                boost::archive::binary_oarchive oa(stream);
-                oa << mesh;
+                    std::ofstream stream(final_path.string(), std::ios::binary | std::ios::out);
+                    boost::archive::binary_oarchive oa(stream);
+                    oa << mesh;
+                }
             }
 
             auto scene_path = file_path;
@@ -89,8 +92,11 @@ bool compile_models(boost::filesystem::path outputdir, std::vector<boost::filesy
                 file >> json_scene;
             }
 
-            for (auto object_name : imported.scene_object_names())
-                imported.convert_object(object_name, json_scene[object_name]);
+            for (auto object_name : imported.scene_object_names()) {
+                if (!boost::algorithm::ends_with(object_name, "_high")) {
+                    imported.convert_object(object_name, json_scene[object_name]);
+                }
+            }
 
             scene_path = sigma::filesystem::make_relative(boost::filesystem::current_path(), scene_path);
             scene_path = outputdir / scene_path;
