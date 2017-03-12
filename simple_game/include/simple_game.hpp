@@ -4,6 +4,7 @@
 #include <simple_game_config.hpp>
 
 #include <sigma/game.hpp>
+#include <sigma/world.hpp>
 
 #include <random>
 
@@ -27,7 +28,12 @@ private:
     std::uniform_real_distribution<float> z_distribution_;
 };
 
-class SIMPLE_GAME_API simple_game : public sigma::game {
+using simple_world = sigma::world<sigma::transform,
+    sigma::graphics::point_light,
+    sigma::graphics::directional_light,
+    sigma::graphics::static_mesh_instance>;
+
+class SIMPLE_GAME_API simple_game : public sigma::game<simple_world> {
 public:
     simple_game(sigma::graphics::renderer* renderer);
 

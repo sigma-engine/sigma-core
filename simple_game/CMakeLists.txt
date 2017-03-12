@@ -12,9 +12,8 @@ set(HEADERS
 )
 
 add_library(simple-game SHARED ${SOURCES} ${HEADERS})
-target_compile_definitions(simple-game PUBLIC -DSIMPLE_GAME_SHARED)
-target_compile_options(simple-game PRIVATE -DSIMPLE_GAME_EXPORT)
-target_include_directories(simple-game PUBLIC include resources ../backends/graphics/sopengl/resources)
+target_compile_definitions(simple-game PUBLIC -DSIMPLE_GAME_SHARED PRIVATE -DSIMPLE_GAME_EXPORT)
+target_include_directories(simple-game PUBLIC include resources ../resources)
 target_link_libraries(simple-game sigma-core)
 
 file(GLOB_RECURSE RESOURCES resources resources/*.*)

@@ -21,7 +21,7 @@ int main(int argc, char const* argv[])
     // clang-format off
     global_options.add_options()("help,h", "Show this help message")
     ("output,o", po::value<std::string>()->default_value((boost::filesystem::current_path()/"data").string()), "output directory")
-	("include-dir,I", po::value<std::vector<std::string> >()->default_value(std::vector<std::string>{}, ""), "Include directory")
+	("include-dir,I", po::value<std::vector<std::string>>()->default_value(std::vector<std::string>{}, "")->implicit_value(std::vector<std::string>{},"."), "Include directory")
     ("input-files", po::value<std::vector<std::string>>(), "input resource files");
     // clang-format on
 

@@ -1,6 +1,6 @@
 #include <simple_game.hpp>
 
-#include <sigma/opengl/renderer.hpp>
+#include <sigma/graphics/opengl/renderer.hpp>
 #include <sigma/trackball_controller.hpp>
 #include <sigma/window.hpp>
 
@@ -18,12 +18,6 @@ int main(int argc, char* argv[])
     auto game = std::make_unique<simple_game>(renderer.get());
 
     sigma::graphics::view_port viewport{
-        game->entities,
-        game->transforms,
-        game->static_mesh_instances,
-        game->point_lights,
-        game->directional_lights,
-        game->spot_lights,
         glm::perspective(0.785398f, (float)window.size().x / (float)window.size().y, 0.01f, 10000.0f),
         glm::mat4(1),
         0.01f,
@@ -32,25 +26,31 @@ int main(int argc, char* argv[])
     };
     sigma::trackball_controller controller;
     auto start = std::chrono::high_resolution_clock::now();
+
+    auto elapsed_time_start = start;
     std::size_t count = 0;
     while (window.good()) {
+
         viewport.view_matrix = controller.matrix();
 
-        count++;
         auto end = std::chrono::high_resolution_clock::now();
-        auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-        if (dt > 1000ms) {
-            auto fps = count / std::chrono::duration_cast<std::chrono::duration<float>>(dt).count();
-            std::cout << "Frame time: " << (dt.count() / count) << " ms\n";
+        auto dt = end - start;
+        start = end;
+
+        auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - elapsed_time_start);
+        count++;
+        if (elapsed_time > 1000ms) {
+            auto fps = count / (std::chrono::duration_cast<std::chrono::duration<float>>(elapsed_time)).count();
+            std::cout << "Frame time: " << (elapsed_time.count() / count) << " ms\n";
             std::cout << "FPS: " << fps << '\n';
-            start = end;
+            elapsed_time_start = end;
             count = 0;
         }
 
         if (renderer && game) {
             SDL_GL_MakeCurrent(window.window_, window.gl_context_);
-            renderer->render(viewport);
-            game->update(dt);
+            renderer->render(viewport, game->world());
+            game->update(std::chrono::duration_cast<std::chrono::duration<float>>(dt));
         }
 
         SDL_Event event;

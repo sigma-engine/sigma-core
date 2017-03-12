@@ -1,1 +1,0 @@
-# sigma-five-opengl-plugin
