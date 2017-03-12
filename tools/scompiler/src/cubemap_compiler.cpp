@@ -35,7 +35,7 @@ bool compile_cubemaps(boost::filesystem::path outputdir, std::vector<boost::file
             Json::Value cubemap_json;
             file >> cubemap_json;
 
-            sigma::resource::development_identifier rid("cubemap", file_path);
+            sigma::resource::identifier rid("cubemap", file_path);
             auto final_path = outputdir / std::to_string(rid.value());
 
             sigma::graphics::cubemap_data cube;

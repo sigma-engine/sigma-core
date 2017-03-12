@@ -71,7 +71,7 @@ bool compile_models(boost::filesystem::path outputdir, std::vector<boost::filesy
             sigma::assimp_converter imported{ file_path };
             for (auto mesh_name : imported.static_mesh_names()) {
                 if (!boost::algorithm::ends_with(mesh_name, "_high")) {
-                    sigma::resource::development_identifier rid("static_mesh", file_path, mesh_name);
+                    sigma::resource::identifier rid("static_mesh", file_path, mesh_name);
                     auto final_path = outputdir / std::to_string(rid.value());
 
                     sigma::graphics::static_mesh_data mesh;

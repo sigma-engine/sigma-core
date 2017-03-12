@@ -12,30 +12,25 @@
 
 namespace sigma {
 namespace resource {
-    bool constexpr_identifier::operator==(const constexpr_identifier& other) const noexcept
+
+    identifier::identifier()
+        : value_(-1)
     {
-        return value_ == other.value_;
     }
 
-    bool constexpr_identifier::operator!=(const constexpr_identifier& other) const noexcept
-    {
-        return value_ != other.value_;
-    }
-
-    util::hash_type constexpr_identifier::value() const noexcept { return value_; }
-
-    constexpr_identifier::operator util::hash_type() const noexcept
-    {
-        return value_;
-    }
-
-    development_identifier::development_identifier(const char* name)
-        : constexpr_identifier(util::compile_time_hash(name))
+    identifier::identifier(const char* name)
+        : value_(util::compile_time_hash(name))
         , name_(name)
     {
     }
 
-    development_identifier::development_identifier(std::string type, boost::filesystem::path path, boost::filesystem::path root_directroy)
+    identifier::identifier(const std::string& name)
+        : value_(util::compile_time_hash(name.c_str()))
+        , name_(name)
+    {
+    }
+
+    identifier::identifier(std::string type, boost::filesystem::path path, boost::filesystem::path root_directroy)
     {
         // TODO error if path is not in root_directroy
         path = boost::filesystem::absolute(path, root_directroy);
@@ -52,7 +47,7 @@ namespace resource {
         value_ = util::compile_time_hash(name_.c_str());
     }
 
-    development_identifier::development_identifier(std::string type, boost::filesystem::path path, std::string sub_name, boost::filesystem::path root_directroy)
+    identifier::identifier(std::string type, boost::filesystem::path path, std::string sub_name, boost::filesystem::path root_directroy)
     {
         // TODO error if path is not in root_directroy
         path = boost::filesystem::absolute(path, root_directroy);
@@ -69,28 +64,32 @@ namespace resource {
         value_ = util::compile_time_hash(name_.c_str());
     }
 
-    development_identifier::development_identifier(const std::string& name)
-        : constexpr_identifier(util::compile_time_hash(name.c_str()))
-        , name_(name)
+    bool identifier::operator==(const identifier& other) const noexcept
     {
+        return value_ == other.value_;
     }
 
-    std::string development_identifier::name() const { return name_; }
+    bool identifier::operator!=(const identifier& other) const noexcept
+    {
+        return value_ != other.value_;
+    }
 
-    std::string development_identifier::nice_name() const
+    util::hash_type identifier::value() const noexcept { return value_; }
+
+    identifier::operator util::hash_type() const noexcept
+    {
+        return value_;
+    }
+
+    std::string identifier::name() const { return name_; }
+
+    std::string identifier::nice_name() const
     {
         auto s = boost::find_first(name_, "://").end();
         return std::string(s, name_.end());
     }
 
-    std::ostream& operator<<(std::ostream& os, const constexpr_identifier& id)
-    {
-        os << "{"
-           << "value: " << id.value() << "}";
-        return os;
-    }
-
-    std::ostream& operator<<(std::ostream& os, const development_identifier& id)
+    std::ostream& operator<<(std::ostream& os, const identifier& id)
     {
         os << "{"
            << "value: " << id.value() << ", name: " << id.name() << "}";

@@ -28,7 +28,7 @@ bool compile_post_process_effects(boost::filesystem::path outputdir, std::vector
             file >> json_effect;
 
             sigma::graphics::post_process_effect_data effect;
-            sigma::resource::development_identifier rid("post_process_effect", file_path);
+            sigma::resource::identifier rid("post_process_effect", file_path);
 
             compile_shader_technique(effect, json_effect);
 

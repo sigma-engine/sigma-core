@@ -92,7 +92,7 @@ bool compile_shaders(boost::filesystem::path outputdir, std::vector<boost::files
 
             sigma::graphics::shader_data shader;
             shader.type = ext_to_type[file_path.extension().string()];
-            sigma::resource::development_identifier rid;
+            sigma::resource::identifier rid;
 
             auto file_name = file_path.string();
             context_type ctx{ input_source.begin(), input_source.end(), file_name.c_str() };
@@ -102,21 +102,21 @@ bool compile_shaders(boost::filesystem::path outputdir, std::vector<boost::files
             switch (shader.type) {
             case graphics::shader_type::vertex: {
                 ctx.add_macro_definition("SIGMA_ENGINE_VERTEX_SHADER");
-                rid = sigma::resource::development_identifier{ "vertex", file_path };
+                rid = sigma::resource::identifier{ "vertex", file_path };
                 break;
             }
             case graphics::shader_type::fragment: {
                 ctx.add_macro_definition("SIGMA_ENGINE_FRAGMENT_SHADER");
-                rid = sigma::resource::development_identifier{ "fragment", file_path };
+                rid = sigma::resource::identifier{ "fragment", file_path };
                 break;
             }
             case graphics::shader_type::geometry: {
                 ctx.add_macro_definition("SIGMA_ENGINE_GEOMETRY_SHADER");
-                rid = sigma::resource::development_identifier{ "geometry", file_path };
+                rid = sigma::resource::identifier{ "geometry", file_path };
                 break;
             }
             case graphics::shader_type::header: {
-                rid = sigma::resource::development_identifier{ "header", file_path };
+                rid = sigma::resource::identifier{ "header", file_path };
                 break;
             }
             }

@@ -64,7 +64,7 @@ bool compile_textures(boost::filesystem::path outputdir, std::vector<boost::file
             }
             }
 
-            sigma::resource::development_identifier rid("texture", file_path);
+            sigma::resource::identifier rid("texture", file_path);
             auto final_path = outputdir / std::to_string(rid.value());
 
             sigma::graphics::texture_data texture;

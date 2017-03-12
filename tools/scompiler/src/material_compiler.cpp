@@ -28,7 +28,7 @@ bool compile_materials(boost::filesystem::path outputdir, std::vector<boost::fil
             file >> json_material;
 
             sigma::graphics::material_data material;
-            sigma::resource::development_identifier rid("material", file_path);
+            sigma::resource::identifier rid("material", file_path);
 
             compile_shader_technique(material, json_material);
 

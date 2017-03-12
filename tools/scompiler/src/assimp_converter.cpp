@@ -203,7 +203,7 @@ void assimp_converter::convert_object(std::string name, Json::Value& entity) con
     if (ainode->mNumMeshes > 0) {
         // TODO warn if more than one mesh per object
         const aiMesh* aimesh = aiScene->mMeshes[ainode->mMeshes[0]];
-        sigma::resource::development_identifier meshid("static_mesh", source_file_, get_name(aimesh));
+        sigma::resource::identifier meshid("static_mesh", source_file_, get_name(aimesh));
         entity["sigma::graphics::static_mesh"] = meshid.nice_name();
     }
 
