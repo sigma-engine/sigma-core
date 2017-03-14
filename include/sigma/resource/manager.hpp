@@ -122,6 +122,11 @@ namespace resource {
             return false;
         }
 
+        operator identifier() const noexcept
+        {
+            return id_;
+        }
+
         bool operator==(const handle<Resource>& other) const noexcept
         {
             return id_ == other.id_;
