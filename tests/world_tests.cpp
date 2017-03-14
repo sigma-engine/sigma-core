@@ -86,19 +86,31 @@ TEST(world_tests, add_component_was_created)
     EXPECT_EQ(894, c->y);
 }
 
-TEST(world_tests, add_no_other_entites_components_where_invalidated)
+TEST(world_tests, getting_component_should_return_the_same_value_returned_by_add)
+{
+    test_world w;
+    auto e = w.create();
+    auto cmp = w.add<construction_component>(e, 12, 894);
+
+    EXPECT_EQ(cmp, w.get<construction_component>(e));
+}
+
+TEST(world_tests, adding_component_should_not_invalidate_other_entities_components_of_the_same_type)
 {
     test_world w;
 
     auto test_e = w.create();
     auto test_cmp = w.add<construction_component>(test_e, 56, 232);
 
-    for (int i = 0; i < 30; ++i) {
+    std::vector<std::pair<sigma::entity, construction_component*>> components;
+    for (int i = 0; i < 128; ++i) {
         auto e = w.create();
-        w.add<construction_component>(e, 23, 423);
+        auto c = w.add<construction_component>(e, 23, 423);
+        components.push_back(std::make_pair(e, c));
     }
 
-    EXPECT_EQ(test_cmp, w.get<construction_component>(test_e));
+    for (auto comp : components)
+        EXPECT_EQ(comp.second, w.get<construction_component>(comp.first));
 }
 
 TEST(world_tests, remove_only_destruction_component_while_calling_destructor)

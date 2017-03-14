@@ -28,10 +28,18 @@ private:
     std::uniform_real_distribution<float> z_distribution_;
 };
 
+struct grid_component {
+    int rows;
+    int columns;
+    float row_spacing;
+    float column_spacing;
+};
+
 using simple_world = sigma::world<sigma::transform,
     sigma::graphics::point_light,
     sigma::graphics::directional_light,
-    sigma::graphics::static_mesh_instance>;
+    sigma::graphics::static_mesh_instance,
+    grid_component>;
 
 class SIMPLE_GAME_API simple_game : public sigma::game<simple_world> {
 public:

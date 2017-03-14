@@ -31,34 +31,53 @@ struct component_set {
 };
 
 struct component_storage {
-    size_t size = 0;
-    std::vector<char> data;
+    std::vector<char*> chunks;
+    size_t count_per_chunk = 256;
+
+    ~component_storage()
+    {
+        for (char* chunk : chunks) {
+            if (chunk)
+                delete[] chunk;
+        }
+    }
 
     template <class T>
     T* get(size_t index)
     {
-        return (T*)(data.data() + (index * sizeof(T)));
+        auto chunk_index = index / count_per_chunk;
+        auto chunk_offset = index % count_per_chunk;
+
+        assert(chunk_index < chunks.size());
+
+        return ((T*)chunks[chunk_index]) + chunk_offset;
     }
 
     template <class T, class... Arguments>
     T* add(size_t index, Arguments&&... args)
     {
-        if (index >= size)
-            resize<T>(index + 1);
+        auto chunk_index = index / count_per_chunk;
+        if (chunk_index >= chunks.size())
+            create_chunk<T>(chunk_index);
+
         return new (get<T>(index)) T{ std::forward<Arguments>(args)... };
     }
 
     template <class T>
     void remove(size_t index)
     {
+        // TODO free chunk when last component is removed from it.
         get<T>(index)->~T();
     }
 
     template <class T>
-    void resize(size_t size)
+    void create_chunk(size_t index)
     {
-        this->size = size;
-        this->data.resize(this->size * sizeof(T));
+        if (index >= chunks.size())
+            chunks.resize(index + 1, nullptr);
+
+        if (chunks[index] == nullptr)
+            chunks[index] = new char[sizeof(T) * count_per_chunk];
     }
 };
 
