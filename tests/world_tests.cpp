@@ -3,46 +3,7 @@
 
 #include <unordered_map>
 
-#include <sigma/world.hpp>
-
-struct basic_component {
-    basic_component(int x, int y)
-        : x(x)
-        , y(y)
-    {
-    }
-
-    int x, y;
-};
-
-struct construction_component {
-    construction_component(int x, int y)
-        : x(x)
-        , y(y)
-    {
-    }
-
-    int x, y;
-};
-
-struct destruction_component {
-    destruction_component(int x, int y)
-        : x(x)
-        , y(y)
-    {
-    }
-
-    virtual ~destruction_component()
-    {
-        destructor();
-    }
-
-    MOCK_METHOD0(destructor, void());
-
-    int x, y;
-};
-
-using test_world = sigma::world<basic_component, construction_component, destruction_component>;
+#include "mock_components.hpp"
 
 TEST(world_tests, create_is_valid)
 {
@@ -125,6 +86,21 @@ TEST(world_tests, add_component_was_created)
     EXPECT_EQ(894, c->y);
 }
 
+TEST(world_tests, add_no_other_entites_components_where_invalidated)
+{
+    test_world w;
+
+    auto test_e = w.create();
+    auto test_cmp = w.add<construction_component>(test_e, 56, 232);
+
+    for (int i = 0; i < 30; ++i) {
+        auto e = w.create();
+        w.add<construction_component>(e, 23, 423);
+    }
+
+    EXPECT_EQ(test_cmp, w.get<construction_component>(test_e));
+}
+
 TEST(world_tests, remove_only_destruction_component_while_calling_destructor)
 {
     test_world w;
@@ -132,7 +108,8 @@ TEST(world_tests, remove_only_destruction_component_while_calling_destructor)
     w.add<construction_component>(e, 12, 894);
     auto c = w.add<destruction_component>(e, 12, 894);
 
-    EXPECT_CALL(*c, destructor()).Times(1);
+    EXPECT_CALL(*c, destructor())
+        .Times(1);
 
     w.remove<destruction_component>(e);
 
@@ -147,7 +124,8 @@ TEST(world_tests, destroy_removes_all_components_and_calls_their_destructors)
     w.add<construction_component>(e, 12, 894);
     auto c = w.add<destruction_component>(e, 12, 894);
 
-    EXPECT_CALL(*c, destructor()).Times(1);
+    EXPECT_CALL(*c, destructor())
+        .Times(1);
 
     w.destroy(e);
 

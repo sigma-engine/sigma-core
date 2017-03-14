@@ -76,12 +76,14 @@ struct world {
         if (free_entities.empty()) {
             entity e{ std::uint32_t(entities.size()), 0 };
             entities.push_back(e);
+            entity_masks.push_back(0);
             return e;
         } else {
             auto index = free_entities.back();
             free_entities.pop_back();
             entities[index].index = index;
             entities[index].version++;
+            entity_masks[index] = 0;
             return entities[index];
         }
     }
@@ -107,9 +109,6 @@ struct world {
         assert(is_alive(e));
         assert(!has<Component>(e));
 
-        if (e.index >= entity_masks.size())
-            entity_masks.resize(e.index + 1);
-
         entity_masks[e.index] |= component_mask_type(1 << component_set_type::template index_of<Component>());
 
         component_storage& data = component_data[component_set_type::template index_of<Component>()];
@@ -119,17 +118,26 @@ struct world {
     template <class Component>
     bool has(entity e)
     {
-        if (!is_alive(e) || e.index >= entity_masks.size())
+        if (!is_alive(e))
             return false;
         auto comp_mask = component_set_type::template mask_for<Component>();
         return (entity_masks[e.index] & comp_mask) == comp_mask;
     }
 
     template <class Component>
+    Component* get(entity e)
+    {
+        assert(is_alive(e));
+        assert(has<Component>(e));
+        component_storage& data = component_data[component_set_type::template index_of<Component>()];
+        return data.template get<Component>(e.index);
+    }
+
+    template <class Component>
     void remove(entity e)
     {
         assert(is_alive(e));
-        if (e.index < entity_masks.size() && has<Component>(e)) {
+        if (has<Component>(e)) {
             entity_masks[e.index] &= ~component_mask_type(1 << component_set_type::template index_of<Component>());
             component_storage& data = component_data[component_set_type::template index_of<Component>()];
             data.template remove<Component>(e.index);
@@ -154,9 +162,12 @@ struct world {
     template <class... SubComponents, class F>
     void for_each(F f)
     {
+        // TODO this still loops over entities that are dead.
         auto mask = component_set_type::template mask_for<SubComponents...>();
-        for (auto e : entities) {
-            if ((entity_masks[e.index] & mask) == mask)
+        auto count = entities.size();
+        for (std::size_t i = 0; i < count; ++i) {
+            auto e = entities[i];
+            if (is_alive(e) && (entity_masks[e.index] & mask) == mask)
                 f(e, *(SubComponents*)(component_data[component_set_type::template index_of<SubComponents>()].template get<SubComponents>(e.index))...);
         }
     }

@@ -20,6 +20,8 @@ build/
 
 proprietary/
 
+*.swp
+
 # Ide Generated files
 *.txt.user*
 .idea/
