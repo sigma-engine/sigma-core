@@ -63,3 +63,5 @@ generated
 
 #assimp
 dna.txt
+
+.vimrc_local.vim

@@ -25,9 +25,7 @@ set(HEADERS
 )
 
 add_executable(scompiler ${SOURCES} ${HEADERS})
-
 target_include_directories(scompiler PUBLIC include)
-
 target_link_libraries(scompiler sigma-core)
 
 if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/glslang")

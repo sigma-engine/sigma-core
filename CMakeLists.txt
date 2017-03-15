@@ -27,7 +27,7 @@ foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/lib)
 endforeach(OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES)
 
-set(LIBRARY_SOURCES
+set(CORE_SOURCES
     src/sigma/entity.cpp
     src/sigma/game.cpp
     src/sigma/trackball_controller.cpp
@@ -53,7 +53,7 @@ set(LIBRARY_SOURCES
     src/sigma/util/filesystem.cpp
     src/sigma/util/json_conversion.cpp
 )
-set(LIBRARY_HEADERS
+set(CORE_HEADERS
     include/sigma/world.hpp
     include/sigma/config.hpp
     include/sigma/entity.hpp
@@ -98,16 +98,15 @@ set(LIBRARY_HEADERS
     include/sigma/util/variadic.hpp
 )
 
-add_library(sigma-core SHARED ${LIBRARY_SOURCES} ${LIBRARY_HEADERS})
+add_library(sigma-core SHARED ${CORE_SOURCES} ${CORE_HEADERS})
 target_include_directories(sigma-core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/resources)
 target_compile_definitions(sigma-core PUBLIC -DSIGMA_SHARED PRIVATE -DSIGMA_EXPORT)
 target_link_libraries(sigma-core PUBLIC ${CMAKE_DL_LIBS} ${CONAN_LIBS})
 
-add_subdirectory(tests)
-add_subdirectory(tools/scompiler)
-
 file(GLOB_RECURSE RESOURCES resources resources/*.*)
 add_resources(sigma-core PACKAGE_ROOT resources ${RESOURCES})
+
+add_subdirectory(tools/scompiler)
 
 add_subdirectory(simple_game)
 
@@ -121,3 +120,8 @@ set(MAIN_HEADERS
 
 add_executable(sigma-runner ${MAIN_SOURCES} ${MAIN_HEADERS})
 target_link_libraries(sigma-runner sigma-core simple-game)
+
+
+enable_testing()
+add_subdirectory(test)
+
