@@ -65,3 +65,4 @@ generated
 dna.txt
 
 .vimrc_local.vim
+*.pyc
