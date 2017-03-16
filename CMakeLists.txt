@@ -1,21 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
 project(sigma-engine)
 
-include(${CMAKE_SOURCE_DIR}/sigma_setup.cmake)
-if(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-    include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-    conan_basic_setup()
-endif()
-
 set (CMAKE_CXX_STANDARD 14)
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES ".*[cC][lL][aA][nN][gG]")
-    add_compile_options(-fPIC)
-endif()
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-if (MSVC)
-    # TODO fix these warnings in visual studio
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4275 /wd4251 /wd4996")
-endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -27,7 +15,22 @@ foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/lib)
 endforeach(OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES)
 
+
+include(${CMAKE_SOURCE_DIR}/sigma_setup.cmake)
+if(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+    include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+    conan_basic_setup()
+endif()
+
+
+if (MSVC)
+    # TODO fix these warnings in visual studio
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4275 /wd4251 /wd4996")
+endif()
+
+
 set(CORE_SOURCES
+    src/sigma/window.cpp
     src/sigma/entity.cpp
     src/sigma/game.cpp
     src/sigma/trackball_controller.cpp
@@ -54,6 +57,7 @@ set(CORE_SOURCES
     src/sigma/util/json_conversion.cpp
 )
 set(CORE_HEADERS
+    include/sigma/window.hpp
     include/sigma/world.hpp
     include/sigma/config.hpp
     include/sigma/entity.hpp
@@ -98,9 +102,9 @@ set(CORE_HEADERS
     include/sigma/util/variadic.hpp
 )
 
-add_library(sigma-core SHARED ${CORE_SOURCES} ${CORE_HEADERS})
+add_library(sigma-core STATIC ${CORE_SOURCES} ${CORE_HEADERS})
 target_include_directories(sigma-core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/resources)
-target_compile_definitions(sigma-core PUBLIC -DSIGMA_SHARED PRIVATE -DSIGMA_EXPORT)
+target_compile_definitions(sigma-core PUBLIC PRIVATE -DSIGMA_EXPORT)
 target_link_libraries(sigma-core PUBLIC ${CMAKE_DL_LIBS} ${CONAN_LIBS})
 
 file(GLOB_RECURSE RESOURCES resources resources/*.*)
@@ -108,20 +112,10 @@ add_resources(sigma-core PACKAGE_ROOT resources ${RESOURCES})
 
 add_subdirectory(tools/scompiler)
 
+
 add_subdirectory(simple_game)
-
-set(MAIN_SOURCES
-    src/sigma/main.cpp
-    src/sigma/window.cpp
-)
-set(MAIN_HEADERS
-    include/sigma/window.hpp
-)
-
-add_executable(sigma-runner ${MAIN_SOURCES} ${MAIN_HEADERS})
-target_link_libraries(sigma-runner sigma-core simple-game)
 
 
 enable_testing()
 add_subdirectory(test)
-
+add_subdirectory(benchmark)

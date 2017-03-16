@@ -1,8 +1,6 @@
 #ifndef SIMPLE_GAME_HPP
 #define SIMPLE_GAME_HPP
 
-#include <simple_game_config.hpp>
-
 #include <sigma/game.hpp>
 #include <sigma/world.hpp>
 
@@ -41,7 +39,7 @@ using simple_world = sigma::world<sigma::transform,
     sigma::graphics::static_mesh_instance,
     grid_component>;
 
-class SIMPLE_GAME_API simple_game : public sigma::game<simple_world> {
+class simple_game : public sigma::game<simple_world> {
 public:
     simple_game(sigma::graphics::renderer* renderer);
 

@@ -3,7 +3,7 @@
 
 #include <sigma/config.hpp>
 
-#include <json/json-forwards.h>
+#include <json/json.h>
 
 #include <glm/gtc/quaternion.hpp>
 #include <glm/vec3.hpp>

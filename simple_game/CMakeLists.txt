@@ -1,18 +1,13 @@
-cmake_minimum_required(VERSION 3.0)
-project(simple-game)
-
-set (CMAKE_CXX_STANDARD 14)
-
 set(SOURCES
+    src/main.cpp
     src/simple_game.cpp
 )
 
 set(HEADERS
-    include/simple_game_config.hpp
+    include/simple_game.hpp
 )
 
-add_library(simple-game SHARED ${SOURCES} ${HEADERS})
-target_compile_definitions(simple-game PUBLIC -DSIMPLE_GAME_SHARED PRIVATE -DSIMPLE_GAME_EXPORT)
+add_executable(simple-game ${SOURCES} ${HEADERS})
 target_include_directories(simple-game PUBLIC include resources ../resources)
 target_link_libraries(simple-game sigma-core)
 

@@ -1,7 +1,7 @@
 #ifndef SIGMA_ENGINE_CONVERT_ASSIMP_CONVERTER_HPP
 #define SIGMA_ENGINE_CONVERT_ASSIMP_CONVERTER_HPP
 
-#include <json/json-forwards.h>
+#include <json/json.h>
 
 #include <boost/filesystem/path.hpp>
 
