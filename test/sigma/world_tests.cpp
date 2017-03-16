@@ -205,3 +205,21 @@ TEST(world_tests, for_each_10_entites_with_two_components_10_with_one)
     });
     EXPECT_EQ(10, count);
 }
+
+TEST(world_test, for_each_should_not_loop_over_dead_entities)
+{
+    test_world w;
+    std::vector<sigma::entity> entities;
+    for (int i = 0; i < 20; ++i) {
+        auto e = w.create();
+        entities.push_back(e);
+        w.add<basic_component>(e, 170, 286);
+    }
+
+    for (auto e : entities)
+        w.destroy(e);
+
+    w.for_each<basic_component>([&](auto e, const auto& c1) {
+        EXPECT_FALSE(true) << "should not loop over dead entities";
+    });
+}

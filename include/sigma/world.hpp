@@ -15,7 +15,7 @@ struct component_set {
     using component_mask_type = std::bitset<sizeof...(Components)>;
 
     template <class Component>
-    static size_t index_of()
+    static constexpr size_t index_of()
     {
         return index<Component, Components...>::value;
     }
@@ -30,6 +30,7 @@ struct component_set {
     }
 };
 
+template <class T>
 struct component_storage {
     std::vector<char*> chunks;
     size_t count_per_chunk = 256;
@@ -42,7 +43,6 @@ struct component_storage {
         }
     }
 
-    template <class T>
     T* get(size_t index)
     {
         auto chunk_index = index / count_per_chunk;
@@ -53,24 +53,22 @@ struct component_storage {
         return ((T*)chunks[chunk_index]) + chunk_offset;
     }
 
-    template <class T, class... Arguments>
+    template <class... Arguments>
     T* add(size_t index, Arguments&&... args)
     {
         auto chunk_index = index / count_per_chunk;
         if (chunk_index >= chunks.size())
-            create_chunk<T>(chunk_index);
+            create_chunk(chunk_index);
 
-        return new (get<T>(index)) T{ std::forward<Arguments>(args)... };
+        return new (get(index)) T{ std::forward<Arguments>(args)... };
     }
 
-    template <class T>
     void remove(size_t index)
     {
         // TODO free chunk when last component is removed from it.
-        get<T>(index)->~T();
+        get(index)->~T();
     }
 
-    template <class T>
     void create_chunk(size_t index)
     {
         if (index >= chunks.size())
@@ -115,11 +113,8 @@ struct world {
         }
     }
 
-    bool is_alive(entity e) const
+    bool is_alive(entity e) const noexcept
     {
-        //        if (!e.is_valid() || e.index >= entities.size())
-        //            return false;
-        //        return entities[e.index] == e;
         return e.index >= 0 && e.index < entities.size() && entities[e.index].index != std::uint32_t(-1) && entities[e.index].version == e.version;
     }
 
@@ -131,8 +126,8 @@ struct world {
 
         entity_masks[e.index] |= component_mask_type(1 << component_set_type::template index_of<Component>());
 
-        component_storage& data = component_data[component_set_type::template index_of<Component>()];
-        return data.template add<Component>(e.index, std::forward<Arguments>(args)...);
+        auto& data = std::get<component_set_type::template index_of<Component>()>(component_data);
+        return data.add(e.index, std::forward<Arguments>(args)...);
     }
 
     template <class Component>
@@ -149,8 +144,8 @@ struct world {
     {
         assert(is_alive(e));
         assert(has<Component>(e));
-        component_storage& data = component_data[component_set_type::template index_of<Component>()];
-        return data.template get<Component>(e.index);
+        auto& data = std::get<component_set_type::template index_of<Component>()>(component_data);
+        return data.get(e.index);
     }
 
     template <class Component>
@@ -159,8 +154,8 @@ struct world {
         assert(is_alive(e));
         if (has<Component>(e)) {
             entity_masks[e.index] &= ~component_mask_type(1 << component_set_type::template index_of<Component>());
-            component_storage& data = component_data[component_set_type::template index_of<Component>()];
-            data.template remove<Component>(e.index);
+            auto& data = std::get<component_set_type::template index_of<Component>()>(component_data);
+            data.remove(e.index);
         }
     }
 
@@ -182,13 +177,12 @@ struct world {
     template <class... SubComponents, class F>
     void for_each(F f)
     {
-        // TODO this still loops over entities that are dead.
         auto mask = component_set_type::template mask_for<SubComponents...>();
         auto count = entities.size();
         for (std::size_t i = 0; i < count; ++i) {
             auto e = entities[i];
-            if (is_alive(e) && (entity_masks[e.index] & mask) == mask)
-                f(e, *(SubComponents*)(component_data[component_set_type::template index_of<SubComponents>()].template get<SubComponents>(e.index))...);
+            if (is_alive(e) && ((entity_masks[e.index] & mask) == mask))
+                f(e, *(SubComponents*)(std::get<component_set_type::template index_of<SubComponents>()>(component_data).get(e.index))...);
         }
     }
 
@@ -199,7 +193,7 @@ private:
     std::vector<entity> entities;
     std::vector<std::uint32_t> free_entities;
     std::vector<component_mask_type> entity_masks;
-    std::array<component_storage, sizeof...(Components)> component_data;
+    std::tuple<component_storage<Components>...> component_data;
 };
 }
 
