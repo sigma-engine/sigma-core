@@ -117,9 +117,10 @@ struct world {
 
     bool is_alive(entity e) const
     {
-        if (!e.is_valid() || e.index >= entities.size())
-            return false;
-        return entities[e.index] == e;
+        //        if (!e.is_valid() || e.index >= entities.size())
+        //            return false;
+        //        return entities[e.index] == e;
+        return e.index >= 0 && e.index < entities.size() && entities[e.index].index != std::uint32_t(-1) && entities[e.index].version == e.version;
     }
 
     template <class Component, class... Arguments>
@@ -171,7 +172,7 @@ struct world {
 
     void destroy(entity e)
     {
-        if (!is_alive(e) || e.index >= entities.size())
+        if (!is_alive(e))
             return;
         remove_components(e);
         free_entities.push_back(entities[e.index].index);
