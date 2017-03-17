@@ -4,6 +4,7 @@ set(SOURCES
 )
 
 set(HEADERS
+    include/grid_component.hpp
     include/simple_game.hpp
 )
 

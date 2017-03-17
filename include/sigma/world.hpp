@@ -33,7 +33,7 @@ struct component_set {
 template <class T>
 struct component_storage {
     std::vector<char*> chunks;
-    size_t count_per_chunk = 128;
+    size_t count_per_chunk = 256;
 
     ~component_storage()
     {

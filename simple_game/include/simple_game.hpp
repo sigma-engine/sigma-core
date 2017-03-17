@@ -1,6 +1,7 @@
 #ifndef SIMPLE_GAME_HPP
 #define SIMPLE_GAME_HPP
 
+#include <grid_component.hpp>
 #include <sigma/game.hpp>
 #include <sigma/world.hpp>
 
@@ -24,13 +25,6 @@ private:
     std::uniform_real_distribution<float> x_distribution_;
     std::uniform_real_distribution<float> y_distribution_;
     std::uniform_real_distribution<float> z_distribution_;
-};
-
-struct grid_component {
-    int rows;
-    int columns;
-    float row_spacing;
-    float column_spacing;
 };
 
 using simple_world = sigma::world<sigma::transform,
