@@ -123,7 +123,7 @@ namespace opengl {
     class texture : public graphics::texture {
     public:
         // TODO replace pixles with boost::gil
-        texture(internal_format format, glm::ivec2 size, const std::vector<unsigned char>& pixels);
+        texture(internal_format format, glm::ivec2 size, const std::vector<unsigned char>& pixels, bool mipmaps=false);
 
         texture(internal_format format, glm::ivec2 size);
 
