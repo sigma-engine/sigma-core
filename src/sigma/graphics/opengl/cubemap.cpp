@@ -2,13 +2,12 @@
 
 #include <sigma/graphics/opengl/util.hpp>
 
-#include <cmath>
-
 namespace sigma {
 namespace opengl {
     cubemap::cubemap(graphics::cubemap_data data)
     {
-        int mip_levels = std::min(std::log2(data.right.size.x), std::log2(data.right.size.y));
+
+		int mip_levels = calculate_mipmap_levels(data.right.size.x, data.right.size.y);
 
         // TODO custom internal format
         GL_CHECK(glGenTextures(1, &object_));

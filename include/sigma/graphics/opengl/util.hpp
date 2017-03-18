@@ -87,6 +87,15 @@ namespace opengl {
     struct enum_type<GLdouble> {
         static const data_types value = double_type;
     };
+
+	template<typename T>
+	T calculate_mipmap_levels(T x_size, T y_size)
+	{
+		T count = 0;
+		while ((x_size /= 2) > 0 && (y_size /= 2) > 0)
+			++count;
+		return count;
+	}
 }
 }
 
