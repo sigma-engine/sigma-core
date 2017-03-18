@@ -28,14 +28,14 @@ using my_world = world<position, direction>;
 
 struct movement_system1 {
 
-    void process(my_world& w, double dt)
+    void process(my_world& w, float dt)
     {
         w.for_each<position, direction>([&](entity, auto& pos, const auto& dir) {
             this->inner_loop(pos, dir, dt);
         });
     }
 
-    void inner_loop(position& pos, const direction& dir, double dt) const
+    void inner_loop(position& pos, const direction& dir, float dt) const
     {
         pos.x += dir.x * dt;
         pos.y += dir.y * dt;
@@ -65,7 +65,11 @@ BENCHMARK_DEFINE_F(world_benchmarks, movement_system)
     while (st.KeepRunning()) {
         benchmark::DoNotOptimize(&w);
         sys1.process(w, 1.0f / 60.0f);
+		// TODO there is a newer version of google benchmark that has 
+		// support ClobberMemory but it is not in conan yet.
+#ifndef _MSC_VER
         benchmark::ClobberMemory();
+#endif
     }
     st.SetComplexityN(st.range(0));
 }

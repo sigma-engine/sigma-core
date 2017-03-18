@@ -24,8 +24,7 @@ endif()
 
 
 if (MSVC)
-    # TODO fix these warnings in visual studio
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4275 /wd4251 /wd4996")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4996")
 endif()
 
 

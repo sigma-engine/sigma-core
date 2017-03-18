@@ -24,7 +24,7 @@ struct component_set {
     static component_mask_type mask_for()
     {
         component_mask_type m;
-        auto l = { m |= (1 << index_of<SubComponents>())... };
+        auto l = { m.set(index_of<SubComponents>())... };
         (void)l;
         return m;
     }
@@ -124,7 +124,7 @@ struct world {
         assert(is_alive(e));
         assert(!has<Component>(e));
 
-        entity_masks[e.index] |= component_mask_type(1 << component_set_type::template index_of<Component>());
+        entity_masks[e.index].set(component_set_type::template index_of<Component>());
 
         auto& data = std::get<component_set_type::template index_of<Component>()>(component_data);
         return data.add(e.index, std::forward<Arguments>(args)...);
@@ -153,7 +153,7 @@ struct world {
     {
         assert(is_alive(e));
         if (has<Component>(e)) {
-            entity_masks[e.index] &= ~component_mask_type(1 << component_set_type::template index_of<Component>());
+			entity_masks[e.index].set(component_set_type::template index_of<Component>(), false);
             auto& data = std::get<component_set_type::template index_of<Component>()>(component_data);
             data.remove(e.index);
         }

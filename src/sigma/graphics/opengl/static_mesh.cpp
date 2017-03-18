@@ -27,7 +27,7 @@ namespace opengl {
         GL_CHECK(glEnableVertexAttribArray(3));
         GL_CHECK(glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(graphics::static_mesh_data::vertex), reinterpret_cast<const void*>(3 * sizeof(glm::vec3))));
 
-        index_count_ = 3 * data.triangles.size();
+        index_count_ = GLsizei(3 * data.triangles.size());
         GL_CHECK(glGenBuffers(1, &index_buffer_));
         GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_));
         GL_CHECK(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * index_count_, data.triangles.data(), GL_STATIC_DRAW));
@@ -51,7 +51,7 @@ namespace opengl {
     {
         GL_CHECK(glBindVertexArray(vertex_array_));
         GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_));
-        GL_CHECK(glDrawElements(GL_TRIANGLES, 3 * material_slots_[material_slot].second, GL_UNSIGNED_INT, reinterpret_cast<const void*>(sizeof(graphics::static_mesh_data::triangle) * material_slots_[material_slot].first)));
+        GL_CHECK(glDrawElements(GL_TRIANGLES, GLsizei (3 * material_slots_[material_slot].second), GL_UNSIGNED_INT, reinterpret_cast<const void*>(sizeof(graphics::static_mesh_data::triangle) * material_slots_[material_slot].first)));
     }
 
     static_mesh_manager::static_mesh_manager(boost::filesystem::path cache_directory, opengl::material_manager& materials)
