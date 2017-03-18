@@ -18,6 +18,7 @@ namespace opengl {
         case graphics::shader_type::geometry:
             return shader_type::GEOMETRY_SHADER;
         }
+		return shader_type::NONE_SHADER;
     }
 
     shader::shader(shader_type type, std::string source)
