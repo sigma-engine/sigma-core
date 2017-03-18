@@ -17,7 +17,7 @@ class SigmaEngineConan(ConanFile):
         , "assimp/3.3.1@siegelaaron94/develop"
     )
     generators = "cmake", "txt"
-    default_options = "gtest:shared=False"
+    default_options = "gtest:shared=False" , "Boost:without_test=True"
 
     def imports(self):
         if self.settings.os == "Windows":
