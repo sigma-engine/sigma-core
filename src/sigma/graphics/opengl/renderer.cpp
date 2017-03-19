@@ -77,65 +77,6 @@ namespace opengl {
         GL_CHECK(glViewport(0, 0, size.x, size.y));
     }
 
-    // void renderer::render_material_buckets(std::vector<material_bucket>& material_buckets)
-    // {
-    //     for (const auto& mat_bucket : material_buckets) { // TODO const
-    //         auto mat = MATERIAL_CONST_PTR(mat_bucket.active_material);
-    //         mat->bind(geometry_buffer::NEXT_FREE_TEXTURE_UINT);
-    //         mat->set_standard_uniforms(&standard_uniform_data_);
-    //         for (const auto& mesh_bucket : mat_bucket.mesh_buckets) { // TODO const
-    //             auto mesh = STATIC_MESH_CONST_PTR(mesh_bucket.active_mesh);
-    //             auto material_slot = mesh_bucket.material_slot;
-    //
-    //             instance_matrices matrices;
-    //             for (const auto& instance : mesh_bucket.instances) { // TODO const
-    //                 matrices.model_matrix = instance.model_matrix;
-    //                 matrices.model_view_matrix = standard_uniform_data_.view_matrix * instance.model_matrix;
-    //                 matrices.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices.model_view_matrix)));
-    //                 mat->set_instance_matrices(&matrices);
-    //                 mesh->render(material_slot);
-    //             }
-    //         }
-    //     }
-    // }
-
-    // std::size_t renderer::fill_material_buckets(const graphics::view_port& viewport, std::vector<material_bucket>& material_buckets, bool transparent)
-    // {
-    //     std::size_t max_instances = 0;
-    //     for (auto e : viewport.entities) { // TODO use a filter here
-    //         if (viewport.static_mesh_instances.has(e) && viewport.transforms.has(e)) {
-    //             auto& txform = viewport.transforms.get(e);
-    //             auto mesh = viewport.static_mesh_instances.get(e);
-    //             for (unsigned int i = 0; i < mesh->material_count(); ++i) {
-    //                 auto mat = mesh->material(i);
-    //
-    //                 if (mat->is_transparent() == transparent) {
-    //                     // find the material bucket if it exist
-    //                     auto mat_it = std::find_if(material_buckets.begin(), material_buckets.end(), [&](const auto& bucket) {
-    //                         return bucket.active_material == mat;
-    //                     });
-    //                     // create the material bucket if it does not exist
-    //                     if (mat_it == material_buckets.end())
-    //                         mat_it = material_buckets.insert(mat_it, { mat, {} });
-    //
-    //                     // find the mesh bucket if it exist
-    //                     auto mesh_it = std::find_if(mat_it->mesh_buckets.begin(), mat_it->mesh_buckets.end(), [&](const auto& bucket) {
-    //                         return bucket.active_mesh == mesh; // TODO do we need to match the material index too??
-    //                     });
-    //
-    //                     if (mesh_it == mat_it->mesh_buckets.end())
-    //                         mesh_it = mat_it->mesh_buckets.insert(mesh_it, { mesh, i, {} });
-    //
-    //                     mesh_it->instances.push_back({ txform.matrix() });
-    //
-    //                     max_instances = std::max(max_instances, mesh_it->instances.size());
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     return max_instances;
-    // }
-
     /*void renderer::point_light_outside_stencil_optimization(glm::vec3 view_space_position, float radius)
 	{
 		// http://forum.devmaster.net/t/deferred-lighting-rendering-light-volumes/14998/5
