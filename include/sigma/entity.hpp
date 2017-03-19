@@ -21,6 +21,13 @@ struct SIGMA_API entity {
 
     std::uint32_t index;
     std::uint32_t version;
+
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version)
+    {
+        ar& index;
+        ar& version;
+    }
 };
 }
 
