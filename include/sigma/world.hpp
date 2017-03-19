@@ -4,6 +4,9 @@
 #include <sigma/entity.hpp>
 #include <sigma/util/variadic.hpp>
 
+#include <boost/serialization/bitset.hpp>
+#include <boost/serialization/split_member.hpp>
+
 #include <array>
 #include <bitset>
 #include <cassert>
@@ -51,6 +54,16 @@ struct component_storage {
         assert(chunk_index < chunks.size());
 
         return ((T*)chunks[chunk_index]) + chunk_offset;
+    }
+
+    const T* get(size_t index) const
+    {
+        auto chunk_index = index / count_per_chunk;
+        auto chunk_offset = index % count_per_chunk;
+
+        assert(chunk_index < chunks.size());
+
+        return ((const T*)chunks[chunk_index]) + chunk_offset;
     }
 
     template <class... Arguments>
@@ -126,12 +139,11 @@ struct world {
 
         entity_masks[e.index].set(component_set_type::template index_of<Component>());
 
-        auto& data = std::get<component_set_type::template index_of<Component>()>(component_data);
-        return data.add(e.index, std::forward<Arguments>(args)...);
+        return create<Component>(e, std::forward<Arguments>(args)...);
     }
 
     template <class Component>
-    bool has(entity e)
+    bool has(entity e) const
     {
         if (!is_alive(e))
             return false;
@@ -145,6 +157,15 @@ struct world {
         assert(is_alive(e));
         assert(has<Component>(e));
         auto& data = std::get<component_set_type::template index_of<Component>()>(component_data);
+        return data.get(e.index);
+    }
+
+    template <class Component>
+    const Component* get(entity e) const
+    {
+        assert(is_alive(e));
+        assert(has<Component>(e));
+        const auto& data = std::get<component_set_type::template index_of<Component>()>(component_data);
         return data.get(e.index);
     }
 
@@ -186,9 +207,53 @@ struct world {
         }
     }
 
+    template <class Archive>
+    void save(Archive& ar, const unsigned int version) const
+    {
+        ar << entities;
+        ar << free_entities;
+        ar << entity_masks;
+        for (auto e : entities)
+
+            (int[]){ (save_entity_component<Components>(ar, e), 0)... };
+    }
+
+    template <class Archive>
+    void load(Archive& ar, const unsigned int version)
+    {
+        ar >> entities;
+        ar >> free_entities;
+        ar >> entity_masks;
+        for (auto e : entities)
+            (int[]){ (load_entity_component<Components>(ar, e), 0)... };
+    }
+
+    BOOST_SERIALIZATION_SPLIT_MEMBER();
+
 private:
     world(const world<Components...>&) = delete;
     world<Components...>& operator=(const world<Components...>&) = delete;
+
+    template <class Component, class... Arguments>
+    Component* create(entity e, Arguments&&... args)
+    {
+        auto& data = std::get<component_set_type::template index_of<Component>()>(component_data);
+        return data.add(e.index, std::forward<Arguments>(args)...);
+    }
+
+    template <class Component, class Archive>
+    void save_entity_component(Archive& ar, entity e) const
+    {
+        if (has<Component>(e))
+            ar << *get<Component>(e);
+    }
+
+    template <class Component, class Archive>
+    void load_entity_component(Archive& ar, entity e)
+    {
+        if (has<Component>(e))
+            ar >> *create<Component>(e);
+    }
 
     std::vector<entity> entities;
     std::vector<std::uint32_t> free_entities;
