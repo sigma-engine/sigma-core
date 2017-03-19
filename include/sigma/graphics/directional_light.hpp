@@ -10,6 +10,13 @@ namespace graphics {
     struct SIGMA_API directional_light {
         glm::vec3 color;
         float intensity;
+
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version)
+        {
+            ar& color;
+            ar& intensity;
+        }
     };
 }
 }

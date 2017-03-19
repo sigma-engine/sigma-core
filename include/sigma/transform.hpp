@@ -2,6 +2,7 @@
 #define SIGMA_TRANSFORM_HPP
 
 #include <sigma/config.hpp>
+#include <sigma/util/glm_serialize.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -14,6 +15,14 @@ struct SIGMA_API transform {
     glm::quat rotation;
     glm::vec3 scale{ 1.0f };
     glm::mat4 matrix;
+
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version)
+    {
+        ar& position;
+        ar& rotation;
+        ar& scale;
+    }
 
     glm::mat4 get_matrix() const
     {

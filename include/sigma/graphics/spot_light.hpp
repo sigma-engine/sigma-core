@@ -7,6 +7,10 @@ namespace sigma {
 namespace graphics {
 
     struct SIGMA_API spot_light {
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version)
+        {
+        }
     };
 }
 }

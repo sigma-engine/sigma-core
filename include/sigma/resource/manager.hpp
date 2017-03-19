@@ -151,6 +151,12 @@ namespace resource {
             return false;
         }
 
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version)
+        {
+            ar& id_;
+        }
+
     private:
         identifier id_;
         manager<Resource>* manager_;

@@ -11,6 +11,13 @@ namespace graphics {
     struct point_light {
         glm::vec3 color;
         float intensity;
+
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version)
+        {
+            ar& color;
+            ar& intensity;
+        }
     };
 }
 }
