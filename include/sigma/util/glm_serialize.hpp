@@ -40,6 +40,15 @@ namespace serialization {
         ar& v.w;
     }
 
+    template <class Archive, typename T, glm::precision P>
+    void serialize(Archive& ar, glm::tquat<T, P>& v, const unsigned int version)
+    {
+        ar& v.x;
+        ar& v.y;
+        ar& v.z;
+        ar& v.w;
+    }
+
     template <class Archive, typename P>
     void serialize(Archive& ar, glm::tmat2x2<P>& v, const unsigned int version)
     {
