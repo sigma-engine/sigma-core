@@ -3,41 +3,22 @@
 
 #include <sigma/config.hpp>
 
+#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/vec3.hpp>
 
 namespace sigma {
 
 struct SIGMA_API transform {
-public:
-    transform() = default;
+    glm::vec3 position;
+    glm::quat rotation;
+    glm::vec3 scale{ 1.0f };
+    glm::mat4 matrix;
 
-    transform(glm::vec3 position, glm::quat rotation = glm::quat{}, glm::vec3 scale = glm::vec3{ 1 });
-
-    glm::vec3 position() const;
-
-    void set_position(const glm::vec3& position);
-
-    glm::quat rotation() const;
-
-    void set_rotation(const glm::quat& rotation);
-
-    glm::vec3 scale() const;
-
-    void set_scale(const glm::vec3& scale);
-
-    bool dirty() const;
-
-    void set_dirty(bool dirty = true);
-
-    const glm::mat4& matrix();
-
-private:
-    glm::vec3 position_;
-    glm::quat rotation_;
-    glm::vec3 scale_{ 1.0f };
-    bool dirty_;
-    glm::mat4 matrix_;
+    glm::mat4 get_matrix() const
+    {
+        return glm::translate(glm::mat4(1), position) * glm::mat4_cast(rotation) * glm::scale(glm::mat4(1), glm::vec3(scale));
+    }
 };
 }
 

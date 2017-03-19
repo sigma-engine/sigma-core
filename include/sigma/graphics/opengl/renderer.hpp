@@ -180,7 +180,7 @@ namespace opengl {
             world.template for_each<transform, graphics::static_mesh_instance>([&](entity e, transform& txform, graphics::static_mesh_instance& mesh_instance) {
                 auto mesh = STATIC_MESH_PTR(mesh_instance.mesh);
                 instance_matrices matrices;
-                matrices.model_matrix = txform.matrix();
+                matrices.model_matrix = txform.matrix;
                 matrices.model_view_matrix = standard_uniform_data_.view_matrix * matrices.model_matrix;
                 matrices.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices.model_view_matrix)));
 
@@ -263,7 +263,7 @@ namespace opengl {
 
             world.template for_each<transform, graphics::point_light>([&](entity e, transform& txform, graphics::point_light& light) {
                 EFFECT_PTR(point_light_effect_)->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
-                EFFECT_PTR(point_light_effect_)->set_uniform("position_radius", glm::vec4(txform.position(), txform.scale().x));
+                EFFECT_PTR(point_light_effect_)->set_uniform("position_radius", glm::vec4(txform.position, txform.scale.x));
                 EFFECT_PTR(point_light_effect_)->bind(); // TODO update uniforms
                 EFFECT_PTR(point_light_effect_)->apply();
             });
@@ -281,7 +281,7 @@ namespace opengl {
 
             world.template for_each<transform, graphics::directional_light>([&](entity e, transform& txform, graphics::directional_light& light) {
                 EFFECT_PTR(directional_light_effect_)->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
-                EFFECT_PTR(directional_light_effect_)->set_uniform("direction", glm::vec3(txform.matrix() * glm::vec4(0, 1, 0, 0)));
+                EFFECT_PTR(directional_light_effect_)->set_uniform("direction", glm::vec3(txform.matrix * glm::vec4(0, 1, 0, 0)));
                 EFFECT_PTR(directional_light_effect_)->bind(); // TODO update uniforms
                 EFFECT_PTR(directional_light_effect_)->apply();
             });

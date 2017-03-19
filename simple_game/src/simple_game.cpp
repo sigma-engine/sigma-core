@@ -16,14 +16,14 @@ simple_game::simple_game(sigma::graphics::renderer* renderer)
     , color_distribution_{ glm::vec3{ 0.0f }, glm::vec3{ 1.0f } }
 {
 
-    //     load("../data/proprietary/classroom/classroom.scn");
-    //     load("../data/water_packed.scn");
+    // load("../data/proprietary/classroom/classroom.scn");
+    // load("../data/water_packed.scn");
     load("../data/material_test_scene.scn");
 
     auto grid_e = world_.create();
     world_.add<sigma::transform>(grid_e);
     world_.add<sigma::graphics::static_mesh_instance>(grid_e, renderer->static_meshes().get(sigma::resource::identifier{ "static_mesh://material_ball:material_ball" }));
-    world_.add<grid_component>(grid_e, 5, 5, 1.5f, 1.5f);
+    world_.add<grid_component>(grid_e, 30, 25, 1.5f, 1.5f);
 
     world_.for_each<sigma::transform, sigma::graphics::static_mesh_instance, grid_component>([&](sigma::entity e, const sigma::transform& txform, sigma::graphics::static_mesh_instance& mesh_instance, const grid_component& grid) {
         auto material = mesh_instance.mesh->material(0);
@@ -42,7 +42,7 @@ simple_game::simple_game(sigma::graphics::renderer* renderer)
                     generated_mat->set_uniform("metalness", 1.0f - (z / float(grid.columns - 1)));
 
                     auto e = world_.create();
-                    world_.add<sigma::transform>(e, txform.position() + glm::vec3{ grid.row_spacing * x, 0, grid.column_spacing * z });
+                    world_.add<sigma::transform>(e, txform.position + glm::vec3{ grid.row_spacing * x, 0, grid.column_spacing * z });
                     auto minst = world_.add<sigma::graphics::static_mesh_instance>(e, mesh_instance.mesh);
                     minst->materials[0] = generated_mat;
                 }
@@ -95,10 +95,12 @@ sigma::transform& simple_game::random_transform(sigma::entity e)
 void simple_game::update(std::chrono::duration<float> dt)
 {
     static auto start = std::chrono::system_clock::now();
-    world_.for_each<sigma::transform, sigma::graphics::point_light>([dt](sigma::entity e, sigma::transform& txform, const sigma::graphics::point_light& light) {
-        auto elapsed = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::system_clock::now() - start);
-        auto pos = txform.position();
-        pos.y += std::cos(elapsed.count()) * dt.count();
-        txform.set_position(pos);
+    auto elapsed = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::system_clock::now() - start);
+    world_.for_each<sigma::transform, sigma::graphics::point_light>([elapsed, dt](sigma::entity e, sigma::transform& txform, const sigma::graphics::point_light& light) {
+        txform.position.y += std::cos(elapsed.count()) * dt.count();
+    });
+
+    world_.for_each<sigma::transform>([&](sigma::entity e, sigma::transform& txform) {
+        txform.matrix = txform.get_matrix();
     });
 }

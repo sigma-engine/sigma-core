@@ -1,6 +1,6 @@
 {
     "cubemaps" : {
-        "environment_map" : "NissiBeach"
+        "environment_map" : "skybox"
     },
     "fragment" : "pbr/deffered/lights/image_based"
 }

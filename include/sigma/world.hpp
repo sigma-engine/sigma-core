@@ -153,7 +153,7 @@ struct world {
     {
         assert(is_alive(e));
         if (has<Component>(e)) {
-			entity_masks[e.index].set(component_set_type::template index_of<Component>(), false);
+            entity_masks[e.index].set(component_set_type::template index_of<Component>(), false);
             auto& data = std::get<component_set_type::template index_of<Component>()>(component_data);
             data.remove(e.index);
         }

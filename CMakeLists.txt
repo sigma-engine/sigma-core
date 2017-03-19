@@ -33,7 +33,6 @@ set(CORE_SOURCES
     src/sigma/entity.cpp
     src/sigma/game.cpp
     src/sigma/trackball_controller.cpp
-    src/sigma/transform.cpp
 
     src/sigma/graphics/renderer.cpp
     src/sigma/resource/identifier.cpp
