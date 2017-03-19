@@ -12,15 +12,27 @@
 namespace sigma {
 namespace graphics {
 
+    enum class texture_filter {
+        LINEAR,
+        NEAREST,
+        NONE
+    };
+
     struct texture_data {
         glm::ivec2 size;
         std::vector<unsigned char> pixels;
+        texture_filter minification_filter = texture_filter::LINEAR;
+        texture_filter magnification_filter = texture_filter::LINEAR;
+        texture_filter mipmap_filter = texture_filter::LINEAR;
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
         {
             ar& size;
             ar& pixels;
+            ar& minification_filter;
+            ar& magnification_filter;
+            ar& mipmap_filter;
         }
     };
 
