@@ -36,16 +36,15 @@ simple_game::simple_game(sigma::graphics::renderer* renderer)
             for (int z = 0; z < grid.columns; ++z) {
                 number++;
                 if (x != 0 || z != 0) {
-                    auto material_ball = renderer->static_meshes().duplicate(mesh_instance.mesh, "static_mesh://material_ball:material_ball" + std::to_string(number));
                     auto generated_mat = renderer->materials().duplicate(mesh_instance.mesh->material(0), "material://generated" + std::to_string(number));
-                    material_ball->set_material(0, generated_mat);
                     generated_mat->set_uniform("basecolor", glm::vec3{ 1, 1, 1 });
                     generated_mat->set_uniform("roughness", x / float(grid.rows - 1));
                     generated_mat->set_uniform("metalness", 1.0f - (z / float(grid.columns - 1)));
 
                     auto e = world_.create();
                     world_.add<sigma::transform>(e, txform.position() + glm::vec3{ grid.row_spacing * x, 0, grid.column_spacing * z });
-                    world_.add<sigma::graphics::static_mesh_instance>(e, material_ball);
+                    auto minst = world_.add<sigma::graphics::static_mesh_instance>(e, mesh_instance.mesh);
+                    minst->materials[0] = generated_mat;
                 }
             }
         }

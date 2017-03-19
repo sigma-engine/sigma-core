@@ -186,6 +186,12 @@ namespace opengl {
 
                 for (unsigned int i = 0; i < mesh->material_count(); ++i) {
                     auto mat = MATERIAL_PTR(mesh->material(i));
+
+                    auto mit = mesh_instance.materials.find(i);
+                    if (mit != mesh_instance.materials.end()) {
+                        mat = MATERIAL_PTR(mit->second);
+                    }
+
                     if (mat->is_transparent() == transparent) {
                         mat->bind(geometry_buffer::NEXT_FREE_TEXTURE_UINT);
                         mat->set_standard_uniforms(&standard_uniform_data_);

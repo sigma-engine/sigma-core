@@ -10,6 +10,7 @@ namespace sigma {
 namespace graphics {
     struct static_mesh_instance {
         resource::handle<static_mesh> mesh;
+        std::unordered_map<std::size_t, resource::handle<material>> materials;
     };
 }
 }
