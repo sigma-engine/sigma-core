@@ -207,6 +207,18 @@ struct world {
         }
     }
 
+    template <class... SubComponents, class F>
+    void for_each(F f) const
+    {
+        auto mask = component_set_type::template mask_for<SubComponents...>();
+        auto count = entities.size();
+        for (std::size_t i = 0; i < count; ++i) {
+            auto e = entities[i];
+            if (is_alive(e) && ((entity_masks[e.index] & mask) == mask))
+                f(e, *(SubComponents*)(std::get<component_set_type::template index_of<SubComponents>()>(component_data).get(e.index))...);
+        }
+    }
+
     template <class Archive>
     void save(Archive& ar, const unsigned int version) const
     {
