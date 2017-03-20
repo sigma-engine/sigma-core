@@ -17,7 +17,7 @@ void main()
     surface s = read_geometry_buffer();
 
     vec3 L = normalize(in_light.direction);
-    vec3 V = -normalize(s.position);
+    vec3 V = normalize(s.position-(view_matrix * vec4(0,0,0,1)).xyz);
 
     out_image = in_light.intensity * in_light.color * compute_lighting(s, L, V);
 }

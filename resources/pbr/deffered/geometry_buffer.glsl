@@ -34,9 +34,10 @@ surface read_geometry_buffer()
     vec4 diffuse_roughness = texture(in_diffuse_roughness, uv);
     vec4 normal_metalness = texture(in_normal_metalness, uv);
 
-    vec4 view_space_position = inverse_projection_matrix * vec4(2 * uv - 1, 2 * depth - 1, 1);
+    // TODO move inverse(projection_matrix * view_matrix)
+    vec4 world_space_position = inverse(projection_matrix * view_matrix) * vec4(2 * uv - 1, 2 * depth - 1, 1);
 
-    s.position = (view_space_position / view_space_position.w).xyz;
+    s.position = (world_space_position / world_space_position.w).xyz;
     s.depth = depth;
     s.normal = normal_metalness.xyz;
 
