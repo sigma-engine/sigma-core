@@ -51,7 +51,14 @@ namespace opengl {
     {
         GL_CHECK(glBindVertexArray(vertex_array_));
         GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_));
-        GL_CHECK(glDrawElements(GL_TRIANGLES, GLsizei (3 * material_slots_[material_slot].second), GL_UNSIGNED_INT, reinterpret_cast<const void*>(sizeof(graphics::static_mesh_data::triangle) * material_slots_[material_slot].first)));
+        GL_CHECK(glDrawElements(GL_TRIANGLES, GLsizei(3 * material_slots_[material_slot].second), GL_UNSIGNED_INT, reinterpret_cast<const void*>(sizeof(graphics::static_mesh_data::triangle) * material_slots_[material_slot].first)));
+    }
+
+    void static_mesh::render_all() const
+    {
+        GL_CHECK(glBindVertexArray(vertex_array_));
+        GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_));
+        GL_CHECK(glDrawElements(GL_TRIANGLES, index_count_, GL_UNSIGNED_INT, 0));
     }
 
     static_mesh_manager::static_mesh_manager(boost::filesystem::path cache_directory, opengl::material_manager& materials)

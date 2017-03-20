@@ -30,11 +30,13 @@ namespace opengl {
 
         void render(unsigned int material_slot) const;
 
+        void render_all() const;
+
         // TODO make private
         GLuint vertex_array_ = 0;
         GLuint vertex_buffer_ = 0;
         GLuint index_buffer_ = 0;
-		GLsizei index_count_ = 0;
+        GLsizei index_count_ = 0;
 
     private:
         static_mesh(const static_mesh&) = delete;

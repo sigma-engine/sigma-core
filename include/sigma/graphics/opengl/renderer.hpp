@@ -42,15 +42,7 @@ namespace opengl {
         template <class World>
         void render(const graphics::view_port& viewport, World& world)
         {
-            // instance_matrices matrices_;
-            // matrices_.model_matrix = glm::mat4(1);
-            // matrices_.model_view_matrix = viewport.view_matrix * matrices_.model_matrix;
-            // matrices_.normal_matrix = glm::mat3(1);
-
-            standard_uniform_data_.projection_matrix = viewport.projection_matrix;
-            standard_uniform_data_.view_matrix = viewport.view_matrix;
-            standard_uniform_data_.inverse_projection_matrix = glm::inverse(viewport.projection_matrix);
-            standard_uniform_data_.inverse_view_matrix = glm::inverse(viewport.view_matrix);
+            setup_view_projection(viewport.view_matrix, viewport.projection_matrix);
             standard_uniform_data_.view_port_size = viewport.size;
             standard_uniform_data_.time = 0; // TODO time
             standard_uniform_data_.z_near = viewport.z_near;
@@ -140,6 +132,14 @@ namespace opengl {
 
         resource::handle<graphics::post_process_effect> vignette_effect_;
 
+        void setup_view_projection(const glm::mat4& view_matrix, const glm::mat4& projection_matrix)
+        {
+            standard_uniform_data_.projection_matrix = projection_matrix;
+            standard_uniform_data_.view_matrix = view_matrix;
+            standard_uniform_data_.inverse_projection_matrix = glm::inverse(projection_matrix);
+            standard_uniform_data_.inverse_view_matrix = glm::inverse(view_matrix);
+        }
+
         template <class World>
         void geometry_pass(const graphics::view_port& viewport, World& world, bool transparent)
         {
@@ -189,8 +189,6 @@ namespace opengl {
         template <class World>
         void light_pass(const graphics::view_port& viewport, World& world)
         {
-            gbuffer_.bind_for_geometry_read();
-
             // GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
 
             // TODO:perf look into passing all analytical lights(directional,point,spot) into one shader
@@ -215,6 +213,9 @@ namespace opengl {
         {
             // TODO IBL breaks energy conservation of the environment map
             // when transparancies are rendered.
+
+            setup_view_projection(viewport.view_matrix, viewport.projection_matrix);
+            gbuffer_.bind_for_geometry_read();
 
             GL_CHECK(glDisable(GL_BLEND));
             GL_CHECK(glDisable(GL_STENCIL_TEST));
@@ -243,6 +244,9 @@ namespace opengl {
         {
             // TODO:perf we can use one fullscreen quad to render all of the directional lights and save on gbuffer lookups.
 
+            setup_view_projection(viewport.view_matrix, viewport.projection_matrix);
+            gbuffer_.bind_for_geometry_read();
+
             analytical_light_setup();
 
             GL_CHECK(glDisable(GL_DEPTH_TEST));
@@ -269,6 +273,9 @@ namespace opengl {
             // TODO:perf look into using a quad for rendering point lights.
             // TODO:perf look into using a fullscreen quad for all point lights and have just one pass
             // that does all point light lighting at once.
+
+            setup_view_projection(viewport.view_matrix, viewport.projection_matrix);
+            gbuffer_.bind_for_geometry_read();
 
             analytical_light_setup();
 
