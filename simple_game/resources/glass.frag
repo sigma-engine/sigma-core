@@ -18,6 +18,6 @@ void main()
     s.diffuse = mix(color.rgb * background_color, color.rgb, color.a);
     s.metalness = 0;
     s.roughness = roughness;
-    s.normal = in_vertex.normal;
+    s.normal = normalize(in_vertex.normal);
     write_geometry_buffer(s);
 }

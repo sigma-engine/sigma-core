@@ -49,7 +49,7 @@ vec3 BRDF_diffuse(vec3 albedo)
 
 vec3 compute_lighting(surface s, vec3 L, vec3 V)
 {
-    vec3 N = normalize(s.normal);
+    vec3 N = s.normal;
     float NdotL = clamp(dot(N, L), 0.0, 1.0);
 
     vec3 albedo = s.diffuse - s.diffuse * s.metalness;

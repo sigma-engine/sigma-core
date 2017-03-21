@@ -14,6 +14,6 @@ void main()
     s.diffuse = basecolor;
     s.metalness = metalness;
     s.roughness = roughness;
-    s.normal = in_vertex.normal;
+    s.normal = normalize(in_vertex.normal);
     write_geometry_buffer(s);
 }

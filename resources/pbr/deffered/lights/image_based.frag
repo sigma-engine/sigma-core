@@ -7,7 +7,7 @@
 // clang-format on
 
 uniform samplerCube environment_map;
-uniform uvec2 environment_map_size = uvec2(2048, 2048);
+uniform uvec2 environment_map_size = uvec2(2048, 2048); // TODO hard coded???
 
 // http://www.trentreed.net/blog/physically-based-shading-and-image-based-lighting/
 // http://blog.tobias-franke.eu/2014/03/30/notes_on_importance_sampling.html
@@ -77,13 +77,12 @@ void main()
 
     surface s = read_geometry_buffer();
 
-    vec3 V = normalize((inverse_view_matrix * vec4(-s.position, 0.0)).xyz);
+    vec3 V = normalize(eye_position - s.position);
 
     if (s.depth == 1.0)
         out_image = pow(texture(environment_map, -V, 0.0).rgb, vec3(3));
     else {
-        vec3 N = normalize((inverse_view_matrix * vec4(s.normal, 0.0)).xyz);
-
+        vec3 N = s.normal;
         vec3 F0 = mix(vec3(0.04f), s.diffuse, s.metalness);
 
         out_image = radiance(N, V, F0, s.roughness);

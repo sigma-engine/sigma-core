@@ -138,6 +138,9 @@ namespace opengl {
             standard_uniform_data_.view_matrix = view_matrix;
             standard_uniform_data_.inverse_projection_matrix = glm::inverse(projection_matrix);
             standard_uniform_data_.inverse_view_matrix = glm::inverse(view_matrix);
+            standard_uniform_data_.projection_view_matrix = projection_matrix * view_matrix;
+            standard_uniform_data_.inverse_projection_view_matrix = glm::inverse(standard_uniform_data_.projection_view_matrix);
+            standard_uniform_data_.eye_position = glm::vec3(standard_uniform_data_.inverse_view_matrix * glm::vec4(0, 0, 0, 1));
         }
 
         template <class World>
@@ -196,14 +199,14 @@ namespace opengl {
             // drawn but more inportantly would mean that the gbuffer would only have to be sampled once per
             // screen pixel.
 
-            // // Render Image based lighting
-            // image_based_light_pass(viewport, world);
+            // Render Image based lighting
+            image_based_light_pass(viewport, world);
 
             // Render directional lights
             directional_light_pass(viewport, world);
 
-            // // Render point lights
-            // point_light_pass(viewport, world);
+            // Render point lights
+            point_light_pass(viewport, world);
 
             // TODO Render spot lights
         }

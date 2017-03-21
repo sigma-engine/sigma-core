@@ -21,7 +21,7 @@ void main()
 {
     out_light.color = color_intensity.rgb;
     out_light.intensity = color_intensity.a;
-    out_light.direction = direction;
+    out_light.direction = normalize(direction);
 
     out_vertex.position = vec4(in_position, 1);
     out_vertex.normal = normalize(in_normal);

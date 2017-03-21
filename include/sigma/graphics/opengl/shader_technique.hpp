@@ -23,9 +23,12 @@ namespace opengl {
         static constexpr const char* VIEW_MATRIX_NAME = "view_matrix";
         static constexpr const char* INVERSE_PROJECTION_MATRIX_NAME = "inverse_projection_matrix";
         static constexpr const char* INVERSE_VIEW_MATRIX_NAME = "inverse_view_matrix";
+        static constexpr const char* PROJECTION_VIEW_MATRIX_NAME = "projection_view_matrix";
+        static constexpr const char* INVERSE_PROJECTION_VIEW_MATRIX_NAME = "inverse_projection_view_matrix";
         static constexpr const char* Z_NEAR_NAME = "z_near";
         static constexpr const char* Z_FAR_NAME = "z_far";
         static constexpr const char* VIEW_PORT_SIZE_NAME = "view_port_size";
+        static constexpr const char* EYE_POSITION_NAME = "eye_position";
         static constexpr const char* TIME_NAME = "time";
 
         static constexpr const char* MODEL_MATRIX_NAME = "model_matrix";
@@ -71,9 +74,12 @@ namespace opengl {
             GL_CHECK(view_matrix_location_ = glGetUniformLocation(object_, VIEW_MATRIX_NAME));
             GL_CHECK(inverse_projection_matrix_location_ = glGetUniformLocation(object_, INVERSE_PROJECTION_MATRIX_NAME));
             GL_CHECK(inverse_view_matrix_location_ = glGetUniformLocation(object_, INVERSE_VIEW_MATRIX_NAME));
+            GL_CHECK(projection_view_matrix_location_ = glGetUniformLocation(object_, PROJECTION_VIEW_MATRIX_NAME));
+            GL_CHECK(inverse_projection_view_matrix_location_ = glGetUniformLocation(object_, INVERSE_PROJECTION_VIEW_MATRIX_NAME));
             GL_CHECK(z_near_location_ = glGetUniformLocation(object_, Z_NEAR_NAME));
             GL_CHECK(z_far_location_ = glGetUniformLocation(object_, Z_FAR_NAME));
             GL_CHECK(view_port_size_location_ = glGetUniformLocation(object_, VIEW_PORT_SIZE_NAME));
+            GL_CHECK(eye_position_location_ = glGetUniformLocation(object_, EYE_POSITION_NAME));
             GL_CHECK(time_location_ = glGetUniformLocation(object_, TIME_NAME));
 
             GL_CHECK(model_matrix_location_ = glGetUniformLocation(object_, MODEL_MATRIX_NAME));
@@ -119,9 +125,13 @@ namespace opengl {
             GL_CHECK(glUniformMatrix4fv(view_matrix_location_, 1, GL_FALSE, glm::value_ptr(standard->view_matrix)));
             GL_CHECK(glUniformMatrix4fv(inverse_projection_matrix_location_, 1, GL_FALSE, glm::value_ptr(standard->inverse_projection_matrix)));
             GL_CHECK(glUniformMatrix4fv(inverse_view_matrix_location_, 1, GL_FALSE, glm::value_ptr(standard->inverse_view_matrix)));
+            GL_CHECK(glUniformMatrix4fv(projection_view_matrix_location_, 1, GL_FALSE, glm::value_ptr(standard->projection_view_matrix)));
+            GL_CHECK(glUniformMatrix4fv(inverse_projection_view_matrix_location_, 1, GL_FALSE, glm::value_ptr(standard->inverse_projection_view_matrix)));
             GL_CHECK(glUniform1f(z_near_location_, standard->z_near));
             GL_CHECK(glUniform1f(z_far_location_, standard->z_far));
             GL_CHECK(glUniform2fv(view_port_size_location_, 1, glm::value_ptr(standard->view_port_size)));
+            GL_CHECK(glUniform3fv(eye_position_location_, 1, glm::value_ptr(standard->eye_position)));
+            GL_CHECK(glUniform1f(time_location_, standard->time));
         }
 
         void set_instance_matrices(instance_matrices* matrices) const
@@ -177,9 +187,12 @@ namespace opengl {
         GLint view_matrix_location_ = -1;
         GLint inverse_projection_matrix_location_ = -1;
         GLint inverse_view_matrix_location_ = -1;
+        GLint projection_view_matrix_location_ = -1;
+        GLint inverse_projection_view_matrix_location_ = -1;
         GLint z_near_location_ = -1;
         GLint z_far_location_ = -1;
         GLint view_port_size_location_ = -1;
+        GLint eye_position_location_ = -1;
         GLint time_location_ = -1;
 
         GLint model_matrix_location_ = -1;

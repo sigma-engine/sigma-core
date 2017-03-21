@@ -31,5 +31,5 @@ void main()
     out_vertex.binormal = normalize(cross(out_vertex.tangent, out_vertex.normal));
     out_vertex.texcoord = in_texcoord;
 
-    gl_Position = projection_matrix * view_matrix * out_vertex.position;
+    gl_Position = projection_view_matrix * out_vertex.position;
 }
