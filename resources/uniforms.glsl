@@ -16,6 +16,7 @@ uniform mat4 inverse_projection_matrix;
 uniform mat4 inverse_view_matrix;
 uniform mat4 projection_view_matrix;
 uniform mat4 inverse_projection_view_matrix;
+uniform mat4 light_projection_view_matrix;
 uniform vec2 view_port_size;
 uniform vec3 eye_position;
 uniform float time;

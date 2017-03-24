@@ -12,6 +12,7 @@ namespace opengl {
         , normal_texture_(internal_format::RGBA16F, size) // RGB10_A2
         , depth_stencil_texture_(internal_format::DEPTH32F_STENCIL8, size)
         , images_{ texture{ internal_format::RGB16F, size }, texture{ internal_format::RGB16F, size } }
+        , shadow_map_(internal_format::DEPTH_COMPONENT16, {1024, 1024})
         , input_image_(0)
         , output_image_(1)
     {
@@ -24,13 +25,27 @@ namespace opengl {
 
     void geometry_buffer::bind_for_geometry_write()
     {
+        dettach(frame_buffer::attachment::DEPTH);
+        attach(frame_buffer::attachment::DEPTH_STENCIL, depth_stencil_texture_);
+
+
         draw_buffers(DIFFUSE_ROUGHNESS_ATTACHMENT, NORMAL_METALNESS_ATTACHMENT, IMAGE_ATTACHMENTS[output_image_]);
         GL_CHECK(glActiveTexture(GLenum(INPUT_IMAGE_TEXTURE_UINT)));
         images_[input_image_].bind();
     }
 
+    void geometry_buffer::bind_for_shadow_write()
+    {
+        dettach(frame_buffer::attachment::DEPTH_STENCIL);
+        attach(frame_buffer::attachment::DEPTH, shadow_map_);
+        draw_buffers(frame_buffer::attachment::NONE);
+    }
+
     void geometry_buffer::bind_for_geometry_read()
     {
+        dettach(frame_buffer::attachment::DEPTH);
+        attach(frame_buffer::attachment::DEPTH_STENCIL, depth_stencil_texture_);
+
         draw_buffers(IMAGE_ATTACHMENTS[output_image_]);
 
         GL_CHECK(glActiveTexture(GLenum(DIFFUSE_ROUGHNESS_TEXTURE_UINT)));
@@ -44,6 +59,9 @@ namespace opengl {
 
         GL_CHECK(glActiveTexture(GLenum(INPUT_IMAGE_TEXTURE_UINT)));
         images_[input_image_].bind();
+
+        GL_CHECK(glActiveTexture(GLenum(SHADOW_MAP_TEXTURE_UINT)));
+        shadow_map_.bind();
     }
 
     void geometry_buffer::swap_input_image()

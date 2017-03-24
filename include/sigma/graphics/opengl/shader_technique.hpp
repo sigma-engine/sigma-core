@@ -25,6 +25,7 @@ namespace opengl {
         static constexpr const char* INVERSE_VIEW_MATRIX_NAME = "inverse_view_matrix";
         static constexpr const char* PROJECTION_VIEW_MATRIX_NAME = "projection_view_matrix";
         static constexpr const char* INVERSE_PROJECTION_VIEW_MATRIX_NAME = "inverse_projection_view_matrix";
+        static constexpr const char* LIGHT_PROJECTION_VIEW_MATRIX_NAME  = "light_projection_view_matrix";
         static constexpr const char* Z_NEAR_NAME = "z_near";
         static constexpr const char* Z_FAR_NAME = "z_far";
         static constexpr const char* VIEW_PORT_SIZE_NAME = "view_port_size";
@@ -76,6 +77,7 @@ namespace opengl {
             GL_CHECK(inverse_view_matrix_location_ = glGetUniformLocation(object_, INVERSE_VIEW_MATRIX_NAME));
             GL_CHECK(projection_view_matrix_location_ = glGetUniformLocation(object_, PROJECTION_VIEW_MATRIX_NAME));
             GL_CHECK(inverse_projection_view_matrix_location_ = glGetUniformLocation(object_, INVERSE_PROJECTION_VIEW_MATRIX_NAME));
+            GL_CHECK(light_projection_view_matrix_location_ = glGetUniformLocation(object_, LIGHT_PROJECTION_VIEW_MATRIX_NAME));
             GL_CHECK(z_near_location_ = glGetUniformLocation(object_, Z_NEAR_NAME));
             GL_CHECK(z_far_location_ = glGetUniformLocation(object_, Z_FAR_NAME));
             GL_CHECK(view_port_size_location_ = glGetUniformLocation(object_, VIEW_PORT_SIZE_NAME));
@@ -127,6 +129,7 @@ namespace opengl {
             GL_CHECK(glUniformMatrix4fv(inverse_view_matrix_location_, 1, GL_FALSE, glm::value_ptr(standard->inverse_view_matrix)));
             GL_CHECK(glUniformMatrix4fv(projection_view_matrix_location_, 1, GL_FALSE, glm::value_ptr(standard->projection_view_matrix)));
             GL_CHECK(glUniformMatrix4fv(inverse_projection_view_matrix_location_, 1, GL_FALSE, glm::value_ptr(standard->inverse_projection_view_matrix)));
+            GL_CHECK(glUniformMatrix4fv(light_projection_view_matrix_location_, 1, GL_FALSE, glm::value_ptr(standard->light_projection_view_matrix)));
             GL_CHECK(glUniform1f(z_near_location_, standard->z_near));
             GL_CHECK(glUniform1f(z_far_location_, standard->z_far));
             GL_CHECK(glUniform2fv(view_port_size_location_, 1, glm::value_ptr(standard->view_port_size)));
@@ -189,6 +192,7 @@ namespace opengl {
         GLint inverse_view_matrix_location_ = -1;
         GLint projection_view_matrix_location_ = -1;
         GLint inverse_projection_view_matrix_location_ = -1;
+        GLint light_projection_view_matrix_location_ = -1;
         GLint z_near_location_ = -1;
         GLint z_far_location_ = -1;
         GLint view_port_size_location_ = -1;

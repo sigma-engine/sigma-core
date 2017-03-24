@@ -34,6 +34,7 @@ namespace opengl {
         GLint in_diffuse_location_ = -1;
         GLint in_normal_location_ = -1;
         GLint in_depth_stencil_location_ = -1;
+        GLint in_shadow_map_location_ = -1;
 
         post_process_effect(const post_process_effect&) = delete;
         post_process_effect& operator=(const post_process_effect&) = delete;

@@ -21,6 +21,7 @@ uniform sampler2D in_diffuse_roughness;
 uniform sampler2D in_normal_metalness;
 uniform sampler2D in_depth_stencil;
 uniform sampler2D in_image;
+uniform sampler2D in_shadow_map;
 
 out vec3 out_image;
 
