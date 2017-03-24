@@ -126,6 +126,7 @@ namespace opengl {
         resource::handle<graphics::post_process_effect> image_based_light_effect_;
         resource::handle<graphics::post_process_effect> point_light_effect_;
         resource::handle<graphics::post_process_effect> directional_light_effect_;
+        resource::handle<graphics::post_process_effect> spot_light_effect_;
         resource::handle<graphics::post_process_effect> texture_blit_effect_;
 
         resource::handle<graphics::post_process_effect> gamma_conversion_;
@@ -209,6 +210,7 @@ namespace opengl {
             point_light_pass(viewport, world);
 
             // TODO Render spot lights
+            spot_light_pass(viewport, world);
         }
 
         template <class World>
@@ -296,6 +298,30 @@ namespace opengl {
                 EFFECT_PTR(point_light_effect_)->set_uniform("position_radius", glm::vec4(txform.position, txform.scale.x));
                 EFFECT_PTR(point_light_effect_)->bind(); // TODO update uniforms
                 EFFECT_PTR(point_light_effect_)->apply();
+            });
+        }
+
+        template <class World>
+        void spot_light_pass(const graphics::view_port& viewport, World& world)
+        {
+            setup_view_projection(viewport.view_matrix, viewport.projection_matrix);
+            gbuffer_.bind_for_geometry_read();
+
+            analytical_light_setup();
+
+            GL_CHECK(glDisable(GL_DEPTH_TEST));
+            GL_CHECK(glDisable(GL_CULL_FACE));
+
+            EFFECT_CONST_PTR(spot_light_effect_)->bind();
+            EFFECT_CONST_PTR(spot_light_effect_)->set_standard_uniforms(&standard_uniform_data_);
+
+            world.template for_each<transform, graphics::spot_light>([&](entity e, const transform& txform, const graphics::spot_light& light) {
+                EFFECT_PTR(spot_light_effect_)->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
+                EFFECT_PTR(spot_light_effect_)->set_uniform("position", txform.position);
+                EFFECT_PTR(spot_light_effect_)->set_uniform("direction", glm::vec3(txform.matrix * glm::vec4(0, 1, 0, 0)));
+                EFFECT_PTR(spot_light_effect_)->set_uniform("cutoff", std::cos(light.cutoff));
+                EFFECT_PTR(spot_light_effect_)->bind(); // TODO update uniforms
+                EFFECT_PTR(spot_light_effect_)->apply();
             });
         }
 

@@ -3,13 +3,22 @@
 
 #include <sigma/config.hpp>
 
+#include <glm/vec3.hpp>
+
 namespace sigma {
 namespace graphics {
 
     struct SIGMA_API spot_light {
+        glm::vec3 color;
+        float intensity;
+        float cutoff;
+
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
         {
+            ar& color;
+            ar& intensity;
+            ar& cutoff;
         }
     };
 }

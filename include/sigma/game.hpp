@@ -88,6 +88,21 @@ public:
                             json::from_json(value, intensity);
                     });
                     world_.template add<graphics::point_light>(e, color, intensity);
+                } else if (component_type == "sigma::graphics::spot_light") {
+                    const auto& component_values = component.getMemberNames();
+                    glm::vec3 color{ 1 };
+                    float intensity{ 1 };
+                    float cutoff = 0.785398;
+                    std::for_each(component_values.begin(), component_values.end(), [&](const std::string& value_name) {
+                        const auto& value = component[value_name];
+                        if (value_name == "color")
+                            json::from_json(value, color);
+                        else if (value_name == "intensity")
+                            json::from_json(value, intensity);
+                        else if (value_name == "cutoff")
+                            json::from_json(value, cutoff);
+                    });
+                    world_.template add<graphics::spot_light>(e, color, intensity, cutoff);
                 } else if (component_type == "sigma::graphics::static_mesh") {
                     auto resource_name = component.asString();
                     if (!boost::starts_with(resource_name, "static_mesh://"))

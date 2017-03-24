@@ -226,6 +226,11 @@ void assimp_converter::convert_object(std::string name, Json::Value& entity) con
                 entity["sigma::graphics::directional_light"]["color"] = json::to_json(color);
                 entity["sigma::graphics::directional_light"]["intensity"] = json::to_json(intensity);
                 break;
+            case aiLightSource_SPOT:
+                entity["sigma::graphics::spot_light"]["color"] = json::to_json(color);
+                entity["sigma::graphics::spot_light"]["intensity"] = json::to_json(intensity);
+                entity["sigam::graphics::spot_light"]["cutoff"] = json::to_json(ailight->mAngleOuterCone);
+                break;
             default: // TODO more lights
                 break;
             }

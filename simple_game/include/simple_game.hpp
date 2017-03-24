@@ -28,8 +28,9 @@ private:
 };
 
 using simple_world = sigma::world<sigma::transform,
-    sigma::graphics::point_light,
     sigma::graphics::directional_light,
+    sigma::graphics::point_light,
+    sigma::graphics::spot_light,
     sigma::graphics::static_mesh_instance,
     grid_component>;
 

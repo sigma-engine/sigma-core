@@ -32,6 +32,7 @@ namespace opengl {
         image_based_light_effect_ = effects_.get("post_process_effect://pbr/deffered/lights/image_based");
         point_light_effect_ = effects_.get("post_process_effect://pbr/deffered/lights/point");
         directional_light_effect_ = effects_.get("post_process_effect://pbr/deffered/lights/directional");
+        spot_light_effect_ = effects_.get("post_process_effect://pbr/deffered/lights/spot");
         texture_blit_effect_ = effects_.get("post_process_effect://pbr/deffered/texture_blit");
 
         vignette_effect_ = effects_.get("post_process_effect://vignette");
