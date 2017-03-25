@@ -3,6 +3,7 @@
 // clang-format off
 #include <pbr/deffered/post_process_effect.glsl>
 #include <pbr/brdf.glsl>
+#include <shadow_sampling.glsl>
 // clang-format on
 
 in spot_light
@@ -29,7 +30,7 @@ void main()
     float att = 1.0 / (light_distance * light_distance);
 
     float factor = dot(L, in_light.direction);
-    
+
     if(factor > in_light.cutoff) {
         att *= (1.0 - (1.0 - factor) * 1.0/(1.0 - in_light.cutoff));
     }
@@ -37,6 +38,10 @@ void main()
         att = 0;
     }
 
-    out_image = att * in_light.intensity * in_light.color * compute_lighting(s, L, V);
+    vec4 light_space_position = light_projection_view_matrix * vec4(s.position,1);
+
+    float shadow = calculate_shadow(in_shadow_map, light_space_position);
+
+    out_image = shadow * att * in_light.intensity * in_light.color * compute_lighting(s, L, V);
 
 }

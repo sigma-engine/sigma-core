@@ -250,21 +250,31 @@ namespace opengl {
         void directional_light_pass(const graphics::view_port& viewport, World& world)
         {
             // TODO:perf we can use one fullscreen quad to render all of the directional lights and save on gbuffer lookups.
-
             setup_view_projection(viewport.view_matrix, viewport.projection_matrix);
-            gbuffer_.bind_for_geometry_read();
-
-            analytical_light_setup();
-
-            GL_CHECK(glDisable(GL_DEPTH_TEST));
-            GL_CHECK(glDisable(GL_CULL_FACE));
-
-            EFFECT_CONST_PTR(directional_light_effect_)->bind();
-            EFFECT_CONST_PTR(directional_light_effect_)->set_standard_uniforms(&standard_uniform_data_);
+            auto pos = standard_uniform_data_.eye_position;
 
             world.template for_each<transform, graphics::directional_light>([&](entity e, const transform& txform, const graphics::directional_light& light) {
+                auto light_direction = glm::vec3(txform.matrix * glm::vec4(0, 1, 0, 0));
+                auto projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 20.0f);
+                auto view = glm::lookAt(pos, pos - light_direction, glm::vec3(0, 1, 0));
+                standard_uniform_data_.light_projection_view_matrix = projection * view;
+                setup_view_projection(view, projection);
+
+                render_to_shadow_map(world);
+
+                setup_view_projection(viewport.view_matrix, viewport.projection_matrix);
+                gbuffer_.bind_for_geometry_read();
+
+                analytical_light_setup();
+
+                GL_CHECK(glDisable(GL_DEPTH_TEST));
+                GL_CHECK(glDisable(GL_CULL_FACE));
+
+                EFFECT_PTR(directional_light_effect_)->bind();
+                EFFECT_PTR(directional_light_effect_)->set_standard_uniforms(&standard_uniform_data_);
+
                 EFFECT_PTR(directional_light_effect_)->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
-                EFFECT_PTR(directional_light_effect_)->set_uniform("direction", glm::vec3(txform.matrix * glm::vec4(0, 1, 0, 0)));
+                EFFECT_PTR(directional_light_effect_)->set_uniform("direction", light_direction);
                 EFFECT_PTR(directional_light_effect_)->bind(); // TODO update uniforms
                 EFFECT_PTR(directional_light_effect_)->apply();
             });
@@ -306,40 +316,16 @@ namespace opengl {
         template <class World>
         void spot_light_pass(const graphics::view_port& viewport, World& world)
         {
-            world.template for_each<transform, graphics::spot_light>([&](entity e, const transform& txform, const graphics::spot_light& light) {
+			// TODO:perf render cones for spot lights to limit there effects.
 
-                setup_view_projection(viewport.view_matrix, viewport.projection_matrix);
-                gbuffer_.bind_for_shadow_write();
+            world.template for_each<transform, graphics::spot_light>([&](entity e, transform& txform, const graphics::spot_light& light) {
+                auto light_direction = glm::vec3(txform.matrix * glm::vec4(0, 1, 0, 0));
+                auto projection = glm::perspective(light.cutoff * 2.50f, 1.0f, 0.01f, 25.0f);
+                auto view = glm::lookAt(txform.position, txform.position - light_direction, glm::vec3(0, 1, 0));
+                standard_uniform_data_.light_projection_view_matrix = projection * view;
+                setup_view_projection(view, projection);
 
-                GL_CHECK(glDisable(GL_BLEND));
-
-                GL_CHECK(glDepthMask(GL_TRUE));
-                GL_CHECK(glDepthFunc(GL_LESS));
-                GL_CHECK(glEnable(GL_DEPTH_TEST));
-                GL_CHECK(glDisable(GL_STENCIL_TEST));
-
-                GL_CHECK(glCullFace(GL_BACK));
-                GL_CHECK(glEnable(GL_CULL_FACE));
-
-                GL_CHECK(glClear(GL_DEPTH_BUFFER_BIT));
-
-                MATERIAL_PTR(shadow_material_)->bind(geometry_buffer::NEXT_FREE_TEXTURE_UINT);
-                MATERIAL_PTR(shadow_material_)->set_standard_uniforms(&standard_uniform_data_);
-
-                world.template for_each<transform, graphics::static_mesh_instance>([&](entity e, const transform& txform, graphics::static_mesh_instance& mesh_instance) {
-                    auto mesh = STATIC_MESH_PTR(mesh_instance.mesh);
-                    instance_matrices matrices;
-                    matrices.model_matrix = txform.matrix;
-                    matrices.model_view_matrix = standard_uniform_data_.view_matrix * matrices.model_matrix;
-                    matrices.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices.model_matrix))); //glm::transpose(glm::inverse(glm::mat3(matrices.model_view_matrix)));
-
-                    MATERIAL_PTR(shadow_material_)->set_instance_matrices(&matrices);
-
-                    mesh->render_all();
-                });
-
-                GL_CHECK(glDepthMask(GL_FALSE));
-                GL_CHECK(glStencilMask(0x00));
+                render_to_shadow_map(world);
 
                 setup_view_projection(viewport.view_matrix, viewport.projection_matrix);
                 gbuffer_.bind_for_geometry_read();
@@ -354,11 +340,46 @@ namespace opengl {
 
                 EFFECT_PTR(spot_light_effect_)->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
                 EFFECT_PTR(spot_light_effect_)->set_uniform("position", txform.position);
-                EFFECT_PTR(spot_light_effect_)->set_uniform("direction", glm::vec3(txform.matrix * glm::vec4(0, 1, 0, 0)));
+                EFFECT_PTR(spot_light_effect_)->set_uniform("direction", light_direction);
                 EFFECT_PTR(spot_light_effect_)->set_uniform("cutoff", std::cos(light.cutoff));
                 EFFECT_PTR(spot_light_effect_)->bind(); // TODO update uniforms
                 EFFECT_PTR(spot_light_effect_)->apply();
             });
+        }
+
+        template <class World>
+        void render_to_shadow_map(World& world)
+        {
+            gbuffer_.bind_for_shadow_write();
+
+            GL_CHECK(glDisable(GL_BLEND));
+
+            GL_CHECK(glDepthMask(GL_TRUE));
+            GL_CHECK(glDepthFunc(GL_LESS));
+            GL_CHECK(glEnable(GL_DEPTH_TEST));
+            GL_CHECK(glDisable(GL_STENCIL_TEST));
+
+            GL_CHECK(glCullFace(GL_FRONT));
+            GL_CHECK(glEnable(GL_CULL_FACE));
+
+            GL_CHECK(glClear(GL_DEPTH_BUFFER_BIT));
+
+            MATERIAL_PTR(shadow_material_)->bind(geometry_buffer::NEXT_FREE_TEXTURE_UINT);
+            MATERIAL_PTR(shadow_material_)->set_standard_uniforms(&standard_uniform_data_);
+
+            world.template for_each<transform, graphics::static_mesh_instance>([&](entity e, const transform& txform, graphics::static_mesh_instance& mesh_instance) {
+                auto mesh = STATIC_MESH_PTR(mesh_instance.mesh);
+                instance_matrices matrices;
+                matrices.model_matrix = txform.matrix;
+                matrices.model_view_matrix = standard_uniform_data_.view_matrix * matrices.model_matrix;
+
+                MATERIAL_PTR(shadow_material_)->set_instance_matrices(&matrices);
+
+                mesh->render_all();
+            });
+
+            GL_CHECK(glDepthMask(GL_FALSE));
+            GL_CHECK(glStencilMask(0x00));
         }
 
         // void point_light_outside_stencil_optimization(glm::vec3 view_space_position, float radius);
