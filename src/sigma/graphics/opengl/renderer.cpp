@@ -17,6 +17,7 @@ namespace opengl {
         , loader_status_(gladLoadGL())
         , default_fbo_(size)
         , gbuffer_(size)
+        , sbuffer_({ 2048, 2048 })
         , shaders_(boost::filesystem::current_path() / ".." / "data")
         , textures_(boost::filesystem::current_path() / ".." / "data")
         , cubemaps_(boost::filesystem::current_path() / ".." / "data")

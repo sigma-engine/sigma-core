@@ -44,6 +44,7 @@ set(CORE_SOURCES
     src/sigma/graphics/opengl/cubemap.cpp
     src/sigma/graphics/opengl/frame_buffer.cpp
     src/sigma/graphics/opengl/geometry_buffer.cpp
+    src/sigma/graphics/opengl/shadow_buffer.cpp
     src/sigma/graphics/opengl/material.cpp
     src/sigma/graphics/opengl/post_process_effect.cpp
     src/sigma/graphics/opengl/renderer.cpp
@@ -79,6 +80,7 @@ set(CORE_HEADERS
     include/sigma/graphics/opengl/cubemap.hpp
     include/sigma/graphics/opengl/frame_buffer.hpp
     include/sigma/graphics/opengl/geometry_buffer.hpp
+    include/sigma/graphics/opengl/shadow_buffer.hpp
     include/sigma/graphics/opengl/material.hpp
     include/sigma/graphics/opengl/post_process_effect.hpp
     include/sigma/graphics/opengl/render_uniforms.hpp

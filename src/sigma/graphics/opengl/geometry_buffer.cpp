@@ -12,17 +12,9 @@ namespace opengl {
         , normal_texture_(internal_format::RGBA16F, size) // RGB10_A2
         , depth_stencil_texture_(internal_format::DEPTH32F_STENCIL8, size)
         , images_{ texture{ internal_format::RGB16F, size }, texture{ internal_format::RGB16F, size } }
-        , shadow_map_(internal_format::DEPTH_COMPONENT16, { 1024, 1024 })
         , input_image_(0)
         , output_image_(1)
     {
-        // TODO move this into texture
-        shadow_map_.bind();
-        GLfloat border_color[] = { 1.0, 1.0, 1.0, 1.0 };
-        GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER));
-        GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER));
-        GL_CHECK(glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border_color));
-
         attach(DIFFUSE_ROUGHNESS_ATTACHMENT, diffuse_texture_);
         attach(NORMAL_METALNESS_ATTACHMENT, normal_texture_);
         attach(IMAGE_ATTACHMENTS[0], images_[0]);
@@ -32,8 +24,6 @@ namespace opengl {
 
     void geometry_buffer::bind_for_geometry_write()
     {
-        dettach(frame_buffer::attachment::DEPTH);
-        attach(frame_buffer::attachment::DEPTH_STENCIL, depth_stencil_texture_);
         GL_CHECK(glViewport(0, 0, size_.x, size_.y));
 
         draw_buffers(DIFFUSE_ROUGHNESS_ATTACHMENT, NORMAL_METALNESS_ATTACHMENT, IMAGE_ATTACHMENTS[output_image_]);
@@ -41,19 +31,8 @@ namespace opengl {
         images_[input_image_].bind();
     }
 
-    void geometry_buffer::bind_for_shadow_write()
-    {
-        dettach(frame_buffer::attachment::DEPTH_STENCIL);
-        attach(frame_buffer::attachment::DEPTH, shadow_map_);
-        draw_buffers(frame_buffer::attachment::NONE);
-        GL_CHECK(glViewport(0, 0, 1024, 1024));
-    }
-
     void geometry_buffer::bind_for_geometry_read()
     {
-        dettach(frame_buffer::attachment::DEPTH);
-        attach(frame_buffer::attachment::DEPTH_STENCIL, depth_stencil_texture_);
-
         draw_buffers(IMAGE_ATTACHMENTS[output_image_]);
         GL_CHECK(glViewport(0, 0, size_.x, size_.y));
 
@@ -68,9 +47,6 @@ namespace opengl {
 
         GL_CHECK(glActiveTexture(GLenum(INPUT_IMAGE_TEXTURE_UINT)));
         images_[input_image_].bind();
-
-        GL_CHECK(glActiveTexture(GLenum(SHADOW_MAP_TEXTURE_UINT)));
-        shadow_map_.bind();
     }
 
     void geometry_buffer::swap_input_image()

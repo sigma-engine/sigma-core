@@ -12,6 +12,7 @@
 #include <sigma/graphics/opengl/post_process_effect.hpp>
 #include <sigma/graphics/opengl/render_uniforms.hpp>
 #include <sigma/graphics/opengl/shader.hpp>
+#include <sigma/graphics/opengl/shadow_buffer.hpp>
 #include <sigma/graphics/opengl/static_mesh.hpp>
 #include <sigma/graphics/opengl/texture.hpp>
 #include <sigma/graphics/opengl/uniform_buffer.hpp>
@@ -114,6 +115,7 @@ namespace opengl {
         int loader_status_;
         default_frame_buffer default_fbo_;
         geometry_buffer gbuffer_;
+        shadow_buffer sbuffer_;
 
         standard_uniforms standard_uniform_data_;
         //uniform_buffer<standard_uniforms> standard_uniforms_;
@@ -388,7 +390,7 @@ namespace opengl {
         template <class World>
         void render_to_shadow_map(World& world)
         {
-            gbuffer_.bind_for_shadow_write();
+            sbuffer_.bind_for_shadow_write();
 
             GL_CHECK(glDisable(GL_BLEND));
 
@@ -418,6 +420,7 @@ namespace opengl {
 
             GL_CHECK(glDepthMask(GL_FALSE));
             GL_CHECK(glStencilMask(0x00));
+            sbuffer_.bind_for_shadow_read(geometry_buffer::SHADOW_MAP_TEXTURE_UINT);
         }
 
         // void point_light_outside_stencil_optimization(glm::vec3 view_space_position, float radius);

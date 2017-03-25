@@ -1,5 +1,5 @@
-#ifndef SIGMA_GRAPHICS_OPENGL_GEOMETRY_BUFFER
-#define SIGMA_GRAPHICS_OPENGL_GEOMETRY_BUFFER
+#ifndef SIGMA_GRAPHICS_OPENGL_GEOMETRY_BUFFER_HPP
+#define SIGMA_GRAPHICS_OPENGL_GEOMETRY_BUFFER_HPP
 
 #include <sigma/graphics/opengl/frame_buffer.hpp>
 #include <sigma/graphics/opengl/texture.hpp>
@@ -40,8 +40,6 @@ namespace opengl {
 
         void bind_for_geometry_write();
 
-        void bind_for_shadow_write();
-
         void bind_for_geometry_read();
 
         void swap_input_image();
@@ -55,11 +53,10 @@ namespace opengl {
         texture normal_texture_;
         texture depth_stencil_texture_;
         texture images_[2];
-        texture shadow_map_;
         int input_image_;
         int output_image_;
     };
 }
 }
 
-#endif // SIGMA_GRAPHICS_OPENGL_GEOMETRY_BUFFER
+#endif // SIGMA_GRAPHICS_OPENGL_GEOMETRY_BUFFER_HPP
