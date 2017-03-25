@@ -18,10 +18,10 @@ int main(int argc, char* argv[])
     auto game = std::make_unique<simple_game>(renderer.get());
 
     sigma::graphics::view_port viewport{
-        glm::perspective(0.785398f, (float)window.size().x / (float)window.size().y, 0.01f, 10000.0f),
+        glm::perspective(0.785398f, (float)window.size().x / (float)window.size().y, 0.01f, 50.0f),
         glm::mat4(1),
         0.01f,
-        10000.0f,
+        50.0f,
         window.size()
     };
     sigma::trackball_controller controller;

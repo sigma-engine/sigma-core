@@ -16,6 +16,8 @@
 #include <sigma/graphics/opengl/texture.hpp>
 #include <sigma/graphics/opengl/uniform_buffer.hpp>
 
+#include <limits>
+
 namespace sigma {
 
 namespace opengl {
@@ -251,12 +253,48 @@ namespace opengl {
         {
             // TODO:perf we can use one fullscreen quad to render all of the directional lights and save on gbuffer lookups.
             setup_view_projection(viewport.view_matrix, viewport.projection_matrix);
-            auto pos = standard_uniform_data_.eye_position;
+            auto inverse_projection_view_matrix = standard_uniform_data_.inverse_projection_view_matrix;
+
+            glm::vec4 corners[] = {
+                glm::vec4{ -1, -1, -1, 1 },
+                glm::vec4{ -1, 1, -1, 1 },
+                glm::vec4{ 1, 1, -1, 1 },
+                glm::vec4{ 1, -1, -1, 1 },
+                glm::vec4{ -1, -1, 1, 1 },
+                glm::vec4{ -1, 1, 1, 1 },
+                glm::vec4{ 1, 1, 1, 1 },
+                glm::vec4{ 1, -1, 1, 1 }
+            };
+
+            glm::vec3 center{ 0 };
+            for (auto& c : corners) {
+                c = inverse_projection_view_matrix * c;
+                c /= c.w;
+                center += glm::vec3{ c };
+            }
+            center /= 8.0f;
 
             world.template for_each<transform, graphics::directional_light>([&](entity e, const transform& txform, const graphics::directional_light& light) {
-                auto light_direction = glm::vec3(txform.matrix * glm::vec4(0, 1, 0, 0));
-                auto projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 20.0f);
-                auto view = glm::lookAt(pos, pos - light_direction, glm::vec3(0, 1, 0));
+                auto light_direction = glm::normalize(glm::vec3(txform.matrix * glm::vec4(0, 1, 0, 0)));
+
+                auto view = glm::lookAt(center, center - light_direction, glm::vec3(0, 1, 0));
+                glm::vec3 min{ std::numeric_limits<float>::max() };
+                glm::vec3 max{ std::numeric_limits<float>::min() };
+                for (auto c : corners) {
+                    auto lc = view * c;
+                    min.x = std::min(min.x, lc.x);
+                    min.y = std::min(min.y, lc.y);
+                    min.z = std::min(min.z, lc.z);
+
+                    max.x = std::max(max.x, lc.x);
+                    max.y = std::max(max.y, lc.y);
+                    max.z = std::max(max.z, lc.z);
+                }
+
+                // glm::vec3 extents = 0.5f * (max - min);
+                // auto projection = glm::ortho(-extents.x, extents.x, -extents.y, extents.y, -extents.z, extents.z);
+                auto projection = glm::ortho(min.x, max.x, min.y, max.y, min.z, max.z);
+
                 standard_uniform_data_.light_projection_view_matrix = projection * view;
                 setup_view_projection(view, projection);
 
@@ -316,10 +354,10 @@ namespace opengl {
         template <class World>
         void spot_light_pass(const graphics::view_port& viewport, World& world)
         {
-			// TODO:perf render cones for spot lights to limit there effects.
+            // TODO:perf render cones for spot lights to limit there effects.
 
             world.template for_each<transform, graphics::spot_light>([&](entity e, transform& txform, const graphics::spot_light& light) {
-                auto light_direction = glm::vec3(txform.matrix * glm::vec4(0, 1, 0, 0));
+                auto light_direction = glm::normalize(glm::vec3(txform.matrix * glm::vec4(0, 1, 0, 0)));
                 auto projection = glm::perspective(light.cutoff * 2.50f, 1.0f, 0.01f, 25.0f);
                 auto view = glm::lookAt(txform.position, txform.position - light_direction, glm::vec3(0, 1, 0));
                 standard_uniform_data_.light_projection_view_matrix = projection * view;
