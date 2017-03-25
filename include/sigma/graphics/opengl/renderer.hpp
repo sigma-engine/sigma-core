@@ -129,6 +129,8 @@ namespace opengl {
         resource::handle<graphics::post_process_effect> spot_light_effect_;
         resource::handle<graphics::post_process_effect> texture_blit_effect_;
 
+        resource::handle<graphics::material> shadow_material_;
+
         resource::handle<graphics::post_process_effect> gamma_conversion_;
 
         resource::handle<graphics::post_process_effect> vignette_effect_;
@@ -304,18 +306,52 @@ namespace opengl {
         template <class World>
         void spot_light_pass(const graphics::view_port& viewport, World& world)
         {
-            setup_view_projection(viewport.view_matrix, viewport.projection_matrix);
-            gbuffer_.bind_for_geometry_read();
-
-            analytical_light_setup();
-
-            GL_CHECK(glDisable(GL_DEPTH_TEST));
-            GL_CHECK(glDisable(GL_CULL_FACE));
-
-            EFFECT_CONST_PTR(spot_light_effect_)->bind();
-            EFFECT_CONST_PTR(spot_light_effect_)->set_standard_uniforms(&standard_uniform_data_);
-
             world.template for_each<transform, graphics::spot_light>([&](entity e, const transform& txform, const graphics::spot_light& light) {
+
+                setup_view_projection(viewport.view_matrix, viewport.projection_matrix);
+                gbuffer_.bind_for_shadow_write();
+
+                GL_CHECK(glDisable(GL_BLEND));
+
+                GL_CHECK(glDepthMask(GL_TRUE));
+                GL_CHECK(glDepthFunc(GL_LESS));
+                GL_CHECK(glEnable(GL_DEPTH_TEST));
+                GL_CHECK(glDisable(GL_STENCIL_TEST));
+
+                GL_CHECK(glCullFace(GL_BACK));
+                GL_CHECK(glEnable(GL_CULL_FACE));
+
+                GL_CHECK(glClear(GL_DEPTH_BUFFER_BIT));
+
+                MATERIAL_PTR(shadow_material_)->bind(geometry_buffer::NEXT_FREE_TEXTURE_UINT);
+                MATERIAL_PTR(shadow_material_)->set_standard_uniforms(&standard_uniform_data_);
+
+                world.template for_each<transform, graphics::static_mesh_instance>([&](entity e, const transform& txform, graphics::static_mesh_instance& mesh_instance) {
+                    auto mesh = STATIC_MESH_PTR(mesh_instance.mesh);
+                    instance_matrices matrices;
+                    matrices.model_matrix = txform.matrix;
+                    matrices.model_view_matrix = standard_uniform_data_.view_matrix * matrices.model_matrix;
+                    matrices.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices.model_matrix))); //glm::transpose(glm::inverse(glm::mat3(matrices.model_view_matrix)));
+
+                    MATERIAL_PTR(shadow_material_)->set_instance_matrices(&matrices);
+
+                    mesh->render_all();
+                });
+
+                GL_CHECK(glDepthMask(GL_FALSE));
+                GL_CHECK(glStencilMask(0x00));
+
+                setup_view_projection(viewport.view_matrix, viewport.projection_matrix);
+                gbuffer_.bind_for_geometry_read();
+
+                analytical_light_setup();
+
+                GL_CHECK(glDisable(GL_DEPTH_TEST));
+                GL_CHECK(glDisable(GL_CULL_FACE));
+
+                EFFECT_CONST_PTR(spot_light_effect_)->bind();
+                EFFECT_CONST_PTR(spot_light_effect_)->set_standard_uniforms(&standard_uniform_data_);
+
                 EFFECT_PTR(spot_light_effect_)->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
                 EFFECT_PTR(spot_light_effect_)->set_uniform("position", txform.position);
                 EFFECT_PTR(spot_light_effect_)->set_uniform("direction", glm::vec3(txform.matrix * glm::vec4(0, 1, 0, 0)));

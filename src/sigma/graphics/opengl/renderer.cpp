@@ -35,6 +35,8 @@ namespace opengl {
         spot_light_effect_ = effects_.get("post_process_effect://pbr/deffered/lights/spot");
         texture_blit_effect_ = effects_.get("post_process_effect://pbr/deffered/texture_blit");
 
+        shadow_material_ = materials_.get("material://shadow");
+
         vignette_effect_ = effects_.get("post_process_effect://vignette");
         gamma_conversion_ = effects_.get("post_process_effect://pbr/deffered/gamma_conversion");
     }
