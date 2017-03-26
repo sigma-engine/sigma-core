@@ -2,6 +2,7 @@
 #define SIGMA_GRAPHICS_OPENGL_SHADOW_BUFFER_HPP
 
 #include <sigma/graphics/opengl/frame_buffer.hpp>
+#include <sigma/graphics/opengl/render_buffer.hpp>
 #include <sigma/graphics/opengl/texture.hpp>
 
 namespace sigma {
@@ -10,15 +11,13 @@ namespace opengl {
     public:
         shadow_buffer(glm::ivec2 size);
 
-        ~shadow_buffer();
-
         void bind_for_shadow_write();
 
         void bind_for_shadow_read(texture_unit unit);
 
     private:
         texture shadow_map_;
-        GLuint depth_render_buffer_;
+        render_buffer depth_buffer_;
     };
 }
 }

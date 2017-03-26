@@ -1,5 +1,6 @@
 #include <sigma/graphics/opengl/frame_buffer.hpp>
 
+#include <sigma/graphics/opengl/render_buffer.hpp>
 #include <sigma/graphics/opengl/texture.hpp>
 
 #include <sigma/graphics/opengl/util.hpp>
@@ -40,17 +41,28 @@ namespace opengl {
         glDeleteFramebuffers(1, &object_);
     }
 
-    void frame_buffer::attach(attachment att, texture& txt)
+    void frame_buffer::attach(attachment att, const texture& txt)
     {
         GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, object_));
-        txt.bind();
         GL_CHECK(glFramebufferTexture2D(GL_FRAMEBUFFER, GLenum(att), GL_TEXTURE_2D, txt.get_object(), 0));
     }
 
-    void frame_buffer::dettach(attachment att)
+    void frame_buffer::attach(attachment att, const render_buffer& buf)
+    {
+        GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, object_));
+        GL_CHECK(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GLenum(att), GL_RENDERBUFFER, buf.get_object()));
+    }
+
+    void frame_buffer::dettach(attachment att, const texture& txt)
     {
         GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, object_));
         GL_CHECK(glFramebufferTexture2D(GL_FRAMEBUFFER, GLenum(att), GL_TEXTURE_2D, 0, 0));
+    }
+
+    void frame_buffer::dettach(attachment att, const render_buffer& txt)
+    {
+        GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, object_));
+        GL_CHECK(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GLenum(att), GL_RENDERBUFFER, 0));
     }
 
     void frame_buffer::read_buffer(attachment att)

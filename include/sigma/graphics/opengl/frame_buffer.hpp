@@ -11,6 +11,7 @@
 namespace sigma {
 namespace opengl {
     class texture;
+    class render_buffer;
 
     class default_frame_buffer {
     public:
@@ -60,9 +61,13 @@ namespace opengl {
 
         ~frame_buffer();
 
-        void attach(attachment att, texture& txt);
+        void attach(attachment att, const texture& txt);
 
-        void dettach(attachment att);
+        void attach(attachment att, const render_buffer& buf);
+
+        void dettach(attachment att, const texture& txt);
+
+        void dettach(attachment att, const render_buffer& txt);
 
         void read_buffer(attachment att);
 

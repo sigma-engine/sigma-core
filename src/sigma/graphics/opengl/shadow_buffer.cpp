@@ -7,6 +7,7 @@ namespace opengl {
     shadow_buffer::shadow_buffer(glm::ivec2 size)
         : frame_buffer(size)
         , shadow_map_(internal_format::RG32F, size, graphics::texture_filter::LINEAR, graphics::texture_filter::LINEAR)
+        , depth_buffer_(internal_format::DEPTH_COMPONENT16, size)
     {
         // TODO move this into texture
         shadow_map_.bind();
@@ -16,16 +17,7 @@ namespace opengl {
         //GL_CHECK(glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border_color));
 
         attach(frame_buffer::attachment::COLOR0, shadow_map_);
-
-        GL_CHECK(glGenRenderbuffers(1, &depth_render_buffer_));
-        GL_CHECK(glBindRenderbuffer(GL_RENDERBUFFER, depth_render_buffer_));
-        GL_CHECK(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, size_.x, size_.y));
-        GL_CHECK(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depth_render_buffer_));
-    }
-
-    shadow_buffer::~shadow_buffer()
-    {
-        glDeleteRenderbuffers(1, &depth_render_buffer_);
+        attach(frame_buffer::attachment::DEPTH, depth_buffer_);
     }
 
     void shadow_buffer::bind_for_shadow_write()

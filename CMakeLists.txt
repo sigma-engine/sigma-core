@@ -51,6 +51,7 @@ set(CORE_SOURCES
     src/sigma/graphics/opengl/shader.cpp
     src/sigma/graphics/opengl/static_mesh.cpp
     src/sigma/graphics/opengl/texture.cpp
+    src/sigma/graphics/opengl/render_buffer.cpp
 
     src/sigma/util/filesystem.cpp
     src/sigma/util/json_conversion.cpp
@@ -91,6 +92,7 @@ set(CORE_HEADERS
     include/sigma/graphics/opengl/texture.hpp
     include/sigma/graphics/opengl/uniform_buffer.hpp
     include/sigma/graphics/opengl/util.hpp
+    include/sigma/graphics/opengl/render_buffer.hpp
 
     include/sigma/resource/identifier.hpp
     include/sigma/resource/manager.hpp
