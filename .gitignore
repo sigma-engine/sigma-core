@@ -7,7 +7,8 @@ tools/scompiler/glslang
 
 .ycm_extra_conf*
 
-*.blend1
+*.blend*
+!*.blend
 
 conanbuildinfo.cmake
 conaninfo.txt
