@@ -122,10 +122,17 @@ namespace opengl {
 
     class texture : public graphics::texture {
     public:
-        // TODO replace pixles with boost::gil
-        texture(internal_format format, glm::ivec2 size, graphics::texture_filter minification_filter, graphics::texture_filter magnification_filter, graphics::texture_filter mipmap_filter, const std::vector<unsigned char>& pixels);
+        texture(internal_format format, glm::ivec2 size,
+            graphics::texture_filter minification_filter = graphics::texture_filter::NEAREST,
+            graphics::texture_filter magnification_filter = graphics::texture_filter::NEAREST,
+            graphics::texture_filter mipmap_filter = graphics::texture_filter::NONE);
 
-        texture(internal_format format, glm::ivec2 size);
+        // TODO replace pixles with boost::gil
+        texture(internal_format format, glm::ivec2 size,
+            graphics::texture_filter minification_filter,
+            graphics::texture_filter magnification_filter,
+            graphics::texture_filter mipmap_filter,
+            const std::vector<unsigned char>& pixels);
 
         texture(graphics::texture_data data);
 

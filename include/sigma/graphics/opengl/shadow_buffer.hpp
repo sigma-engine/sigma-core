@@ -10,12 +10,15 @@ namespace opengl {
     public:
         shadow_buffer(glm::ivec2 size);
 
+        ~shadow_buffer();
+
         void bind_for_shadow_write();
 
         void bind_for_shadow_read(texture_unit unit);
 
     private:
         texture shadow_map_;
+        GLuint depth_render_buffer_;
     };
 }
 }

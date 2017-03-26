@@ -187,7 +187,9 @@ namespace opengl {
                         mat->bind(geometry_buffer::NEXT_FREE_TEXTURE_UINT);
                         mat->set_standard_uniforms(&standard_uniform_data_);
                         mat->set_instance_matrices(&matrices);
-                        mesh->render(i);
+                        //                        mesh->render(i);
+                        mesh->render_all();
+                        break;
                     }
                 }
             });
@@ -213,7 +215,7 @@ namespace opengl {
             directional_light_pass(viewport, world);
 
             // Render point lights
-            point_light_pass(viewport, world);
+            //point_light_pass(viewport, world);
 
             // TODO Render spot lights
             spot_light_pass(viewport, world);
@@ -293,9 +295,10 @@ namespace opengl {
                     max.z = std::max(max.z, lc.z);
                 }
 
-                // glm::vec3 extents = 0.5f * (max - min);
-                // auto projection = glm::ortho(-extents.x, extents.x, -extents.y, extents.y, -extents.z, extents.z);
-                auto projection = glm::ortho(min.x, max.x, min.y, max.y, min.z, max.z);
+                center -= min.z * light_direction;
+
+                view = glm::lookAt(center, center - light_direction, glm::vec3(0, 1, 0));
+                auto projection = glm::ortho(min.x, max.x, min.y, max.y, 0.0f, max.z - min.z);
 
                 standard_uniform_data_.light_projection_view_matrix = projection * view;
                 setup_view_projection(view, projection);
@@ -315,6 +318,7 @@ namespace opengl {
 
                 EFFECT_PTR(directional_light_effect_)->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
                 EFFECT_PTR(directional_light_effect_)->set_uniform("direction", light_direction);
+                EFFECT_PTR(directional_light_effect_)->set_uniform("center", center);
                 EFFECT_PTR(directional_light_effect_)->bind(); // TODO update uniforms
                 EFFECT_PTR(directional_light_effect_)->apply();
             });
@@ -360,7 +364,7 @@ namespace opengl {
 
             world.template for_each<transform, graphics::spot_light>([&](entity e, transform& txform, const graphics::spot_light& light) {
                 auto light_direction = glm::normalize(glm::vec3(txform.matrix * glm::vec4(0, 1, 0, 0)));
-                auto projection = glm::perspective(light.cutoff * 2.50f, 1.0f, 0.01f, 25.0f);
+                auto projection = glm::perspective(light.cutoff * 4.0f, 1.0f, 0.01f, 50.0f);
                 auto view = glm::lookAt(txform.position, txform.position - light_direction, glm::vec3(0, 1, 0));
                 standard_uniform_data_.light_projection_view_matrix = projection * view;
                 setup_view_projection(view, projection);
@@ -399,10 +403,11 @@ namespace opengl {
             GL_CHECK(glEnable(GL_DEPTH_TEST));
             GL_CHECK(glDisable(GL_STENCIL_TEST));
 
-            GL_CHECK(glCullFace(GL_FRONT));
+            GL_CHECK(glCullFace(GL_BACK));
             GL_CHECK(glEnable(GL_CULL_FACE));
 
-            GL_CHECK(glClear(GL_DEPTH_BUFFER_BIT));
+            GL_CHECK(glClearColor(1.0f, 1.0f, 0.0f, 0.0f));
+            GL_CHECK(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
 
             MATERIAL_PTR(shadow_material_)->bind(geometry_buffer::NEXT_FREE_TEXTURE_UINT);
             MATERIAL_PTR(shadow_material_)->set_standard_uniforms(&standard_uniform_data_);
