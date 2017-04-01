@@ -47,7 +47,7 @@ namespace opengl {
         {
             setup_view_projection(viewport.view_matrix, viewport.projection_matrix);
             standard_uniform_data_.view_port_size = viewport.size;
-            standard_uniform_data_.time = 0; // TODO time
+            standard_uniform_data_.time = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::high_resolution_clock::now() - start_time_).count();
             standard_uniform_data_.z_near = viewport.z_near;
             standard_uniform_data_.z_far = viewport.z_far;
             //standard_uniforms_.set_data(standard_uniform_data_);
@@ -117,6 +117,7 @@ namespace opengl {
         geometry_buffer gbuffer_;
         shadow_buffer sbuffer_;
 
+        std::chrono::high_resolution_clock::time_point start_time_;
         standard_uniforms standard_uniform_data_;
         //uniform_buffer<standard_uniforms> standard_uniforms_;
 
@@ -187,9 +188,7 @@ namespace opengl {
                         mat->bind(geometry_buffer::NEXT_FREE_TEXTURE_UINT);
                         mat->set_standard_uniforms(&standard_uniform_data_);
                         mat->set_instance_matrices(&matrices);
-                        //                        mesh->render(i);
-                        mesh->render_all();
-                        break;
+                        mesh->render(i);
                     }
                 }
             });
