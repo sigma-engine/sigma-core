@@ -19,7 +19,8 @@ out spot_light
     vec3 position;
     vec3 direction;
     float cutoff;
-} out_light;
+}
+out_light;
 
 void main()
 {

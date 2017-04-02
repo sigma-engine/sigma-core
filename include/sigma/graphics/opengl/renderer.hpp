@@ -257,6 +257,7 @@ namespace opengl {
             // TODO:perf we can use one fullscreen quad to render all of the directional lights and save on gbuffer lookups.
             setup_view_projection(viewport.view_matrix, viewport.projection_matrix);
             auto inverse_projection_view_matrix = standard_uniform_data_.inverse_projection_view_matrix;
+            auto epos = standard_uniform_data_.eye_position;
 
             glm::vec4 corners[] = {
                 glm::vec4{ -1, -1, -1, 1 },
@@ -269,35 +270,19 @@ namespace opengl {
                 glm::vec4{ 1, -1, 1, 1 }
             };
 
-            glm::vec3 center{ 0 };
             for (auto& c : corners) {
                 c = inverse_projection_view_matrix * c;
                 c /= c.w;
-                center += glm::vec3{ c };
             }
-            center /= 8.0f;
+
+            float longest_diagonal = glm::length(glm::vec3(corners[6] - corners[0])) / 8.0f;
+            auto projection = glm::ortho(-longest_diagonal, longest_diagonal, -longest_diagonal, longest_diagonal, 0.0f, 2.0f * longest_diagonal);
 
             world.template for_each<transform, graphics::directional_light>([&](entity e, const transform& txform, const graphics::directional_light& light) {
                 auto light_direction = glm::normalize(glm::vec3(txform.matrix * glm::vec4(0, 1, 0, 0)));
 
-                auto view = glm::lookAt(center, center - light_direction, glm::vec3(0, 1, 0));
-                glm::vec3 min{ std::numeric_limits<float>::max() };
-                glm::vec3 max{ std::numeric_limits<float>::min() };
-                for (auto c : corners) {
-                    auto lc = view * c;
-                    min.x = std::min(min.x, lc.x);
-                    min.y = std::min(min.y, lc.y);
-                    min.z = std::min(min.z, lc.z);
-
-                    max.x = std::max(max.x, lc.x);
-                    max.y = std::max(max.y, lc.y);
-                    max.z = std::max(max.z, lc.z);
-                }
-
-                center -= min.z * light_direction;
-
-                view = glm::lookAt(center, center - light_direction, glm::vec3(0, 1, 0));
-                auto projection = glm::ortho(min.x, max.x, min.y, max.y, 0.0f, max.z - min.z);
+                auto light_center = epos + (longest_diagonal * light_direction / 2.0f);
+                auto view = glm::lookAt(light_center, light_center - light_direction, glm::vec3(0, 1, 0));
 
                 standard_uniform_data_.light_projection_view_matrix = projection * view;
                 setup_view_projection(view, projection);
@@ -317,7 +302,7 @@ namespace opengl {
 
                 EFFECT_PTR(directional_light_effect_)->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
                 EFFECT_PTR(directional_light_effect_)->set_uniform("direction", light_direction);
-                EFFECT_PTR(directional_light_effect_)->set_uniform("center", center);
+                EFFECT_PTR(directional_light_effect_)->set_uniform("center", light_center);
                 EFFECT_PTR(directional_light_effect_)->bind(); // TODO update uniforms
                 EFFECT_PTR(directional_light_effect_)->apply();
             });
@@ -405,7 +390,7 @@ namespace opengl {
             GL_CHECK(glCullFace(GL_BACK));
             GL_CHECK(glEnable(GL_CULL_FACE));
 
-            GL_CHECK(glClearColor(-1.0f, 1.0f, 0.0f, 0.0f));
+            GL_CHECK(glClearColor(-1.0f, -1.0f, 0.0f, 0.0f));
             GL_CHECK(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
 
             MATERIAL_PTR(shadow_material_)->bind(geometry_buffer::NEXT_FREE_TEXTURE_UINT);

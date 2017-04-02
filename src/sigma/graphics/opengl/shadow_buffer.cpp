@@ -11,10 +11,10 @@ namespace opengl {
     {
         // TODO move this into texture
         shadow_map_.bind();
-        //GLfloat border_color[] = { 1.0, 1.0, 0.0, 0.0 };
-        GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-        GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-        //GL_CHECK(glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border_color));
+        GLfloat border_color[] = { -1.0, -1.0, 0.0, 0.0 };
+        GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER));
+        GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER));
+        GL_CHECK(glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border_color));
 
         attach(frame_buffer::attachment::COLOR0, shadow_map_);
         attach(frame_buffer::attachment::DEPTH, depth_buffer_);

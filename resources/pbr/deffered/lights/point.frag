@@ -11,7 +11,8 @@ in point_light
     float radius;
     vec3 color;
     float intensity;
-} in_light;
+}
+in_light;
 
 void main()
 {

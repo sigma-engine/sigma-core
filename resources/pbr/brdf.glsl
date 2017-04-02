@@ -1,8 +1,8 @@
 #ifndef SIGMA_PBR_DEFFERED_BRDF_GLSL
 #define SIGMA_PBR_DEFFERED_BRDF_GLSL
 
-#include <pbr/deffered/geometry_buffer.glsl>
 #include <math.glsl>
+#include <pbr/deffered/geometry_buffer.glsl>
 
 #define NO_DIV_BY_ZERO 1e-5
 

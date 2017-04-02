@@ -12,7 +12,8 @@ in directional_light
     float intensity;
     vec3 direction;
     vec3 center;
-} in_light;
+}
+in_light;
 
 void main()
 {
@@ -21,7 +22,7 @@ void main()
     vec3 V = normalize(eye_position - s.position);
     vec3 L = in_light.direction;
 
-    vec4 light_space_position = light_projection_view_matrix * vec4(s.position,1);
+    vec4 light_space_position = light_projection_view_matrix * vec4(s.position, 1);
 
     float depth = length(s.position - in_light.center);
     float shadow = calculate_shadow(in_shadow_map, light_space_position, depth); // bias = 0.0004

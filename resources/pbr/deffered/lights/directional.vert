@@ -17,7 +17,8 @@ out directional_light
     float intensity;
     vec3 direction;
     vec3 center;
-} out_light;
+}
+out_light;
 
 void main()
 {
