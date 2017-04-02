@@ -302,7 +302,7 @@ namespace opengl {
                 standard_uniform_data_.light_projection_view_matrix = projection * view;
                 setup_view_projection(view, projection);
 
-                render_to_shadow_map(world);
+                render_to_shadow_map(world, light.cast_shadows);
 
                 setup_view_projection(viewport.view_matrix, viewport.projection_matrix);
                 gbuffer_.bind_for_geometry_read();
@@ -391,7 +391,7 @@ namespace opengl {
         }
 
         template <class World>
-        void render_to_shadow_map(World& world)
+        void render_to_shadow_map(World& world, bool cast_shadows = true)
         {
             sbuffer_.bind_for_shadow_write();
 
@@ -405,22 +405,26 @@ namespace opengl {
             GL_CHECK(glCullFace(GL_BACK));
             GL_CHECK(glEnable(GL_CULL_FACE));
 
-            GL_CHECK(glClearColor(1.0f, 1.0f, 0.0f, 0.0f));
+            GL_CHECK(glClearColor(-1.0f, 1.0f, 0.0f, 0.0f));
             GL_CHECK(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
 
             MATERIAL_PTR(shadow_material_)->bind(geometry_buffer::NEXT_FREE_TEXTURE_UINT);
             MATERIAL_PTR(shadow_material_)->set_standard_uniforms(&standard_uniform_data_);
 
-            world.template for_each<transform, graphics::static_mesh_instance>([&](entity e, const transform& txform, graphics::static_mesh_instance& mesh_instance) {
-                auto mesh = STATIC_MESH_PTR(mesh_instance.mesh);
-                instance_matrices matrices;
-                matrices.model_matrix = txform.matrix;
-                matrices.model_view_matrix = standard_uniform_data_.view_matrix * matrices.model_matrix;
+            if (cast_shadows) {
+                world.template for_each<transform, graphics::static_mesh_instance>([&](entity e, const transform& txform, graphics::static_mesh_instance& mesh_instance) {
+                    if (mesh_instance.cast_shadows) {
+                        auto mesh = STATIC_MESH_PTR(mesh_instance.mesh);
+                        instance_matrices matrices;
+                        matrices.model_matrix = txform.matrix;
+                        matrices.model_view_matrix = standard_uniform_data_.view_matrix * matrices.model_matrix;
 
-                MATERIAL_PTR(shadow_material_)->set_instance_matrices(&matrices);
+                        MATERIAL_PTR(shadow_material_)->set_instance_matrices(&matrices);
 
-                mesh->render_all();
-            });
+                        mesh->render_all();
+                    }
+                });
+            }
 
             GL_CHECK(glDepthMask(GL_FALSE));
             GL_CHECK(glStencilMask(0x00));

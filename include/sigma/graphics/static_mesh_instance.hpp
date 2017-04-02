@@ -12,12 +12,14 @@ namespace graphics {
     struct static_mesh_instance {
         resource::handle<static_mesh> mesh;
         std::unordered_map<std::size_t, resource::handle<material>> materials;
+        bool cast_shadows = true;
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
         {
             ar& mesh;
             ar& materials;
+            ar& cast_shadows;
         }
     };
 }
