@@ -12,6 +12,7 @@ namespace graphics {
         glm::vec3 color;
         float intensity;
         float cutoff;
+        bool cast_shadows = true;
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
@@ -19,6 +20,7 @@ namespace graphics {
             ar& color;
             ar& intensity;
             ar& cutoff;
+            ar& cast_shadows;
         }
     };
 }

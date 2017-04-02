@@ -363,12 +363,12 @@ namespace opengl {
 
             world.template for_each<transform, graphics::spot_light>([&](entity e, transform& txform, const graphics::spot_light& light) {
                 auto light_direction = glm::normalize(glm::vec3(txform.matrix * glm::vec4(0, 1, 0, 0)));
-                auto projection = glm::perspective(light.cutoff * 4.0f, 1.0f, 0.01f, 50.0f);
+                auto projection = glm::perspective(light.cutoff * 2.0f, 1.0f, 0.01f, 50.0f);
                 auto view = glm::lookAt(txform.position, txform.position - light_direction, glm::vec3(0, 1, 0));
                 standard_uniform_data_.light_projection_view_matrix = projection * view;
                 setup_view_projection(view, projection);
 
-                render_to_shadow_map(world);
+                render_to_shadow_map(world, light.cast_shadows);
 
                 setup_view_projection(viewport.view_matrix, viewport.projection_matrix);
                 gbuffer_.bind_for_geometry_read();
