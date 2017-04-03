@@ -20,6 +20,8 @@ namespace graphics {
 
         float diagonal() const;
 
+        float radius() const;
+
         glm::vec3 center() const;
 
         glm::mat4 view() const;
@@ -34,12 +36,15 @@ namespace graphics {
 
         void set_projection_view(float fovy, float aspect, float z_near, float z_far, const glm::mat4& view);
 
+        glm::mat4 inverse_projection_view() const;
+
     private:
         float fovy_;
         float aspect_;
         float z_near_;
         float z_far_;
         float diagonal_;
+        float radius_;
         glm::vec3 center_;
         glm::mat4 projection_;
         glm::mat4 view_;

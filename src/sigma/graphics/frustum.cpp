@@ -2,6 +2,8 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <algorithm>
+
 namespace sigma {
 namespace graphics {
 
@@ -33,6 +35,11 @@ namespace graphics {
     float frustum::diagonal() const
     {
         return diagonal_;
+    }
+
+    float frustum::radius() const
+    {
+        return radius_;
     }
 
     glm::vec3 frustum::center() const
@@ -82,6 +89,11 @@ namespace graphics {
         rebuild_();
     }
 
+    glm::mat4 frustum::inverse_projection_view() const
+    {
+        return inverse_projection_view_;
+    }
+
     void frustum::rebuild_()
     {
         projection_view_ = projection_ * view_;
@@ -105,6 +117,10 @@ namespace graphics {
             center_ += glm::vec3{ c };
         }
         center_ /= 8.0f;
+
+        radius_ = std::numeric_limits<float>::min();
+        for (auto c : corners)
+            radius_ = std::max(radius_, glm::distance(glm::vec3{ c }, center_));
 
         diagonal_ = glm::length(glm::vec3(corners[6] - corners[0]));
     }

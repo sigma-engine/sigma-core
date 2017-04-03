@@ -11,6 +11,7 @@ namespace graphics {
         glm::vec3 color;
         float intensity;
         bool cast_shadows = true;
+        glm::vec3 direction{ 0.0f, 1.0f, 0.0f };
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
