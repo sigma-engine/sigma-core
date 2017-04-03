@@ -261,26 +261,9 @@ namespace opengl {
         {
             // TODO:perf we can use one fullscreen quad to render all of the directional lights and save on gbuffer lookups.
             setup_view_projection(viewport.view_frustum.view(), viewport.view_frustum.projection());
-            auto inverse_projection_view_matrix = standard_uniform_data_.inverse_projection_view_matrix;
             auto epos = standard_uniform_data_.eye_position;
 
-            glm::vec4 corners[] = {
-                glm::vec4{ -1, -1, -1, 1 },
-                glm::vec4{ -1, 1, -1, 1 },
-                glm::vec4{ 1, 1, -1, 1 },
-                glm::vec4{ 1, -1, -1, 1 },
-                glm::vec4{ -1, -1, 1, 1 },
-                glm::vec4{ -1, 1, 1, 1 },
-                glm::vec4{ 1, 1, 1, 1 },
-                glm::vec4{ 1, -1, 1, 1 }
-            };
-
-            for (auto& c : corners) {
-                c = inverse_projection_view_matrix * c;
-                c /= c.w;
-            }
-
-            float longest_diagonal = glm::length(glm::vec3(corners[6] - corners[0])) / 2.0f;
+            float longest_diagonal = viewport.view_frustum.diagonal();
             auto projection = glm::ortho(-longest_diagonal, longest_diagonal, -longest_diagonal, longest_diagonal, 0.0f, 2.0f * longest_diagonal);
 
             world.template for_each<transform, graphics::directional_light>([&](entity e, const transform& txform, const graphics::directional_light& light) {

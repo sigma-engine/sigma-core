@@ -30,6 +30,16 @@ namespace graphics {
         return z_far_;
     }
 
+    float frustum::diagonal() const
+    {
+        return diagonal_;
+    }
+
+    glm::vec3 frustum::center() const
+    {
+        return center_;
+    }
+
     glm::mat4 frustum::view() const
     {
         return view_;
@@ -75,6 +85,28 @@ namespace graphics {
     void frustum::rebuild_()
     {
         projection_view_ = projection_ * view_;
+        inverse_projection_view_ = glm::inverse(projection_view_);
+
+        glm::vec4 corners[] = {
+            glm::vec4{ -1, -1, -1, 1 },
+            glm::vec4{ -1, 1, -1, 1 },
+            glm::vec4{ 1, 1, -1, 1 },
+            glm::vec4{ 1, -1, -1, 1 },
+            glm::vec4{ -1, -1, 1, 1 },
+            glm::vec4{ -1, 1, 1, 1 },
+            glm::vec4{ 1, 1, 1, 1 },
+            glm::vec4{ 1, -1, 1, 1 }
+        };
+
+        center_ = glm::vec3{ 0 };
+        for (auto& c : corners) {
+            c = inverse_projection_view_ * c;
+            c /= c.w;
+            center_ += glm::vec3{ c };
+        }
+        center_ /= 8.0f;
+
+        diagonal_ = glm::length(glm::vec3(corners[6] - corners[0]));
     }
 }
 }

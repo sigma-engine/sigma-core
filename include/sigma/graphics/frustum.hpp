@@ -2,6 +2,7 @@
 #define SIGMA_GRAPHICS_FRUSTUM_HPP
 
 #include <glm/mat4x4.hpp>
+#include <glm/vec3.hpp>
 
 namespace sigma {
 namespace graphics {
@@ -16,6 +17,10 @@ namespace graphics {
         float z_near() const;
 
         float z_far() const;
+
+        float diagonal() const;
+
+        glm::vec3 center() const;
 
         glm::mat4 view() const;
 
@@ -34,9 +39,12 @@ namespace graphics {
         float aspect_;
         float z_near_;
         float z_far_;
+        float diagonal_;
+        glm::vec3 center_;
         glm::mat4 projection_;
         glm::mat4 view_;
         glm::mat4 projection_view_;
+        glm::mat4 inverse_projection_view_;
 
         void rebuild_();
     };
