@@ -18,11 +18,8 @@ int main(int argc, char* argv[])
     auto game = std::make_unique<simple_game>(renderer.get());
 
     sigma::graphics::view_port viewport{
-        glm::perspective(0.785398f, (float)window.size().x / (float)window.size().y, 0.01f, 50.0f),
-        glm::mat4(1),
-        0.01f,
-        50.0f,
-        window.size()
+        window.size(),
+        sigma::graphics::frustum(0.785398f, (float)window.size().x / (float)window.size().y, 0.01f, 50.0f)
     };
     sigma::trackball_controller controller;
     auto start = std::chrono::high_resolution_clock::now();
@@ -31,7 +28,7 @@ int main(int argc, char* argv[])
     std::size_t count = 0;
     while (window.good()) {
 
-        viewport.view_matrix = controller.matrix();
+        viewport.view_frustum.set_view(controller.matrix());
 
         auto end = std::chrono::high_resolution_clock::now();
         auto dt = end - start;

@@ -5,6 +5,7 @@
 
 #include <sigma/config.hpp>
 #include <sigma/entity.hpp>
+#include <sigma/graphics/directional_light.hpp>
 #include <sigma/graphics/opengl/cubemap.hpp>
 #include <sigma/graphics/opengl/frame_buffer.hpp>
 #include <sigma/graphics/opengl/geometry_buffer.hpp>
@@ -16,6 +17,10 @@
 #include <sigma/graphics/opengl/static_mesh.hpp>
 #include <sigma/graphics/opengl/texture.hpp>
 #include <sigma/graphics/opengl/uniform_buffer.hpp>
+#include <sigma/graphics/point_light.hpp>
+#include <sigma/graphics/spot_light.hpp>
+#include <sigma/graphics/static_mesh_instance.hpp>
+#include <sigma/transform.hpp>
 
 #include <limits>
 
@@ -45,11 +50,11 @@ namespace opengl {
         template <class World>
         void render(const graphics::view_port& viewport, World& world)
         {
-            setup_view_projection(viewport.view_matrix, viewport.projection_matrix);
+            setup_view_projection(viewport.view_frustum.view(), viewport.view_frustum.projection());
             standard_uniform_data_.view_port_size = viewport.size;
             standard_uniform_data_.time = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::high_resolution_clock::now() - start_time_).count();
-            standard_uniform_data_.z_near = viewport.z_near;
-            standard_uniform_data_.z_far = viewport.z_far;
+            standard_uniform_data_.z_near = viewport.view_frustum.z_near();
+            standard_uniform_data_.z_far = viewport.view_frustum.z_far();
             //standard_uniforms_.set_data(standard_uniform_data_);
 
             // Begin rendering
@@ -226,7 +231,7 @@ namespace opengl {
             // TODO IBL breaks energy conservation of the environment map
             // when transparancies are rendered.
 
-            setup_view_projection(viewport.view_matrix, viewport.projection_matrix);
+            setup_view_projection(viewport.view_frustum.view(), viewport.view_frustum.projection());
             gbuffer_.bind_for_geometry_read();
 
             GL_CHECK(glDisable(GL_BLEND));
@@ -255,7 +260,7 @@ namespace opengl {
         void directional_light_pass(const graphics::view_port& viewport, World& world)
         {
             // TODO:perf we can use one fullscreen quad to render all of the directional lights and save on gbuffer lookups.
-            setup_view_projection(viewport.view_matrix, viewport.projection_matrix);
+            setup_view_projection(viewport.view_frustum.view(), viewport.view_frustum.projection());
             auto inverse_projection_view_matrix = standard_uniform_data_.inverse_projection_view_matrix;
             auto epos = standard_uniform_data_.eye_position;
 
@@ -275,13 +280,14 @@ namespace opengl {
                 c /= c.w;
             }
 
-            float longest_diagonal = glm::length(glm::vec3(corners[6] - corners[0])) / 8.0f;
+            float longest_diagonal = glm::length(glm::vec3(corners[6] - corners[0])) / 2.0f;
             auto projection = glm::ortho(-longest_diagonal, longest_diagonal, -longest_diagonal, longest_diagonal, 0.0f, 2.0f * longest_diagonal);
 
             world.template for_each<transform, graphics::directional_light>([&](entity e, const transform& txform, const graphics::directional_light& light) {
                 auto light_direction = glm::normalize(glm::vec3(txform.matrix * glm::vec4(0, 1, 0, 0)));
 
-                auto light_center = epos + (longest_diagonal * light_direction / 2.0f);
+                auto light_center = epos + (longest_diagonal * light_direction);
+                light_center = glm::round(light_center * float(sbuffer_.size().x)) / float(sbuffer_.size().x);
                 auto view = glm::lookAt(light_center, light_center - light_direction, glm::vec3(0, 1, 0));
 
                 standard_uniform_data_.light_projection_view_matrix = projection * view;
@@ -289,7 +295,7 @@ namespace opengl {
 
                 render_to_shadow_map(world, light.cast_shadows);
 
-                setup_view_projection(viewport.view_matrix, viewport.projection_matrix);
+                setup_view_projection(viewport.view_frustum.view(), viewport.view_frustum.projection());
                 gbuffer_.bind_for_geometry_read();
 
                 analytical_light_setup();
@@ -319,7 +325,7 @@ namespace opengl {
             // TODO:perf look into using a fullscreen quad for all point lights and have just one pass
             // that does all point light lighting at once.
 
-            setup_view_projection(viewport.view_matrix, viewport.projection_matrix);
+            setup_view_projection(viewport.view_frustum.view(), viewport.view_frustum.projection());
             gbuffer_.bind_for_geometry_read();
 
             analytical_light_setup();
@@ -355,7 +361,7 @@ namespace opengl {
 
                 render_to_shadow_map(world, light.cast_shadows);
 
-                setup_view_projection(viewport.view_matrix, viewport.projection_matrix);
+                setup_view_projection(viewport.view_frustum.view(), viewport.view_frustum.projection());
                 gbuffer_.bind_for_geometry_read();
 
                 analytical_light_setup();
