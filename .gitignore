@@ -5,6 +5,9 @@
 
 tools/scompiler/glslang
 
+tags
+*.taghl
+
 .ycm_extra_conf*
 
 *.blend*

@@ -3,8 +3,8 @@
 
 #include <sigma/config.hpp>
 
+#include <sigma/frustum.hpp>
 #include <sigma/graphics/cubemap.hpp>
-#include <sigma/graphics/frustum.hpp>
 #include <sigma/graphics/material.hpp>
 #include <sigma/graphics/post_process_effect.hpp>
 #include <sigma/graphics/shader.hpp>

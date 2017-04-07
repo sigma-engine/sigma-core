@@ -3,7 +3,7 @@
 
 #include <sigma/config.hpp>
 
-#include <sigma/graphics/frustum.hpp>
+#include <sigma/frustum.hpp>
 
 #include <glm/vec3.hpp>
 

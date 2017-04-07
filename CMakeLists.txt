@@ -33,9 +33,9 @@ set(CORE_SOURCES
     src/sigma/entity.cpp
     src/sigma/game.cpp
     src/sigma/trackball_controller.cpp
+    src/sigma/frustum.cpp
 
     src/sigma/graphics/renderer.cpp
-    src/sigma/graphics/frustum.cpp
     src/sigma/resource/identifier.cpp
     src/sigma/graphics/material.cpp
     src/sigma/graphics/shader_technique.cpp
@@ -65,6 +65,7 @@ set(CORE_HEADERS
     include/sigma/game.hpp
     include/sigma/trackball_controller.hpp
     include/sigma/transform.hpp
+    include/sigma/frustum.hpp
 
     include/sigma/graphics/cubemap.hpp
     include/sigma/graphics/directional_light.hpp
@@ -73,7 +74,6 @@ set(CORE_HEADERS
     include/sigma/graphics/point_light.hpp
     include/sigma/graphics/post_process_effect.hpp
     include/sigma/graphics/renderer.hpp
-    include/sigma/graphics/frustum.hpp
     include/sigma/graphics/shader.hpp
     include/sigma/graphics/static_mesh.hpp
     include/sigma/graphics/spot_light.hpp

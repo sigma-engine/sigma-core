@@ -1,4 +1,4 @@
-#include <sigma/graphics/frustum.hpp>
+#include <sigma/frustum.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
 
