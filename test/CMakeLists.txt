@@ -3,6 +3,7 @@ find_package(GTest REQUIRED)
 set(TEST_SOURCES
     sigma/main.cpp
     sigma/world_tests.cpp
+    sigma/frustum_tests.cpp
 )
 
 set(TEST_HEADERS

@@ -9,7 +9,7 @@ macro(sigma_setup)
         set(MODEL_COMPILER "${CONAN_BIN_DIRS_SIGMA-ENGINE}/${MODEL_COMPILER}")
         set(REFLECTION_COMPILER "${CONAN_BIN_DIRS_SIGMA-ENGINE}/${REFLECTION_COMPILER}")
     endif()
-endmacro(sigma_setup)
+endmacro()
 
 function(add_resources target)
     # https://cmake.org/cmake/help/v3.0/module/CMakeParseArguments.html
