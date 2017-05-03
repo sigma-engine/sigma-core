@@ -16,6 +16,8 @@ namespace graphics {
     struct static_mesh_data;
 }
 
+class converter;
+
 class assimp_converter {
 public:
     assimp_converter(boost::filesystem::path source_file);
@@ -34,6 +36,7 @@ private:
     boost::filesystem::path root_directroy_;
     boost::filesystem::path source_file_;
     std::unique_ptr<Assimp::Importer> importer_;
+    std::unique_ptr<converter> converter_;
 
     std::set<std::string> static_mesh_names_;
     std::set<std::string> object_names_;

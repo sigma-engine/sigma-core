@@ -43,31 +43,81 @@ std::string get_name(const aiMaterial* mat)
     return matName.C_Str();
 }
 
-glm::vec3 convert_color(aiColor3D c)
-{
-    return glm::vec3(c.r, c.g, c.b);
-}
+// glm::vec3 convert_color(aiColor3D c)
+// {
+//     return glm::vec3(c.r, c.g, c.b);
+// }
+//
+// glm::vec3 convert_3d(aiVector3D v)
+// {
+//     return { v.x, v.z, -v.y };
+// }
+//
+// glm::quat convert_3d(aiQuaternion q)
+// {
+//     return glm::quat(q.w, q.x, q.z, -q.y);
+// }
+//
+// glm::vec2 convert_2d(aiVector3D v)
+// {
+//     return glm::vec2(v.x, v.y);
+// }
 
-glm::vec3 convert_3d(aiVector3D v)
-{
-    return { v.x, v.z, -v.y };
-}
+struct converter {
+    virtual glm::vec3 convert_color(aiColor3D c)
+    {
+        return glm::vec3(c.r, c.g, c.b);
+    }
 
-glm::quat convert_3d(aiQuaternion q)
-{
-    return glm::quat(q.w, q.x, q.z, -q.y);
-}
+    virtual glm::vec3 convert_3d(aiVector3D v)
+    {
+        return { v.x, v.y, v.z };
+    }
 
-glm::vec2 convert_2d(aiVector3D v)
-{
-    return glm::vec2(v.x, v.y);
-}
+    virtual glm::quat convert_3d(aiQuaternion q)
+    {
+        return glm::quat(q.w, q.x, q.y, q.z);
+    }
+
+    virtual glm::vec2 convert_2d(aiVector3D v)
+    {
+        return glm::vec2(v.x, v.y);
+    }
+};
+
+struct blender_converter : public converter {
+    virtual glm::vec3 convert_color(aiColor3D c) override
+    {
+        return glm::vec3(c.r, c.g, c.b);
+    }
+
+    virtual glm::vec3 convert_3d(aiVector3D v) override
+    {
+        return { v.x, v.z, -v.y };
+    }
+
+    virtual glm::quat convert_3d(aiQuaternion q) override
+    {
+        return glm::quat(q.w, q.x, q.z, -q.y);
+    }
+
+    virtual glm::vec2 convert_2d(aiVector3D v) override
+    {
+        return glm::vec2(v.x, v.y);
+    }
+};
 
 assimp_converter::assimp_converter(boost::filesystem::path source_file)
     : source_file_(source_file)
     , importer_(std::make_unique<Assimp::Importer>())
 {
     auto filename = source_file_.string();
+
+    if (boost::algorithm::ends_with(filename, ".blend"))
+        converter_ = std::make_unique<blender_converter>();
+    else
+        converter_ = std::make_unique<converter>();
+
     const aiScene* scene = importer_->ReadFile(filename.c_str(),
         aiProcess_CalcTangentSpace
             | aiProcess_JoinIdenticalVertices
@@ -105,10 +155,10 @@ assimp_converter::assimp_converter(boost::filesystem::path source_file)
 
     for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
         std::string name = get_name(scene->mMeshes[i]);
-        if (!scene->mMeshes[i]->HasBones())
-            static_mesh_names_.insert(name);
-        else
-            static_mesh_names_.erase(name);
+        // if (!scene->mMeshes[i]->HasBones())
+        static_mesh_names_.insert(name);
+        // else
+        //     static_mesh_names_.erase(name);
     }
 
     // TODO recursive
@@ -147,19 +197,19 @@ void assimp_converter::convert_static_mesh(std::string name, graphics::static_me
         std::vector<sigma::graphics::static_mesh_data::vertex> submesh_vertices(aimesh->mNumVertices);
         for (unsigned int j = 0; j < aimesh->mNumVertices; ++j) {
             auto pos = aimesh->mVertices[j];
-            submesh_vertices[j].position = convert_3d(pos);
+            submesh_vertices[j].position = converter_->convert_3d(pos);
 
             if (aimesh->HasNormals()) {
                 auto nor = aimesh->mNormals[j];
-                submesh_vertices[j].normal = convert_3d(nor);
+                submesh_vertices[j].normal = converter_->convert_3d(nor);
             }
 
             if (aimesh->HasTangentsAndBitangents()) {
                 auto tan = aimesh->mTangents[j];
-                submesh_vertices[j].tangent = convert_3d(tan);
+                submesh_vertices[j].tangent = converter_->convert_3d(tan);
             }
             if (aimesh->HasTextureCoords(0)) {
-                auto tex = convert_2d(aimesh->mTextureCoords[0][j]);
+                auto tex = converter_->convert_2d(aimesh->mTextureCoords[0][j]);
                 submesh_vertices[j].texcoord = tex;
             }
         }
@@ -196,9 +246,9 @@ void assimp_converter::convert_object(std::string name, Json::Value& entity) con
     ainode->mTransformation.Decompose(aiscale, airotation, aiposition);
     aiscale.y *= -1;
 
-    entity["sigma::transform"]["position"] = json::to_json(convert_3d(aiposition));
-    entity["sigma::transform"]["rotation"] = json::to_json(glm::degrees(glm::eulerAngles(convert_3d(airotation))));
-    entity["sigma::transform"]["scale"] = json::to_json(convert_3d(aiscale));
+    entity["sigma::transform"]["position"] = json::to_json(converter_->convert_3d(aiposition));
+    entity["sigma::transform"]["rotation"] = json::to_json(glm::degrees(glm::eulerAngles(converter_->convert_3d(airotation))));
+    entity["sigma::transform"]["scale"] = json::to_json(converter_->convert_3d(aiscale));
 
     if (ainode->mNumMeshes > 0) {
         // TODO warn if more than one mesh per object
@@ -207,13 +257,10 @@ void assimp_converter::convert_object(std::string name, Json::Value& entity) con
         entity["sigma::graphics::static_mesh"] = meshid.nice_name();
     }
 
-    if (ainode->mMetaData)
-        std::cout << ainode->mMetaData->mNumProperties << '\n';
-
     for (unsigned int i = 0; i < aiScene->mNumLights; ++i) {
         const aiLight* ailight = aiScene->mLights[i];
         if (name == ailight->mName.C_Str()) {
-            auto color = convert_color(ailight->mColorDiffuse);
+            auto color = converter_->convert_color(ailight->mColorDiffuse);
             float intensity = color[0]; // TOOD check intensity and color
             color /= intensity;
 
