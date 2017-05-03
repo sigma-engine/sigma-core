@@ -2,5 +2,8 @@
     "cubemaps" : {
         "environment_map" : "skybox"
     },
+    /*"textures": {
+        "environment_map": "proprietary/Ditch_River/Ditch-River_TMap"
+    },*/
     "fragment" : "pbr/deffered/lights/image_based"
 }
