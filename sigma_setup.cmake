@@ -36,23 +36,18 @@ function(add_resources target)
         set(resource_files ${package_UNPARSED_ARGUMENTS})
         list(REMOVE_DUPLICATES resource_files)
 
-        set(TIME_STAMPS)
-        foreach(resource ${resource_files})
-            file(RELATIVE_PATH resource_time_stamp ${package_PACKAGE_ROOT} ${resource})
-            set(resource_time_stamp "${CMAKE_BINARY_DIR}/data/${resource_time_stamp}.stamp")
-            set(TIME_STAMPS ${TIME_STAMPS} ${resource_time_stamp})
-        endforeach()
-
-        add_custom_target(${target}-resources ALL DEPENDS ${TIME_STAMPS})
+        add_custom_target(${target}-resources ALL DEPENDS  ${resource_files})
 
         add_custom_command(
-            OUTPUT ${TIME_STAMPS}
+            OUTPUT ${resource_files}
             COMMAND ${SCOMPILER} ARGS --output="${CMAKE_BINARY_DIR}/data" ${include_args} ${resource_files}
             WORKING_DIRECTORY ${package_PACKAGE_ROOT}
             DEPENDS always_rebuild
             COMMENT "Compiling ${target} resources..."
         )
         add_custom_command(OUTPUT always_rebuild COMMAND cmake -E echo COMMENT "")
+
         add_dependencies(${target}-resources scompiler)
+
     endif()
 endfunction()

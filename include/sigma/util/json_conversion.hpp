@@ -9,6 +9,9 @@
 #include <glm/vec3.hpp>
 
 namespace sigma {
+namespace graphics {
+    enum class texture_filter;
+}
 namespace json {
     bool SIGMA_API from_json(const Json::Value& value, float& output);
 
@@ -19,6 +22,8 @@ namespace json {
     bool SIGMA_API from_json(const Json::Value& value, glm::vec4& output);
 
     bool SIGMA_API from_json(const Json::Value& value, glm::quat& output);
+
+    bool SIGMA_API from_json(const Json::Value& value, graphics::texture_filter& output);
 
     Json::Value SIGMA_API to_json(float v);
 

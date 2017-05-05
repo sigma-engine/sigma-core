@@ -1,6 +1,10 @@
 #include <sigma/util/json_conversion.hpp>
 
+#include <sigma/graphics/texture.hpp>
+
 #include <json/json.h>
+
+#include <boost/algorithm/string/case_conv.hpp>
 
 namespace sigma {
 namespace json {
@@ -39,6 +43,22 @@ namespace json {
             return true;
         }
         // TODO support x,y,z,w
+        return false;
+    }
+
+    bool from_json(const Json::Value& value, graphics::texture_filter& output)
+    {
+        auto str = boost::to_lower_copy(value.asString());
+        if (str == "nearest") {
+            output = graphics::texture_filter::NEAREST;
+            return true;
+        } else if (str == "linear") {
+            output = graphics::texture_filter::LINEAR;
+            return true;
+        } else if (str == "none") {
+            output = graphics::texture_filter::NONE;
+            return true;
+        }
         return false;
     }
 
