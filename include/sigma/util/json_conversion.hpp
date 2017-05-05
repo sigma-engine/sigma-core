@@ -11,6 +11,7 @@
 namespace sigma {
 namespace graphics {
     enum class texture_filter;
+    enum class texture_format;
 }
 namespace json {
     bool SIGMA_API from_json(const Json::Value& value, float& output);
@@ -24,6 +25,8 @@ namespace json {
     bool SIGMA_API from_json(const Json::Value& value, glm::quat& output);
 
     bool SIGMA_API from_json(const Json::Value& value, graphics::texture_filter& output);
+
+    bool SIGMA_API from_json(const Json::Value& value, graphics::texture_format& output);
 
     Json::Value SIGMA_API to_json(float v);
 

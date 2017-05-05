@@ -4,6 +4,26 @@
 
 namespace sigma {
 namespace opengl {
+    std::pair<GLenum, GLenum> convert_gl(graphics::texture_format fmt)
+    {
+        switch (fmt) {
+        case graphics::texture_format::RGB8:
+            return { GL_RGB, GL_UNSIGNED_BYTE };
+        case graphics::texture_format::RGBA8:
+            return { GL_RGBA, GL_UNSIGNED_BYTE };
+        }
+    }
+
+    internal_format convert_internal(graphics::texture_format fmt)
+    {
+        switch (fmt) {
+        case graphics::texture_format::RGB8:
+            return internal_format::RGB8;
+        case graphics::texture_format::RGBA8:
+            return internal_format::RGBA8;
+        }
+    }
+
     texture::texture(internal_format format, glm::ivec2 size,
         graphics::texture_filter minification_filter,
         graphics::texture_filter magnification_filter,
@@ -33,16 +53,18 @@ namespace opengl {
         graphics::texture_filter minification_filter,
         graphics::texture_filter magnification_filter,
         graphics::texture_filter mipmap_filter,
-        const std::vector<unsigned char>& pixels)
+        graphics::texture_format data_format,
+        const std::vector<char>& data)
         : texture(format, size, minification_filter, magnification_filter, mipmap_filter)
     {
-        GL_CHECK(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, size.x, size.y, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data()));
+        auto gl_format = convert_gl(data_format);
+        GL_CHECK(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, size.x, size.y, gl_format.first, gl_format.second, data.data()));
         if (mipmap_filter != graphics::texture_filter::NONE)
             GL_CHECK(glGenerateMipmap(GL_TEXTURE_2D));
     }
 
     texture::texture(graphics::texture_data data)
-        : texture(internal_format::RGBA8, data.size, data.minification_filter, data.magnification_filter, data.mipmap_filter, data.pixels)
+        : texture(convert_internal(data.format), data.size, data.minification_filter, data.magnification_filter, data.mipmap_filter, data.format, data.data)
     {
     }
 

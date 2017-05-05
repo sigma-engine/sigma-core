@@ -62,6 +62,19 @@ namespace json {
         return false;
     }
 
+    bool from_json(const Json::Value& value, graphics::texture_format& output)
+    {
+        auto str = boost::to_lower_copy(value.asString());
+        if (str == "rgb8") {
+            output = graphics::texture_format::RGB8;
+            return true;
+        } else if (str == "rgba8") {
+            output = graphics::texture_format::RGBA8;
+            return true;
+        }
+        return false;
+    }
+
     Json::Value to_json(float v)
     {
         return Json::Value{ v };

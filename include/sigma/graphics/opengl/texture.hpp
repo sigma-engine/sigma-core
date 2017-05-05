@@ -120,6 +120,12 @@ namespace opengl {
         //COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT = GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT,
     };
 
+    // TODO hack remove this
+    std::pair<GLenum, GLenum> convert_gl(graphics::texture_format fmt);
+
+    // TODO hack remove this
+    internal_format convert_internal(graphics::texture_format fmt);
+
     class texture : public graphics::texture {
     public:
         texture(internal_format format, glm::ivec2 size,
@@ -127,12 +133,12 @@ namespace opengl {
             graphics::texture_filter magnification_filter = graphics::texture_filter::NEAREST,
             graphics::texture_filter mipmap_filter = graphics::texture_filter::NONE);
 
-        // TODO replace pixles with boost::gil
         texture(internal_format format, glm::ivec2 size,
             graphics::texture_filter minification_filter,
             graphics::texture_filter magnification_filter,
             graphics::texture_filter mipmap_filter,
-            const std::vector<unsigned char>& pixels);
+            graphics::texture_format data_format,
+            const std::vector<char>& data);
 
         texture(graphics::texture_data data);
 

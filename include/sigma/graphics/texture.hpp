@@ -18,9 +18,15 @@ namespace graphics {
         NONE
     };
 
+    enum class texture_format {
+        RGB8,
+        RGBA8
+    };
+
     struct texture_data {
         glm::ivec2 size;
-        std::vector<unsigned char> pixels;
+        texture_format format;
+        std::vector<char> data;
         texture_filter minification_filter = texture_filter::LINEAR;
         texture_filter magnification_filter = texture_filter::LINEAR;
         texture_filter mipmap_filter = texture_filter::LINEAR;
@@ -29,7 +35,8 @@ namespace graphics {
         void serialize(Archive& ar, const unsigned int version)
         {
             ar& size;
-            ar& pixels;
+            ar& format;
+            ar& data;
             ar& minification_filter;
             ar& magnification_filter;
             ar& mipmap_filter;
