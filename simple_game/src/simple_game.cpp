@@ -23,12 +23,12 @@ simple_game::simple_game(sigma::graphics::renderer* renderer)
     auto grid_e = world_.create();
     world_.add<sigma::transform>(grid_e);
     world_.add<sigma::graphics::static_mesh_instance>(grid_e, renderer->static_meshes().get(sigma::resource::identifier{ "static_mesh://material_ball:material_ball" }));
-    world_.add<grid_component>(grid_e, 30, 25, 1.5f, 1.5f);
+    world_.add<grid_component>(grid_e, 5, 5, 1.5f, 1.5f);
 
     world_.for_each<sigma::transform, sigma::graphics::static_mesh_instance, grid_component>([&](sigma::entity e, const sigma::transform& txform, sigma::graphics::static_mesh_instance& mesh_instance, const grid_component& grid) {
         auto material = mesh_instance.mesh->material(0);
         material->set_uniform("roughness", 0.0f);
-        material->set_uniform("basecolor", glm::vec3{ 1.0f });
+        material->set_uniform("basecolor", glm::vec3{ 1.0f, 0.0f, 0.0f });
         material->set_uniform("metalness", 1.0f);
 
         int number = 0;
@@ -37,7 +37,7 @@ simple_game::simple_game(sigma::graphics::renderer* renderer)
                 number++;
                 if (x != 0 || z != 0) {
                     auto generated_mat = renderer->materials().duplicate(mesh_instance.mesh->material(0), "material://generated" + std::to_string(number));
-                    generated_mat->set_uniform("basecolor", glm::vec3{ 1, 1, 1 });
+                    generated_mat->set_uniform("basecolor", glm::vec3{ 1, 0, 0 });
                     generated_mat->set_uniform("roughness", x / float(grid.rows - 1));
                     generated_mat->set_uniform("metalness", 1.0f - (z / float(grid.columns - 1)));
 

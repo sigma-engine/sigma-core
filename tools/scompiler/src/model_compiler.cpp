@@ -86,10 +86,13 @@ bool compile_models(boost::filesystem::path outputdir, std::vector<boost::filesy
             auto scene_path = file_path;
             scene_path.replace_extension(".scn");
 
-            Json::Value json_scene;
+            Json::Value json_scene(Json::objectValue);
             if (boost::filesystem::exists(scene_path)) {
                 std::ifstream file(scene_path.string());
                 file >> json_scene;
+            } else {
+                std::ofstream file(scene_path.string());
+                file << json_scene;
             }
 
             for (auto object_name : imported.scene_object_names()) {
@@ -98,12 +101,12 @@ bool compile_models(boost::filesystem::path outputdir, std::vector<boost::filesy
                 }
             }
 
-            scene_path = sigma::filesystem::make_relative(boost::filesystem::current_path(), scene_path);
-            scene_path = outputdir / scene_path;
-            std::ofstream outscene(scene_path.string());
+            auto full_scene_path = sigma::filesystem::make_relative(boost::filesystem::current_path(), scene_path);
+            full_scene_path = outputdir / full_scene_path;
+            std::ofstream outscene(full_scene_path.string());
             outscene << json_scene;
 
-            touch_stamp_file(outputdir, file_path);
+            touch_stamp_file(outputdir, file_path, { scene_path });
         } catch (...) { // TODO cacth the correct error types and get the messages
             all_good = false;
             std::cerr << "scompiler: error: could not compile model '" << file_path << "'!\n";

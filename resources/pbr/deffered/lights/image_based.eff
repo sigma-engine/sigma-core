@@ -1,9 +1,9 @@
 {
-    "cubemaps" : {
+   /* "cubemaps" : {
         "environment_map" : "skybox"
-    },
-    /*"textures": {
-        "environment_map": "proprietary/Ditch_River/Ditch-River_TMap"
     },*/
+    "textures": {
+        "environment_map": "proprietary/06-07_Day_H_4K"
+    },
     "fragment" : "pbr/deffered/lights/image_based"
 }

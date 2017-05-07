@@ -76,6 +76,30 @@
 			]
 		},
         "sigma::graphics::static_mesh": "proprietary/Beta:Beta_HighTorsoGeo"
+    },
+    "Cerberus_LP": {
+        "sigma::transform" : 
+		{
+			"position" : 
+			[
+				-3.84,
+				1.42,
+				0.06
+			],
+			"rotation" : 
+			[
+				0,
+				0,
+				-90
+			],
+			"scale" : 
+			[
+				0.003,
+				0.003,
+				0.003
+			]
+		},
+        "sigma::graphics::static_mesh": "proprietary/Cerberus_by_Andrew_Maximov/Cerberus_LP:unnamed" 
     }
 
 }

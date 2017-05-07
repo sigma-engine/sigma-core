@@ -6,8 +6,8 @@
 #include <math.glsl>
 // clang-format on
 
-uniform samplerCube environment_map;
-// uniform sampler2D environment_map;
+// uniform samplerCube environment_map;
+uniform sampler2D environment_map;
 
 // http://www.trentreed.net/blog/physically-based-shading-and-image-based-lighting/
 // http://blog.tobias-franke.eu/2014/03/30/notes_on_importance_sampling.html
@@ -65,9 +65,8 @@ vec3 radiance(vec3 N, vec3 V, vec3 F0, float roughness)
         float lod = environment_map_lod(environment_map_size, SAMPLES, pdf);
 
         // Sample the environment map
-        vec3 environment_color = textureLod(environment_map, L, lod).rgb;
-        // vec3 environment_color = textureSphereLod(environment_map, L, lod).rgb;
-        environment_color = pow(environment_color, vec3(2.2)); // TODO gamma conversion should be done on loading
+        // vec3 environment_color = textureLod(environment_map, L, lod).rgb;
+        vec3 environment_color = textureSphereLod(environment_map, L, lod).rgb;
 
         sum += environment_color * F_schlick(VdotH, F0) * G_schlick(NdotL, NdotV, roughness) * VdotH / (NdotH * NdotV + NO_DIV_BY_ZERO);
     }
@@ -82,9 +81,9 @@ void main()
 
     vec3 V = normalize(eye_position - s.position);
 
-    // out_image = pow(textureSphereLod(environment_map, -V, 0.0).rgb, vec3(3));
+    // out_image = texture(environment_map, -V, 0.0).rgb;
     if (s.depth == 1.0)
-        out_image = pow(texture(environment_map, -V, 0.0).rgb, vec3(3));
+        out_image = textureSphereLod(environment_map, -V, 0.0).rgb;
     else {
         vec3 N = s.normal;
         vec3 F0 = mix(vec3(0.04f), s.diffuse, s.metalness);

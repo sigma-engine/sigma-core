@@ -1,0 +1,7 @@
+{
+    "basecolor": [0.02, 0.02, 0.02],
+    "roughness": 0.8,
+    "metalness": 0.0,
+    "vertex" : "default",
+    "fragment" : "default_basic"
+}

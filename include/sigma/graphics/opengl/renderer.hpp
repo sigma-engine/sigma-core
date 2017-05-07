@@ -193,9 +193,7 @@ namespace opengl {
                         mat->bind(geometry_buffer::NEXT_FREE_TEXTURE_UINT);
                         mat->set_standard_uniforms(&standard_uniform_data_);
                         mat->set_instance_matrices(&matrices);
-                        //mesh->render(i);
-                        mesh->render_all();
-                        break;
+                        mesh->render(i);
                     }
                 }
             });
