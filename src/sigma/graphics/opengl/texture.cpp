@@ -11,6 +11,8 @@ namespace opengl {
             return { GL_RGB, GL_UNSIGNED_BYTE };
         case graphics::texture_format::RGBA8:
             return { GL_RGBA, GL_UNSIGNED_BYTE };
+        case graphics::texture_format::RGB32F:
+            return { GL_RGB, GL_FLOAT };
         }
     }
 
@@ -21,6 +23,8 @@ namespace opengl {
             return internal_format::RGB8;
         case graphics::texture_format::RGBA8:
             return internal_format::RGBA8;
+        case graphics::texture_format::RGB32F:
+            return internal_format::RGB32F;
         }
     }
 

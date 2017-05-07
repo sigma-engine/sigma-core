@@ -22,6 +22,7 @@ set(HEADERS
     include/shader_technique_compiler.hpp
     include/texture_compiler.hpp
     include/shader_validation.hpp
+    include/hdr_io.hpp
 )
 
 add_executable(scompiler ${SOURCES} ${HEADERS})

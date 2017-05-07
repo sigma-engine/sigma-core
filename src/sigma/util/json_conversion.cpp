@@ -71,7 +71,11 @@ namespace json {
         } else if (str == "rgba8") {
             output = graphics::texture_format::RGBA8;
             return true;
+        } else if (str == "rgb32f") {
+            output = graphics::texture_format::RGB32F;
+            return true;
         }
+
         return false;
     }
 

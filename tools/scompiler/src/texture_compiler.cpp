@@ -1,4 +1,5 @@
 #include <compiler_util.hpp>
+#include <hdr_io.hpp>
 #include <texture_compiler.hpp>
 
 #include <sigma/graphics/texture.hpp>
@@ -18,7 +19,8 @@ namespace sigma {
 enum class input_file_type : unsigned int {
     tiff,
     jpeg,
-    png
+    png,
+    hdr
 };
 
 static std::unordered_map<std::string, input_file_type> ext_to_type = {
@@ -31,6 +33,7 @@ static std::unordered_map<std::string, input_file_type> ext_to_type = {
     { ".jfif", input_file_type::jpeg },
     { ".jfi", input_file_type::jpeg },
     { ".png", input_file_type::png },
+    { ".hdr", input_file_type::hdr }
 };
 
 bool is_texture(boost::filesystem::path file)
@@ -38,33 +41,14 @@ bool is_texture(boost::filesystem::path file)
     return ext_to_type.count(file.extension().string()) > 0;
 }
 
-void copy_texture_data(const boost::gil::rgba8_image_t& image, graphics::texture_data& texture)
+template <class Img>
+void copy_texture_data(const Img& image, graphics::texture_data& texture)
 {
-    texture.data.reserve(image.width() * image.height() * 4);
+    auto view = boost::gil::const_view(image);
+    using pixel = typename decltype(view)::value_type;
+    texture.data.resize(image.width() * image.height() * sizeof(pixel));
     texture.size = glm::ivec2{ image.width(), image.height() };
-
-    auto f = [&texture](boost::gil::rgba8_pixel_t p) {
-        texture.data.push_back(boost::gil::at_c<0>(p));
-        texture.data.push_back(boost::gil::at_c<1>(p));
-        texture.data.push_back(boost::gil::at_c<2>(p));
-        texture.data.push_back(boost::gil::at_c<3>(p));
-    };
-
-    boost::gil::for_each_pixel(boost::gil::const_view(image), std::function<void(boost::gil::rgba8_pixel_t)>(f));
-}
-
-void copy_texture_data(const boost::gil::rgb8_image_t& image, graphics::texture_data& texture)
-{
-    texture.data.reserve(image.width() * image.height() * 3);
-    texture.size = glm::ivec2{ image.width(), image.height() };
-
-    auto f = [&texture](boost::gil::rgb8_pixel_t p) {
-        texture.data.push_back(boost::gil::at_c<0>(p));
-        texture.data.push_back(boost::gil::at_c<1>(p));
-        texture.data.push_back(boost::gil::at_c<2>(p));
-    };
-
-    boost::gil::for_each_pixel(boost::gil::const_view(image), std::function<void(boost::gil::rgb8_pixel_t)>(f));
+    boost::gil::copy_pixels(view, boost::gil::interleaved_view(view.width(), view.height(), (pixel*)texture.data.data(), view.width() * sizeof(pixel)));
 }
 
 template <class Img>
@@ -83,6 +67,10 @@ void compile_texture(const boost::filesystem::path& file_path, graphics::texture
     }
     case input_file_type::png: {
         boost::gil::png_read_and_convert_image(file_path_string, image);
+        break;
+    }
+    case input_file_type::hdr: {
+        sigma::hdr_read_and_convert_image(file_path_string, image);
         break;
     }
     }
@@ -139,6 +127,10 @@ bool compile_textures(boost::filesystem::path outputdir, std::vector<boost::file
             }
             case graphics::texture_format::RGBA8: {
                 compile_texture<boost::gil::rgba8_image_t>(file_path, texture);
+                break;
+            }
+            case graphics::texture_format::RGB32F: {
+                compile_texture<boost::gil::rgb32f_image_t>(file_path, texture);
                 break;
             }
             }

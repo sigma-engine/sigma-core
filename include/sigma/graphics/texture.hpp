@@ -20,7 +20,8 @@ namespace graphics {
 
     enum class texture_format {
         RGB8,
-        RGBA8
+        RGBA8,
+        RGB32F
     };
 
     struct texture_data {
