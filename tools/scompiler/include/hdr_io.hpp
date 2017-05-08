@@ -24,7 +24,7 @@ boost::gil::rgb32f_pixel_t hrd_rgbe_to_rgb(const rgbe8_pixel_t& pixel)
         out[i] = (pixel[i] / 256.0f) * float(pow(2, exp));
 }
 
-bool hdr_old_rle_decode(std::vector<rgbe8_pixel_t> scanline, int start, std::ifstream& file)
+bool hdr_old_rle_decode(std::vector<rgbe8_pixel_t>& scanline, int start, std::ifstream& file)
 {
     int rshift = 0;
     for (int i = start; i < scanline.size();) {
@@ -36,7 +36,7 @@ bool hdr_old_rle_decode(std::vector<rgbe8_pixel_t> scanline, int start, std::ifs
             int count = scanline[i][3] << rshift;
             for (int j = 0; j < count; ++j, ++i)
                 scanline[i] = scanline[i - 1];
-
+            rshift += 8;
         } else {
             rshift = 0;
             i++;

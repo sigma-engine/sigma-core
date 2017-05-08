@@ -32,14 +32,14 @@ float G_schlick(float NdotL, float NdotV, float roughness)
 vec3 BRDF_specular(vec3 L, vec3 V, vec3 N, vec3 F0, float roughness)
 {
     vec3 H = normalize(V + L);
-    float NdotV = abs(dot(N, V)) + NO_DIV_BY_ZERO;
-    float NdotL = clamp(dot(N, L), 0.0, 1.0) + NO_DIV_BY_ZERO;
+    float NdotV = clamp(dot(N, V), 0.0, 1.0);
+    float NdotL = clamp(dot(N, L), 0.0, 1.0);
     float NdotH = clamp(dot(N, H), 0.0, 1.0);
     float VdotH = clamp(dot(V, H), 0.0, 1.0);
 
     float alpha = roughness * roughness;
     float alpha2 = alpha * alpha;
-    return D_ggx(NdotH, alpha2) * F_schlick(VdotH, F0) * G_schlick(NdotL, NdotV, roughness) / (4 * NdotL * NdotV);
+    return D_ggx(NdotH, alpha2) * F_schlick(VdotH, F0) * G_schlick(NdotL, NdotV, roughness) / (4 * NdotL * NdotV + NO_DIV_BY_ZERO);
 }
 
 vec3 BRDF_diffuse(vec3 albedo)
