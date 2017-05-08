@@ -6,9 +6,15 @@
 #include <vertex.glsl>
 // clang-format on
 
+vec3 reinhard(vec3 color)
+{
+    return color / (color + vec3(1.0));
+}
+
 const vec3 gamma_correction = vec3(1.0 / 2.2);
 
 void main()
 {
-    out_image = pow(texture(in_image, in_vertex.texcoord).rgb, gamma_correction);
+    vec3 color = texture(in_image, in_vertex.texcoord).rgb;
+    out_image = pow(reinhard(color), gamma_correction);
 }
