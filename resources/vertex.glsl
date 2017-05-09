@@ -13,7 +13,7 @@ out vertex_data
     vec3 normal;
     vec3 tangent;
     vec2 texcoord;
-    vec3 binormal;
+    vec3 bitangent;
 }
 out_vertex;
 #elif defined(SIGMA_ENGINE_FRAGMENT_SHADER)
@@ -23,7 +23,7 @@ in vertex_data
     vec3 normal;
     vec3 tangent;
     vec2 texcoord;
-    vec3 binormal;
+    vec3 bitangent;
 }
 in_vertex;
 #elif defined(SIGMA_ENGINE_GEOMETRY_SHADER)
@@ -33,7 +33,7 @@ in vertex_data
     vec3 normal;
     vec3 tangent;
     vec2 texcoord;
-    vec3 binormal;
+    vec3 bitangent;
 }
 in_vertex[];
 
@@ -43,7 +43,7 @@ out vertex_data
     vec3 normal;
     vec3 tangent;
     vec2 texcoord;
-    vec3 binormal;
+    vec3 bitangent;
 }
 out_vertex;
 #else

@@ -22,7 +22,7 @@ void main()
         out_vertex.normal = in_vertex[i].normal;
         out_vertex.tangent = in_vertex[i].tangent;
         out_vertex.texcoord = in_vertex[i].texcoord;
-        out_vertex.binormal = in_vertex[i].binormal;
+        out_vertex.bitangent = in_vertex[i].bitangent;
         gl_Position = projection_matrix * out_vertex.position;
         EmitVertex();
     }

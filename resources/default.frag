@@ -12,7 +12,7 @@ uniform sampler2D roughness_map;
 void main()
 {
     surface s;
-    mat3 tbn = mat3(in_vertex.tangent, in_vertex.binormal, in_vertex.normal);
+    mat3 tbn = mat3(in_vertex.tangent, in_vertex.bitangent, in_vertex.normal);
 
     // TODO do this conversion on the cpu
     s.diffuse = pow(texture(basecolor_map, in_vertex.texcoord).rgb, vec3(2.2));
