@@ -22,6 +22,7 @@ boost::gil::rgb32f_pixel_t hrd_rgbe_to_rgb(const rgbe8_pixel_t& pixel)
     boost::gil::rgb32f_pixel_t out;
     for (int i = 0; i < 3; ++i)
         out[i] = (pixel[i] / 256.0f) * float(pow(2, exp));
+    return out;
 }
 
 bool hdr_old_rle_decode(std::vector<rgbe8_pixel_t>& scanline, int start, std::ifstream& file)
