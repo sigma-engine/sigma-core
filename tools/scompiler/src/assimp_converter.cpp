@@ -43,26 +43,6 @@ std::string get_name(const aiMaterial* mat)
     return matName.C_Str();
 }
 
-// glm::vec3 convert_color(aiColor3D c)
-// {
-//     return glm::vec3(c.r, c.g, c.b);
-// }
-//
-// glm::vec3 convert_3d(aiVector3D v)
-// {
-//     return { v.x, v.z, -v.y };
-// }
-//
-// glm::quat convert_3d(aiQuaternion q)
-// {
-//     return glm::quat(q.w, q.x, q.z, -q.y);
-// }
-//
-// glm::vec2 convert_2d(aiVector3D v)
-// {
-//     return glm::vec2(v.x, v.y);
-// }
-
 struct converter {
     virtual glm::vec3 convert_color(aiColor3D c)
     {
