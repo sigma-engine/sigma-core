@@ -39,7 +39,7 @@ function(add_resources target)
         add_custom_target(${target}-resources ALL DEPENDS  ${resource_files})
 
         add_custom_command(
-            OUTPUT ${resource_files}
+            TARGET ${target}-resources
             COMMAND ${SCOMPILER} ARGS --output="${CMAKE_BINARY_DIR}/data" ${include_args} ${resource_files}
             WORKING_DIRECTORY ${package_PACKAGE_ROOT}
             DEPENDS always_rebuild
