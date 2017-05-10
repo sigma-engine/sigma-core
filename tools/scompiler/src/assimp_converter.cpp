@@ -88,9 +88,10 @@ assimp_converter::assimp_converter(boost::filesystem::path package_root, boost::
             | aiProcess_SortByPType
             | aiProcess_FindDegenerates
             | aiProcess_FindInvalidData
-            | aiProcess_GenUVCoords
+            // | aiProcess_GenUVCoords
             | aiProcess_FindInstances
             | aiProcess_FlipUVs
+            | aiProcess_CalcTangentSpace
         // | aiProcess_MakeLeftHanded
         // | aiProcess_RemoveComponent
         // | aiProcess_GenNormals
@@ -165,8 +166,8 @@ void assimp_converter::convert_material(std::string name, Json::Value& material)
         { aiTextureType_SPECULAR, "roughness_map" },
         { aiTextureType_AMBIENT, "metallic_map" },
         { aiTextureType_EMISSIVE, "emissive_map" },
-        { aiTextureType_HEIGHT, "normals_map" },
-        { aiTextureType_NORMALS, "normals_map" },
+        { aiTextureType_HEIGHT, "normal_map" },
+        { aiTextureType_NORMALS, "normal_map" },
         { aiTextureType_SHININESS, "roughness_map" },
         { aiTextureType_OPACITY, "opacity_map" },
         { aiTextureType_DISPLACEMENT, "displacement_map" },
@@ -175,14 +176,30 @@ void assimp_converter::convert_material(std::string name, Json::Value& material)
     };
 
     material["vertex"] = "default";
-    material["fragment"] = "default";
+    material["fragment"] = "default_basic";
     for (unsigned int i = 0; i < aiScene->mNumMaterials; ++i) {
         auto aimat = aiScene->mMaterials[i];
         if (get_name(aimat) != name)
             continue;
+
+        aiColor3D color;
+        if (AI_SUCCESS == aimat->Get(AI_MATKEY_COLOR_DIFFUSE, color))
+            material["basecolor"] = json::to_json(converter_->convert_color(color));
+        if (AI_SUCCESS == aimat->Get(AI_MATKEY_COLOR_SPECULAR, color))
+            material["roughness"] = converter_->convert_color(color).x;
+        if (AI_SUCCESS == aimat->Get(AI_MATKEY_COLOR_AMBIENT, color))
+            material["metalness"] = converter_->convert_color(color).x;
+        if (AI_SUCCESS == aimat->Get(AI_MATKEY_COLOR_EMISSIVE, color))
+            material["emissive"] = json::to_json(converter_->convert_color(color));
+        if (AI_SUCCESS == aimat->Get(AI_MATKEY_COLOR_TRANSPARENT, color))
+            material["transparent"] = converter_->convert_color(color).x;
+        if (AI_SUCCESS == aimat->Get(AI_MATKEY_COLOR_REFLECTIVE, color))
+            material["reflective"] = converter_->convert_color(color).x;
+
         for (auto texture_type : texture_type_map) {
             if (aimat->GetTextureCount(texture_type.first) > 0) {
-                material["texture"][texture_type.second] = get_name(aimat, texture_type.first);
+                material["textures"][texture_type.second] = get_name(aimat, texture_type.first);
+                material["fragment"] = "default";
             }
         }
         return;
@@ -322,7 +339,7 @@ std::string assimp_converter::get_name(const aiMaterial* mat) const
     mat->Get(AI_MATKEY_NAME, matName);
     std::string name = matName.C_Str();
     if (name == "DefaultMaterial")
-        name = "default";
+        return "default";
 
     if (boost::starts_with(name, "//"))
         return (root_directroy_ / name.substr(2))
@@ -348,173 +365,3 @@ std::string assimp_converter::get_name(const aiNode* node) const
     return name;
 }
 }
-
-/*
-void convert(aiMaterial *aiMat) {
-    aiString name;
-    aiColor3D diffuse;
-    aiColor3D specular;
-    aiColor3D ambient;
-    aiColor3D emissive;
-    aiColor3D transparent;
-    int wireframe = 0;
-    int twosided = 0;
-    int shading_model = 0;
-    int blend_func = 0;
-    float opacity = 0;
-    float shininess = 0;
-    float shininess_strength = 0;
-    float ior = 0;
-    if (AI_SUCCESS == aiMat->Get(AI_MATKEY_NAME, name)) {
-        //std::cout << "name := "<< name.C_Str() << '\n';
-    }
-    if (AI_SUCCESS == aiMat->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse)) {
-        //std::cout << "diffuse := "<< diffuse.r << " " << diffuse.g << " " <<
-diffuse.b << " "  << '\n';
-    }
-    if (AI_SUCCESS == aiMat->Get(AI_MATKEY_COLOR_SPECULAR, specular)) {
-        //std::cout << "specular := "<< specular.r << " " << specular.g << " "
-<< specular.b << " "  << '\n';
-    }
-    if (AI_SUCCESS == aiMat->Get(AI_MATKEY_COLOR_AMBIENT, ambient)) {
-        //std::cout << "ambient := "<< ambient.r << " " << ambient.g << " " <<
-ambient.b << " "  << '\n';
-    }
-    if (AI_SUCCESS == aiMat->Get(AI_MATKEY_COLOR_EMISSIVE, emissive)) {
-        //std::cout << "emissive := "<< emissive.r << " " << emissive.g << " "
-<< emissive.b << " "  << '\n';
-    }
-    if (AI_SUCCESS == aiMat->Get(AI_MATKEY_COLOR_TRANSPARENT, transparent)) {
-        //std::cout << "transparent := "<< transparent.r << " " << transparent.g
-<< " " << transparent.b << " "  << '\n';
-    }
-    if (AI_SUCCESS == aiMat->Get(AI_MATKEY_ENABLE_WIREFRAME, wireframe)) {
-        //std::cout << "wireframe := "<< wireframe << '\n';
-    }
-    if (AI_SUCCESS == aiMat->Get(AI_MATKEY_TWOSIDED, twosided)) {
-        //std::cout << "twosided := "<< twosided << '\n';
-    }
-    if (AI_SUCCESS == aiMat->Get(AI_MATKEY_SHADING_MODEL, shading_model)) {
-        //std::cout << "shading_model := "<< shading_model << '\n';
-    }
-    if (AI_SUCCESS == aiMat->Get(AI_MATKEY_BLEND_FUNC, blend_func)) {
-        //std::cout << "blend_func := "<< blend_func << '\n';
-    }
-    if (AI_SUCCESS == aiMat->Get(AI_MATKEY_OPACITY, opacity)) {
-        //std::cout << "opacity := "<< opacity << '\n';
-    }
-    if (AI_SUCCESS == aiMat->Get(AI_MATKEY_SHININESS, shininess)) {
-        //std::cout << "shininess := "<< shininess << '\n';
-    }
-    if (AI_SUCCESS == aiMat->Get(AI_MATKEY_SHININESS_STRENGTH,
-shininess_strength)) {
-        //std::cout << "shininess_strength := "<< shininess_strength <<
-'\n';
-    }
-    if (AI_SUCCESS == aiMat->Get(AI_MATKEY_REFRACTI, ior)) {
-        //std::cout << "ior := "<< ior << '\n';
-    }
-
-    for (unsigned int n = 0; n < aiMat->GetTextureCount(aiTextureType_NONE);
-++n) {
-        aiString texture;
-        aiMat->GetTexture(aiTextureType_NONE, n, &texture);
-        //std::cout << "none_texture(" << n << ") := " << texture.C_Str() <<
-'\n';
-    }
-    for (unsigned int n = 0; n < aiMat->GetTextureCount(aiTextureType_DIFFUSE);
-++n) {
-        aiString texture;
-        aiMat->GetTexture(aiTextureType_DIFFUSE, n, &texture);
-        //std::cout << "diffuse_texture(" << n << ") := " << texture.C_Str() <<
-'\n';
-    }
-    for (unsigned int n = 0; n < aiMat->GetTextureCount(aiTextureType_SPECULAR);
-++n) {
-        aiString texture;
-        aiMat->GetTexture(aiTextureType_SPECULAR, n, &texture);
-        //std::cout << "specular_texture(" << n << ") := " << texture.C_Str() <<
-'\n';
-    }
-    for (unsigned int n = 0; n < aiMat->GetTextureCount(aiTextureType_AMBIENT);
-++n) {
-        aiString texture;
-        aiMat->GetTexture(aiTextureType_AMBIENT, n, &texture);
-        //std::cout << "ambient_texture(" << n << ") := " << texture.C_Str() <<
-'\n';
-    }
-    for (unsigned int n = 0; n < aiMat->GetTextureCount(aiTextureType_EMISSIVE);
-++n) {
-        aiString texture;
-        aiMat->GetTexture(aiTextureType_EMISSIVE, n, &texture);
-        //std::cout << "emissive_texture(" << n << ") := " << texture.C_Str() <<
-'\n';
-    }
-    for (unsigned int n = 0; n < aiMat->GetTextureCount(aiTextureType_HEIGHT);
-++n) {
-        aiString texture;
-        aiMat->GetTexture(aiTextureType_HEIGHT, n, &texture);
-        //std::cout << "height_texture(" << n << ") := " << texture.C_Str() <<
-'\n';
-    }
-    for (unsigned int n = 0; n < aiMat->GetTextureCount(aiTextureType_NORMALS);
-++n) {
-        aiString texture;
-        aiMat->GetTexture(aiTextureType_NORMALS, n, &texture);
-        //std::cout << "normal_texture(" << n << ") := " << texture.C_Str() <<
-'\n';
-    }
-    for (unsigned int n = 0; n <
-aiMat->GetTextureCount(aiTextureType_SHININESS); ++n) {
-        aiString texture;
-        aiMat->GetTexture(aiTextureType_SHININESS, n, &texture);
-        //std::cout << "shininess_texture(" << n << ") := " << texture.C_Str()
-<< '\n';
-    }
-    for (unsigned int n = 0; n < aiMat->GetTextureCount(aiTextureType_OPACITY);
-++n) {
-        aiString texture;
-        aiMat->GetTexture(aiTextureType_OPACITY, n, &texture);
-        //std::cout << "opacity_texture(" << n << ") := " << texture.C_Str() <<
-'\n';
-    }
-    for (unsigned int n = 0; n <
-aiMat->GetTextureCount(aiTextureType_DISPLACEMENT); ++n) {
-        aiString texture;
-        aiMat->GetTexture(aiTextureType_DISPLACEMENT, n, &texture);
-        //std::cout << "displacement_texture(" << n << ") := " <<
-texture.C_Str() << '\n';
-    }
-    for (unsigned int n = 0; n < aiMat->GetTextureCount(aiTextureType_LIGHTMAP);
-++n) {
-        aiString texture;
-        aiMat->GetTexture(aiTextureType_LIGHTMAP, n, &texture);
-        //std::cout << "lightmap_texture(" << n << ") := " << texture.C_Str() <<
-'\n';
-    }
-    for (unsigned int n = 0; n <
-aiMat->GetTextureCount(aiTextureType_REFLECTION); ++n) {
-        aiString texture;
-        aiMat->GetTexture(aiTextureType_REFLECTION, n, &texture);
-        //std::cout << "reflection_texture(" << n << ") := " << texture.C_Str()
-<< '\n';
-    }
-    for (unsigned int n = 0; n < aiMat->GetTextureCount(aiTextureType_UNKNOWN);
-++n) {
-        aiString texture;
-        aiMat->GetTexture(aiTextureType_UNKNOWN, n, &texture);
-        //std::cout << "unknown_texture(" << n << ") := " << texture.C_Str() <<
-'\n';
-    }
-
-//    TEXTURE(t,n);
-//    TEXBLEND(t,n);
-//    TEXOP(t,n);
-//    MAPPING(t,n);
-//    UVWSRC(t,n);
-//    MAPPINGMODE_U(t,n);
-//    MAPPINGMODE_V(t,n);
-//    TEXMAP_AXIS(t,n);
-//    TEXFLAGS(t,n);
-}
-*/
