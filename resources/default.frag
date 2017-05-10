@@ -18,6 +18,8 @@ void main()
     s.diffuse = pow(texture(basecolor_map, in_vertex.texcoord).rgb, vec3(2.2));
     s.metalness = texture(metallic_map, in_vertex.texcoord).r;
     s.roughness = texture(roughness_map, in_vertex.texcoord).r;
-    s.normal = normalize(tbn * (texture(normal_map, in_vertex.texcoord).xyz * 2.0 - 1.0));
+    vec3 N = texture(normal_map, in_vertex.texcoord).xyz;
+    N.xy = (N.xy) * 2.0 - 1.0;
+    s.normal = normalize(tbn * N);
     write_geometry_buffer(s);
 }
