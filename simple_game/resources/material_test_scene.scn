@@ -6,100 +6,100 @@
             }
     },
     "Beta_HighJoints": {
-        "sigma::transform" : 
+        "sigma::transform" :
 		{
-			"position" : 
+			"position" :
 			[
 				-5,
 				0,
 				-0
 			],
-			"rotation" : 
+			"rotation" :
 			[
 				0,
 				0,
 				0
 			],
-			"scale" : 
+			"scale" :
 			[
 				0.010,
 				0.010,
 				0.010
 			]
 		},
-        "sigma::graphics::static_mesh": "proprietary/Beta:Beta_HighJointsGeo"
+        "sigma::graphics::static_mesh": "proprietary/Beta/Beta:Beta_HighJointsGeo"
     },
     "Beta_HighLimbs": {
-        "sigma::transform" : 
+        "sigma::transform" :
 		{
-			"position" : 
+			"position" :
 			[
 				-5,
 				0,
 				-0
 			],
-			"rotation" : 
+			"rotation" :
 			[
 				0,
 				0,
 				0
 			],
-			"scale" : 
+			"scale" :
 			[
 				0.010,
 				0.010,
 				0.010
 			]
 		},
-        "sigma::graphics::static_mesh": "proprietary/Beta:Beta_HighLimbsGeo"
+        "sigma::graphics::static_mesh": "proprietary/Beta/Beta:Beta_HighLimbsGeo"
     },
     "Beta_HighTorso": {
-        "sigma::transform" : 
+        "sigma::transform" :
 		{
-			"position" : 
+			"position" :
 			[
 				-5,
 				0,
 				-0
 			],
-			"rotation" : 
+			"rotation" :
 			[
 				0,
 				0,
 				0
 			],
-			"scale" : 
+			"scale" :
 			[
 				0.010,
 				0.010,
 				0.010
 			]
 		},
-        "sigma::graphics::static_mesh": "proprietary/Beta:Beta_HighTorsoGeo"
+        "sigma::graphics::static_mesh": "proprietary/Beta/Beta:Beta_HighTorsoGeo"
     },
     "Cerberus_LP": {
-        "sigma::transform" : 
+        "sigma::transform" :
 		{
-			"position" : 
+			"position" :
 			[
 				-3.84,
 				1.42,
 				0.06
 			],
-			"rotation" : 
+			"rotation" :
 			[
 				0,
 				0,
 				-90
 			],
-			"scale" : 
+			"scale" :
 			[
 				0.003,
 				0.003,
 				0.003
 			]
 		},
-        "sigma::graphics::static_mesh": "proprietary/Cerberus_by_Andrew_Maximov/Cerberus_LP:unnamed" 
+        "sigma::graphics::static_mesh": "proprietary/Cerberus_by_Andrew_Maximov/Cerberus_LP:unnamed"
     }
 
 }

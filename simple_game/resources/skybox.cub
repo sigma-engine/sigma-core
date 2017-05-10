@@ -1,8 +1,0 @@
-{
-    "right": "proprietary/skybox/right",
-    "left": "proprietary/skybox/left",
-    "top": "proprietary/skybox/top",
-    "bottom": "proprietary/skybox/bottom",
-    "back": "proprietary/skybox/back",
-    "front": "proprietary/skybox/front"
-}
