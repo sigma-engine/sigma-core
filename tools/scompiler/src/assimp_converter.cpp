@@ -16,7 +16,6 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/replace.hpp>
 
-#include <iostream>
 #include <unordered_map>
 
 namespace sigma {
@@ -342,8 +341,7 @@ std::string assimp_converter::get_name(const aiMaterial* mat) const
         return "default";
 
     if (boost::starts_with(name, "//"))
-        return (root_directroy_ / name.substr(2))
-            .string();
+        return (root_directroy_ / name.substr(2)).string();
     if (name[0] == '/')
         return name.substr(1);
     return (root_directroy_ / name).string();
