@@ -25,7 +25,7 @@ namespace opengl {
         static constexpr const char* INVERSE_VIEW_MATRIX_NAME = "inverse_view_matrix";
         static constexpr const char* PROJECTION_VIEW_MATRIX_NAME = "projection_view_matrix";
         static constexpr const char* INVERSE_PROJECTION_VIEW_MATRIX_NAME = "inverse_projection_view_matrix";
-        static constexpr const char* LIGHT_PROJECTION_VIEW_MATRIX_NAME  = "light_projection_view_matrix";
+        static constexpr const char* LIGHT_PROJECTION_VIEW_MATRIX_NAME = "light_projection_view_matrix";
         static constexpr const char* Z_NEAR_NAME = "z_near";
         static constexpr const char* Z_FAR_NAME = "z_far";
         static constexpr const char* VIEW_PORT_SIZE_NAME = "view_port_size";
@@ -149,17 +149,37 @@ namespace opengl {
             GL_CHECK(glUseProgram(object_));
             GL_CHECK(glUniform1i(in_image_location_, geometry_buffer::INPUT_IMAGE_LOCATION));
 
-            for (std::size_t i = 0; i < this->floats_.size(); ++i)
-                GL_CHECK(glUniform1f(float_locations_[i], this->floats_[i].second));
+            for (std::size_t i = 0; i < this->floats_.size(); ++i) {
+                // TODO this should not be needed because it should be checked
+                // at compile time.
+                if (float_locations_[i] >= 0) {
+                    GL_CHECK(glUniform1f(float_locations_[i], this->floats_[i].second));
+                }
+            }
 
-            for (std::size_t i = 0; i < this->vec2s_.size(); ++i)
-                GL_CHECK(glUniform2fv(vec2_locations_[i], 1, glm::value_ptr(this->vec2s_[i].second)));
+            for (std::size_t i = 0; i < this->vec2s_.size(); ++i) {
+                // TODO this should not be needed because it should be checked
+                // at compile time.
+                if (vec2_locations_[i] >= 0) {
+                    GL_CHECK(glUniform2fv(vec2_locations_[i], 1, glm::value_ptr(this->vec2s_[i].second)));
+                }
+            }
 
-            for (std::size_t i = 0; i < this->vec3s_.size(); ++i)
-                GL_CHECK(glUniform3fv(vec3_locations_[i], 1, glm::value_ptr(this->vec3s_[i].second)));
+            for (std::size_t i = 0; i < this->vec3s_.size(); ++i) {
+                // TODO this should not be needed because it should be checked
+                // at compile time.
+                if (vec3_locations_[i] >= 0) {
+                    GL_CHECK(glUniform3fv(vec3_locations_[i], 1, glm::value_ptr(this->vec3s_[i].second)));
+                }
+            }
 
-            for (std::size_t i = 0; i < this->vec4s_.size(); ++i)
-                GL_CHECK(glUniform4fv(vec4_locations_[i], 1, glm::value_ptr(this->vec4s_[i].second)));
+            for (std::size_t i = 0; i < this->vec4s_.size(); ++i) {
+                // TODO this should not be needed because it should be checked
+                // at compile time.
+                if (vec4_locations_[i] >= 0) {
+                    GL_CHECK(glUniform4fv(vec4_locations_[i], 1, glm::value_ptr(this->vec4s_[i].second)));
+                }
+            }
         }
 
         void bind(texture_unit first_texture_unit) const
@@ -168,15 +188,23 @@ namespace opengl {
             auto texture_unit = GLenum(first_texture_unit);
             auto unit_number = GLenum(first_texture_unit) - GL_TEXTURE0;
             for (std::size_t i = 0; i < this->textures_.size(); ++i, ++texture_unit, ++unit_number) {
-                GL_CHECK(glActiveTexture(texture_unit));
-                TEXTURE_CONST_PTR(this->textures_[i].second)->bind();
-                GL_CHECK(glUniform1i(texture_locations_[i], unit_number));
+                // TODO this should not be needed because it should be checked
+                // at compile time.
+                if (texture_locations_[i] >= 0) {
+                    GL_CHECK(glActiveTexture(texture_unit));
+                    TEXTURE_CONST_PTR(this->textures_[i].second)->bind();
+                    GL_CHECK(glUniform1i(texture_locations_[i], unit_number));
+                }
             }
 
             for (std::size_t i = 0; i < this->cubemaps_.size(); ++i, ++texture_unit, ++unit_number) {
-                GL_CHECK(glActiveTexture(texture_unit));
-                CUBEMAP_CONST_PTR(this->cubemaps_[i].second)->bind();
-                GL_CHECK(glUniform1i(cubemap_locations_[i], unit_number));
+                // TODO this should not be needed because it should be checked
+                // at compile time.
+                if (cubemap_locations_[i] >= 0) {
+                    GL_CHECK(glActiveTexture(texture_unit));
+                    CUBEMAP_CONST_PTR(this->cubemaps_[i].second)->bind();
+                    GL_CHECK(glUniform1i(cubemap_locations_[i], unit_number));
+                }
             }
         }
 
