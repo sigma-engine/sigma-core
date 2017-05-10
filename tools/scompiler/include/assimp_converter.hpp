@@ -10,6 +10,9 @@
 namespace Assimp {
 class Importer;
 }
+class aiMesh;
+class aiNode;
+class aiMaterial;
 
 namespace sigma {
 namespace graphics {
@@ -20,13 +23,17 @@ class converter;
 
 class assimp_converter {
 public:
-    assimp_converter(boost::filesystem::path source_file);
+    assimp_converter(boost::filesystem::path package_root, boost::filesystem::path source_file);
 
     ~assimp_converter();
+
+    const std::set<std::string>& material_names() const;
 
     const std::set<std::string>& static_mesh_names() const;
 
     const std::set<std::string>& scene_object_names() const;
+
+    void convert_material(std::string name, Json::Value& material) const;
 
     void convert_static_mesh(std::string name, graphics::static_mesh_data& mesh) const;
 
@@ -38,8 +45,19 @@ private:
     std::unique_ptr<Assimp::Importer> importer_;
     std::unique_ptr<converter> converter_;
 
+    std::set<std::string> material_names_;
     std::set<std::string> static_mesh_names_;
     std::set<std::string> object_names_;
+
+    std::string get_name(const aiMesh* mesh) const;
+
+    std::string get_name(const aiNode* node) const;
+
+    std::string get_name(const aiMaterial* mat, int texture_type) const;
+
+    bool is_source(const aiMaterial* mat) const;
+
+    std::string get_name(const aiMaterial* mat) const;
 };
 }
 

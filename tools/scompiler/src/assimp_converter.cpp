@@ -14,34 +14,12 @@
 #include <glm/gtx/rotate_vector.hpp>
 
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string/replace.hpp>
 
 #include <iostream>
 #include <unordered_map>
 
 namespace sigma {
-
-std::string get_name(const aiMesh* mesh)
-{
-    std::string name = mesh->mName.C_Str();
-    if (name == "")
-        return "unnamed";
-    return name;
-}
-
-std::string get_name(const aiNode* node)
-{
-    std::string name = node->mName.C_Str();
-    if (name == "")
-        return "unnamed";
-    return name;
-}
-
-std::string get_name(const aiMaterial* mat)
-{
-    aiString matName;
-    mat->Get(AI_MATKEY_NAME, matName);
-    return matName.C_Str();
-}
 
 struct converter {
     virtual glm::vec3 convert_color(aiColor3D c)
@@ -87,8 +65,9 @@ struct blender_converter : public converter {
     }
 };
 
-assimp_converter::assimp_converter(boost::filesystem::path source_file)
-    : source_file_(source_file)
+assimp_converter::assimp_converter(boost::filesystem::path package_root, boost::filesystem::path source_file)
+    : root_directroy_(filesystem::make_relative(package_root, source_file).parent_path())
+    , source_file_(source_file)
     , importer_(std::make_unique<Assimp::Importer>())
 {
     auto filename = source_file_.string();
@@ -133,6 +112,13 @@ assimp_converter::assimp_converter(boost::filesystem::path source_file)
         return;
     }
 
+    for (unsigned int i = 0; i < scene->mNumMaterials; ++i) {
+        if (is_source(scene->mMaterials[i])) {
+            std::string name = get_name(scene->mMaterials[i]);
+            material_names_.insert(name);
+        }
+    }
+
     for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
         std::string name = get_name(scene->mMeshes[i]);
         // if (!scene->mMeshes[i]->HasBones())
@@ -155,6 +141,11 @@ assimp_converter::assimp_converter(boost::filesystem::path source_file)
 
 assimp_converter::~assimp_converter() {}
 
+const std::set<std::string>& assimp_converter::material_names() const
+{
+    return material_names_;
+}
+
 const std::set<std::string>& assimp_converter::static_mesh_names() const
 {
     return static_mesh_names_;
@@ -163,6 +154,39 @@ const std::set<std::string>& assimp_converter::static_mesh_names() const
 const std::set<std::string>& assimp_converter::scene_object_names() const
 {
     return object_names_;
+}
+
+void assimp_converter::convert_material(std::string name, Json::Value& material) const
+{
+    const aiScene* aiScene = importer_->GetScene();
+
+    std::unordered_map<aiTextureType, std::string> texture_type_map = {
+        { aiTextureType_DIFFUSE, "basecolor_map" },
+        { aiTextureType_SPECULAR, "roughness_map" },
+        { aiTextureType_AMBIENT, "metallic_map" },
+        { aiTextureType_EMISSIVE, "emissive_map" },
+        { aiTextureType_HEIGHT, "normals_map" },
+        { aiTextureType_NORMALS, "normals_map" },
+        { aiTextureType_SHININESS, "roughness_map" },
+        { aiTextureType_OPACITY, "opacity_map" },
+        { aiTextureType_DISPLACEMENT, "displacement_map" },
+        { aiTextureType_LIGHTMAP, "lightmap_map" },
+        { aiTextureType_REFLECTION, "reflection_map" }
+    };
+
+    material["vertex"] = "default";
+    material["fragment"] = "default";
+    for (unsigned int i = 0; i < aiScene->mNumMaterials; ++i) {
+        auto aimat = aiScene->mMaterials[i];
+        if (get_name(aimat) != name)
+            continue;
+        for (auto texture_type : texture_type_map) {
+            if (aimat->GetTextureCount(texture_type.first) > 0) {
+                material["texture"][texture_type.second] = get_name(aimat, texture_type.first);
+            }
+        }
+        return;
+    }
 }
 
 void assimp_converter::convert_static_mesh(std::string name, graphics::static_mesh_data& mesh) const
@@ -264,6 +288,64 @@ void assimp_converter::convert_object(std::string name, Json::Value& entity) con
             break;
         }
     }
+}
+
+std::string assimp_converter::get_name(const aiMaterial* mat, int texture_type) const
+{
+    aiString texture;
+    mat->GetTexture((aiTextureType)texture_type, 0, &texture);
+    std::string name = texture.C_Str();
+    boost::algorithm::replace_all(name, "\\", "/");
+
+    boost::filesystem::path texture_path = root_directroy_ / name;
+    if (boost::starts_with(name, "//"))
+        texture_path = root_directroy_ / name.substr(2);
+    else if (name[0] == '/')
+        texture_path = name.substr(1);
+    else if (!boost::filesystem::exists(texture_path))
+        texture_path = name;
+
+    return texture_path.replace_extension("").string();
+}
+
+bool assimp_converter::is_source(const aiMaterial* mat) const
+{
+    aiString matName;
+    mat->Get(AI_MATKEY_NAME, matName);
+    std::string name = matName.C_Str();
+    return name[0] != '/' && name != "DefaultMaterial";
+}
+
+std::string assimp_converter::get_name(const aiMaterial* mat) const
+{
+    aiString matName;
+    mat->Get(AI_MATKEY_NAME, matName);
+    std::string name = matName.C_Str();
+    if (name == "DefaultMaterial")
+        name = "default";
+
+    if (boost::starts_with(name, "//"))
+        return (root_directroy_ / name.substr(2))
+            .string();
+    if (name[0] == '/')
+        return name.substr(1);
+    return (root_directroy_ / name).string();
+}
+
+std::string assimp_converter::get_name(const aiMesh* mesh) const
+{
+    std::string name = mesh->mName.C_Str();
+    if (name == "")
+        return "unnamed";
+    return name;
+}
+
+std::string assimp_converter::get_name(const aiNode* node) const
+{
+    std::string name = node->mName.C_Str();
+    if (name == "")
+        return "unnamed";
+    return name;
 }
 }
 

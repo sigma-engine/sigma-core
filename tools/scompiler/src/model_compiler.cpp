@@ -1,5 +1,6 @@
 #include <assimp_converter.hpp>
 #include <compiler_util.hpp>
+#include <material_compiler.hpp>
 #include <model_compiler.hpp>
 
 #include <sigma/graphics/static_mesh.hpp>
@@ -68,7 +69,28 @@ bool compile_models(boost::filesystem::path outputdir, std::vector<boost::filesy
 
         std::cout << file_path.filename().string() << std::endl;
         try {
-            sigma::assimp_converter imported{ file_path };
+            sigma::assimp_converter imported{ boost::filesystem::current_path(), file_path };
+
+            std::vector<boost::filesystem::path> material_paths;
+            for (auto material_name : imported.material_names()) {
+                boost::filesystem::path material_path = boost::filesystem::current_path() / material_name;
+                material_path.replace_extension("mat");
+                material_paths.push_back(material_path);
+
+                Json::Value json_material(Json::objectValue);
+                if (boost::filesystem::exists(material_path)) {
+                    std::ifstream file(material_path.string());
+                    file >> json_material;
+                }
+
+                imported.convert_material(material_name, json_material);
+
+                std::ofstream file(material_path.string());
+                file << json_material;
+            }
+
+            compile_materials(outputdir, material_paths);
+
             for (auto mesh_name : imported.static_mesh_names()) {
                 if (!boost::algorithm::ends_with(mesh_name, "_high")) {
                     sigma::resource::identifier rid("static_mesh", file_path, mesh_name);
@@ -90,9 +112,6 @@ bool compile_models(boost::filesystem::path outputdir, std::vector<boost::filesy
             if (boost::filesystem::exists(scene_path)) {
                 std::ifstream file(scene_path.string());
                 file >> json_scene;
-            } else {
-                std::ofstream file(scene_path.string());
-                file << json_scene;
             }
 
             for (auto object_name : imported.scene_object_names()) {
@@ -105,8 +124,10 @@ bool compile_models(boost::filesystem::path outputdir, std::vector<boost::filesy
             full_scene_path = outputdir / full_scene_path;
             std::ofstream outscene(full_scene_path.string());
             outscene << json_scene;
-
-            touch_stamp_file(outputdir, file_path, { scene_path });
+            if (boost::filesystem::exists(scene_path))
+                touch_stamp_file(outputdir, file_path, { scene_path });
+            else
+                touch_stamp_file(outputdir, file_path);
         } catch (...) { // TODO cacth the correct error types and get the messages
             all_good = false;
             std::cerr << "scompiler: error: could not compile model '" << file_path << "'!\n";
