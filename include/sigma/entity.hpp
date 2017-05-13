@@ -3,7 +3,8 @@
 
 #include <sigma/config.hpp>
 
-#include <cinttypes>
+#include <cstddef>
+#include <cstdint>
 #include <functional>
 
 namespace sigma {

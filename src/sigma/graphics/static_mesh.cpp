@@ -1,5 +1,7 @@
 #include <sigma/graphics/static_mesh.hpp>
 
+#include <sigma/resource/manager.hpp>
+
 namespace sigma {
 namespace graphics {
 

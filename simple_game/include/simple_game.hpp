@@ -5,6 +5,8 @@
 
 #include <sigma/game.hpp>
 
+#include <glm/vec3.hpp>
+
 #include <random>
 
 struct uniform_vec3_distribution {

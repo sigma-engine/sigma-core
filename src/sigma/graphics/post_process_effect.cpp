@@ -1,5 +1,7 @@
 #include <sigma/graphics/post_process_effect.hpp>
 
+#include <sigma/resource/manager.hpp>
+
 namespace sigma {
 namespace graphics {
     post_process_effect::post_process_effect(const post_process_effect_data& data)

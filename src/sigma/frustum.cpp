@@ -3,6 +3,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <algorithm>
+#include <limits>
 
 namespace sigma {
 namespace graphics {

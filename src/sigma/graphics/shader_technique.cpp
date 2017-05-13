@@ -1,5 +1,12 @@
 #include <sigma/graphics/shader_technique.hpp>
 
+#include <sigma/graphics/shader.hpp>
+#include <sigma/resource/manager.hpp>
+
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+
 namespace sigma {
 namespace graphics {
     shader_technique::shader_technique(const shader_technique_data& data)

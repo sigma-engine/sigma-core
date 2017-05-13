@@ -5,6 +5,8 @@
 
 #include <sigma/graphics/opengl/util.hpp>
 
+#include <glad/glad.h>
+
 namespace sigma {
 namespace opengl {
     default_frame_buffer::default_frame_buffer(glm::ivec2 size)

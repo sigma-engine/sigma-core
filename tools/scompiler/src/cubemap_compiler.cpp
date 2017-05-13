@@ -5,8 +5,12 @@
 
 #include <json/json.h>
 
-#include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
+#include <boost/filesystem/path.hpp>
+
+#include <fstream>
+#include <sigma/resource/identifier.hpp>
+#include <string>
 
 namespace sigma {
 bool is_cubemap(boost::filesystem::path file)

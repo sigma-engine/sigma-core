@@ -2,13 +2,10 @@
 #include <sigma/util/compile_time_hash.hpp>
 #include <sigma/util/filesystem.hpp>
 
-#include <boost/algorithm/string.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/serialization/access.hpp>
-
-#include <functional>
-#include <iostream>
-#include <random>
+#include <boost/algorithm/string/find.hpp>
+#include <boost/algorithm/string/replace.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
 
 namespace sigma {
 namespace resource {

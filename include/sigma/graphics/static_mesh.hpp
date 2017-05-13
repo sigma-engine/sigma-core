@@ -2,6 +2,7 @@
 #define SIGMA_GRAPHICS_STATIC_MESH_HPP
 
 #include <sigma/config.hpp>
+
 #include <sigma/graphics/material.hpp>
 #include <sigma/resource/manager.hpp>
 #include <sigma/util/glm_serialize.hpp>
@@ -11,13 +12,18 @@
 
 #include <boost/serialization/array.hpp>
 #include <boost/serialization/vector.hpp>
+#include <boost/serialization/version.hpp>
 
 #include <array>
+#include <cstddef>
 #include <vector>
 
 namespace sigma {
+namespace resource {
+    template <class Resource>
+    class handle;
+}
 namespace graphics {
-
     struct static_mesh_data {
         struct vertex {
             glm::vec3 position;

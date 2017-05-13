@@ -3,12 +3,16 @@
 
 #include <sigma/config.hpp>
 #include <sigma/util/compile_time_hash.hpp>
-#include <sigma/util/json_conversion.hpp>
+
+#include <json/json.h>
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/serialization/access.hpp>
 
+#include <cstddef>
+#include <functional>
+#include <ostream>
 #include <string>
 
 namespace sigma {

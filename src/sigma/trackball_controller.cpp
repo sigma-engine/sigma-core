@@ -1,5 +1,8 @@
 #include <sigma/trackball_controller.hpp>
 
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/quaternion.hpp>
+
 namespace sigma {
 trackball_controller::trackball_controller()
     : rotating_(false)

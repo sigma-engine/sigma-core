@@ -5,7 +5,9 @@
 
 #include <sigma/config.hpp>
 #include <sigma/entity.hpp>
+#include <sigma/graphics/cubemap.hpp>
 #include <sigma/graphics/directional_light.hpp>
+#include <sigma/graphics/material.hpp>
 #include <sigma/graphics/opengl/cubemap.hpp>
 #include <sigma/graphics/opengl/frame_buffer.hpp>
 #include <sigma/graphics/opengl/geometry_buffer.hpp>
@@ -16,13 +18,23 @@
 #include <sigma/graphics/opengl/shadow_buffer.hpp>
 #include <sigma/graphics/opengl/static_mesh.hpp>
 #include <sigma/graphics/opengl/texture.hpp>
-#include <sigma/graphics/opengl/uniform_buffer.hpp>
+#include <sigma/graphics/opengl/util.hpp>
 #include <sigma/graphics/point_light.hpp>
+#include <sigma/graphics/post_process_effect.hpp>
+#include <sigma/graphics/shader.hpp>
 #include <sigma/graphics/spot_light.hpp>
+#include <sigma/graphics/static_mesh.hpp>
 #include <sigma/graphics/static_mesh_instance.hpp>
+#include <sigma/graphics/texture.hpp>
+#include <sigma/resource/manager.hpp>
 #include <sigma/transform.hpp>
 
-#include <limits>
+#include <glad/glad.h>
+
+#include <glm/mat4x4.hpp>
+#include <glm/vec2.hpp>
+
+#include <chrono>
 
 namespace sigma {
 

@@ -1,8 +1,11 @@
 #include <sigma/graphics/opengl/shader.hpp>
 
 #include <sigma/graphics/opengl/util.hpp>
+#include <sigma/graphics/shader.hpp>
 
-#include <cassert>
+#include <glad/glad.h>
+
+#include <cstdlib>
 #include <iostream>
 #include <vector>
 
@@ -18,7 +21,7 @@ namespace opengl {
         case graphics::shader_type::geometry:
             return shader_type::GEOMETRY_SHADER;
         }
-		return shader_type::NONE_SHADER;
+        return shader_type::NONE_SHADER;
     }
 
     shader::shader(shader_type type, std::string source)
@@ -43,7 +46,7 @@ namespace opengl {
             std::string error_string(error_buffer.begin(), error_buffer.end());
             std::cout << error_string << '\n';
 
-            std::abort();
+            std::abort(); // TODO be more subtle???
         }
     }
 

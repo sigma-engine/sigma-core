@@ -1,8 +1,14 @@
 #include <sigma/graphics/opengl/post_process_effect.hpp>
 
 #include <sigma/graphics/opengl/geometry_buffer.hpp>
+#include <sigma/graphics/opengl/shader.hpp>
 #include <sigma/graphics/opengl/static_mesh.hpp>
+#include <sigma/graphics/opengl/texture.hpp>
 #include <sigma/graphics/opengl/util.hpp>
+
+#include <glad/glad.h>
+
+#include <boost/filesystem/path.hpp>
 
 namespace sigma {
 namespace opengl {

@@ -1,6 +1,6 @@
 #include "simple_game.hpp"
 
-#include <glm/vec3.hpp>
+#include <sigma/entity.hpp>
 
 #include <boost/math/constants/constants.hpp>
 
@@ -107,7 +107,7 @@ void simple_game::update(std::chrono::duration<float> dt)
 
     world_.for_each<sigma::transform, sigma::graphics::directional_light>([&](sigma::entity e, const sigma::transform& txform, sigma::graphics::directional_light& light) {
         light.direction = glm::normalize(glm::vec3(txform.matrix * glm::vec4(0, 1, 0, 0)));
-        //light.shadow_frustum.set_view(glm::lookAt(txform.position, txform.position - light.direction, glm::vec3(0, 1, 0)));
+        // light.shadow_frustum.set_view(glm::lookAt(txform.position, txform.position - light.direction, glm::vec3(0, 1, 0)));
     });
 
     world_.for_each<sigma::transform, sigma::graphics::spot_light>([&](sigma::entity e, const sigma::transform& txform, sigma::graphics::spot_light& light) {
