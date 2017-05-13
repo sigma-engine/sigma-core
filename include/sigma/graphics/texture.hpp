@@ -2,6 +2,7 @@
 #define SIGMA_GRAPHICS_TEXTURE_HPP
 
 #include <sigma/config.hpp>
+#include <sigma/reflect.hpp>
 #include <sigma/resource/manager.hpp>
 #include <sigma/util/glm_serialize.hpp>
 
@@ -12,13 +13,13 @@
 namespace sigma {
 namespace graphics {
 
-    enum class texture_filter {
+    enum class R_ENUM() texture_filter {
         LINEAR,
         NEAREST,
         NONE
     };
 
-    enum class texture_format {
+    enum class R_ENUM() texture_format {
         RGB8,
         RGBA8,
         RGB32F
@@ -66,5 +67,7 @@ namespace graphics {
 }
 
 BOOST_CLASS_VERSION(sigma::graphics::texture_data, 1);
+
+#include <sigma/graphics/texture.generated.hpp>
 
 #endif // SIGMA_GRAPHICS_TEXTURE_HPP
