@@ -3,6 +3,7 @@
 
 #include <sigma/config.hpp>
 #include <sigma/util/compile_time_hash.hpp>
+#include <sigma/util/json_conversion.hpp>
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
@@ -11,6 +12,19 @@
 #include <string>
 
 namespace sigma {
+
+// TODO:RESOURCE remove this when the new resource system is in place
+namespace resource {
+    struct identifier;
+}
+namespace json {
+    // TODO:RESOURCE remove this when the new resource system is in place
+    static bool from_json(const Json::Value& source, resource::identifier& output);
+
+    // TODO:RESOURCE remove this when the new resource system is in place
+    static void to_json(const resource::identifier& source, Json::Value& output);
+}
+
 namespace resource {
     struct SIGMA_API identifier {
     public:
@@ -41,13 +55,15 @@ namespace resource {
 
         std::string name() const;
 
-        std::string nice_name() const;
-
     protected:
         util::hash_type value_;
         std::string name_;
 
         friend class boost::serialization::access;
+
+        // TODO:RESOURCE remove this when the new resource system is in place
+        friend bool json::from_json(const Json::Value& source, identifier& output);
+        friend void json::to_json(const identifier& source, Json::Value& output);
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
@@ -60,6 +76,21 @@ namespace resource {
     SIGMA_API std::ostream& operator<<(std::ostream& os, const identifier& id);
 
     using identifier = identifier;
+}
+namespace json {
+    // TODO:RESOURCE remove this when the new resource system is in place
+    static bool from_json(const Json::Value& source, resource::identifier& output)
+    {
+        output.name_ = source.asString();
+        output.value_ = util::compile_time_hash(output.name_.c_str());
+        return true;
+    }
+
+    // TODO:RESOURCE remove this when the new resource system is in place
+    static void to_json(const resource::identifier& source, Json::Value& output)
+    {
+        output = source.name_;
+    }
 }
 }
 

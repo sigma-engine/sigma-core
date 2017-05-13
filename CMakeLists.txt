@@ -55,7 +55,6 @@ set(CORE_SOURCES
     src/sigma/graphics/opengl/render_buffer.cpp
 
     src/sigma/util/filesystem.cpp
-    src/sigma/util/json_conversion.cpp
 )
 set(CORE_HEADERS
     include/sigma/window.hpp

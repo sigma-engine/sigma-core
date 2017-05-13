@@ -1,8 +1,9 @@
 #ifndef SIMPLE_GAME_HPP
 #define SIMPLE_GAME_HPP
 
-#include <sigma/game.hpp>
 #include <simple_world.hpp>
+
+#include <sigma/game.hpp>
 
 #include <random>
 

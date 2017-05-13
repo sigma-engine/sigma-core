@@ -24,13 +24,14 @@ namespace json {
         }
     }
 
-    static void from_json(const Json::Value& source, {{enum}}& output)
+    static bool from_json(const Json::Value& source, {{enum}}& output)
     {
         auto str = boost::to_lower_copy(source.asString());
         {%- for constant in enum.constants %}
         {% if not loop.first %}else {% endif %}if (str == "{{constant.lower()}}")
             output = {{enum}}::{{constant}};
         {%- endfor %}
+        return true;
     }
 {%- endfor -%}
 {%- for class in database.classes %}
@@ -42,32 +43,34 @@ namespace json {
         {% endfor %}
     }
 
-    static void from_json(const Json::Value& source, {{class}}& output)
+    static bool from_json(const Json::Value& source, {{class}}& output)
     {
         {% for field in class.fields if not field.is_derived() -%}
         from_json(source["{{field.name}}"], output.{{field.name}});
         {% endfor %}
+        return true;
     }
 {%- endfor -%}
-{#%- for world in database.worlds %}
+{%- for world in database.worlds %}
 
-void from_json(const Json::Value &source, {{world}} &output)
-{
-    auto entity_names = source.getMemberNames();
-    std::for_each(entity_names.begin(), entity_names.end(), [&](const std::string& entity_name) {
-        const auto& scene_entity = source[entity_name];
-        const auto& entity_component_types = scene_entity.getMemberNames();
+    static bool from_json(const Json::Value &source, {{world}}& output)
+    {
+        auto entity_names = source.getMemberNames();
+        std::for_each(entity_names.begin(), entity_names.end(), [&](const std::string& entity_name) {
+            const auto& scene_entity = source[entity_name];
+            const auto& entity_component_types = scene_entity.getMemberNames();
 
-        auto e = output.create();
-        std::for_each(entity_component_types.begin(), entity_component_types.end(), [&](const std::string& component_type) {
-            {% for component in world.components -%}
-            {% if not loop.first %}else {% endif %}if (component_type == "{{component}}")
-                from_json(scene_entity["{{component}}"], *output.add<{{component}}>(e));
-            {% endfor %}
+            auto e = output.create();
+            std::for_each(entity_component_types.begin(), entity_component_types.end(), [&](const std::string& component_type) {
+                {% for component in world.components -%}
+                {% if not loop.first %}else {% endif %}if (component_type == "{{component}}")
+                    from_json(scene_entity["{{component}}"], *output.add<{{component}}>(e));
+                {% endfor %}
+            });
         });
-    });
-}
-{%- endfor %#}
+        return true;
+    }
+{%- endfor %}
 }
 }
 

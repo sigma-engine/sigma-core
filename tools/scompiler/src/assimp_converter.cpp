@@ -1,6 +1,11 @@
 #include <assimp_converter.hpp>
 
+#include <sigma/graphics/directional_light.hpp>
+#include <sigma/graphics/point_light.hpp>
+#include <sigma/graphics/spot_light.hpp>
 #include <sigma/graphics/static_mesh.hpp>
+#include <sigma/graphics/static_mesh_instance.hpp>
+#include <sigma/transform.hpp>
 #include <sigma/util/filesystem.hpp>
 #include <sigma/util/json_conversion.hpp>
 
@@ -266,15 +271,19 @@ void assimp_converter::convert_object(std::string name, Json::Value& entity) con
     ainode->mTransformation.Decompose(aiscale, airotation, aiposition);
     aiscale.y *= -1;
 
-    json::to_json(converter_->convert_3d(aiposition), entity["sigma::transform"]["position"]);
-    json::to_json(converter_->convert_3d(airotation), entity["sigma::transform"]["rotation"]);
-    json::to_json(converter_->convert_3d(aiscale), entity["sigma::transform"]["scale"]);
+    sigma::transform txform;
+    txform.position = converter_->convert_3d(aiposition);
+    txform.rotation = converter_->convert_3d(airotation);
+    txform.scale = converter_->convert_3d(aiscale);
+    json::to_json(txform, entity["sigma::transform"]);
 
     if (ainode->mNumMeshes > 0) {
         // TODO warn if more than one mesh per object
         const aiMesh* aimesh = aiScene->mMeshes[ainode->mMeshes[0]];
-        sigma::resource::identifier meshid("static_mesh", source_file_, get_name(aimesh));
-        entity["sigma::graphics::static_mesh"] = meshid.nice_name();
+
+        sigma::graphics::static_mesh_instance inst;
+        inst.mesh = sigma::resource::identifier("static_mesh", source_file_, get_name(aimesh));
+        json::to_json(inst, entity["sigma::graphics::static_mesh_instance"]);
     }
 
     for (unsigned int i = 0; i < aiScene->mNumLights; ++i) {
@@ -285,19 +294,28 @@ void assimp_converter::convert_object(std::string name, Json::Value& entity) con
             color /= intensity;
 
             switch (ailight->mType) {
-            case aiLightSource_POINT:
-                json::to_json(color, entity["sigma::graphics::point_light"]["color"]);
-                json::to_json(intensity, entity["sigma::graphics::point_light"]["intensity"]);
+            case aiLightSource_POINT: {
+                sigma::graphics::point_light light;
+                light.color = color;
+                light.intensity = intensity;
+                json::to_json(light, entity["sigma::graphics::point_light"]);
                 break;
-            case aiLightSource_DIRECTIONAL:
-                json::to_json(color, entity["sigma::graphics::directional_light"]["color"]);
-                json::to_json(intensity, entity["sigma::graphics::directional_light"]["intensity"]);
+            }
+            case aiLightSource_DIRECTIONAL: {
+                sigma::graphics::directional_light light;
+                light.color = color;
+                light.intensity = intensity;
+                json::to_json(light, entity["sigma::graphics::directional_light"]);
                 break;
-            case aiLightSource_SPOT:
-                json::to_json(color, entity["sigma::graphics::spot_light"]["color"]);
-                json::to_json(intensity, entity["sigma::graphics::spot_light"]["intensity"]);
-                json::to_json(ailight->mAngleOuterCone, entity["sigam::graphics::spot_light"]["cutoff"]);
+            }
+            case aiLightSource_SPOT: {
+                sigma::graphics::spot_light light;
+                light.color = color;
+                light.intensity = intensity;
+                light.cutoff = ailight->mAngleOuterCone;
+                json::to_json(light, entity["sigma::graphics::spot_light"]);
                 break;
+            }
             default: // TODO more lights
                 break;
             }

@@ -2,6 +2,7 @@
 #define SIGMA_ENGINE_RESOURCE_MANAGER_HPP
 
 #include <sigma/resource/identifier.hpp>
+#include <sigma/util/json_conversion.hpp>
 
 #include <boost/archive/binary_iarchive.hpp>
 
@@ -267,6 +268,24 @@ namespace resource {
         std::unordered_map<identifier, resource_data> resources_data_;
         std::unordered_map<identifier, std::unique_ptr<Resource>> resources_;
     };
+}
+
+namespace json {
+    // TODO:RESOURCE remove this when the new resource system is in place
+    template <class Resource>
+    static bool from_json(const Json::Value& source, resource::handle<Resource>& output)
+    {
+        resource::identifier id;
+        from_json(source, id);
+        output = id;
+    }
+
+    // TODO:RESOURCE remove this when the new resource system is in place
+    template <class Resource>
+    static void to_json(const resource::handle<Resource>& source, Json::Value& output)
+    {
+        to_json((resource::identifier)source, output);
+    }
 }
 }
 
