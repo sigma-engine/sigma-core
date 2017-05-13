@@ -2,13 +2,13 @@
 #define SIGMA_GRAPHICS_POINT_LIGHT_HPP
 
 #include <sigma/config.hpp>
+#include <sigma/reflect.hpp>
 
 #include <glm/vec3.hpp>
 
 namespace sigma {
 namespace graphics {
-
-    struct point_light {
+    struct R_COMPONENT() point_light {
         glm::vec3 color;
         float intensity;
 
@@ -21,5 +21,7 @@ namespace graphics {
     };
 }
 }
+
+#include <sigma/graphics/point_light.generated.hpp>
 
 #endif // SIGMA_GRAPHICS_POINT_LIGHT_HPP
