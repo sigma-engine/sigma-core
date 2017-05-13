@@ -11,6 +11,35 @@ macro(sigma_setup)
     endif()
 endmacro()
 
+function(generate_meta_data generated_header_files)
+    set(gen_list)
+    foreach(header_file ${ARGN})
+        file(RELATIVE_PATH header_file "${CMAKE_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/${header_file}")
+
+        set(generated_header_file "${CMAKE_BINARY_DIR}/${header_file}")
+        get_filename_component(dir "${generated_header_file}" DIRECTORY)
+        get_filename_component(name "${generated_header_file}" NAME_WE)
+        get_filename_component(ext "${generated_header_file}" EXT)
+        set(generated_header_file "${dir}/${name}.generated${ext}")
+
+        file(READ "${CMAKE_SOURCE_DIR}/${header_file}" file_text)
+        string(FIND "${file_text}" "${name}.generated${EXT}" match)
+
+        if(NOT ${match} EQUAL -1)
+            add_custom_command(
+                OUTPUT "${generated_header_file}"
+                COMMAND python2 ARGS "${CMAKE_SOURCE_DIR}/tools/sreflect/sreflect.py" --template-file="${CMAKE_SOURCE_DIR}/tools/sreflect/generated.j2" --source-directory "${CMAKE_SOURCE_DIR}" --build-directory "${CMAKE_BINARY_DIR}" --file "${CMAKE_SOURCE_DIR}/${header_file}"
+                MAIN_DEPENDENCY "${CMAKE_SOURCE_DIR}/${header_file}"
+                DEPENDS "${CMAKE_SOURCE_DIR}/tools/sreflect/generated.j2" "${CMAKE_SOURCE_DIR}/tools/sreflect/sreflect.py"
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            )
+            list(APPEND gen_list "${generated_header_file}")
+        endif()
+    endforeach()
+
+    set(${generated_header_files} ${gen_list} PARENT_SCOPE)
+endfunction()
+
 function(add_resources target)
     # https://cmake.org/cmake/help/v3.0/module/CMakeParseArguments.html
     set(options)
