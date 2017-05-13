@@ -8,37 +8,55 @@
 
 namespace sigma {
 namespace json {
-    bool from_json(const Json::Value& value, float& output)
+    bool from_json(const Json::Value& source, bool& output)
     {
-        if (value.isConvertibleTo(Json::realValue)) {
-            output = float(value.asDouble());
+        if (source.isConvertibleTo(Json::booleanValue)) {
+            output = float(source.asBool());
             return true;
         }
         return false;
     }
 
-    bool from_json(const Json::Value& value, glm::vec2& output)
+    bool from_json(const Json::Value& source, int& output)
+    {
+        if (source.isConvertibleTo(Json::intValue)) {
+            output = float(source.asInt());
+            return true;
+        }
+        return false;
+    }
+
+    bool from_json(const Json::Value& source, float& output)
+    {
+        if (source.isConvertibleTo(Json::realValue)) {
+            output = float(source.asDouble());
+            return true;
+        }
+        return false;
+    }
+
+    bool from_json(const Json::Value& source, glm::vec2& output)
     {
         // TODO support x,y
-        return value.isArray() && value.size() == 2 && from_json(value[0], output.x) && from_json(value[1], output.y);
+        return source.isArray() && source.size() == 2 && from_json(source[0], output.x) && from_json(source[1], output.y);
     }
 
-    bool from_json(const Json::Value& value, glm::vec3& output)
+    bool from_json(const Json::Value& source, glm::vec3& output)
     {
         // TODO support x,y,z
-        return value.isArray() && value.size() == 3 && from_json(value[0], output.x) && from_json(value[1], output.y) && from_json(value[2], output.z);
+        return source.isArray() && source.size() == 3 && from_json(source[0], output.x) && from_json(source[1], output.y) && from_json(source[2], output.z);
     }
 
-    bool from_json(const Json::Value& value, glm::vec4& output)
+    bool from_json(const Json::Value& source, glm::vec4& output)
     {
         // TODO support x,y,z,w
-        return value.isArray() && value.size() == 4 && from_json(value[0], output.x) && from_json(value[1], output.y) && from_json(value[2], output.z) && from_json(value[3], output.w);
+        return source.isArray() && source.size() == 4 && from_json(source[0], output.x) && from_json(source[1], output.y) && from_json(source[2], output.z) && from_json(source[3], output.w);
     }
 
-    bool from_json(const Json::Value& value, glm::quat& output)
+    bool from_json(const Json::Value& source, glm::quat& output)
     {
         glm::vec3 e;
-        if (from_json(value, e)) {
+        if (from_json(source, e)) {
             output = glm::quat{ glm::radians(e) };
             return true;
         }
@@ -46,51 +64,48 @@ namespace json {
         return false;
     }
 
-    bool from_json(const Json::Value& value, graphics::texture_filter& output)
+    void to_json(bool source, Json::Value& output)
     {
-        auto str = boost::to_lower_copy(value.asString());
-        if (str == "nearest") {
-            output = graphics::texture_filter::NEAREST;
-            return true;
-        } else if (str == "linear") {
-            output = graphics::texture_filter::LINEAR;
-            return true;
-        } else if (str == "none") {
-            output = graphics::texture_filter::NONE;
-            return true;
-        }
-        return false;
+        output = source;
     }
 
-    bool from_json(const Json::Value& value, graphics::texture_format& output)
+    void to_json(int source, Json::Value& output)
     {
-        auto str = boost::to_lower_copy(value.asString());
-        if (str == "rgb8") {
-            output = graphics::texture_format::RGB8;
-            return true;
-        } else if (str == "rgba8") {
-            output = graphics::texture_format::RGBA8;
-            return true;
-        } else if (str == "rgb32f") {
-            output = graphics::texture_format::RGB32F;
-            return true;
-        }
-
-        return false;
+        output = source;
     }
 
-    Json::Value to_json(float v)
+    void to_json(float source, Json::Value& output)
     {
-        return Json::Value{ v };
+        output = source;
     }
 
-    Json::Value to_json(glm::vec3 v)
+    void to_json(const glm::vec2& source, Json::Value& output)
     {
-        Json::Value out(Json::arrayValue);
-        out[0] = v.x;
-        out[1] = v.y;
-        out[2] = v.z;
-        return out;
+        // TODO support x,y
+        output[0] = source.x;
+        output[1] = source.y;
+    }
+
+    void to_json(const glm::vec3& source, Json::Value& output)
+    {
+        // TODO support x,y,z
+        output[0] = source.x;
+        output[1] = source.y;
+        output[2] = source.z;
+    }
+
+    void to_json(const glm::vec4& source, Json::Value& output)
+    {
+        // TODO support x,y,z,w
+        output[0] = source.x;
+        output[1] = source.y;
+        output[2] = source.z;
+        output[3] = source.w;
+    }
+
+    void to_json(const glm::quat& source, Json::Value& output)
+    {
+        to_json(glm::degrees(glm::eulerAngles(source)), output);
     }
 }
 }

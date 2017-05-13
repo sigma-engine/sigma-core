@@ -108,17 +108,10 @@ bool compile_textures(boost::filesystem::path outputdir, std::vector<boost::file
 
             sigma::graphics::texture_data texture;
 
-            if (!json::from_json(import_settings["filter"]["minification"], texture.minification_filter) || texture.minification_filter == graphics::texture_filter::NONE)
-                throw std::runtime_error("filter.minification='" + import_settings["filter"]["minification"].asString() + "'");
-
-            if (!json::from_json(import_settings["filter"]["magnification"], texture.magnification_filter) || texture.magnification_filter == graphics::texture_filter::NONE)
-                throw std::runtime_error("filter.magnification='" + import_settings["filter"]["magnification"].asString() + "'");
-
-            if (!json::from_json(import_settings["filter"]["mipmap"], texture.mipmap_filter))
-                throw std::runtime_error("filter.mipmap='" + import_settings["filter"]["mipmap"].asString() + "'");
-
-            if (!json::from_json(import_settings["format"], texture.format))
-                throw std::runtime_error("format='" + import_settings["format"].asString() + "'");
+            json::from_json(import_settings["filter"]["minification"], texture.minification_filter);
+            json::from_json(import_settings["filter"]["magnification"], texture.magnification_filter);
+            json::from_json(import_settings["filter"]["mipmap"], texture.mipmap_filter);
+            json::from_json(import_settings["format"], texture.format);
 
             switch (texture.format) {
             case graphics::texture_format::RGB8: {

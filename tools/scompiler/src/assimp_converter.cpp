@@ -183,17 +183,17 @@ void assimp_converter::convert_material(std::string name, Json::Value& material)
 
         aiColor3D color;
         if (AI_SUCCESS == aimat->Get(AI_MATKEY_COLOR_DIFFUSE, color))
-            material["basecolor"] = json::to_json(converter_->convert_color(color));
+            json::to_json(converter_->convert_color(color), material["basecolor"]);
         if (AI_SUCCESS == aimat->Get(AI_MATKEY_COLOR_SPECULAR, color))
-            material["roughness"] = converter_->convert_color(color).x;
+            json::to_json(converter_->convert_color(color).x, material["roughness"]);
         if (AI_SUCCESS == aimat->Get(AI_MATKEY_COLOR_AMBIENT, color))
-            material["metalness"] = converter_->convert_color(color).x;
+            json::to_json(converter_->convert_color(color).x, material["metalness"]);
         if (AI_SUCCESS == aimat->Get(AI_MATKEY_COLOR_EMISSIVE, color))
-            material["emissive"] = json::to_json(converter_->convert_color(color));
+            json::to_json(converter_->convert_color(color), material["emissive"]);
         if (AI_SUCCESS == aimat->Get(AI_MATKEY_COLOR_TRANSPARENT, color))
-            material["transparent"] = converter_->convert_color(color).x;
+            json::to_json(converter_->convert_color(color).x, material["transparent"]);
         if (AI_SUCCESS == aimat->Get(AI_MATKEY_COLOR_REFLECTIVE, color))
-            material["reflective"] = converter_->convert_color(color).x;
+            json::to_json(converter_->convert_color(color).x, material["reflective"]);
 
         for (auto texture_type : texture_type_map) {
             if (aimat->GetTextureCount(texture_type.first) > 0) {
@@ -266,9 +266,9 @@ void assimp_converter::convert_object(std::string name, Json::Value& entity) con
     ainode->mTransformation.Decompose(aiscale, airotation, aiposition);
     aiscale.y *= -1;
 
-    entity["sigma::transform"]["position"] = json::to_json(converter_->convert_3d(aiposition));
-    entity["sigma::transform"]["rotation"] = json::to_json(glm::degrees(glm::eulerAngles(converter_->convert_3d(airotation))));
-    entity["sigma::transform"]["scale"] = json::to_json(converter_->convert_3d(aiscale));
+    json::to_json(converter_->convert_3d(aiposition), entity["sigma::transform"]["position"]);
+    json::to_json(converter_->convert_3d(airotation), entity["sigma::transform"]["rotation"]);
+    json::to_json(converter_->convert_3d(aiscale), entity["sigma::transform"]["scale"]);
 
     if (ainode->mNumMeshes > 0) {
         // TODO warn if more than one mesh per object
@@ -286,17 +286,17 @@ void assimp_converter::convert_object(std::string name, Json::Value& entity) con
 
             switch (ailight->mType) {
             case aiLightSource_POINT:
-                entity["sigma::graphics::point_light"]["color"] = json::to_json(color);
-                entity["sigma::graphics::point_light"]["intensity"] = json::to_json(intensity);
+                json::to_json(color, entity["sigma::graphics::point_light"]["color"]);
+                json::to_json(intensity, entity["sigma::graphics::point_light"]["intensity"]);
                 break;
             case aiLightSource_DIRECTIONAL:
-                entity["sigma::graphics::directional_light"]["color"] = json::to_json(color);
-                entity["sigma::graphics::directional_light"]["intensity"] = json::to_json(intensity);
+                json::to_json(color, entity["sigma::graphics::directional_light"]["color"]);
+                json::to_json(intensity, entity["sigma::graphics::directional_light"]["intensity"]);
                 break;
             case aiLightSource_SPOT:
-                entity["sigma::graphics::spot_light"]["color"] = json::to_json(color);
-                entity["sigma::graphics::spot_light"]["intensity"] = json::to_json(intensity);
-                entity["sigam::graphics::spot_light"]["cutoff"] = json::to_json(ailight->mAngleOuterCone);
+                json::to_json(color, entity["sigma::graphics::spot_light"]["color"]);
+                json::to_json(intensity, entity["sigma::graphics::spot_light"]["intensity"]);
+                json::to_json(ailight->mAngleOuterCone, entity["sigam::graphics::spot_light"]["cutoff"]);
                 break;
             default: // TODO more lights
                 break;

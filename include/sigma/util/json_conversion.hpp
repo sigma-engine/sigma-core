@@ -14,23 +14,33 @@ namespace graphics {
     enum class texture_format;
 }
 namespace json {
-    bool SIGMA_API from_json(const Json::Value& value, float& output);
+    bool SIGMA_API from_json(const Json::Value& source, bool& output);
 
-    bool SIGMA_API from_json(const Json::Value& value, glm::vec2& output);
+    bool SIGMA_API from_json(const Json::Value& source, int& output);
 
-    bool SIGMA_API from_json(const Json::Value& value, glm::vec3& output);
+    bool SIGMA_API from_json(const Json::Value& source, float& output);
 
-    bool SIGMA_API from_json(const Json::Value& value, glm::vec4& output);
+    bool SIGMA_API from_json(const Json::Value& source, glm::vec2& output);
 
-    bool SIGMA_API from_json(const Json::Value& value, glm::quat& output);
+    bool SIGMA_API from_json(const Json::Value& source, glm::vec3& output);
 
-    bool SIGMA_API from_json(const Json::Value& value, graphics::texture_filter& output);
+    bool SIGMA_API from_json(const Json::Value& source, glm::vec4& output);
 
-    bool SIGMA_API from_json(const Json::Value& value, graphics::texture_format& output);
+    bool SIGMA_API from_json(const Json::Value& source, glm::quat& output);
 
-    Json::Value SIGMA_API to_json(float v);
+    void SIGMA_API to_json(bool source, Json::Value& output);
 
-    Json::Value SIGMA_API to_json(glm::vec3 v);
+    void SIGMA_API to_json(int source, Json::Value& output);
+
+    void SIGMA_API to_json(float source, Json::Value& output);
+
+    void SIGMA_API to_json(const glm::vec2& source, Json::Value& output);
+
+    void SIGMA_API to_json(const glm::vec3& source, Json::Value& output);
+
+    void SIGMA_API to_json(const glm::vec4& source, Json::Value& output);
+
+    void SIGMA_API to_json(const glm::quat& source, Json::Value& output);
 }
 }
 
