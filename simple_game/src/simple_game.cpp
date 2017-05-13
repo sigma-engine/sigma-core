@@ -18,12 +18,13 @@ simple_game::simple_game(sigma::graphics::renderer* renderer)
 
     // load("../data/proprietary/classroom/classroom.scn");
     // load("../data/water_packed.scn");
-    load("../data/material_test_scene.scn");
+    // load("../data/material_test_scene.scn");
+    load("../data/proprietary/sponza/sponza.scn");
 
-    auto grid_e = world_.create();
-    world_.add<sigma::transform>(grid_e);
-    world_.add<sigma::graphics::static_mesh_instance>(grid_e, renderer->static_meshes().get(sigma::resource::identifier{ "static_mesh://material_ball:material_ball" }));
-    world_.add<grid_component>(grid_e, 5, 5, 1.5f, 1.5f);
+    // auto grid_e = world_.create();
+    // world_.add<sigma::transform>(grid_e);
+    // world_.add<sigma::graphics::static_mesh_instance>(grid_e, renderer->static_meshes().get(sigma::resource::identifier{ "static_mesh://material_ball:material_ball" }));
+    // world_.add<grid_component>(grid_e, 5, 5, 1.5f, 1.5f);
 
     world_.for_each<sigma::transform, sigma::graphics::static_mesh_instance, grid_component>([&](sigma::entity e, const sigma::transform& txform, sigma::graphics::static_mesh_instance& mesh_instance, const grid_component& grid) {
         auto material = mesh_instance.mesh->material(0);

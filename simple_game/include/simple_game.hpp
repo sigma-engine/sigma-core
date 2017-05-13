@@ -1,9 +1,8 @@
 #ifndef SIMPLE_GAME_HPP
 #define SIMPLE_GAME_HPP
 
-#include <grid_component.hpp>
 #include <sigma/game.hpp>
-#include <sigma/world.hpp>
+#include <simple_world.hpp>
 
 #include <random>
 
@@ -26,13 +25,6 @@ private:
     std::uniform_real_distribution<float> y_distribution_;
     std::uniform_real_distribution<float> z_distribution_;
 };
-
-using simple_world = sigma::world<sigma::transform,
-    sigma::graphics::directional_light,
-    sigma::graphics::point_light,
-    sigma::graphics::spot_light,
-    sigma::graphics::static_mesh_instance,
-    grid_component>;
 
 class simple_game : public sigma::game<simple_world> {
 public:
