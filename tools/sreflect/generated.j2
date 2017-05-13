@@ -1,0 +1,75 @@
+#ifndef {{generated_header_gaurd}}
+#define {{generated_header_gaurd}}
+#ifndef __REFLECTION_PARSER__
+
+#include <sigma/util/json_conversion.hpp>
+
+#include <json/json.h>
+
+#include <boost/algorithm/string/case_conv.hpp>
+
+namespace sigma {
+namespace json {
+{%- for enum in database.enums %}
+
+    static void to_json(const {{enum}}& source, Json::Value& output)
+    {
+        switch (source) {
+        {%- for constant in enum.constants %}
+        case {{enum}}::{{constant}}: {
+            output = "{{constant}}";
+            break;
+        }
+        {%- endfor %}
+        }
+    }
+
+    static void from_json(const Json::Value& source, {{enum}}& output)
+    {
+        auto str = boost::to_lower_copy(source.asString());
+        {%- for constant in enum.constants %}
+        {% if not loop.first %}else {% endif %}if (str == "{{constant.lower()}}")
+            output = {{enum}}::{{constant}};
+        {%- endfor %}
+    }
+{%- endfor -%}
+{%- for class in database.classes %}
+
+    static void to_json(const {{class}}& source, Json::Value& output)
+    {
+        {% for field in class.fields if not field.is_derived() -%}
+            to_json(source.{{field.name}}, output["{{field.name}}"]);
+        {% endfor %}
+    }
+
+    static void from_json(const Json::Value& source, {{class}}& output)
+    {
+        {% for field in class.fields if not field.is_derived() -%}
+        from_json(source["{{field.name}}"], output.{{field.name}});
+        {% endfor %}
+    }
+{%- endfor -%}
+{#%- for world in database.worlds %}
+
+void from_json(const Json::Value &source, {{world}} &output)
+{
+    auto entity_names = source.getMemberNames();
+    std::for_each(entity_names.begin(), entity_names.end(), [&](const std::string& entity_name) {
+        const auto& scene_entity = source[entity_name];
+        const auto& entity_component_types = scene_entity.getMemberNames();
+
+        auto e = output.create();
+        std::for_each(entity_component_types.begin(), entity_component_types.end(), [&](const std::string& component_type) {
+            {% for component in world.components -%}
+            {% if not loop.first %}else {% endif %}if (component_type == "{{component}}")
+                from_json(scene_entity["{{component}}"], *output.add<{{component}}>(e));
+            {% endfor %}
+        });
+    });
+}
+{%- endfor %#}
+}
+}
+
+#endif // __REFLECTION_PARSER__
+#endif // {{generated_header_gaurd}}
