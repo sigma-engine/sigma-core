@@ -1,8 +1,12 @@
 #include <sigma/graphics/opengl/static_mesh.hpp>
 
-#include <sigma/graphics/opengl/render_uniforms.hpp>
-#include <sigma/graphics/opengl/shader_technique.hpp>
+#include <sigma/graphics/opengl/material.hpp>
 #include <sigma/graphics/opengl/util.hpp>
+#include <sigma/graphics/static_mesh.hpp>
+
+#include <glad/glad.h>
+
+#include <boost/filesystem/path.hpp>
 
 namespace sigma {
 namespace opengl {

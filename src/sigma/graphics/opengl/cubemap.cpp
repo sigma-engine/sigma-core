@@ -1,7 +1,10 @@
 #include <sigma/graphics/opengl/cubemap.hpp>
 
+#include <sigma/graphics/cubemap.hpp>
 #include <sigma/graphics/opengl/texture.hpp>
 #include <sigma/graphics/opengl/util.hpp>
+
+#include <glad/glad.h>
 
 namespace sigma {
 namespace opengl {

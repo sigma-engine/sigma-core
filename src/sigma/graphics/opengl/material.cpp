@@ -3,6 +3,8 @@
 #include <sigma/graphics/opengl/geometry_buffer.hpp>
 #include <sigma/graphics/opengl/util.hpp>
 
+#include <glad/glad.h>
+
 namespace sigma {
 namespace opengl {
     material::material(const graphics::material_data& data)

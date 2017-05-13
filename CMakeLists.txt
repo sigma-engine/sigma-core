@@ -55,7 +55,6 @@ set(CORE_SOURCES
     src/sigma/graphics/opengl/render_buffer.cpp
 
     src/sigma/util/filesystem.cpp
-    src/sigma/util/json_conversion.cpp
 )
 set(CORE_HEADERS
     include/sigma/window.hpp
@@ -106,8 +105,9 @@ set(CORE_HEADERS
     include/sigma/util/variadic.hpp
 )
 
-add_library(sigma-core STATIC ${CORE_SOURCES} ${CORE_HEADERS})
-target_include_directories(sigma-core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/resources)
+generate_meta_data(CORE_GENERATED_SOURCES ${CORE_HEADERS})
+add_library(sigma-core STATIC ${CORE_SOURCES} ${CORE_GENERATED_SOURCES})
+target_include_directories(sigma-core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_BINARY_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/resources)
 target_compile_definitions(sigma-core PUBLIC PRIVATE -DSIGMA_EXPORT)
 target_link_libraries(sigma-core PUBLIC ${CMAKE_DL_LIBS} ${CONAN_LIBS})
 

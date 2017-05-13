@@ -2,15 +2,18 @@
 #define SIGMA_GRAPHICS_STATIC_MESH_INSTANCE_HPP
 
 #include <sigma/config.hpp>
-
 #include <sigma/graphics/static_mesh.hpp>
+#include <sigma/reflect.hpp>
+#include <sigma/resource/identifier.hpp>
+#include <sigma/resource/manager.hpp>
 
 #include <unordered_map>
 
 namespace sigma {
 namespace graphics {
-    struct static_mesh_instance {
+    struct R_COMPONENT() static_mesh_instance {
         resource::handle<static_mesh> mesh;
+        R_FIELD(derived) //TODO:RESOURCE remove this when new resource system is added.
         std::unordered_map<std::size_t, resource::handle<material>> materials;
         bool cast_shadows = true;
 
@@ -24,5 +27,7 @@ namespace graphics {
     };
 }
 }
+
+#include <sigma/graphics/static_mesh_instance.generated.hpp>
 
 #endif // SIGMA_GRAPHICS_STATIC_MESH_INSTANCE_HPP

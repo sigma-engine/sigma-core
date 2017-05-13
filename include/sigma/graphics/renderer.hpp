@@ -11,6 +11,8 @@
 #include <sigma/graphics/static_mesh.hpp>
 #include <sigma/graphics/texture.hpp>
 
+#include <glm/vec2.hpp>
+
 namespace sigma {
 namespace graphics {
     struct SIGMA_API view_port {

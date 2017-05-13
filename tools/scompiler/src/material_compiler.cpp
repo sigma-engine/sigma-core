@@ -7,6 +7,7 @@
 #include <json/json.h>
 
 #include <boost/archive/binary_oarchive.hpp>
+#include <boost/filesystem/path.hpp>
 
 namespace sigma {
 bool is_material(boost::filesystem::path file)

@@ -2,8 +2,11 @@
 #define SIGMA_GRAPHICS_OPENGL_SHADOW_BUFFER_HPP
 
 #include <sigma/graphics/opengl/frame_buffer.hpp>
+
 #include <sigma/graphics/opengl/render_buffer.hpp>
 #include <sigma/graphics/opengl/texture.hpp>
+
+#include <glm/vec2.hpp>
 
 namespace sigma {
 namespace opengl {

@@ -5,6 +5,8 @@
 
 #include <glad/glad.h>
 
+#include <string>
+
 #define SHADER_CONST_PTR(x) static_cast<const sigma::opengl::shader*>(x.get())
 #define SHADER_PTR(x) static_cast<sigma::opengl::shader*>(x.get())
 
@@ -17,7 +19,7 @@ namespace opengl {
         TESS_EVALUATION_SHADER = GL_TESS_EVALUATION_SHADER,
         GEOMETRY_SHADER = GL_GEOMETRY_SHADER,
         FRAGMENT_SHADER = GL_FRAGMENT_SHADER,
-		NONE_SHADER
+        NONE_SHADER
     };
 
     class shader : public graphics::shader {

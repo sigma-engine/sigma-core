@@ -2,13 +2,10 @@
 #include <sigma/util/compile_time_hash.hpp>
 #include <sigma/util/filesystem.hpp>
 
-#include <boost/algorithm/string.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/serialization/access.hpp>
-
-#include <functional>
-#include <iostream>
-#include <random>
+#include <boost/algorithm/string/find.hpp>
+#include <boost/algorithm/string/replace.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
 
 namespace sigma {
 namespace resource {
@@ -82,12 +79,6 @@ namespace resource {
     }
 
     std::string identifier::name() const { return name_; }
-
-    std::string identifier::nice_name() const
-    {
-        auto s = boost::find_first(name_, "://").end();
-        return std::string(s, name_.end());
-    }
 
     std::ostream& operator<<(std::ostream& os, const identifier& id)
     {

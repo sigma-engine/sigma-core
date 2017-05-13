@@ -3,9 +3,15 @@
 
 #include <json/json.h>
 
+#include <glm/gtc/quaternion.hpp>
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+
 #include <boost/filesystem/path.hpp>
 
 #include <set>
+#include <string>
 
 namespace Assimp {
 class Importer;

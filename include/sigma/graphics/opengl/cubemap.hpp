@@ -5,8 +5,6 @@
 
 #include <glad/glad.h>
 
-#include <vector>
-
 #define CUBEMAP_CONST_PTR(x) static_cast<const sigma::opengl::cubemap*>(x.get())
 #define CUBEMAP_PTR(x) static_cast<sigma::opengl::cubemap*>(x.get())
 

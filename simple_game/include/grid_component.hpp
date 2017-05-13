@@ -1,7 +1,9 @@
 #ifndef GRID_COMPONENT_HPP
 #define GRID_COMPONENT_HPP
 
-struct grid_component {
+#include <sigma/reflect.hpp>
+
+struct R_COMPONENT() grid_component {
     int rows;
     int columns;
     float row_spacing;
@@ -16,5 +18,7 @@ struct grid_component {
         ar& column_spacing;
     }
 };
+
+#include "grid_component.generated.hpp"
 
 #endif // GRID_COMPONENT_HPP

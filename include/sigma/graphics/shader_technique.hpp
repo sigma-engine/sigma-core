@@ -1,16 +1,28 @@
 #ifndef SIGMA_GRAPHICS_SHADER_TECHNIQUE_HPP
 #define SIGMA_GRAPHICS_SHADER_TECHNIQUE_HPP
 
+#include <sigma/config.hpp>
+
 #include <sigma/graphics/cubemap.hpp>
 #include <sigma/graphics/shader.hpp>
 #include <sigma/graphics/texture.hpp>
 
-#include <boost/serialization/unordered_map.hpp>
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
 
+#include <boost/serialization/unordered_map.hpp>
+#include <boost/serialization/version.hpp>
+
+#include <cstddef>
 #include <string>
 #include <unordered_map>
 
 namespace sigma {
+namespace resource {
+    template <class Resource>
+    class handle;
+}
 namespace graphics {
 
     struct shader_technique_data {

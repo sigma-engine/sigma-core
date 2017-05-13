@@ -1,6 +1,11 @@
 #include <sigma/graphics/opengl/shadow_buffer.hpp>
 
+#include <sigma/graphics/opengl/texture.hpp>
 #include <sigma/graphics/opengl/util.hpp>
+
+#include <glad/glad.h>
+
+#include <glm/vec2.hpp>
 
 namespace sigma {
 namespace opengl {

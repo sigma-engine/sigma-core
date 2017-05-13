@@ -1,7 +1,11 @@
 #ifndef SIGMA_GRAPHICS_MATERIAL_HPP
 #define SIGMA_GRAPHICS_MATERIAL_HPP
 
+#include <sigma/config.hpp>
 #include <sigma/graphics/shader_technique.hpp>
+#include <sigma/resource/manager.hpp>
+
+#include <boost/serialization/version.hpp>
 
 namespace sigma {
 namespace graphics {

@@ -1,8 +1,14 @@
 #ifndef SIGMA_ENGINE_GRAPHICS_POST_PROCESS_EFFECT_HPP
 #define SIGMA_ENGINE_GRAPHICS_POST_PROCESS_EFFECT_HPP
 
+#include <sigma/config.hpp>
+
 #include <sigma/graphics/shader_technique.hpp>
 #include <sigma/graphics/static_mesh.hpp>
+#include <sigma/resource/identifier.hpp>
+#include <sigma/resource/manager.hpp>
+
+#include <boost/serialization/version.hpp>
 
 namespace sigma {
 namespace graphics {

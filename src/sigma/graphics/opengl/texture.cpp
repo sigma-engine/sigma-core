@@ -1,6 +1,11 @@
 #include <sigma/graphics/opengl/texture.hpp>
 
 #include <sigma/graphics/opengl/util.hpp>
+#include <sigma/graphics/texture.hpp>
+
+#include <glad/glad.h>
+
+#include <glm/vec2.hpp>
 
 namespace sigma {
 namespace opengl {

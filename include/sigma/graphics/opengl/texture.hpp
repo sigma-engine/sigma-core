@@ -5,6 +5,9 @@
 
 #include <glad/glad.h>
 
+#include <glm/vec2.hpp>
+
+#include <utility>
 #include <vector>
 
 #define TEXTURE_CONST_PTR(x) static_cast<const sigma::opengl::texture*>(x.get())

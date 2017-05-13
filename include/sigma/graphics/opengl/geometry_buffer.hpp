@@ -4,7 +4,9 @@
 #include <sigma/graphics/opengl/frame_buffer.hpp>
 #include <sigma/graphics/opengl/texture.hpp>
 
-#include <glm/vec4.hpp>
+#include <glad/glad.h>
+
+#include <glm/vec2.hpp>
 
 namespace sigma {
 namespace opengl {

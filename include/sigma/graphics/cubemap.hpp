@@ -2,6 +2,7 @@
 #define SIGMA_GRAPHICS_CUBEMAP_HPP
 
 #include <sigma/config.hpp>
+
 #include <sigma/graphics/texture.hpp>
 
 namespace sigma {

@@ -2,6 +2,7 @@
 #define SIGMA_TRANSFORM_HPP
 
 #include <sigma/config.hpp>
+#include <sigma/reflect.hpp>
 #include <sigma/util/glm_serialize.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -10,16 +11,20 @@
 
 namespace sigma {
 
-struct SIGMA_API transform {
+struct R_COMPONENT() transform {
     glm::vec3 position;
     glm::quat rotation;
     glm::vec3 scale;
+
+    R_FIELD(derived)
     glm::mat4 matrix;
 
-	transform(glm::vec3 position = glm::vec3{0}, glm::quat rotation = glm::quat{},glm::vec3 scale = glm::vec3{1})
-		: position(position), rotation(rotation), scale(scale)
-	{
-	}
+    transform(glm::vec3 position = glm::vec3{ 0 }, glm::quat rotation = glm::quat{}, glm::vec3 scale = glm::vec3{ 1 })
+        : position(position)
+        , rotation(rotation)
+        , scale(scale)
+    {
+    }
 
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version)
@@ -35,5 +40,7 @@ struct SIGMA_API transform {
     }
 };
 }
+
+#include <sigma/transform.generated.hpp>
 
 #endif // SIGMA_TRANSFORM_HPP

@@ -1,14 +1,18 @@
 #include <sigma/graphics/opengl/renderer.hpp>
 
-#include <glad/glad.h>
-#include <sigma/graphics/opengl/shader.hpp>
-#include <sigma/graphics/opengl/texture.hpp>
+#include <sigma/graphics/cubemap.hpp>
+#include <sigma/graphics/material.hpp>
 #include <sigma/graphics/opengl/util.hpp>
+#include <sigma/graphics/post_process_effect.hpp>
+#include <sigma/graphics/shader.hpp>
+#include <sigma/graphics/static_mesh.hpp>
+#include <sigma/graphics/texture.hpp>
 
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/matrix.hpp>
-#include <glm/vec4.hpp>
+#include <glad/glad.h>
+
+#include <glm/vec2.hpp>
+
+#include <stdexcept>
 
 namespace sigma {
 namespace opengl {

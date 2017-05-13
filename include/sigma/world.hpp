@@ -103,6 +103,7 @@ struct world {
 
     entity create()
     {
+        count_++;
         if (free_entities.empty()) {
             entity e{ std::uint32_t(entities.size()), 0 };
             entities.push_back(e);
@@ -190,6 +191,7 @@ struct world {
     {
         if (!is_alive(e))
             return;
+        count_--;
         remove_components(e);
         free_entities.push_back(entities[e.index].index);
         entities[e.index].index = std::uint32_t(-1);
@@ -217,6 +219,11 @@ struct world {
             if (is_alive(e) && ((entity_masks[e.index] & mask) == mask))
                 f(e, *(SubComponents*)(std::get<component_set_type::template index_of<SubComponents>()>(component_data).get(e.index))...);
         }
+    }
+
+    size_t size() const
+    {
+        return count_;
     }
 
     template <class Archive>
@@ -267,6 +274,7 @@ private:
             ar >> *create<Component>(e);
     }
 
+    std::size_t count_ = 0;
     std::vector<entity> entities;
     std::vector<std::uint32_t> free_entities;
     std::vector<component_mask_type> entity_masks;

@@ -3,8 +3,10 @@
 #include <sigma/util/filesystem.hpp>
 
 #include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
 
 #include <fstream>
+#include <string>
 
 namespace sigma {
 boost::filesystem::path stamp_file_path(const boost::filesystem::path& outputdir, const boost::filesystem::path& resource)

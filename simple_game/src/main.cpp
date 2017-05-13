@@ -1,12 +1,11 @@
 #include <simple_game.hpp>
 
 #include <sigma/graphics/opengl/renderer.hpp>
+#include <sigma/graphics/renderer.hpp>
 #include <sigma/trackball_controller.hpp>
 #include <sigma/window.hpp>
 
-#include <SDL.h>
-
-#include <glm/gtc/matrix_transform.hpp>
+#include <SDL2/SDL.h>
 
 #include <iostream>
 
