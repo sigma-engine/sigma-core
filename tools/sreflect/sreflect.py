@@ -14,9 +14,9 @@ def make_vaild_identifier(string):
     return re.sub('\W|^(?=\d)', '_', string)
 
 
-def remove_all(strings, in_string):
+def replace_all(strings, with_string, in_string):
     for s in strings:
-        in_string = in_string.replace(s, "")
+        in_string = in_string.replace(s, with_string)
     return in_string
 
 
@@ -131,16 +131,17 @@ class reflection_database:
             self.extract_exports(child, cursor)
 
 
-def render_metadata_template(database, template_file, header_file):
-    template_name = os.path.splitext(os.path.basename(template_file))[0]
+def render_metadata_template(database, template_file_path, header_file):
+    template_name = os.path.splitext(os.path.basename(template_file_path))[0]
 
     generated_header_file = os.path.splitext(
         header_file.replace(database.source_directory, database.build_directory))
     generated_header_file = generated_header_file[0] + \
         "." + template_name + generated_header_file[1]
+    generated_source_file = os.path.splitext(generated_header_file)[0] + ".cpp"
 
-    generated_header_gaurd = remove_all(
-        [database.build_directory.lower() + "/", "include/", "inc/", "src/"], generated_header_file.lower())
+    generated_header_gaurd = replace_all(
+        [database.build_directory.lower() + "/", "include/", "inc/", "src/"], "", generated_header_file.lower())
     generated_header_gaurd = make_vaild_identifier(generated_header_gaurd.upper())
 
     output_directory = os.path.dirname(generated_header_file)
@@ -156,12 +157,16 @@ def render_metadata_template(database, template_file, header_file):
     tu = database.parse(index, template_name, header_file)
     if tu != None:
         if reflection_db.extract(tu.cursor):
-            with open(template_file, "r") as template_file:
-                template = jinja2.Template(template_file.read())
+            for template_ext, generated_file in [(".cpp.j2", generated_source_file), (".hpp.j2", generated_header_file)]:
+                file_path = template_file_path + template_ext
+                if not os.path.exists(file_path):
+                    continue
+                with open(file_path, "r") as template_file:
+                    template = jinja2.Template(template_file.read())
 
-            with open(generated_header_file, 'w') as output:
-                output.write(template.render(
-                    generated_header_gaurd=generated_header_gaurd, database=reflection_db))
+                    with open(generated_file, 'w') as output:
+                        output.write(template.render(header_file=header_file, generated_header_file=generated_header_file, generated_source_file=generated_source_file,
+                                                     generated_header_gaurd=generated_header_gaurd, database=reflection_db))
     else:
         sys.exit(-1)
 
