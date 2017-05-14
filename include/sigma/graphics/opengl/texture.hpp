@@ -155,6 +155,8 @@ namespace opengl {
 
         void bind() const;
 
+        void generate_mipmaps();
+
     private:
         texture(const texture&) = delete;
         texture& operator=(const texture&) = delete;

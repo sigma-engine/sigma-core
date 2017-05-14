@@ -291,6 +291,7 @@ namespace opengl {
 
                 setup_view_projection(viewport.view_frustum.view(), viewport.view_frustum.projection());
                 gbuffer_.bind_for_geometry_read();
+                sbuffer_.bind_for_shadow_read(geometry_buffer::SHADOW_MAP_TEXTURE_UINT);
 
                 analytical_light_setup();
 
@@ -356,6 +357,7 @@ namespace opengl {
 
                 setup_view_projection(viewport.view_frustum.view(), viewport.view_frustum.projection());
                 gbuffer_.bind_for_geometry_read();
+                sbuffer_.bind_for_shadow_read(geometry_buffer::SHADOW_MAP_TEXTURE_UINT);
 
                 analytical_light_setup();
 
@@ -412,7 +414,6 @@ namespace opengl {
 
             GL_CHECK(glDepthMask(GL_FALSE));
             GL_CHECK(glStencilMask(0x00));
-            sbuffer_.bind_for_shadow_read(geometry_buffer::SHADOW_MAP_TEXTURE_UINT);
         }
 
         // void point_light_outside_stencil_optimization(glm::vec3 view_space_position, float radius);
