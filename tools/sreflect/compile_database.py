@@ -12,12 +12,13 @@ class compile_database:
         self.source_extensions = ['.cpp', '.cxx', '.cc', '.c', '.m', '.mm']
         self.header_extensions = ['.h', '.hxx', '.hpp', '.hh']
 
-    def parse(self, index, template_name, source_file):
+    def parse(self, index, source_file):
+        ext = os.path.splitext(source_file)[1][1:]
         arguments = self.__get_compile_arguments(source_file)
         tu = index.parse(source_file, arguments)
         parse_success = True
         safe_to_ignore_error = re.compile(
-            r"(.*):(\d+):(\d+):\s+fatal\s+error:\s*(.*\." + template_name + r"\..*)\s+file\s+not\s+found")
+            r"(.*):(\d+):(\d+):\s+fatal\s+error:\s*(.*\..*\." + ext + r")\s+file\s+not\s+found")
         for diagnostic in tu.diagnostics:
             if diagnostic.severity >= 3:
                 message = str(diagnostic)

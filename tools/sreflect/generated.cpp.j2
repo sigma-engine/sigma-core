@@ -1,5 +1,13 @@
 #ifndef __REFLECTION_PARSER__
-#include "{{header_file}}"
+{% for enum in database.enums %}
+#include "{{enum.file}}"
+{% endfor %}
+{% for class in database.classes %}
+#include "{{class.file}}"
+{% endfor %}
+{% for world in database.worlds %}
+#include "{{world.file}}"
+{% endfor %}
 
 #include <sigma/util/json_conversion.hpp>
 

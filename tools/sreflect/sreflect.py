@@ -41,8 +41,15 @@ class reflection_field:
         return "derived" in self.attributes
 
 
-class reflection_enum:
-    def __init__(self, cursor):
+class reflection_decleration(object):
+    def __init__(self, source_directory, source_file):
+        self.source_directory = source_directory
+        self.file = str(source_file)
+
+
+class reflection_enum(reflection_decleration):
+    def __init__(self, source_directory, cursor):
+        super(reflection_enum, self).__init__(source_directory, cursor.location.file)
         self.name = full_name(cursor)
         self.constants = []
         for child in cursor.get_children():
@@ -53,8 +60,9 @@ class reflection_enum:
         return self.name
 
 
-class reflection_class:
-    def __init__(self, cursor):
+class reflection_class(reflection_decleration):
+    def __init__(self, source_directory, cursor):
+        super(reflection_class, self).__init__(source_directory, cursor.location.file)
         self.name = full_name(cursor)
         self.fields = []
         for child in cursor.get_children():
@@ -67,8 +75,9 @@ class reflection_class:
         return self.name
 
 
-class reflection_world:
-    def __init__(self, cursor, canonical):
+class reflection_world(reflection_decleration):
+    def __init__(self, source_directory, cursor, canonical):
+        super(reflection_world, self).__init__(source_directory, cursor.location.file)
         self.name = full_name(cursor)
         self.components = [canonical.get_template_argument_type(
             i).spelling for i in range(canonical.get_num_template_arguments())]
@@ -78,18 +87,19 @@ class reflection_world:
 
 
 class reflection_database:
-    def __init__(self):
+    def __init__(self, source_directory):
         self.ignore_namespaces = ["::std", "std", "boost", "mpl_", "literals",
                                   "chrono_literals", "__gnu_cxx", "__cxxabiv1", "Json", "glm"]
+        self.source_directory = source_directory
 
     def extract(self, cursor):
         self.enums = []
         self.classes = []
         self.worlds = []
-        self.extract_exports(cursor, None)
+        self.__extract_exports(cursor, None)
         return len(self.enums) > 0 or len(self.classes) > 0 or len(self.worlds) > 0
 
-    def extract_exports(self, cursor, parent):
+    def __extract_exports(self, cursor, parent):
         if "__" in cursor.spelling:  # 2.10.3.1
             return
         elif cursor.kind in [clang.cindex.CursorKind.NAMESPACE, clang.cindex.CursorKind.NAMESPACE_REF]:
@@ -101,9 +111,9 @@ class reflection_database:
         elif cursor.kind == clang.cindex.CursorKind.ANNOTATE_ATTR and cursor.spelling in ["R_CLASS", "R_ENUM"]:
             if parent.location.is_from_main_file():
                 if parent.kind in [clang.cindex.CursorKind.CLASS_DECL, clang.cindex.CursorKind.STRUCT_DECL]:
-                    self.classes.append(reflection_class(parent))
+                    self.classes.append(reflection_class(self.source_directory, parent))
                 elif parent.kind == clang.cindex.CursorKind.ENUM_DECL:
-                    self.enums.append(reflection_enum(parent))
+                    self.enums.append(reflection_enum(self.source_directory, parent))
             return
         elif cursor.kind in [clang.cindex.CursorKind.DECL_REF_EXPR,
                              clang.cindex.CursorKind.FUNCTION_DECL,
@@ -123,12 +133,13 @@ class reflection_database:
             if type_decl.kind != clang.cindex.CursorKind.NO_DECL_FOUND:
                 if full_name(type_decl) == "sigma::world":
                     if cursor.location.is_from_main_file():
-                        self.worlds.append(reflection_world(cursor, canonical_type))
+                        self.worlds.append(reflection_world(
+                            self.source_directory, cursor, canonical_type))
             return
 
         # print cursor.kind, cursor.spelling
         for child in cursor.get_children():
-            self.extract_exports(child, cursor)
+            self.__extract_exports(child, cursor)
 
 
 def render_metadata_template(database, template_file_path, header_file):
@@ -152,9 +163,9 @@ def render_metadata_template(database, template_file_path, header_file):
             if not os.path.exists(output_directory):
                 raise
 
-    reflection_db = reflection_database()
+    reflection_db = reflection_database(database.source_directory)
     index = clang.cindex.Index.create(True)
-    tu = database.parse(index, template_name, header_file)
+    tu = database.parse(index, header_file)
     if tu != None:
         if reflection_db.extract(tu.cursor):
             for template_ext, generated_file in [(".cpp.j2", generated_source_file), (".hpp.j2", generated_header_file)]:
@@ -178,12 +189,22 @@ parser.add_argument('-b', '--build-directory', type=str,
                     help='The root build folder of the project.', required=True)
 parser.add_argument('-f', '--file', type=str,
                     help='The header to generate the metadata for.', required=True)
-parser.add_argument('-t', '--template-file', type=str,
-                    help='The template file used to generate the metadata.', required=True)
+
+sub_parsers = parser.add_subparsers(dest="sub_parser")
+
+render_template_parser = sub_parsers.add_parser("template")
+render_template_parser.add_argument('-t', '--template-file', type=str,
+                                    help='The template file used to generate the metadata.', required=True)
 
 args = parser.parse_args()
 
 database = compile_database(os.path.abspath(args.source_directory),
                             os.path.abspath(args.build_directory))
 
-render_metadata_template(database, os.path.abspath(args.template_file), os.path.abspath(args.file))
+# reflection_db = reflection_database(database.source_directory)
+
+if args.sub_parser == "template":
+    render_metadata_template(database, os.path.abspath(
+        args.template_file), os.path.abspath(args.file))
+else:
+    pass

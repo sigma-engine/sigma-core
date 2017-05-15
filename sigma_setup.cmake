@@ -29,7 +29,7 @@ function(generate_meta_data generated_header_files)
         if(NOT ${match} EQUAL -1)
             add_custom_command(
                 OUTPUT "${generated_source_file}" "${generated_header_file}"
-                COMMAND python2 ARGS "${CMAKE_SOURCE_DIR}/tools/sreflect/sreflect.py" --template-file="${CMAKE_SOURCE_DIR}/tools/sreflect/generated" --source-directory "${CMAKE_SOURCE_DIR}" --build-directory "${CMAKE_BINARY_DIR}" --file "${CMAKE_SOURCE_DIR}/${header_file}"
+                COMMAND python2 ARGS "${CMAKE_SOURCE_DIR}/tools/sreflect/sreflect.py" --source-directory "${CMAKE_SOURCE_DIR}" --build-directory "${CMAKE_BINARY_DIR}" --file "${CMAKE_SOURCE_DIR}/${header_file}" template --template-file="${CMAKE_SOURCE_DIR}/tools/sreflect/generated"
                 MAIN_DEPENDENCY "${CMAKE_SOURCE_DIR}/${header_file}"
                 DEPENDS "${CMAKE_SOURCE_DIR}/tools/sreflect/generated.hpp.j2" "${CMAKE_SOURCE_DIR}/tools/sreflect/generated.cpp.j2" "${CMAKE_SOURCE_DIR}/tools/sreflect/sreflect.py"
                 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
