@@ -1,6 +1,6 @@
 #ifndef __REFLECTION_PARSER__
-#ifndef {{generated_header_gaurd}}
-#define {{generated_header_gaurd}}
+#ifndef {{generated_gaurd}}
+#define {{generated_gaurd}}
 
 namespace Json {
     class Value;
@@ -9,24 +9,24 @@ namespace sigma {
 namespace json {
 {%- for enum in database.enums %}
 
-    void to_json(const {{enum}}& source, Json::Value& output);
+    void to_json(const {{enum.name}}& source, Json::Value& output);
 
-    bool from_json(const Json::Value& source, {{enum}}& output);
+    bool from_json(const Json::Value& source, {{enum.name}}& output);
 {%- endfor -%}
 {%- for class in database.classes %}
 
-    void to_json(const {{class}}& source, Json::Value& output);
+    void to_json(const {{class.name}}& source, Json::Value& output);
 
-    bool from_json(const Json::Value& source, {{class}}& output);
+    bool from_json(const Json::Value& source, {{class.name}}& output);
 {%- endfor -%}
 {%- for world in database.worlds %}
-    
-    void to_json(const {{world}}& source, Json::Value& output);
 
-    bool from_json(const Json::Value &source, {{world}}& output);
+    void to_json(const {{world.name}}& source, Json::Value& output);
+
+    bool from_json(const Json::Value &source, {{world.name}}& output);
 {%- endfor %}
 }
 }
 
-#endif // {{generated_header_gaurd}}
+#endif // {{generated_gaurd}}
 #endif // __REFLECTION_PARSER__

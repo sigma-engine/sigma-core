@@ -18,7 +18,7 @@ class compile_database:
         tu = index.parse(source_file, arguments)
         parse_success = True
         safe_to_ignore_error = re.compile(
-            r"(.*):(\d+):(\d+):\s+fatal\s+error:\s*(.*\..*\." + ext + r")\s+file\s+not\s+found")
+            r"(.*):(\d+):(\d+):\s+fatal\s+error:\s*'(.*\..*\." + ext + r")'\s+file\s+not\s+found")
         for diagnostic in tu.diagnostics:
             if diagnostic.severity >= 3:
                 message = str(diagnostic)

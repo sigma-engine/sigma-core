@@ -8,6 +8,11 @@ import os
 import re
 import sys
 import time
+import json
+
+
+IGNORE_NAMESPACES = ["::std", "std", "boost", "mpl_", "literals",
+                     "chrono_literals", "__gnu_cxx", "__cxxabiv1", "Json", "glm"]
 
 
 def make_vaild_identifier(string):
@@ -28,23 +33,20 @@ def full_name(cursor):
     return name
 
 
-class reflection_field:
-    def __init__(self, cursor):
-        self.name = cursor.spelling
-        self.type = cursor.type.spelling
-        self.attributes = []
-        for child in cursor.get_children():
-            if child.kind == clang.cindex.CursorKind.ANNOTATE_ATTR:
-                self.attributes += [a.strip() for a in child.spelling.split(",")]
-
-    def is_derived(self):
-        return "derived" in self.attributes
-
-
 class reflection_decleration(object):
     def __init__(self, source_directory, source_file):
         self.source_directory = source_directory
         self.file = str(source_file)
+
+
+class reflection_field:
+    def __init__(self, cursor):
+        self.name = cursor.spelling
+        self.type = cursor.type.spelling
+        for child in cursor.get_children():
+            if child.kind == clang.cindex.CursorKind.ANNOTATE_ATTR:
+                for a in child.spelling.split(","):
+                    setattr(self, a.strip(), True)
 
 
 class reflection_enum(reflection_decleration):
@@ -88,8 +90,6 @@ class reflection_world(reflection_decleration):
 
 class reflection_database:
     def __init__(self, source_directory):
-        self.ignore_namespaces = ["::std", "std", "boost", "mpl_", "literals",
-                                  "chrono_literals", "__gnu_cxx", "__cxxabiv1", "Json", "glm"]
         self.source_directory = source_directory
 
     def extract(self, cursor):
@@ -104,10 +104,9 @@ class reflection_database:
             return
         elif cursor.kind in [clang.cindex.CursorKind.NAMESPACE, clang.cindex.CursorKind.NAMESPACE_REF]:
             fname = full_name(cursor)
-            for ign in self.ignore_namespaces:
+            for ign in IGNORE_NAMESPACES:
                 if fname.startswith(ign):
                     return
-
         elif cursor.kind == clang.cindex.CursorKind.ANNOTATE_ATTR and cursor.spelling in ["R_CLASS", "R_ENUM"]:
             if parent.location.is_from_main_file():
                 if parent.kind in [clang.cindex.CursorKind.CLASS_DECL, clang.cindex.CursorKind.STRUCT_DECL]:
@@ -137,25 +136,15 @@ class reflection_database:
                             self.source_directory, cursor, canonical_type))
             return
 
-        # print cursor.kind, cursor.spelling
         for child in cursor.get_children():
             self.__extract_exports(child, cursor)
 
 
-def render_metadata_template(database, template_file_path, header_file):
-    template_name = os.path.splitext(os.path.basename(template_file_path))[0]
+def generated_metadata(database, header_file):
+    metadata_file = header_file.replace(
+        database.source_directory, database.build_directory) + ".meta"
 
-    generated_header_file = os.path.splitext(
-        header_file.replace(database.source_directory, database.build_directory))
-    generated_header_file = generated_header_file[0] + \
-        "." + template_name + generated_header_file[1]
-    generated_source_file = os.path.splitext(generated_header_file)[0] + ".cpp"
-
-    generated_header_gaurd = replace_all(
-        [database.build_directory.lower() + "/", "include/", "inc/", "src/"], "", generated_header_file.lower())
-    generated_header_gaurd = make_vaild_identifier(generated_header_gaurd.upper())
-
-    output_directory = os.path.dirname(generated_header_file)
+    output_directory = os.path.dirname(metadata_file)
     if not os.path.exists(output_directory):
         try:
             os.makedirs(output_directory)
@@ -166,18 +155,31 @@ def render_metadata_template(database, template_file_path, header_file):
     reflection_db = reflection_database(database.source_directory)
     index = clang.cindex.Index.create(True)
     tu = database.parse(index, header_file)
-    if tu != None:
-        if reflection_db.extract(tu.cursor):
-            for template_ext, generated_file in [(".cpp.j2", generated_source_file), (".hpp.j2", generated_header_file)]:
-                file_path = template_file_path + template_ext
-                if not os.path.exists(file_path):
-                    continue
-                with open(file_path, "r") as template_file:
-                    template = jinja2.Template(template_file.read())
+    if reflection_db.extract(tu.cursor):
+        with open(metadata_file, 'w') as output_file:
+            output_file.write(json.dumps(reflection_db, indent=4,
+                                         sort_keys=True, default=lambda o: o.__dict__))
+        return reflection_db
 
-                    with open(generated_file, 'w') as output:
-                        output.write(template.render(header_file=header_file, generated_header_file=generated_header_file, generated_source_file=generated_source_file,
-                                                     generated_header_gaurd=generated_header_gaurd, database=reflection_db))
+
+def render_metadata_template(reflection_db, template_file_path, header_file):
+    template_name = os.path.splitext(os.path.basename(template_file_path))
+    template_name = template_name[0].replace(".j2", "")
+
+    generated_file = header_file.replace(database.source_directory, database.build_directory)
+    generated_file = os.path.splitext(generated_file)[0] + "." + template_name
+
+    generated_gaurd = replace_all(
+        [database.build_directory.lower() + "/", "include/", "inc/", "src/"], "", generated_file.lower())
+    generated_gaurd = make_vaild_identifier(generated_gaurd.upper())
+
+    if reflection_db:
+        with open(template_file_path, "r") as template_file:
+            template = jinja2.Template(template_file.read())
+
+            with open(generated_file, 'w') as output:
+                output.write(template.render(
+                    generated_gaurd=generated_gaurd, database=reflection_db))
     else:
         sys.exit(-1)
 
@@ -192,19 +194,24 @@ parser.add_argument('-f', '--file', type=str,
 
 sub_parsers = parser.add_subparsers(dest="sub_parser")
 
+generate_parser = sub_parsers.add_parser("generate")
+
 render_template_parser = sub_parsers.add_parser("template")
 render_template_parser.add_argument('-t', '--template-file', type=str,
                                     help='The template file used to generate the metadata.', required=True)
 
 args = parser.parse_args()
 
+header_file = os.path.abspath(args.file)
 database = compile_database(os.path.abspath(args.source_directory),
                             os.path.abspath(args.build_directory))
 
-# reflection_db = reflection_database(database.source_directory)
 
-if args.sub_parser == "template":
-    render_metadata_template(database, os.path.abspath(
-        args.template_file), os.path.abspath(args.file))
-else:
-    pass
+if args.sub_parser == "generate":
+    generated_metadata(database, header_file)
+elif args.sub_parser == "template":
+    metadata_file = header_file.replace(
+        database.source_directory, database.build_directory) + ".meta"
+    with open(metadata_file, 'r') as input_meta:
+        reflection_db = json.load(input_meta)
+        render_metadata_template(reflection_db, os.path.abspath(args.template_file), header_file)

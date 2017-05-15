@@ -19,11 +19,12 @@ namespace sigma {
 namespace json {
 {%- for enum in database.enums %}
 
-    void to_json(const {{enum}}& source, Json::Value& output)
+    void to_json(const {{enum.name}}& source, Json::Value& output)
     {
+    
         switch (source) {
         {%- for constant in enum.constants %}
-        case {{enum}}::{{constant}}: {
+        case {{enum.name}}::{{constant}}: {
             output = "{{constant}}";
             break;
         }
@@ -31,28 +32,28 @@ namespace json {
         }
     }
 
-    bool from_json(const Json::Value& source, {{enum}}& output)
+    bool from_json(const Json::Value& source, {{enum.name}}& output)
     {
         auto str = boost::to_lower_copy(source.asString());
         {%- for constant in enum.constants %}
         {% if not loop.first %}else {% endif %}if (str == "{{constant.lower()}}")
-            output = {{enum}}::{{constant}};
+            output = {{enum.name}}::{{constant}};
         {%- endfor %}
         return true;
     }
 {%- endfor -%}
 {%- for class in database.classes %}
 
-    void to_json(const {{class}}& source, Json::Value& output)
+    void to_json(const {{class.name}}& source, Json::Value& output)
     {
-        {% for field in class.fields if not field.is_derived() -%}
+        {% for field in class.fields if not field.derived -%}
             to_json(source.{{field.name}}, output["{{field.name}}"]);
         {% endfor %}
     }
 
-    bool from_json(const Json::Value& source, {{class}}& output)
+    bool from_json(const Json::Value& source, {{class.name}}& output)
     {
-        {% for field in class.fields if not field.is_derived() -%}
+        {% for field in class.fields if not field.derived -%}
         from_json(source["{{field.name}}"], output.{{field.name}});
         {% endfor %}
         return true;
@@ -60,7 +61,7 @@ namespace json {
 {%- endfor -%}
 {%- for world in database.worlds %}
 
-    bool from_json(const Json::Value &source, {{world}}& output)
+    bool from_json(const Json::Value &source, {{world.name}}& output)
     {
         auto entity_names = source.getMemberNames();
         std::for_each(entity_names.begin(), entity_names.end(), [&](const std::string& entity_name) {
