@@ -12,7 +12,7 @@
 namespace sigma {
 bool is_material(boost::filesystem::path file)
 {
-    return file.extension() == ".mat";
+    return file.extension() == ".smat";
 }
 
 bool compile_materials(boost::filesystem::path outputdir, std::vector<boost::filesystem::path> materials)

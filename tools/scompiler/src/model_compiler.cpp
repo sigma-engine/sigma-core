@@ -74,7 +74,7 @@ bool compile_models(boost::filesystem::path outputdir, std::vector<boost::filesy
             std::vector<boost::filesystem::path> material_paths;
             for (auto material_name : imported.material_names()) {
                 boost::filesystem::path material_path = boost::filesystem::current_path() / material_name;
-                material_path.replace_extension("mat");
+                material_path.replace_extension("smat");
                 material_paths.push_back(material_path);
 
                 Json::Value json_material(Json::objectValue);
