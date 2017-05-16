@@ -14,7 +14,8 @@ class SigmaEngineConan(ConanFile):
         "glad/master@siegelaaron94/develop",
         "gtest/1.8.0@lasote/stable",
         "google-benchmark/1.1.0@cpace6/stable",
-        "assimp/3.3.1@siegelaaron94/develop"
+        "assimp/3.3.1@siegelaaron94/develop",
+        "glslang/master@siegelaaron94/develop"
     )
     generators = "cmake", "txt"
     default_options = "gtest:shared=False", "Boost:without_test=True"

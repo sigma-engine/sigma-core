@@ -27,15 +27,4 @@ set(HEADERS
 
 add_executable(scompiler ${SOURCES} ${HEADERS})
 target_include_directories(scompiler PUBLIC include)
-target_link_libraries(scompiler sigma-core)
-
-if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/glslang")
-    set(ENABLE_AMD_EXTENSIONS  OFF)
-    set(ENABLE_GLSLANG_BINARIES  OFF)
-    set(ENABLE_NV_EXTENSIONS OFF)
-    set(ENABLE_HLSL OFF)
-    add_subdirectory(glslang)
-    target_compile_definitions(scompiler PRIVATE USE_GLSLANG)
-    target_include_directories(scompiler PRIVATE glslang)
-    target_link_libraries(scompiler glslang OSDependent  OGLCompiler)
-endif()
+target_link_libraries(scompiler sigma-core ${CONAN_LIBS})
