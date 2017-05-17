@@ -26,7 +26,7 @@ class SigmaEngineConan(ConanFile):
             self.copy("*.dylib*", dst="bin", src="lib")
 
     def build(self):
-        cmake = CMake(self.settings)
-        cmake.configure(self, build_dir=".")
-        cmake.configure(self, build_dir=".")
-        cmake.build(self)
+        cmake = CMake(self)
+        cmake.configure(build_dir="./")
+        cmake.configure(build_dir="./")
+        cmake.build()
