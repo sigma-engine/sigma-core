@@ -1,3 +1,7 @@
 {
+    "inner_radius" : 0.60,
+    "outer_radius" : 1.0,
+    "opacity" : 0.7,
+    "color" : [1,0,0],
     "fragment" : "vignette"
 }
