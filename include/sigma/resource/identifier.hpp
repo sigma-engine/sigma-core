@@ -17,15 +17,12 @@
 
 namespace sigma {
 
-// TODO:RESOURCE remove this when the new resource system is in place
 namespace resource {
     struct identifier;
 }
 namespace json {
-    // TODO:RESOURCE remove this when the new resource system is in place
     static bool from_json(const Json::Value& source, resource::identifier& output);
 
-    // TODO:RESOURCE remove this when the new resource system is in place
     static void to_json(const resource::identifier& source, Json::Value& output);
 }
 
@@ -65,7 +62,6 @@ namespace resource {
 
         friend class boost::serialization::access;
 
-        // TODO:RESOURCE remove this when the new resource system is in place
         friend bool json::from_json(const Json::Value& source, identifier& output);
         friend void json::to_json(const identifier& source, Json::Value& output);
 
@@ -82,7 +78,6 @@ namespace resource {
     using identifier = identifier;
 }
 namespace json {
-    // TODO:RESOURCE remove this when the new resource system is in place
     static bool from_json(const Json::Value& source, resource::identifier& output)
     {
         output.name_ = source.asString();
@@ -90,7 +85,6 @@ namespace json {
         return true;
     }
 
-    // TODO:RESOURCE remove this when the new resource system is in place
     static void to_json(const resource::identifier& source, Json::Value& output)
     {
         output = source.name_;

@@ -42,10 +42,6 @@ set(CORE_SOURCES
 
     src/sigma/graphics/renderer.cpp
     src/sigma/resource/identifier.cpp
-    src/sigma/graphics/material.cpp
-    src/sigma/graphics/shader_technique.cpp
-    src/sigma/graphics/post_process_effect.cpp
-    src/sigma/graphics/static_mesh.cpp
 
     src/sigma/graphics/opengl/cubemap.cpp
     src/sigma/graphics/opengl/frame_buffer.cpp

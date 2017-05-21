@@ -5,6 +5,7 @@
 
 #include <json/json.h>
 
+#include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/filesystem/path.hpp>
 
@@ -18,7 +19,7 @@ bool is_cubemap(boost::filesystem::path file)
     return file.extension() == ".cub";
 }
 
-void load_texture(boost::filesystem::path data_dir, sigma::resource::identifier id, sigma::graphics::texture_data& texture)
+void load_texture(boost::filesystem::path data_dir, sigma::resource::identifier id, sigma::graphics::texture& texture)
 {
     auto input_path = data_dir / std::to_string(id.value());
     std::ifstream stream{ input_path.string(), std::ios::binary };
@@ -42,7 +43,7 @@ bool compile_cubemaps(boost::filesystem::path outputdir, std::vector<boost::file
             sigma::resource::identifier rid("cubemap", file_path);
             auto final_path = outputdir / std::to_string(rid.value());
 
-            sigma::graphics::cubemap_data cube;
+            sigma::graphics::cubemap cube;
             std::vector<boost::filesystem::path> dependencies;
 
             for (auto it = cubemap_json.begin(); it != cubemap_json.end(); ++it) {

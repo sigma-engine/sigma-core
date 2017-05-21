@@ -1,14 +1,13 @@
 #ifndef SIGMA_GRAPHICS_TEXTURE_HPP
 #define SIGMA_GRAPHICS_TEXTURE_HPP
 
-#include <sigma/config.hpp>
 #include <sigma/reflect.hpp>
-#include <sigma/resource/manager.hpp>
 #include <sigma/util/glm_serialize.hpp>
 
 #include <glm/vec2.hpp>
 
 #include <boost/serialization/vector.hpp>
+#include <boost/serialization/version.hpp>
 
 namespace sigma {
 namespace graphics {
@@ -25,7 +24,7 @@ namespace graphics {
         RGB32F
     };
 
-    struct texture_data {
+    struct texture {
         glm::ivec2 size;
         texture_format format;
         std::vector<char> data;
@@ -44,29 +43,10 @@ namespace graphics {
             ar& mipmap_filter;
         }
     };
-
-    class SIGMA_API texture {
-    public:
-        using resource_data = texture_data;
-
-        texture() = default;
-
-        texture(texture&&) noexcept = default;
-
-        texture& operator=(texture&&) noexcept = default;
-
-        virtual ~texture() = default;
-
-    private:
-        texture(const texture&) = delete;
-        texture& operator=(const texture&) = delete;
-    };
-
-    using texture_manager = resource::manager<texture>;
 }
 }
 
-BOOST_CLASS_VERSION(sigma::graphics::texture_data, 1);
+BOOST_CLASS_VERSION(sigma::graphics::texture, 1);
 
 #include <sigma/graphics/texture.generated.hpp>
 

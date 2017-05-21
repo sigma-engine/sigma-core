@@ -16,19 +16,25 @@
 
 namespace sigma {
 namespace opengl {
-    renderer::renderer(glm::ivec2 size)
+    renderer::renderer(glm::ivec2 size,
+        resource::cache<graphics::texture>& texture_cache,
+        resource::cache<graphics::cubemap>& cubemap_cache,
+        resource::cache<graphics::shader>& shader_cache,
+        resource::cache<graphics::material>& material_cache,
+        resource::cache<graphics::static_mesh>& static_mesh_cache,
+        resource::cache<graphics::post_process_effect>& effect_cache)
         : graphics::renderer(size)
         , loader_status_(gladLoadGL())
         , default_fbo_(size)
         , gbuffer_(size)
         , sbuffer_({ 2048, 2048 })
         , start_time_(std::chrono::high_resolution_clock::now())
-        , shaders_(boost::filesystem::current_path() / ".." / "data")
-        , textures_(boost::filesystem::current_path() / ".." / "data")
-        , cubemaps_(boost::filesystem::current_path() / ".." / "data")
-        , materials_(boost::filesystem::current_path() / ".." / "data", shaders_, textures_, cubemaps_)
-        , static_meshes_(boost::filesystem::current_path() / ".." / "data", materials_)
-        , effects_(boost::filesystem::current_path() / ".." / "data", shaders_, textures_, cubemaps_, static_meshes_)
+        , textures_(texture_cache)
+        , cubemaps_(cubemap_cache)
+        , shaders_(shader_cache)
+        , materials_(textures_, cubemaps_, shaders_, material_cache)
+        , static_meshes_(materials_, static_mesh_cache)
+        , effects_(textures_, cubemaps_, shaders_, static_meshes_, effect_cache)
     {
         if (!loader_status_)
             throw std::runtime_error("error: could not load OpenGL");
@@ -49,36 +55,6 @@ namespace opengl {
 
     renderer::~renderer()
     {
-    }
-
-    graphics::texture_manager& renderer::textures()
-    {
-        return textures_;
-    }
-
-    graphics::cubemap_manager& renderer::cubemaps()
-    {
-        return cubemaps_;
-    }
-
-    graphics::shader_manager& renderer::shaders()
-    {
-        return shaders_;
-    }
-
-    graphics::material_manager& renderer::materials()
-    {
-        return materials_;
-    }
-
-    graphics::static_mesh_manager& renderer::static_meshes()
-    {
-        return static_meshes_;
-    }
-
-    graphics::post_process_effect_manager& renderer::effects()
-    {
-        return effects_;
     }
 
     void renderer::resize(glm::uvec2 size)

@@ -11,6 +11,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 
+#include <fstream>
 #include <iostream>
 #include <vector>
 
@@ -96,7 +97,7 @@ bool compile_models(boost::filesystem::path outputdir, std::vector<boost::filesy
                     sigma::resource::identifier rid("static_mesh", file_path, mesh_name);
                     auto final_path = outputdir / std::to_string(rid.value());
 
-                    sigma::graphics::static_mesh_data mesh;
+                    sigma::graphics::static_mesh mesh;
                     imported.convert_static_mesh(mesh_name, mesh);
 
                     std::ofstream stream(final_path.string(), std::ios::binary | std::ios::out);

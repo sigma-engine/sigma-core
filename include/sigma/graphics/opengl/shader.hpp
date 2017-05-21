@@ -2,13 +2,13 @@
 #define SIGMA_ENGINE_SHADER_HPP
 
 #include <sigma/graphics/shader.hpp>
+#include <sigma/resource/manager.hpp>
 
 #include <glad/glad.h>
 
 #include <string>
 
-// #define SHADER_PTR(shader_mgr, x) static_cast<const sigma::opengl::shader*>(shader_mgr.acquire(x))
-#define SHADER_PTR(shader_mgr, x) static_cast<sigma::opengl::shader*>(shader_mgr.acquire(x))
+#define SHADER_PTR(shader_mgr, x) shader_mgr.acquire(x)
 
 namespace sigma {
 namespace opengl {
@@ -22,11 +22,11 @@ namespace opengl {
         NONE_SHADER
     };
 
-    class shader : public graphics::shader {
+    class shader {
     public:
         shader(shader_type type, std::string source);
 
-        shader(graphics::shader_data data);
+        shader(graphics::shader data);
 
         shader(shader&&) = default;
 
@@ -43,11 +43,35 @@ namespace opengl {
         GLuint object_ = 0;
     };
 
-    class shader_manager : public graphics::shader_manager {
+    class shader_manager {
     public:
-        using graphics::shader_manager::shader_manager;
+        // TODO remove the use of unique_ptr
 
-        virtual std::unique_ptr<graphics::shader> create(graphics::shader_data data) override;
+        shader_manager(resource::cache<graphics::shader>& shader_cache)
+            : shader_cache_(shader_cache)
+        {
+        }
+
+        resource::handle<graphics::shader> get(resource::identifier id)
+        {
+            return shader_cache_.get(id);
+        }
+
+        opengl::shader* acquire(resource::handle<graphics::shader> hndl)
+        {
+            // TODO not thread safe
+            if (hndl.index >= shaders_.size())
+                shaders_.resize(hndl.index + 1);
+
+            if (shaders_[hndl.index] == nullptr)
+                shaders_[hndl.index] = std::make_unique<shader>(*shader_cache_.acquire(hndl));
+
+            return shaders_.at(hndl.index).get();
+        }
+
+    private:
+        resource::cache<graphics::shader>& shader_cache_;
+        std::vector<std::unique_ptr<shader>> shaders_;
     };
 }
 }

@@ -50,7 +50,7 @@ namespace opengl {
         }
     }
 
-    shader::shader(graphics::shader_data data)
+    shader::shader(graphics::shader data)
         : shader(convert(data.type), data.source)
     {
     }
@@ -63,11 +63,6 @@ namespace opengl {
     GLuint shader::get_object() const
     {
         return object_;
-    }
-
-    std::unique_ptr<graphics::shader> shader_manager::create(graphics::shader_data data)
-    {
-        return std::make_unique<shader>(std::move(data));
     }
 }
 }

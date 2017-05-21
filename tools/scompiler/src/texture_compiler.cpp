@@ -3,11 +3,13 @@
 #include <texture_compiler.hpp>
 
 #include <sigma/graphics/texture.hpp>
+#include <sigma/resource/identifier.hpp>
 #include <sigma/util/json_conversion.hpp>
 
 #include <json/json.h>
 
 #include <boost/archive/binary_oarchive.hpp>
+#include <boost/filesystem/operations.hpp>
 #include <boost/gil/extension/io/jpeg_io.hpp>
 #include <boost/gil/extension/io/png_io.hpp>
 #include <boost/gil/extension/io/tiff_io.hpp>
@@ -42,7 +44,7 @@ bool is_texture(boost::filesystem::path file)
 }
 
 template <class Img>
-void copy_texture_data(const Img& image, graphics::texture_data& texture)
+void copy_texture(const Img& image, graphics::texture& texture)
 {
     auto view = boost::gil::const_view(image);
     using pixel = typename decltype(view)::value_type;
@@ -52,7 +54,7 @@ void copy_texture_data(const Img& image, graphics::texture_data& texture)
 }
 
 template <class Img>
-void compile_texture(const boost::filesystem::path& file_path, graphics::texture_data& texture)
+void compile_texture(const boost::filesystem::path& file_path, graphics::texture& texture)
 {
     std::string file_path_string = file_path.string();
     Img image;
@@ -75,7 +77,7 @@ void compile_texture(const boost::filesystem::path& file_path, graphics::texture
     }
     }
 
-    copy_texture_data(image, texture);
+    copy_texture(image, texture);
 }
 
 bool compile_textures(boost::filesystem::path outputdir, std::vector<boost::filesystem::path> textures)
@@ -106,7 +108,7 @@ bool compile_textures(boost::filesystem::path outputdir, std::vector<boost::file
             sigma::resource::identifier rid("texture", file_path);
             auto final_path = outputdir / std::to_string(rid.value());
 
-            sigma::graphics::texture_data texture;
+            sigma::graphics::texture texture;
 
             json::from_json(import_settings["filter"]["minification"], texture.minification_filter);
             json::from_json(import_settings["filter"]["magnification"], texture.magnification_filter);

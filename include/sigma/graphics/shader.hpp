@@ -2,8 +2,10 @@
 #define SIGMA_GRAPHICS_SHADER_HPP
 
 #include <sigma/config.hpp>
-#include <sigma/resource/manager.hpp>
 
+#include <boost/serialization/version.hpp>
+
+#include <array>
 #include <string>
 
 namespace sigma {
@@ -20,7 +22,7 @@ namespace graphics {
         return { shader_type::vertex, shader_type::fragment, shader_type::geometry };
     }
 
-    struct shader_data {
+    struct shader {
         shader_type type;
         std::string source;
 
@@ -31,25 +33,6 @@ namespace graphics {
             ar& source;
         }
     };
-
-    class SIGMA_API shader {
-    public:
-        using resource_data = shader_data;
-
-        shader() = default;
-
-        shader(shader&&) = default;
-
-        shader& operator=(shader&&) = default;
-
-        virtual ~shader() = default;
-
-    private:
-        shader(const shader&) = delete;
-        shader& operator=(const shader&) = delete;
-    };
-
-    using shader_manager = resource::manager<shader>;
 }
 }
 
@@ -63,6 +46,6 @@ struct hash<sigma::graphics::shader_type> {
 };
 }
 
-BOOST_CLASS_VERSION(sigma::graphics::shader_data, 1);
+BOOST_CLASS_VERSION(sigma::graphics::shader, 1);
 
 #endif // SIGMA_GRAPHICS_SHADER_HPP

@@ -11,10 +11,18 @@
 
 int main(int argc, char* argv[])
 {
+    auto data_path = boost::filesystem::current_path() / ".." / "data";
+    sigma::resource::cache<sigma::graphics::texture> textures{ data_path };
+    sigma::resource::cache<sigma::graphics::cubemap> cubemaps{ data_path };
+    sigma::resource::cache<sigma::graphics::shader> shaders{ data_path };
+    sigma::resource::cache<sigma::graphics::material> materials{ data_path };
+    sigma::resource::cache<sigma::graphics::static_mesh> static_meshes{ data_path };
+    sigma::resource::cache<sigma::graphics::post_process_effect> effects{ data_path };
+
     sigma::window window{ glm::ivec2{ 1920, 1080 } };
 
-    auto renderer = std::make_unique<sigma::opengl::renderer>(window.size());
-    auto game = std::make_unique<simple_game>(renderer.get());
+    auto renderer = std::make_unique<sigma::opengl::renderer>(window.size(), textures, cubemaps, shaders, materials, static_meshes, effects);
+    auto game = std::make_unique<simple_game>(static_meshes);
 
     sigma::graphics::view_port viewport{
         window.size(),

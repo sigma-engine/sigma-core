@@ -4,38 +4,64 @@
 #include <sigma/graphics/material.hpp>
 #include <sigma/graphics/opengl/shader_technique.hpp>
 
-// #define MATERIAL_PTR(material_mgr, x) static_cast<const sigma::opengl::material*>(material_mgr.acquire(x))
-#define MATERIAL_PTR(material_mgr, x) static_cast<sigma::opengl::material*>(material_mgr.acquire(x))
+#define MATERIAL_PTR(material_mgr, x) material_mgr.acquire(x)
 
 namespace sigma {
 namespace opengl {
-    class material : public shader_technique<graphics::material> {
+    class material : public opengl::shader_technique<graphics::material> {
     public:
         material() = default;
 
-        material(texture_manager& textures, cubemap_manager& cubemaps, shader_manager& shaders, const graphics::material_data& data);
+        material(const graphics::material& data);
 
         material(material&&) = default;
 
         material& operator=(material&&) = default;
 
-        void link(opengl::shader_manager& shader_mgr);
+        void link(texture_manager& texture_mgr, cubemap_manager& cubemap_mgr, shader_manager& shader_mgr);
 
     private:
         material(const material&) = delete;
         material& operator=(const material&) = delete;
     };
 
-    class material_manager : public sigma::graphics::material_manager {
+    class material_manager {
     public:
-        material_manager(boost::filesystem::path cache_directory, opengl::shader_manager& shaders, opengl::texture_manager& textures, opengl::cubemap_manager& cubemaps);
+        // TODO remove the use of unique_ptr
 
-        virtual std::unique_ptr<graphics::material> create(graphics::material_data data) override;
+        material_manager(texture_manager& textures, cubemap_manager& cubemaps, shader_manager& shaders, resource::cache<graphics::material>& material_cache)
+            : textures_(textures)
+            , cubemaps_(cubemaps)
+            , shaders_(shaders)
+            , material_cache_(material_cache)
+        {
+        }
+
+        resource::handle<graphics::material> get(resource::identifier id)
+        {
+            return material_cache_.get(id);
+        }
+
+        opengl::material* acquire(resource::handle<graphics::material> hndl)
+        {
+            // TODO not thread safe
+            if (hndl.index >= materials_.size())
+                materials_.resize(hndl.index + 1);
+
+            if (materials_[hndl.index] == nullptr) {
+                materials_[hndl.index] = std::make_unique<material>(*material_cache_.acquire(hndl));
+                materials_[hndl.index]->link(textures_, cubemaps_, shaders_);
+            }
+
+            return materials_.at(hndl.index).get();
+        }
 
     private:
-        opengl::shader_manager& shaders_;
-        opengl::texture_manager& textures_;
-        opengl::cubemap_manager& cubemaps_;
+        texture_manager& textures_;
+        cubemap_manager& cubemaps_;
+        shader_manager& shaders_;
+        resource::cache<graphics::material>& material_cache_;
+        std::vector<std::unique_ptr<material>> materials_;
     };
 }
 }

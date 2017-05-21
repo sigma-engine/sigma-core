@@ -7,8 +7,8 @@
 #include <chrono>
 #include <cmath>
 
-simple_game::simple_game(sigma::graphics::renderer* renderer)
-    : sigma::game<simple_world>(renderer->static_meshes())
+simple_game::simple_game(sigma::resource::cache<sigma::graphics::static_mesh>& static_meshes)
+    : sigma::game<simple_world>(static_meshes)
     , generator_(6546534)
     , position_distribution_{ { -50, .5f, -50 }, { 50.0f, .5f, 50.0f } }
     , rotation_distribution_{ glm::vec3{ 0.0f }, glm::vec3{ 2.0f * boost::math::constants::pi<float>() } }

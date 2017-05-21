@@ -141,7 +141,6 @@ assimp_converter::assimp_converter(boost::filesystem::path package_root, boost::
     }
 
     // TODO skeletal mesehes.
-    // TODO matericonvertals
     // TODO the whole scene.
     // TODO animations.
     // TODO textures?
@@ -213,7 +212,7 @@ void assimp_converter::convert_material(std::string name, Json::Value& material)
     }
 }
 
-void assimp_converter::convert_static_mesh(std::string name, graphics::static_mesh_data& mesh) const
+void assimp_converter::convert_static_mesh(std::string name, graphics::static_mesh& mesh) const
 {
     const aiScene* aiScene = importer_->GetScene();
 
@@ -222,7 +221,7 @@ void assimp_converter::convert_static_mesh(std::string name, graphics::static_me
         if (name != get_name(aimesh))
             continue;
 
-        std::vector<sigma::graphics::static_mesh_data::vertex> submesh_vertices(aimesh->mNumVertices);
+        std::vector<sigma::graphics::static_mesh::vertex> submesh_vertices(aimesh->mNumVertices);
         for (unsigned int j = 0; j < aimesh->mNumVertices; ++j) {
             auto pos = aimesh->mVertices[j];
             submesh_vertices[j].position = converter_->convert_3d(pos);
@@ -242,7 +241,7 @@ void assimp_converter::convert_static_mesh(std::string name, graphics::static_me
             }
         }
 
-        std::vector<sigma::graphics::static_mesh_data::triangle> submesh_triangles(aimesh->mNumFaces);
+        std::vector<sigma::graphics::static_mesh::triangle> submesh_triangles(aimesh->mNumFaces);
         for (unsigned int j = 0; j < aimesh->mNumFaces; ++j) {
             aiFace f = aimesh->mFaces[j];
             for (unsigned int k = 0; k < 3; ++k)

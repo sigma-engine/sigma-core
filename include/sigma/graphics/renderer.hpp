@@ -4,12 +4,6 @@
 #include <sigma/config.hpp>
 
 #include <sigma/frustum.hpp>
-#include <sigma/graphics/cubemap.hpp>
-#include <sigma/graphics/material.hpp>
-#include <sigma/graphics/post_process_effect.hpp>
-#include <sigma/graphics/shader.hpp>
-#include <sigma/graphics/static_mesh.hpp>
-#include <sigma/graphics/texture.hpp>
 
 #include <glm/vec2.hpp>
 
@@ -25,18 +19,6 @@ namespace graphics {
         renderer(glm::ivec2 size);
 
         virtual ~renderer();
-
-        virtual texture_manager& textures() = 0;
-
-        virtual cubemap_manager& cubemaps() = 0;
-
-        virtual shader_manager& shaders() = 0;
-
-        virtual material_manager& materials() = 0;
-
-        virtual static_mesh_manager& static_meshes() = 0;
-
-        virtual post_process_effect_manager& effects() = 0;
 
         virtual void resize(glm::uvec2 size) = 0;
 

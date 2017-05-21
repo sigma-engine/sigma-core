@@ -8,9 +8,9 @@
 
 namespace sigma {
 namespace graphics {
-    struct shader_data;
+    struct shader;
 }
-bool validate_shader(const graphics::shader_data& shader, std::vector<boost::filesystem::path> source_filenames);
+bool validate_shader(const graphics::shader& shader, std::vector<boost::filesystem::path> source_filenames);
 }
 
 #endif //SIGMA_SHADER_VALIDATION_HPP

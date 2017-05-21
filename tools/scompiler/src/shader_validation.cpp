@@ -4,6 +4,7 @@
 
 #include <glslang/Public/ShaderLang.h>
 
+#include <iostream>
 #include <regex>
 
 namespace glslang {
@@ -21,7 +22,7 @@ struct glsl_process {
     }
 };
 
-bool sigma::validate_shader(const graphics::shader_data& shader, std::vector<boost::filesystem::path> source_filenames)
+bool sigma::validate_shader(const graphics::shader& shader, std::vector<boost::filesystem::path> source_filenames)
 {
     glsl_process validation_process;
 

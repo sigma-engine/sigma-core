@@ -22,7 +22,7 @@ class aiMaterial;
 
 namespace sigma {
 namespace graphics {
-    struct static_mesh_data;
+    struct static_mesh;
 }
 
 class converter;
@@ -41,7 +41,7 @@ public:
 
     void convert_material(std::string name, Json::Value& material) const;
 
-    void convert_static_mesh(std::string name, graphics::static_mesh_data& mesh) const;
+    void convert_static_mesh(std::string name, graphics::static_mesh& mesh) const;
 
     void convert_object(std::string name, Json::Value& entity) const;
 

@@ -12,7 +12,7 @@
 
 namespace sigma {
 namespace opengl {
-    class static_mesh_manager;
+    class shader_manager;
 
     template <class T>
     class shader_technique : public T {
@@ -37,14 +37,8 @@ namespace opengl {
         static constexpr const char* MODEL_VIEW_MATRIX_NAME = "model_view_matrix";
         static constexpr const char* NORMAL_MATRIX_NAME = "normal_matrix";
 
-        shader_technique(texture_manager& textures, cubemap_manager& cubemaps, shader_manager& shaders, const typename T::resource_data& data)
-            : T(textures, cubemaps, shaders, data)
-        {
-            GL_CHECK(object_ = glCreateProgram());
-        }
-
-        shader_technique(texture_manager& textures, cubemap_manager& cubemaps, shader_manager& shaders, static_mesh_manager& static_meshes, const typename T::resource_data& data)
-            : T(textures, cubemaps, shaders, static_meshes, data)
+        shader_technique(const T& data)
+            : T(data)
         {
             GL_CHECK(object_ = glCreateProgram());
         }
@@ -58,12 +52,46 @@ namespace opengl {
             glDeleteProgram(object_);
         }
 
-        void link(const opengl::shader_manager& shader_mgr)
+        void set_uniform(const std::string& name, float value)
+        {
+            for (auto& u : floats_) {
+                if (u.first == name)
+                    u.second = value;
+            }
+        }
+
+        void set_uniform(const std::string& name, const glm::vec2& value)
+        {
+            for (auto& u : vec2s_) {
+                if (u.first == name)
+                    u.second = value;
+            }
+        }
+
+        void set_uniform(const std::string& name, const glm::vec3& value)
+        {
+            for (auto& u : vec3s_) {
+                if (u.first == name)
+                    u.second = value;
+            }
+        }
+
+        void set_uniform(const std::string& name, const glm::vec4& value)
+        {
+            for (auto& u : vec4s_) {
+                if (u.first == name)
+                    u.second = value;
+            }
+        }
+
+        void link(texture_manager& texture_mgr, cubemap_manager& cubemap_mgr, shader_manager& shader_mgr)
         {
             assert(linked_ == GL_FALSE && "Program already linked");
 
-            for (const auto& shdr : this->shaders_)
-                GL_CHECK(glAttachShader(object_, SHADER_PTR(shader_mgr, shdr.second)->get_object()));
+            for (const auto& shdr : this->shaders) {
+                auto shdr_hnd = shader_mgr.get(shdr.second);
+                GL_CHECK(glAttachShader(object_, SHADER_PTR(shader_mgr, shdr_hnd)->get_object()));
+            }
 
             GL_CHECK(glLinkProgram(object_));
 
@@ -97,34 +125,58 @@ namespace opengl {
 
             GL_CHECK(in_image_location_ = glGetUniformLocation(object_, geometry_buffer::IMAGE_INPUT_NAME));
 
-            float_locations_.resize(this->floats_.size());
-            for (std::size_t i = 0; i < float_locations_.size(); ++i) {
-                GL_CHECK(float_locations_[i] = glGetUniformLocation(object_, this->floats_[i].first.c_str()));
+            int i = 0;
+            floats_.resize(T::floats.size());
+            float_locations_.resize(T::floats.size());
+            for (auto v : T::floats) {
+                GL_CHECK(float_locations_[i] = glGetUniformLocation(object_, v.first.c_str()));
+                floats_[i] = v;
+                i++;
             }
 
-            vec2_locations_.resize(this->vec2s_.size());
-            for (std::size_t i = 0; i < vec2_locations_.size(); ++i) {
-                GL_CHECK(vec2_locations_[i] = glGetUniformLocation(object_, this->vec2s_[i].first.c_str()));
+            i = 0;
+            vec2s_.resize(T::vec2s.size());
+            vec2_locations_.resize(T::vec2s.size());
+            for (auto v : T::vec2s) {
+                GL_CHECK(vec2_locations_[i] = glGetUniformLocation(object_, v.first.c_str()));
+                vec2s_[i] = v;
+                i++;
             }
 
-            vec3_locations_.resize(this->vec3s_.size());
-            for (std::size_t i = 0; i < vec3_locations_.size(); ++i) {
-                GL_CHECK(vec3_locations_[i] = glGetUniformLocation(object_, this->vec3s_[i].first.c_str()));
+            i = 0;
+            vec3s_.resize(T::vec3s.size());
+            vec3_locations_.resize(T::vec3s.size());
+            for (auto v : T::vec3s) {
+                GL_CHECK(vec3_locations_[i] = glGetUniformLocation(object_, v.first.c_str()));
+                vec3s_[i] = v;
+                i++;
             }
 
-            vec4_locations_.resize(this->vec4s_.size());
-            for (std::size_t i = 0; i < vec4_locations_.size(); ++i) {
-                GL_CHECK(vec4_locations_[i] = glGetUniformLocation(object_, this->vec4s_[i].first.c_str()));
+            i = 0;
+            vec4s_.resize(T::vec4s.size());
+            vec4_locations_.resize(T::vec4s.size());
+            for (auto v : T::vec4s) {
+                GL_CHECK(vec4_locations_[i] = glGetUniformLocation(object_, v.first.c_str()));
+                vec4s_[i] = v;
+                i++;
             }
 
-            texture_locations_.resize(this->textures_.size());
-            for (std::size_t i = 0; i < texture_locations_.size(); ++i) {
-                GL_CHECK(texture_locations_[i] = glGetUniformLocation(object_, this->textures_[i].first.c_str()));
+            i = 0;
+            textures_.resize(T::textures.size());
+            texture_locations_.resize(T::textures.size());
+            for (auto v : T::textures) {
+                GL_CHECK(texture_locations_[i] = glGetUniformLocation(object_, v.first.c_str()));
+                textures_[i] = std::make_pair(v.first, texture_mgr.get(v.second));
+                i++;
             }
 
-            cubemap_locations_.resize(this->cubemaps_.size());
-            for (std::size_t i = 0; i < cubemap_locations_.size(); ++i) {
-                GL_CHECK(cubemap_locations_[i] = glGetUniformLocation(object_, this->cubemaps_[i].first.c_str()));
+            i = 0;
+            cubemaps_.resize(T::cubemaps.size());
+            cubemap_locations_.resize(T::cubemaps.size());
+            for (auto v : T::cubemaps) {
+                GL_CHECK(cubemap_locations_[i] = glGetUniformLocation(object_, v.first.c_str()));
+                cubemaps_[i] = std::make_pair(v.first, cubemap_mgr.get(v.second));
+                i++;
             }
         }
 
@@ -151,7 +203,7 @@ namespace opengl {
             GL_CHECK(glUniformMatrix3fv(normal_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->normal_matrix)));
         }
 
-        void bind() const
+        void bind(texture_manager& texture_mgr, cubemap_manager& cubemap_mgr) const
         {
             GL_CHECK(glUseProgram(object_));
             GL_CHECK(glUniform1i(in_image_location_, geometry_buffer::INPUT_IMAGE_LOCATION));
@@ -189,9 +241,9 @@ namespace opengl {
             }
         }
 
-        void bind(const texture_manager& texture_mgr, const cubemap_manager& cubemap_mgr, texture_unit first_texture_unit) const
+        void bind(texture_manager& texture_mgr, cubemap_manager& cubemap_mgr, texture_unit first_texture_unit) const
         {
-            bind();
+            bind(texture_mgr, cubemap_mgr);
             auto texture_unit = GLenum(first_texture_unit);
             auto unit_number = GLenum(first_texture_unit) - GL_TEXTURE0;
             for (std::size_t i = 0; i < this->textures_.size(); ++i, ++texture_unit, ++unit_number) {
@@ -237,6 +289,13 @@ namespace opengl {
         GLint model_matrix_location_ = -1;
         GLint model_view_matrix_location_ = -1;
         GLint normal_matrix_location_ = -1;
+
+        std::vector<std::pair<std::string, float>> floats_;
+        std::vector<std::pair<std::string, glm::vec2>> vec2s_;
+        std::vector<std::pair<std::string, glm::vec3>> vec3s_;
+        std::vector<std::pair<std::string, glm::vec4>> vec4s_;
+        std::vector<std::pair<std::string, resource::handle<graphics::texture>>> textures_;
+        std::vector<std::pair<std::string, resource::handle<graphics::cubemap>>> cubemaps_;
 
         std::vector<GLint> float_locations_;
         std::vector<GLint> vec2_locations_;

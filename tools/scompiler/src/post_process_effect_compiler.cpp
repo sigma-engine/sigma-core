@@ -9,6 +9,8 @@
 
 #include <boost/archive/binary_oarchive.hpp>
 
+#include <fstream>
+
 namespace sigma {
 bool is_post_process_effect(boost::filesystem::path file)
 {
@@ -27,10 +29,13 @@ bool compile_post_process_effects(boost::filesystem::path outputdir, std::vector
             Json::Value json_effect;
             file >> json_effect;
 
-            sigma::graphics::post_process_effect_data effect;
+            sigma::graphics::post_process_effect effect;
             sigma::resource::identifier rid("post_process_effect", file_path);
 
             compile_shader_technique(effect, json_effect);
+
+            if (effect.shaders.count(graphics::shader_type::vertex) == 0)
+                effect.shaders[graphics::shader_type::vertex] = resource::identifier{ "vertex", "fullscreen_quad" };
 
             if (json_effect.isMember("static_mesh"))
                 effect.mesh = sigma::resource::identifier{ "static_mesh", json_effect["static_mesh"].asString() };

@@ -8,9 +8,8 @@
 
 namespace sigma {
 namespace opengl {
-    cubemap::cubemap(graphics::cubemap_data data)
+    cubemap::cubemap(const graphics::cubemap& data)
     {
-        // TODO custom internal format
         GL_CHECK(glGenTextures(1, &object_));
         GL_CHECK(glBindTexture(GL_TEXTURE_CUBE_MAP, object_));
 
@@ -60,11 +59,6 @@ namespace opengl {
     void cubemap::bind() const
     {
         GL_CHECK(glBindTexture(GL_TEXTURE_CUBE_MAP, object_));
-    }
-
-    std::unique_ptr<graphics::cubemap> cubemap_manager::create(graphics::cubemap_data data)
-    {
-        return std::make_unique<cubemap>(std::move(data));
     }
 }
 }

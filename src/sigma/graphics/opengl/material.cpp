@@ -7,31 +7,16 @@
 
 namespace sigma {
 namespace opengl {
-    material::material(texture_manager& textures, cubemap_manager& cubemaps, shader_manager& shaders, const graphics::material_data& data)
-        : shader_technique<graphics::material>(textures, cubemaps, shaders, data)
+    material::material(const graphics::material& data)
+        : shader_technique<graphics::material>(data)
     {
     }
 
-    void material::link(opengl::shader_manager& shader_mgr)
+    void material::link(texture_manager& texture_mgr,cubemap_manager& cubemap_mgr, shader_manager& shader_mgr)
     {
         GL_CHECK(glBindFragDataLocation(object_, geometry_buffer::DIFFUSE_ROUGHNESS_OUTPUT_LOCATION, geometry_buffer::DIFFUSE_ROUGHNESS_OUTPUT_NAME));
         GL_CHECK(glBindFragDataLocation(object_, geometry_buffer::NORMAL_METALNESS_LOCATION, geometry_buffer::NORMAL_METALNESS_OUTPUT_NAME));
-        shader_technique::link(shader_mgr);
-    }
-
-    material_manager::material_manager(boost::filesystem::path cache_directory, opengl::shader_manager& shaders, opengl::texture_manager& textures, opengl::cubemap_manager& cubemaps)
-        : graphics::material_manager(cache_directory)
-        , shaders_(shaders)
-        , textures_(textures)
-        , cubemaps_(cubemaps)
-    {
-    }
-
-    std::unique_ptr<graphics::material> material_manager::create(graphics::material_data data)
-    {
-        auto effect = std::make_unique<opengl::material>(textures_, cubemaps_, shaders_, std::move(data));
-        effect->link(shaders_);
-        return std::move(effect);
+        shader_technique::link(texture_mgr, cubemap_mgr, shader_mgr);
     }
 }
 }

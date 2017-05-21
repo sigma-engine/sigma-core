@@ -8,23 +8,15 @@
 
 #include <glad/glad.h>
 
-#include <boost/filesystem/path.hpp>
-
 #include <cstddef>
 
-// #define STATIC_MESH_PTR(static_mesh_mgr, x) static_cast<const sigma::opengl::static_mesh*>(static_mesh_mgr.acquire(x))
-#define STATIC_MESH_PTR(static_mesh_mgr, x) static_cast<sigma::opengl::static_mesh*>(static_mesh_mgr.acquire(x))
+#define STATIC_MESH_PTR(static_mesh_mgr, x) static_mesh_mgr.acquire(x)
 
 namespace sigma {
 namespace opengl {
-    class static_mesh : public graphics::static_mesh {
+    class static_mesh {
     public:
-        struct material_slot {
-            resource::handle<graphics::material> material;
-            std::size_t start, end;
-        };
-
-        static_mesh(material_manager& materials, const graphics::static_mesh_data& data);
+        static_mesh(material_manager& material_mgr, const graphics::static_mesh& data);
 
         static_mesh(static_mesh&&) = default;
 
@@ -44,19 +36,45 @@ namespace opengl {
         GLuint index_buffer_ = 0;
         GLsizei index_count_ = 0;
 
+        std::vector<resource::handle<graphics::material>> materials_;
+        std::vector<std::pair<std::size_t, std::size_t>> material_slots_;
+
     private:
         static_mesh(const static_mesh&) = delete;
         static_mesh& operator=(const static_mesh&) = delete;
     };
 
-    class static_mesh_manager : public graphics::static_mesh_manager {
+    class static_mesh_manager {
     public:
-        static_mesh_manager(boost::filesystem::path cache_directory, opengl::material_manager& materials);
+        // TODO remove the use of unique_ptr
 
-        virtual std::unique_ptr<graphics::static_mesh> create(graphics::static_mesh_data data) override;
+        static_mesh_manager(material_manager& materials, resource::cache<graphics::static_mesh>& static_mesh_cache)
+            : materials_(materials)
+            , static_mesh_cache_(static_mesh_cache)
+        {
+        }
+
+        resource::handle<graphics::static_mesh> get(resource::identifier id)
+        {
+            return static_mesh_cache_.get(id);
+        }
+
+        opengl::static_mesh* acquire(resource::handle<graphics::static_mesh> hndl)
+        {
+            // TODO not thread safe
+            if (hndl.index >= static_meshes_.size())
+                static_meshes_.resize(hndl.index + 1);
+
+            if (static_meshes_[hndl.index] == nullptr)
+                static_meshes_[hndl.index] = std::make_unique<static_mesh>(materials_, *static_mesh_cache_.acquire(hndl));
+
+            return static_meshes_.at(hndl.index).get();
+        }
 
     private:
-        opengl::material_manager& materials_;
+        material_manager& materials_;
+        resource::cache<graphics::static_mesh>& static_mesh_cache_;
+        std::vector<std::unique_ptr<static_mesh>> static_meshes_;
     };
 }
 }

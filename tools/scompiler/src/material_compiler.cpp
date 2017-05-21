@@ -9,6 +9,8 @@
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/filesystem/path.hpp>
 
+#include <fstream>
+
 namespace sigma {
 bool is_material(boost::filesystem::path file)
 {
@@ -28,7 +30,7 @@ bool compile_materials(boost::filesystem::path outputdir, std::vector<boost::fil
             Json::Value json_material;
             file >> json_material;
 
-            sigma::graphics::material_data material;
+            sigma::graphics::material material;
             sigma::resource::identifier rid("material", file_path);
 
             compile_shader_technique(material, json_material);

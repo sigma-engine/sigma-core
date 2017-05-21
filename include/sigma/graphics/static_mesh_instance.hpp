@@ -2,6 +2,7 @@
 #define SIGMA_GRAPHICS_STATIC_MESH_INSTANCE_HPP
 
 #include <sigma/config.hpp>
+#include <sigma/graphics/material.hpp>
 #include <sigma/graphics/static_mesh.hpp>
 #include <sigma/reflect.hpp>
 #include <sigma/resource/identifier.hpp>

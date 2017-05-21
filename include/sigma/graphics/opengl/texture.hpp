@@ -2,16 +2,16 @@
 #define SIGMA_GRAPHICS_OPENGL_TEXTURE_HPP
 
 #include <sigma/graphics/texture.hpp>
+#include <sigma/resource/manager.hpp>
 
 #include <glad/glad.h>
-
 #include <glm/vec2.hpp>
 
+#include <cassert>
 #include <utility>
 #include <vector>
 
-// #define TEXTURE_PTR(texture_mgr, x) static_cast<const sigma::opengl::texture*>(texture_mgr.acquire(x))
-#define TEXTURE_PTR(texture_mgr, x) static_cast<sigma::opengl::texture*>(texture_mgr.acquire(x))
+#define TEXTURE_PTR(texture_mgr, x) texture_mgr.acquire(x)
 
 namespace sigma {
 namespace opengl {
@@ -129,7 +129,7 @@ namespace opengl {
     // TODO hack remove this
     internal_format convert_internal(graphics::texture_format fmt);
 
-    class texture : public graphics::texture {
+    class texture {
     public:
         texture(internal_format format, glm::ivec2 size,
             graphics::texture_filter minification_filter = graphics::texture_filter::NEAREST,
@@ -143,7 +143,7 @@ namespace opengl {
             graphics::texture_format data_format,
             const std::vector<char>& data);
 
-        texture(graphics::texture_data data);
+        texture(const graphics::texture& data);
 
         texture(texture&&) = default;
 
@@ -164,11 +164,35 @@ namespace opengl {
         GLuint object_ = 0;
     };
 
-    class texture_manager : public graphics::texture_manager {
+    class texture_manager {
     public:
-        using graphics::texture_manager::texture_manager;
+        // TODO remove the use of unique_ptr
 
-        virtual std::unique_ptr<graphics::texture> create(graphics::texture_data data) override;
+        texture_manager(resource::cache<graphics::texture>& texture_cache)
+            : texture_cache_(texture_cache)
+        {
+        }
+
+        resource::handle<graphics::texture> get(resource::identifier id)
+        {
+            return texture_cache_.get(id);
+        }
+
+        opengl::texture* acquire(resource::handle<graphics::texture> hndl)
+        {
+            // TODO not thread safe
+            if (hndl.index >= textures_.size())
+                textures_.resize(hndl.index + 1);
+
+            if (textures_[hndl.index] == nullptr)
+                textures_[hndl.index] = std::make_unique<texture>(*texture_cache_.acquire(hndl));
+
+            return textures_.at(hndl.index).get();
+        }
+
+    private:
+        resource::cache<graphics::texture>& texture_cache_;
+        std::vector<std::unique_ptr<texture>> textures_;
     };
 }
 }

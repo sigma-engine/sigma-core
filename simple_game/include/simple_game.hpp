@@ -4,7 +4,6 @@
 #include <simple_world.hpp>
 
 #include <sigma/game.hpp>
-#include <sigma/graphics/renderer.hpp>
 
 #include <glm/vec3.hpp>
 
@@ -32,7 +31,7 @@ private:
 
 class simple_game : public sigma::game<simple_world> {
 public:
-    simple_game(sigma::graphics::renderer* renderer);
+    simple_game(sigma::resource::cache<sigma::graphics::static_mesh>& static_meshes);
 
     sigma::transform& random_transform(sigma::entity e);
 

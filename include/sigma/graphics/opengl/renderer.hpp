@@ -41,21 +41,15 @@ namespace sigma {
 namespace opengl {
     class SIGMA_API renderer : public graphics::renderer {
     public:
-        renderer(glm::ivec2 size);
+        renderer(glm::ivec2 size,
+            resource::cache<graphics::texture>& texture_cache,
+            resource::cache<graphics::cubemap>& cubemap_cache,
+            resource::cache<graphics::shader>& shader_cahce,
+            resource::cache<graphics::material>& material_cache,
+            resource::cache<graphics::static_mesh>& static_mesh_cache,
+            resource::cache<graphics::post_process_effect>& effect_cache);
 
         virtual ~renderer();
-
-        virtual graphics::texture_manager& textures() override;
-
-        virtual graphics::cubemap_manager& cubemaps() override;
-
-        virtual graphics::shader_manager& shaders() override;
-
-        virtual graphics::material_manager& materials() override;
-
-        virtual graphics::static_mesh_manager& static_meshes() override;
-
-        virtual graphics::post_process_effect_manager& effects() override;
 
         virtual void resize(glm::uvec2 size) override;
 
@@ -138,9 +132,9 @@ namespace opengl {
         standard_uniforms standard_uniform_data_;
         //uniform_buffer<standard_uniforms> standard_uniforms_;
 
-        opengl::shader_manager shaders_;
         opengl::texture_manager textures_;
         opengl::cubemap_manager cubemaps_;
+        opengl::shader_manager shaders_;
         opengl::material_manager materials_;
         opengl::static_mesh_manager static_meshes_;
         opengl::post_process_effect_manager effects_;
@@ -193,15 +187,16 @@ namespace opengl {
                 matrices.model_view_matrix = standard_uniform_data_.view_matrix * matrices.model_matrix;
                 matrices.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices.model_matrix))); //glm::transpose(glm::inverse(glm::mat3(matrices.model_view_matrix)));
 
-                for (unsigned int i = 0; i < mesh->material_count(); ++i) {
-                    auto mat = MATERIAL_PTR(materials_, mesh->material(i));
+                for (unsigned int i = 0; i < mesh->materials_.size(); ++i) {
+                    auto mat = MATERIAL_PTR(materials_, mesh->materials_[i]);
 
-                    auto mit = mesh_instance.materials.find(i);
-                    if (mit != mesh_instance.materials.end()) {
-                        mat = MATERIAL_PTR(materials_, mit->second);
-                    }
+                    // TODO allow overriding materials
+                    // auto mit = mesh_instance.materials.find(i);
+                    // if (mit != mesh_instance.materials.end()) {
+                    //     mat = MATERIAL_PTR(materials_, mit->second);
+                    // }
 
-                    if (mat->is_transparent() == transparent) {
+                    if (mat->transparent == transparent) {
                         mat->bind(textures_, cubemaps_, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
                         mat->set_standard_uniforms(&standard_uniform_data_);
                         mat->set_instance_matrices(&matrices);
@@ -233,7 +228,7 @@ namespace opengl {
             // Render point lights
             point_light_pass(viewport, world);
 
-            // TODO Render spot lights
+            // Render spot lights
             spot_light_pass(viewport, world);
         }
 
@@ -304,7 +299,7 @@ namespace opengl {
                 EFFECT_PTR(effects_, directional_light_effect_)->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
                 EFFECT_PTR(effects_, directional_light_effect_)->set_uniform("direction", light.direction);
                 EFFECT_PTR(effects_, directional_light_effect_)->set_uniform("center", light_center);
-                EFFECT_PTR(effects_, directional_light_effect_)->bind(textures_, cubemaps_); // TODO update uniforms
+                EFFECT_PTR(effects_, directional_light_effect_)->bind(textures_, cubemaps_);
                 EFFECT_PTR(effects_, directional_light_effect_)->apply(static_meshes_);
             });
         }
@@ -337,7 +332,7 @@ namespace opengl {
             world.template for_each<transform, graphics::point_light>([&](entity e, const transform& txform, const graphics::point_light& light) {
                 EFFECT_PTR(effects_, point_light_effect_)->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
                 EFFECT_PTR(effects_, point_light_effect_)->set_uniform("position_radius", glm::vec4(txform.position, txform.scale.x));
-                EFFECT_PTR(effects_, point_light_effect_)->bind(textures_, cubemaps_); // TODO update uniforms
+                EFFECT_PTR(effects_, point_light_effect_)->bind(textures_, cubemaps_);
                 EFFECT_PTR(effects_, point_light_effect_)->apply(static_meshes_);
             });
         }
@@ -371,7 +366,7 @@ namespace opengl {
                 EFFECT_PTR(effects_, spot_light_effect_)->set_uniform("position", txform.position);
                 EFFECT_PTR(effects_, spot_light_effect_)->set_uniform("direction", light.direction);
                 EFFECT_PTR(effects_, spot_light_effect_)->set_uniform("cutoff", std::cos(light.cutoff));
-                EFFECT_PTR(effects_, spot_light_effect_)->bind(textures_, cubemaps_); // TODO update uniforms
+                EFFECT_PTR(effects_, spot_light_effect_)->bind(textures_, cubemaps_);
                 EFFECT_PTR(effects_, spot_light_effect_)->apply(static_meshes_);
             });
         }

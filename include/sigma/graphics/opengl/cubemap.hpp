@@ -2,17 +2,17 @@
 #define SIGMA_GRAPHICS_OPENGL_CUBEMAP_HPP
 
 #include <sigma/graphics/cubemap.hpp>
+#include <sigma/resource/manager.hpp>
 
 #include <glad/glad.h>
 
-// #define CUBEMAP_PTR(cubemap_mgr, x) static_cast<const sigma::opengl::cubemap*>(cubemap_mgr.acquire(x))
-#define CUBEMAP_PTR(cubemap_mgr, x) static_cast<const sigma::opengl::cubemap*>(cubemap_mgr.acquire(x))
+#define CUBEMAP_PTR(cubemap_mgr, x) cubemap_mgr.acquire(x)
 
 namespace sigma {
 namespace opengl {
-    class cubemap : public graphics::cubemap {
+    class cubemap {
     public:
-        cubemap(graphics::cubemap_data data);
+        cubemap(const graphics::cubemap& data);
 
         cubemap(cubemap&&) = default;
 
@@ -31,11 +31,35 @@ namespace opengl {
         GLuint object_ = 0;
     };
 
-    class cubemap_manager : public graphics::cubemap_manager {
+    class cubemap_manager {
     public:
-        using graphics::cubemap_manager::cubemap_manager;
+        // TODO remove the use of unique_ptr
 
-        virtual std::unique_ptr<graphics::cubemap> create(graphics::cubemap_data data) override;
+        cubemap_manager(resource::cache<graphics::cubemap>& cubemap_cache)
+            : cubemap_cache_(cubemap_cache)
+        {
+        }
+
+        resource::handle<graphics::cubemap> get(resource::identifier id)
+        {
+            return cubemap_cache_.get(id);
+        }
+
+        opengl::cubemap* acquire(resource::handle<graphics::cubemap> hndl)
+        {
+            // TODO not thread safe
+            if (hndl.index >= cubemaps_.size())
+                cubemaps_.resize(hndl.index + 1);
+
+            if (cubemaps_[hndl.index] == nullptr)
+                cubemaps_[hndl.index] = std::make_unique<cubemap>(*cubemap_cache_.acquire(hndl));
+
+            return cubemaps_.at(hndl.index).get();
+        }
+
+    private:
+        resource::cache<graphics::cubemap>& cubemap_cache_;
+        std::vector<std::unique_ptr<cubemap>> cubemaps_;
     };
 }
 }

@@ -72,7 +72,7 @@ namespace opengl {
             GL_CHECK(glGenerateMipmap(GL_TEXTURE_2D));
     }
 
-    texture::texture(graphics::texture_data data)
+    texture::texture(const graphics::texture& data)
         : texture(convert_internal(data.format), data.size, data.minification_filter, data.magnification_filter, data.mipmap_filter, data.format, data.data)
     {
     }
@@ -95,11 +95,6 @@ namespace opengl {
     void texture::generate_mipmaps()
     {
         GL_CHECK(glGenerateMipmap(GL_TEXTURE_2D));
-    }
-
-    std::unique_ptr<graphics::texture> texture_manager::create(graphics::texture_data data)
-    {
-        return std::make_unique<texture>(std::move(data));
     }
 }
 }

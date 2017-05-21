@@ -4,13 +4,11 @@
 #include <sigma/graphics/post_process_effect.hpp>
 
 #include <sigma/graphics/opengl/shader_technique.hpp>
+#include <sigma/graphics/static_mesh.hpp>
 
 #include <glad/glad.h>
 
-#include <boost/filesystem/path.hpp>
-
-// #define EFFECT_PTR(effect_mgr, x) static_cast<const sigma::opengl::post_process_effect*>(effect_mgr.acquire(x))
-#define EFFECT_PTR(effect_mgr, x) static_cast<sigma::opengl::post_process_effect*>(effect_mgr.acquire(x))
+#define EFFECT_PTR(effect_mgr, x) effect_mgr.acquire(x)
 
 namespace sigma {
 namespace opengl {
@@ -21,17 +19,17 @@ namespace opengl {
 
     class post_process_effect : public shader_technique<graphics::post_process_effect> {
     public:
-        post_process_effect(texture_manager& textures, cubemap_manager& cubemaps, shader_manager& shaders, static_mesh_manager& static_meshes, const graphics::post_process_effect_data& data);
+        post_process_effect(static_mesh_manager& static_meshes, const graphics::post_process_effect& data);
 
         post_process_effect(post_process_effect&&) = default;
 
         post_process_effect& operator=(post_process_effect&&) = default;
 
-        void link(opengl::shader_manager& shader_mgr);
+        void link(texture_manager& texture_mgr, cubemap_manager& cubemap_mgr, shader_manager& shader_mgr);
 
-        void bind(const opengl::texture_manager& texture_mgr, const opengl::cubemap_manager& cubemap_mgr) const;
+        void bind(opengl::texture_manager& texture_mgr, opengl::cubemap_manager& cubemap_mgr) const;
 
-        void apply(const static_mesh_manager& static_mesh_mgr) const;
+        void apply(static_mesh_manager& static_mesh_mgr) const;
 
     private:
         GLint in_position_location_ = -1;
@@ -40,21 +38,51 @@ namespace opengl {
         GLint in_depth_stencil_location_ = -1;
         GLint in_shadow_map_location_ = -1;
 
+        resource::handle<graphics::static_mesh> mesh_;
+
         post_process_effect(const post_process_effect&) = delete;
         post_process_effect& operator=(const post_process_effect&) = delete;
     };
 
-    class post_process_effect_manager : public sigma::graphics::post_process_effect_manager {
+    class post_process_effect_manager {
     public:
-        post_process_effect_manager(boost::filesystem::path cache_directory, opengl::shader_manager& shaders, opengl::texture_manager& textures, opengl::cubemap_manager& cubemaps, opengl::static_mesh_manager& meshes);
+        // TODO remove the use of unique_ptr
 
-        virtual std::unique_ptr<graphics::post_process_effect> create(graphics::post_process_effect_data data) override;
+        post_process_effect_manager(texture_manager& textures, cubemap_manager& cubemaps, shader_manager& shaders, static_mesh_manager& static_meshes, resource::cache<graphics::post_process_effect>& post_process_effect_cache)
+            : textures_(textures)
+            , cubemaps_(cubemaps)
+            , shaders_(shaders)
+            , static_meshes_(static_meshes)
+            , post_process_effect_cache_(post_process_effect_cache)
+        {
+        }
+
+        resource::handle<graphics::post_process_effect> get(resource::identifier id)
+        {
+            return post_process_effect_cache_.get(id);
+        }
+
+        opengl::post_process_effect* acquire(resource::handle<graphics::post_process_effect> hndl)
+        {
+            // TODO not thread safe
+            if (hndl.index >= effects_.size())
+                effects_.resize(hndl.index + 1);
+
+            if (effects_[hndl.index] == nullptr) {
+                effects_[hndl.index] = std::make_unique<post_process_effect>(static_meshes_, *post_process_effect_cache_.acquire(hndl));
+                effects_[hndl.index]->link(textures_, cubemaps_, shaders_);
+            }
+
+            return effects_.at(hndl.index).get();
+        }
 
     private:
-        opengl::shader_manager& shaders_;
-        opengl::texture_manager& textures_;
-        opengl::cubemap_manager& cubemaps_;
-        opengl::static_mesh_manager& meshes_;
+        texture_manager& textures_;
+        cubemap_manager& cubemaps_;
+        shader_manager& shaders_;
+        static_mesh_manager& static_meshes_;
+        resource::cache<graphics::post_process_effect>& post_process_effect_cache_;
+        std::vector<std::unique_ptr<post_process_effect>> effects_;
     };
 }
 }
