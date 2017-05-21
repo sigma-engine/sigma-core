@@ -9,10 +9,10 @@
 
 namespace sigma {
 namespace graphics {
-    shader_technique::shader_technique(const shader_technique_data& data)
+    shader_technique::shader_technique(texture_manager& textures, cubemap_manager& cubemaps, shader_manager& shaders, const shader_technique_data& data)
     {
         for (const auto& shdr : data.shaders)
-            shaders_[shdr.first] = resource::handle<graphics::shader>{ shdr.second };
+            shaders_[shdr.first] = shaders.get(shdr.second);
 
         for (const auto& float_uniform : data.floats)
             floats_.push_back(std::make_pair(float_uniform.first, float_uniform.second));
@@ -27,10 +27,10 @@ namespace graphics {
             vec4s_.push_back(std::make_pair(vec4_uniform.first, vec4_uniform.second));
 
         for (const auto& txt : data.textures)
-            textures_.push_back(std::make_pair(txt.first, resource::handle<graphics::texture>{ txt.second }));
+            textures_.push_back(std::make_pair(txt.first, textures.get(txt.second)));
 
         for (const auto& cube : data.cubemaps)
-            cubemaps_.push_back(std::make_pair(cube.first, resource::handle<graphics::cubemap>{ cube.second }));
+            cubemaps_.push_back(std::make_pair(cube.first, cubemaps.get(cube.second)));
     }
 
     bool shader_technique::has_shader(graphics::shader_type type) const

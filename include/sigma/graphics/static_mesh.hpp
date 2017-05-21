@@ -19,10 +19,6 @@
 #include <vector>
 
 namespace sigma {
-namespace resource {
-    template <class Resource>
-    class handle;
-}
 namespace graphics {
     struct static_mesh_data {
         struct vertex {
@@ -60,7 +56,7 @@ namespace graphics {
 
         static_mesh() = default;
 
-        static_mesh(const static_mesh_data& data);
+        static_mesh(material_manager& materials, const static_mesh_data& data);
 
         static_mesh(static_mesh&&) = default;
 

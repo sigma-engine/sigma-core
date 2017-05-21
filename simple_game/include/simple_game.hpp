@@ -4,6 +4,7 @@
 #include <simple_world.hpp>
 
 #include <sigma/game.hpp>
+#include <sigma/graphics/renderer.hpp>
 
 #include <glm/vec3.hpp>
 

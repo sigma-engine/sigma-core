@@ -35,10 +35,10 @@ endif()
 
 set(CORE_SOURCES
     src/sigma/window.cpp
-    src/sigma/entity.cpp
     src/sigma/game.cpp
     src/sigma/trackball_controller.cpp
     src/sigma/frustum.cpp
+    src/sigma/handle.cpp
 
     src/sigma/graphics/renderer.cpp
     src/sigma/resource/identifier.cpp
@@ -65,11 +65,11 @@ set(CORE_HEADERS
     include/sigma/window.hpp
     include/sigma/world.hpp
     include/sigma/config.hpp
-    include/sigma/entity.hpp
     include/sigma/game.hpp
     include/sigma/trackball_controller.hpp
     include/sigma/transform.hpp
     include/sigma/frustum.hpp
+    include/sigma/handle.hpp
 
     include/sigma/graphics/cubemap.hpp
     include/sigma/graphics/directional_light.hpp

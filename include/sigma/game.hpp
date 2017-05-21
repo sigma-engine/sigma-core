@@ -1,9 +1,8 @@
 #ifndef SIGMA_GAME_HPP
 #define SIGMA_GAME_HPP
 
-#include <sigma/entity.hpp>
-#include <sigma/graphics/renderer.hpp>
 #include <sigma/graphics/static_mesh_instance.hpp>
+#include <sigma/world.hpp>
 
 #include <json/json.h>
 
@@ -16,8 +15,8 @@ namespace sigma {
 template <class World>
 class game {
 public:
-    game(graphics::renderer* renderer)
-        : renderer_(renderer)
+    game(resource::cache<graphics::static_mesh>& static_meshes)
+        : static_meshes_(static_meshes)
     {
     }
 
@@ -36,7 +35,7 @@ public:
         json::from_json(scene_data, world_);
 
         world_.template for_each<sigma::graphics::static_mesh_instance>([&](sigma::entity e, sigma::graphics::static_mesh_instance& mesh_instance) {
-            mesh_instance.mesh.set_manager(&renderer_->static_meshes());
+            mesh_instance.mesh = static_meshes_.get(mesh_instance.mesh_id);
         });
     }
 
@@ -44,7 +43,7 @@ public:
 
 protected:
     World world_;
-    graphics::renderer* renderer_;
+    resource::cache<graphics::static_mesh>& static_meshes_;
 };
 }
 

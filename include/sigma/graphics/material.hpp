@@ -26,7 +26,7 @@ namespace graphics {
 
         material() = default;
 
-        material(const material_data& data);
+        material(texture_manager& textures, cubemap_manager& cubemaps, shader_manager& shaders, const material_data& data);
 
         material(material&&) = default;
 

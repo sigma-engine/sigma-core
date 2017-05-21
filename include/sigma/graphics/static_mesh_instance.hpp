@@ -12,15 +12,19 @@
 namespace sigma {
 namespace graphics {
     struct R_COMPONENT() static_mesh_instance {
+        resource::identifier mesh_id;
+        bool cast_shadows = true;
+
+        R_FIELD(derived)
         resource::handle<static_mesh> mesh;
+
         R_FIELD(derived) //TODO:RESOURCE remove this when new resource system is added.
         std::unordered_map<std::size_t, resource::handle<material>> materials;
-        bool cast_shadows = true;
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
         {
-            ar& mesh;
+            ar& mesh_id;
             ar& materials;
             ar& cast_shadows;
         }

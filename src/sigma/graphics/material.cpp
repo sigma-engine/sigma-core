@@ -2,8 +2,8 @@
 
 namespace sigma {
 namespace graphics {
-    material::material(const material_data& data)
-        : shader_technique(data)
+    material::material(texture_manager& textures, cubemap_manager& cubemaps, shader_manager& shaders, const material_data& data)
+        : shader_technique(textures, cubemaps, shaders, data)
     {
         transparent_ = data.transparent;
     }

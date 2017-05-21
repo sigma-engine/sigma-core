@@ -10,8 +10,8 @@
 
 namespace sigma {
 namespace opengl {
-    static_mesh::static_mesh(const graphics::static_mesh_data& data)
-        : graphics::static_mesh(data)
+    static_mesh::static_mesh(material_manager& materials, const graphics::static_mesh_data& data)
+        : graphics::static_mesh(materials, data)
     {
         GL_CHECK(glGenVertexArrays(1, &vertex_array_));
         GL_CHECK(glBindVertexArray(vertex_array_));
@@ -73,9 +73,7 @@ namespace opengl {
 
     std::unique_ptr<graphics::static_mesh> static_mesh_manager::create(graphics::static_mesh_data data)
     {
-        auto mesh = std::make_unique<opengl::static_mesh>(std::move(data));
-        for (unsigned int i = 0; i < mesh->material_count(); ++i)
-            mesh->material(i).set_manager(&materials_);
+        auto mesh = std::make_unique<opengl::static_mesh>(materials_, std::move(data));
         return std::move(mesh);
     }
 }

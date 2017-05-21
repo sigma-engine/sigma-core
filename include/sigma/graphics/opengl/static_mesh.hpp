@@ -12,8 +12,8 @@
 
 #include <cstddef>
 
-#define STATIC_MESH_CONST_PTR(x) static_cast<const sigma::opengl::static_mesh*>(x.get())
-#define STATIC_MESH_PTR(x) static_cast<sigma::opengl::static_mesh*>(x.get())
+// #define STATIC_MESH_PTR(static_mesh_mgr, x) static_cast<const sigma::opengl::static_mesh*>(static_mesh_mgr.acquire(x))
+#define STATIC_MESH_PTR(static_mesh_mgr, x) static_cast<sigma::opengl::static_mesh*>(static_mesh_mgr.acquire(x))
 
 namespace sigma {
 namespace opengl {
@@ -24,7 +24,7 @@ namespace opengl {
             std::size_t start, end;
         };
 
-        static_mesh(const graphics::static_mesh_data& data);
+        static_mesh(material_manager& materials, const graphics::static_mesh_data& data);
 
         static_mesh(static_mesh&&) = default;
 

@@ -4,8 +4,8 @@
 #include <sigma/graphics/material.hpp>
 #include <sigma/graphics/opengl/shader_technique.hpp>
 
-#define MATERIAL_CONST_PTR(x) static_cast<const sigma::opengl::material*>(x.get())
-#define MATERIAL_PTR(x) static_cast<sigma::opengl::material*>(x.get())
+// #define MATERIAL_PTR(material_mgr, x) static_cast<const sigma::opengl::material*>(material_mgr.acquire(x))
+#define MATERIAL_PTR(material_mgr, x) static_cast<sigma::opengl::material*>(material_mgr.acquire(x))
 
 namespace sigma {
 namespace opengl {
@@ -13,20 +13,30 @@ namespace opengl {
     public:
         material() = default;
 
-        material(const graphics::material_data& data);
+        material(texture_manager& textures, cubemap_manager& cubemaps, shader_manager& shaders, const graphics::material_data& data);
 
         material(material&&) = default;
 
         material& operator=(material&&) = default;
 
-        void link();
+        void link(opengl::shader_manager& shader_mgr);
 
     private:
         material(const material&) = delete;
         material& operator=(const material&) = delete;
     };
 
-    using material_manager = shader_technique_manager<material, graphics::material_manager>;
+    class material_manager : public sigma::graphics::material_manager {
+    public:
+        material_manager(boost::filesystem::path cache_directory, opengl::shader_manager& shaders, opengl::texture_manager& textures, opengl::cubemap_manager& cubemaps);
+
+        virtual std::unique_ptr<graphics::material> create(graphics::material_data data) override;
+
+    private:
+        opengl::shader_manager& shaders_;
+        opengl::texture_manager& textures_;
+        opengl::cubemap_manager& cubemaps_;
+    };
 }
 }
 

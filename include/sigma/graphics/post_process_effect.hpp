@@ -29,7 +29,7 @@ namespace graphics {
 
         post_process_effect() = default;
 
-        post_process_effect(const post_process_effect_data& data);
+        post_process_effect(texture_manager& textures, cubemap_manager& cubemaps, shader_manager& shaders, static_mesh_manager& static_meshes, const post_process_effect_data& data);
 
         post_process_effect(post_process_effect&&) = default;
 

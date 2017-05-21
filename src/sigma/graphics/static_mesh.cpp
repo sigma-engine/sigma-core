@@ -5,10 +5,10 @@
 namespace sigma {
 namespace graphics {
 
-    static_mesh::static_mesh(const static_mesh_data& data)
+    static_mesh::static_mesh(material_manager& materials, const static_mesh_data& data)
     {
         for (const auto& mat_slot : data.materials) {
-            materials_.push_back(mat_slot.first);
+            materials_.push_back(materials.get(mat_slot.first));
             material_slots_.push_back(mat_slot.second);
         }
     }

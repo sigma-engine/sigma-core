@@ -10,8 +10,8 @@
 #include <utility>
 #include <vector>
 
-#define TEXTURE_CONST_PTR(x) static_cast<const sigma::opengl::texture*>(x.get())
-#define TEXTURE_PTR(x) static_cast<sigma::opengl::texture*>(x.get())
+// #define TEXTURE_PTR(texture_mgr, x) static_cast<const sigma::opengl::texture*>(texture_mgr.acquire(x))
+#define TEXTURE_PTR(texture_mgr, x) static_cast<sigma::opengl::texture*>(texture_mgr.acquire(x))
 
 namespace sigma {
 namespace opengl {

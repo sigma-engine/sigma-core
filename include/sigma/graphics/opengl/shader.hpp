@@ -7,8 +7,8 @@
 
 #include <string>
 
-#define SHADER_CONST_PTR(x) static_cast<const sigma::opengl::shader*>(x.get())
-#define SHADER_PTR(x) static_cast<sigma::opengl::shader*>(x.get())
+// #define SHADER_PTR(shader_mgr, x) static_cast<const sigma::opengl::shader*>(shader_mgr.acquire(x))
+#define SHADER_PTR(shader_mgr, x) static_cast<sigma::opengl::shader*>(shader_mgr.acquire(x))
 
 namespace sigma {
 namespace opengl {

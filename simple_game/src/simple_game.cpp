@@ -1,6 +1,6 @@
 #include "simple_game.hpp"
 
-#include <sigma/entity.hpp>
+#include <sigma/world.hpp>
 
 #include <boost/math/constants/constants.hpp>
 
@@ -8,7 +8,7 @@
 #include <cmath>
 
 simple_game::simple_game(sigma::graphics::renderer* renderer)
-    : sigma::game<simple_world>(renderer)
+    : sigma::game<simple_world>(renderer->static_meshes())
     , generator_(6546534)
     , position_distribution_{ { -50, .5f, -50 }, { 50.0f, .5f, 50.0f } }
     , rotation_distribution_{ glm::vec3{ 0.0f }, glm::vec3{ 2.0f * boost::math::constants::pi<float>() } }
@@ -26,30 +26,30 @@ simple_game::simple_game(sigma::graphics::renderer* renderer)
     // world_.add<sigma::graphics::static_mesh_instance>(grid_e, renderer->static_meshes().get(sigma::resource::identifier{ "static_mesh://material_ball:material_ball" }));
     // world_.add<grid_component>(grid_e, 5, 5, 1.5f, 1.5f);
 
-    world_.for_each<sigma::transform, sigma::graphics::static_mesh_instance, grid_component>([&](sigma::entity e, const sigma::transform& txform, sigma::graphics::static_mesh_instance& mesh_instance, const grid_component& grid) {
-        auto material = mesh_instance.mesh->material(0);
-        material->set_uniform("roughness", 0.0f);
-        material->set_uniform("basecolor", glm::vec3{ 1.0f, 0.0f, 0.0f });
-        material->set_uniform("metalness", 1.0f);
-
-        int number = 0;
-        for (int x = 0; x < grid.rows; ++x) {
-            for (int z = 0; z < grid.columns; ++z) {
-                number++;
-                if (x != 0 || z != 0) {
-                    auto generated_mat = renderer->materials().duplicate(mesh_instance.mesh->material(0), "material://generated" + std::to_string(number));
-                    generated_mat->set_uniform("basecolor", glm::vec3{ 1, 0, 0 });
-                    generated_mat->set_uniform("roughness", x / float(grid.rows - 1));
-                    generated_mat->set_uniform("metalness", 1.0f - (z / float(grid.columns - 1)));
-
-                    auto e = world_.create();
-                    world_.add<sigma::transform>(e, txform.position + glm::vec3{ grid.row_spacing * x, 0, grid.column_spacing * z });
-                    auto minst = world_.add<sigma::graphics::static_mesh_instance>(e, mesh_instance.mesh);
-                    minst->materials[0] = generated_mat;
-                }
-            }
-        }
-    });
+    // world_.for_each<sigma::transform, sigma::graphics::static_mesh_instance, grid_component>([&](sigma::entity e, const sigma::transform& txform, sigma::graphics::static_mesh_instance& mesh_instance, const grid_component& grid) {
+    //     auto material = mesh_instance.mesh->material(0);
+    //     material->set_uniform("roughness", 0.0f);
+    //     material->set_uniform("basecolor", glm::vec3{ 1.0f, 0.0f, 0.0f });
+    //     material->set_uniform("metalness", 1.0f);
+    //
+    //     int number = 0;
+    //     for (int x = 0; x < grid.rows; ++x) {
+    //         for (int z = 0; z < grid.columns; ++z) {
+    //             number++;
+    //             if (x != 0 || z != 0) {
+    //                 auto generated_mat = renderer->materials().duplicate(mesh_instance.mesh->material(0), "material://generated" + std::to_string(number));
+    //                 generated_mat->set_uniform("basecolor", glm::vec3{ 1, 0, 0 });
+    //                 generated_mat->set_uniform("roughness", x / float(grid.rows - 1));
+    //                 generated_mat->set_uniform("metalness", 1.0f - (z / float(grid.columns - 1)));
+    //
+    //                 auto e = world_.create();
+    //                 world_.add<sigma::transform>(e, txform.position + glm::vec3{ grid.row_spacing * x, 0, grid.column_spacing * z });
+    //                 auto minst = world_.add<sigma::graphics::static_mesh_instance>(e, mesh_instance.mesh);
+    //                 minst->materials[0] = generated_mat;
+    //             }
+    //         }
+    //     }
+    // });
 
     // std::uniform_int_distribution<int> point_light_count_distribution_{ 0, 500 };
     // int number_of_point_lights = 512; //point_light_count_distribution_(generator_);

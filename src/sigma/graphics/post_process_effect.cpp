@@ -4,12 +4,12 @@
 
 namespace sigma {
 namespace graphics {
-    post_process_effect::post_process_effect(const post_process_effect_data& data)
-        : shader_technique(data)
+    post_process_effect::post_process_effect(texture_manager& textures, cubemap_manager& cubemaps, shader_manager& shaders, static_mesh_manager& static_meshes, const post_process_effect_data& data)
+        : shader_technique(textures, cubemaps, shaders, data)
     {
         if (!has_shader(shader_type::vertex))
-            set_shader(shader_type::vertex, resource::identifier{ "vertex", "fullscreen_quad" });
-        mesh_ = resource::handle<static_mesh>{ data.mesh };
+            set_shader(shader_type::vertex, shaders.get(resource::identifier{ "vertex", "fullscreen_quad" }));
+        mesh_ = static_meshes.get(data.mesh);
     }
 
     resource::handle<static_mesh>& post_process_effect::mesh()

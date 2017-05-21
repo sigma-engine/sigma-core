@@ -12,6 +12,7 @@
 
 namespace sigma {
 namespace opengl {
+    class static_mesh_manager;
 
     template <class T>
     class shader_technique : public T {
@@ -36,8 +37,14 @@ namespace opengl {
         static constexpr const char* MODEL_VIEW_MATRIX_NAME = "model_view_matrix";
         static constexpr const char* NORMAL_MATRIX_NAME = "normal_matrix";
 
-        shader_technique(const typename T::resource_data& data)
-            : T(data)
+        shader_technique(texture_manager& textures, cubemap_manager& cubemaps, shader_manager& shaders, const typename T::resource_data& data)
+            : T(textures, cubemaps, shaders, data)
+        {
+            GL_CHECK(object_ = glCreateProgram());
+        }
+
+        shader_technique(texture_manager& textures, cubemap_manager& cubemaps, shader_manager& shaders, static_mesh_manager& static_meshes, const typename T::resource_data& data)
+            : T(textures, cubemaps, shaders, static_meshes, data)
         {
             GL_CHECK(object_ = glCreateProgram());
         }
@@ -51,12 +58,12 @@ namespace opengl {
             glDeleteProgram(object_);
         }
 
-        void link()
+        void link(const opengl::shader_manager& shader_mgr)
         {
             assert(linked_ == GL_FALSE && "Program already linked");
 
             for (const auto& shdr : this->shaders_)
-                GL_CHECK(glAttachShader(object_, SHADER_CONST_PTR(shdr.second)->get_object()));
+                GL_CHECK(glAttachShader(object_, SHADER_PTR(shader_mgr, shdr.second)->get_object()));
 
             GL_CHECK(glLinkProgram(object_));
 
@@ -182,7 +189,7 @@ namespace opengl {
             }
         }
 
-        void bind(texture_unit first_texture_unit) const
+        void bind(const texture_manager& texture_mgr, const cubemap_manager& cubemap_mgr, texture_unit first_texture_unit) const
         {
             bind();
             auto texture_unit = GLenum(first_texture_unit);
@@ -192,7 +199,7 @@ namespace opengl {
                 // at compile time.
                 if (texture_locations_[i] >= 0) {
                     GL_CHECK(glActiveTexture(texture_unit));
-                    TEXTURE_CONST_PTR(this->textures_[i].second)->bind();
+                    TEXTURE_PTR(texture_mgr, this->textures_[i].second)->bind();
                     GL_CHECK(glUniform1i(texture_locations_[i], unit_number));
                 }
             }
@@ -202,7 +209,7 @@ namespace opengl {
                 // at compile time.
                 if (cubemap_locations_[i] >= 0) {
                     GL_CHECK(glActiveTexture(texture_unit));
-                    CUBEMAP_CONST_PTR(this->cubemaps_[i].second)->bind();
+                    CUBEMAP_PTR(cubemap_mgr, this->cubemaps_[i].second)->bind();
                     GL_CHECK(glUniform1i(cubemap_locations_[i], unit_number));
                 }
             }
@@ -243,42 +250,6 @@ namespace opengl {
     private:
         shader_technique(const shader_technique&) = delete;
         shader_technique& operator=(const shader_technique&) = delete;
-    };
-
-    template <class InternalType, class Cache>
-    class shader_technique_manager : public Cache {
-    public:
-        shader_technique_manager(boost::filesystem::path cache_directory, opengl::shader_manager& shaders, opengl::texture_manager& textures, opengl::cubemap_manager& cubemaps)
-            : Cache(cache_directory)
-            , shaders_(shaders)
-            , textures_(textures)
-            , cubemaps_(cubemaps)
-        {
-        }
-
-        virtual std::unique_ptr<typename Cache::resource_type> create(typename Cache::resource_data data) override
-        {
-            auto tech = std::make_unique<InternalType>(data);
-
-            for (auto type : graphics::all_shader_types()) {
-                if (tech->has_shader(type))
-                    tech->shader(type).set_manager(&shaders_);
-            }
-            tech->link();
-
-            for (unsigned int i = 0; i < tech->texture_count(); ++i)
-                tech->texture(i).set_manager(&textures_);
-
-            for (unsigned int i = 0; i < tech->cubemap_count(); ++i)
-                tech->cubemap(i).set_manager(&cubemaps_);
-
-            return std::move(tech);
-        }
-
-    private:
-        opengl::shader_manager& shaders_;
-        opengl::texture_manager& textures_;
-        opengl::cubemap_manager& cubemaps_;
     };
 }
 }

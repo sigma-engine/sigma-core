@@ -19,10 +19,6 @@
 #include <unordered_map>
 
 namespace sigma {
-namespace resource {
-    template <class Resource>
-    class handle;
-}
 namespace graphics {
 
     struct shader_technique_data {
@@ -53,7 +49,7 @@ namespace graphics {
 
         shader_technique() = default;
 
-        shader_technique(const shader_technique_data& data);
+        shader_technique(texture_manager& textures, cubemap_manager& cubemaps, shader_manager& shaders, const shader_technique_data& data);
 
         shader_technique(shader_technique&&) = default;
 

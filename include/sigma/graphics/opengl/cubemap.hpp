@@ -5,8 +5,8 @@
 
 #include <glad/glad.h>
 
-#define CUBEMAP_CONST_PTR(x) static_cast<const sigma::opengl::cubemap*>(x.get())
-#define CUBEMAP_PTR(x) static_cast<sigma::opengl::cubemap*>(x.get())
+// #define CUBEMAP_PTR(cubemap_mgr, x) static_cast<const sigma::opengl::cubemap*>(cubemap_mgr.acquire(x))
+#define CUBEMAP_PTR(cubemap_mgr, x) static_cast<const sigma::opengl::cubemap*>(cubemap_mgr.acquire(x))
 
 namespace sigma {
 namespace opengl {

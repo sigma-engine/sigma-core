@@ -1,7 +1,7 @@
 #ifndef SIGMA_WORLD_HPP
 #define SIGMA_WORLD_HPP
 
-#include <sigma/entity.hpp>
+#include <sigma/handle.hpp>
 #include <sigma/util/variadic.hpp>
 
 #include <boost/serialization/bitset.hpp>
@@ -13,6 +13,8 @@
 #include <vector>
 
 namespace sigma {
+using entity = handle;
+
 template <class... Components>
 struct component_set {
     using component_mask_type = std::bitset<sizeof...(Components)>;
@@ -104,19 +106,12 @@ struct world {
     entity create()
     {
         count_++;
-        if (free_entities.empty()) {
-            entity e{ std::uint32_t(entities.size()), 0 };
-            entities.push_back(e);
-            entity_masks.push_back(0);
-            return e;
-        } else {
-            auto index = free_entities.back();
-            free_entities.pop_back();
-            entities[index].index = index;
-            entities[index].version++;
-            entity_masks[index] = 0;
-            return entities[index];
-        }
+        auto e = create_handle(entities, free_entities);
+        if (e.index >= entity_masks.size())
+            entity_masks.resize(e.index + 1);
+        entity_masks[e.index] = 0;
+
+        return e;
     }
 
     ~world()
@@ -129,7 +124,7 @@ struct world {
 
     bool is_alive(entity e) const noexcept
     {
-        return e.index >= 0 && e.index < entities.size() && entities[e.index].index != std::uint32_t(-1) && entities[e.index].version == e.version;
+        return is_valid_handle(entities, free_entities, e);
     }
 
     template <class Component, class... Arguments>
@@ -193,8 +188,7 @@ struct world {
             return;
         count_--;
         remove_components(e);
-        free_entities.push_back(entities[e.index].index);
-        entities[e.index].index = std::uint32_t(-1);
+        destroy_handle(entities, free_entities, e);
     }
 
     template <class... SubComponents, class F>

@@ -285,7 +285,7 @@ void assimp_converter::convert_object(std::string name, Json::Value& entity) con
         const aiMesh* aimesh = aiScene->mMeshes[ainode->mMeshes[0]];
 
         sigma::graphics::static_mesh_instance inst;
-        inst.mesh = sigma::resource::identifier("static_mesh", source_file_, get_name(aimesh));
+        inst.mesh_id = sigma::resource::identifier("static_mesh", source_file_, get_name(aimesh));
         json::to_json(inst, entity["sigma::graphics::static_mesh_instance"]);
     }
 
