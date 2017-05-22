@@ -4,6 +4,7 @@
 #include <pbr/deffered/post_process_effect.glsl>
 #include <pbr/brdf.glsl>
 #include <shadow_sampling.glsl>
+#include <sigma/graphics/shadow_block.glsl>
 // clang-format on
 
 in spot_light

@@ -68,6 +68,7 @@ set(CORE_HEADERS
     include/sigma/handle.hpp
 
     include/sigma/graphics/standard_block.hpp
+    include/sigma/graphics/shadow_block.hpp
     include/sigma/graphics/cubemap.hpp
     include/sigma/graphics/directional_light.hpp
     include/sigma/graphics/material.hpp

@@ -22,6 +22,7 @@
 #include <sigma/graphics/point_light.hpp>
 #include <sigma/graphics/post_process_effect.hpp>
 #include <sigma/graphics/shader.hpp>
+#include <sigma/graphics/shadow_block.hpp>
 #include <sigma/graphics/spot_light.hpp>
 #include <sigma/graphics/standard_block.hpp>
 #include <sigma/graphics/static_mesh.hpp>
@@ -63,9 +64,7 @@ namespace opengl {
                 viewport.view_frustum.z_near(),
                 viewport.view_frustum.z_far(),
                 viewport.view_frustum.view(),
-                viewport.view_frustum.projection(),
-                glm::mat4());
-            //standard_block_.set_data(standard_);
+                viewport.view_frustum.projection());
 
             // Begin rendering
             GL_CHECK(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
@@ -134,6 +133,9 @@ namespace opengl {
         graphics::standard_block standard_;
         uniform_buffer<graphics::standard_block> standard_uniform_buffer_;
 
+        graphics::shadow_block shadow_;
+        uniform_buffer<graphics::shadow_block> shadow_uniform_buffer_;
+
         opengl::texture_manager textures_;
         opengl::cubemap_manager cubemaps_;
         opengl::shader_manager shaders_;
@@ -153,7 +155,7 @@ namespace opengl {
 
         resource::handle<graphics::post_process_effect> vignette_effect_;
 
-        void setup_view_projection(const glm::vec2& viewport_size, float fovy, float z_near, float z_far, const glm::mat4& view_matrix, const glm::mat4& projection_matrix, const glm::mat4& light_projection_view_matrix)
+        void setup_view_projection(const glm::vec2& viewport_size, float fovy, float z_near, float z_far, const glm::mat4& view_matrix, const glm::mat4& projection_matrix)
         {
             standard_.projection_matrix = projection_matrix;
             standard_.inverse_projection_matrix = glm::inverse(projection_matrix);
@@ -161,7 +163,6 @@ namespace opengl {
             standard_.inverse_view_matrix = glm::inverse(view_matrix);
             standard_.projection_view_matrix = projection_matrix * view_matrix;
             standard_.inverse_projection_view_matrix = glm::inverse(standard_.projection_view_matrix);
-            standard_.light_projection_view_matrix = light_projection_view_matrix;
             standard_.view_port_size = viewport_size;
             standard_.eye_position = glm::vec3(standard_.inverse_view_matrix * glm::vec4(0, 0, 0, 1));
             standard_.time = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::high_resolution_clock::now() - start_time_).count();
@@ -251,8 +252,7 @@ namespace opengl {
                 viewport.view_frustum.z_near(),
                 viewport.view_frustum.z_far(),
                 viewport.view_frustum.view(),
-                viewport.view_frustum.projection(),
-                glm::mat4());
+                viewport.view_frustum.projection());
             gbuffer_.bind_for_geometry_read();
 
             GL_CHECK(glDisable(GL_BLEND));
@@ -285,8 +285,7 @@ namespace opengl {
                 viewport.view_frustum.z_near(),
                 viewport.view_frustum.z_far(),
                 viewport.view_frustum.view(),
-                viewport.view_frustum.projection(),
-                glm::mat4());
+                viewport.view_frustum.projection());
 
             auto epos = standard_.eye_position;
 
@@ -299,14 +298,12 @@ namespace opengl {
                 light_center = glm::round(light_center * float(sbuffer_.size().x)) / float(sbuffer_.size().x);
                 auto view = glm::lookAt(light_center, light_center - light.direction, glm::vec3(0, 1, 0));
 
-                auto light_projection_view_matrix = projection * view;
                 setup_view_projection(size_,
                     viewport.view_frustum.fovy(),
                     0.0f,
                     2.0f * longest_diagonal,
                     view,
-                    projection,
-                    light_projection_view_matrix);
+                    projection);
 
                 render_to_shadow_map(world, light.cast_shadows);
 
@@ -315,8 +312,11 @@ namespace opengl {
                     viewport.view_frustum.z_near(),
                     viewport.view_frustum.z_far(),
                     viewport.view_frustum.view(),
-                    viewport.view_frustum.projection(),
-                    light_projection_view_matrix);
+                    viewport.view_frustum.projection());
+
+                shadow_.light_projection_view_matrix = projection * view;
+                shadow_uniform_buffer_.set_data(shadow_);
+                shadow_uniform_buffer_.set_binding_point(1);
 
                 gbuffer_.bind_for_geometry_read();
                 sbuffer_.bind_for_shadow_read(geometry_buffer::SHADOW_MAP_TEXTURE_UINT);
@@ -352,8 +352,7 @@ namespace opengl {
                 viewport.view_frustum.z_near(),
                 viewport.view_frustum.z_far(),
                 viewport.view_frustum.view(),
-                viewport.view_frustum.projection(),
-                glm::mat4());
+                viewport.view_frustum.projection());
 
             gbuffer_.bind_for_geometry_read();
 
@@ -384,8 +383,7 @@ namespace opengl {
                 viewport.view_frustum.z_near(),
                 viewport.view_frustum.z_far(),
                 viewport.view_frustum.view(),
-                viewport.view_frustum.projection(),
-                glm::mat4());
+                viewport.view_frustum.projection());
 
             world.template for_each<transform, graphics::spot_light>([&](entity e, transform& txform, const graphics::spot_light& light) {
                 setup_view_projection(size_,
@@ -393,8 +391,7 @@ namespace opengl {
                     light.shadow_frustum.z_near(),
                     light.shadow_frustum.z_far(),
                     light.shadow_frustum.view(),
-                    light.shadow_frustum.projection(),
-                    light.shadow_frustum.projection_view());
+                    light.shadow_frustum.projection());
 
                 render_to_shadow_map(world, light.cast_shadows);
 
@@ -403,8 +400,11 @@ namespace opengl {
                     viewport.view_frustum.z_near(),
                     viewport.view_frustum.z_far(),
                     viewport.view_frustum.view(),
-                    viewport.view_frustum.projection(),
-                    light.shadow_frustum.projection_view());
+                    viewport.view_frustum.projection());
+
+                shadow_.light_projection_view_matrix = light.shadow_frustum.projection_view();
+                shadow_uniform_buffer_.set_data(shadow_);
+                shadow_uniform_buffer_.set_binding_point(1);
 
                 gbuffer_.bind_for_geometry_read();
                 sbuffer_.bind_for_shadow_read(geometry_buffer::SHADOW_MAP_TEXTURE_UINT);

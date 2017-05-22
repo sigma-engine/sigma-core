@@ -24,8 +24,6 @@ namespace graphics {
         glm::mat4 projection_view_matrix;
         glm::mat4 inverse_projection_view_matrix;
 
-        glm::mat4 light_projection_view_matrix;
-
         glm::vec2 view_port_size;
         glm::vec3 eye_position;
 
