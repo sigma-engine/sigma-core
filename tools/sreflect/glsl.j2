@@ -5,7 +5,7 @@
 {% for class in database.classes if class.std140 %}
 layout (std140{% if class.binding %}, binding = {{class.binding}}{% endif %}) uniform {{class.glsl_name}}
 {
-    {% for field in class.fields -%}
+    {% for field in class.fields %}
     {{field.glsl_type}} {{field.name}};
     {% endfor %}
 };
