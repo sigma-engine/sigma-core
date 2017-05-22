@@ -1,4 +1,4 @@
-#version 400
+#version 420
 
 #include <pbr/deffered/geometry_buffer.glsl>
 #include <uniforms.glsl>
