@@ -299,7 +299,7 @@ namespace opengl {
                 auto view = glm::lookAt(light_center, light_center - light.direction, glm::vec3(0, 1, 0));
 
                 setup_view_projection(size_,
-                    viewport.view_frustum.fovy(),
+                    90.0f,
                     0.0f,
                     2.0f * longest_diagonal,
                     view,
@@ -315,6 +315,7 @@ namespace opengl {
                     viewport.view_frustum.projection());
 
                 shadow_.light_projection_view_matrix = projection * view;
+                shadow_.frustum_center = light_center;
                 shadow_uniform_buffer_.set_data(shadow_);
                 shadow_uniform_buffer_.set_binding_point(1);
 
@@ -330,7 +331,6 @@ namespace opengl {
 
                 EFFECT_PTR(effects_, directional_light_effect_)->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
                 EFFECT_PTR(effects_, directional_light_effect_)->set_uniform("direction", light.direction);
-                EFFECT_PTR(effects_, directional_light_effect_)->set_uniform("center", light_center);
                 EFFECT_PTR(effects_, directional_light_effect_)->bind(textures_, cubemaps_);
                 EFFECT_PTR(effects_, directional_light_effect_)->apply(static_meshes_);
             });
@@ -403,6 +403,7 @@ namespace opengl {
                     viewport.view_frustum.projection());
 
                 shadow_.light_projection_view_matrix = light.shadow_frustum.projection_view();
+                shadow_.frustum_center = txform.position;
                 shadow_uniform_buffer_.set_data(shadow_);
                 shadow_uniform_buffer_.set_binding_point(1);
 

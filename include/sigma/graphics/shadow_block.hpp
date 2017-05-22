@@ -17,6 +17,7 @@ namespace sigma {
 namespace graphics {
     struct R_EXPORT(std140, binding = 1) shadow_block {
         glm::mat4 light_projection_view_matrix;
+        glm::vec3 frustum_center;
     };
 }
 }
