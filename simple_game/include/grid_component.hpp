@@ -1,5 +1,4 @@
 // TEMPLATE(generated.hpp)
-// TEMPLATE(generated.cpp)
 #ifndef GRID_COMPONENT_HPP
 #define GRID_COMPONENT_HPP
 

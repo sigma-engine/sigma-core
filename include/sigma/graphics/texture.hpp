@@ -1,5 +1,4 @@
 // TEMPLATE(generated.hpp)
-// TEMPLATE(generated.cpp)
 #ifndef SIGMA_GRAPHICS_TEXTURE_HPP
 #define SIGMA_GRAPHICS_TEXTURE_HPP
 

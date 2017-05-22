@@ -1,5 +1,4 @@
 // TEMPLATE(generated.hpp)
-// TEMPLATE(generated.cpp)
 #ifndef SIGMA_TRANSFORM_HPP
 #define SIGMA_TRANSFORM_HPP
 

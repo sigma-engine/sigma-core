@@ -6,7 +6,7 @@
 layout (std140{% if class.binding %}, binding = {{class.binding}}{% endif %}) uniform {{class.glsl_name}}
 {
     {% for field in class.fields %}
-    {{field.glsl_type}} {{field.name}};
+    {{field.std140_type.name}} {{field.name}}{% if field.std140_type.is_array %}[{{field.std140_type.element_count}}]{% endif %};
     {% endfor %}
 };
 {% endfor %}

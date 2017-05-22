@@ -1,5 +1,4 @@
 // TEMPLATE(generated.hpp)
-// TEMPLATE(generated.cpp)
 #ifndef SIMPLE_WORLD_HPP
 #define SIMPLE_WORLD_HPP
 

@@ -17,7 +17,7 @@ namespace std140 {
             {% for field in class.fields %}
             field_offset = offset;
             offset = to_std140(source.{{field.name}}, output, field_offset);
-            assert(field_offset == ({{field.std140_offset}} + start) && "'{{field.name}}' of type '{{field.type}}' offset does not match!\n");
+            assert(field_offset == ({{field.std140_offset}} + start) && "'{{field.name}}' of type '{{field.type.name}}' offset does not match!\n");
             {% endfor %}
             return offset;
         }

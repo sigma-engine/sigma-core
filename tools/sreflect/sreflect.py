@@ -39,6 +39,71 @@ def full_name(cursor):
     return name
 
 
+class reflection_type(object):
+    def __init__(self, typet, element_count=0):
+        if not isinstance(typet, clang.cindex.Type):
+            self.is_array = False
+            self.name = typet
+            if element_count > 0:
+                self.is_array = True
+                self.element_count = element_count
+        else:
+            self.is_array = False
+            self.name = typet.spelling
+            if typet.kind == clang.cindex.TypeKind.CONSTANTARRAY:
+                self.is_array = True
+                self.name = typet.element_type.spelling
+                self.element_count = typet.element_count
+
+
+class std140_type(object):
+    def __init__(self, type):
+        self.name = type.name
+        self.name = type.name.replace("glm::", "")
+        self.is_array = type.is_array
+
+        count = 1
+        if type.is_array:
+            self.element_count = type.element_count
+            self.element_type = std140_type(reflection_type(self.name, 0))
+
+    def alignment(self):
+        N = 4
+        if not self.is_array:
+            for typename, basic_unit_count in [("float", 1),
+                                               ("vec2", 2), ("vec3", 4), ("vec4", 4),
+                                               ("mat2", 4), ("mat3", 4), ("mat4", 4)]:
+                if self.name == typename:
+                    return basic_unit_count * N
+
+            raise NotImplementedError(
+                "alignment not implemented for type '{}'".format(self.name))
+        else:
+            return roundUp(self.element_type.alignment(), 4 * N)
+
+    def size(self):
+        N = 4
+        for typename, basic_unit_count in [("float", 1),
+                                           ("vec2", 2), ("vec3", 3), ("vec4", 4),
+                                           ("mat2", 2 * 4), ("mat3", 3 * 4), ("mat4", 4 * 4)]:
+            if self.name == typename:
+                size = basic_unit_count * N
+
+        if not self.is_array:
+            return size
+        else:
+            return self.element_count * roundUp(size, 4 * N)
+
+    def align_to_start(self, offset):
+        return roundUp(offset, self.alignment())
+
+    def align_to_end(self, start_offset):
+        if self.is_array:
+            return roundUp(start_offset + self.size(), self.alignment())
+        else:
+            return start_offset + self.size()
+
+
 class reflection_decleration(object):
     def __init__(self, source_directory, source_file, annotations=[]):
         self.source_directory = source_directory
@@ -52,10 +117,10 @@ class reflection_decleration(object):
             setattr(self, a.strip(), value)
 
 
-class reflection_field:
+class reflection_field(object):
     def __init__(self, cursor):
         self.name = cursor.spelling
-        self.type = cursor.type.spelling
+        self.type = reflection_type(cursor.type)
         for child in cursor.get_children():
             if child.kind == clang.cindex.CursorKind.ANNOTATE_ATTR:
                 for a in child.spelling.split(","):
@@ -92,33 +157,10 @@ class reflection_class(reflection_decleration):
                 self.glsl_name = self.glsl_name.split("::")[-1]
 
             offset = 0
-            N = 4
             for field in self.fields:
-                field.glsl_type = field.type.replace("glm::", "")
-                if field.glsl_type == "float":
-                    field.std140_offset = roundUp(offset, N)
-                    offset = field.std140_offset + N
-                elif field.glsl_type == "vec2":
-                    field.std140_offset = roundUp(offset, 2 * N)
-                    offset = field.std140_offset + 2 * N
-                elif field.glsl_type == "vec3":
-                    field.std140_offset = roundUp(offset, 4 * N)
-                    offset = field.std140_offset + 3 * N
-                elif field.glsl_type == "vec4":
-                    field.std140_offset = roundUp(offset, 4 * N)
-                    offset = field.std140_offset + 4 * N
-                elif field.glsl_type == "mat2":
-                    field.std140_offset = roundUp(offset, 4 * N)
-                    offset = field.std140_offset + 2 * 4 * N
-                elif field.glsl_type == "mat3":
-                    field.std140_offset = roundUp(offset, 4 * N)
-                    offset = field.std140_offset + 3 * 4 * N
-                elif field.glsl_type == "mat4":
-                    field.std140_offset = roundUp(offset, 4 * N)
-                    offset = field.std140_offset + 4 * 4 * N
-                else:
-                    raise NotImplementedError(
-                        "std140 layout not implemented for type '{}'".format(field.type))
+                field.std140_type = std140_type(field.type)
+                field.std140_offset = field.std140_type.align_to_start(offset)
+                offset = field.std140_type.align_to_end(field.std140_offset)
             self.std140_size = offset
 
     def __str__(self):

@@ -1,7 +1,5 @@
 // TEMPLATE(generated.hpp)
-// TEMPLATE(generated.cpp)
 // TEMPLATE(std140.hpp)
-// TEMPLATE(std140.cpp)
 // TEMPLATE(glsl)
 #ifndef SIGMA_GRAPHICS_STANDARD_BLOCK_HPP
 #define SIGMA_GRAPHICS_STANDARD_BLOCK_HPP
