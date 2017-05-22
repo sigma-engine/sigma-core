@@ -1,3 +1,5 @@
+// TEMPLATE(generated.hpp)
+// TEMPLATE(generated.cpp)
 #ifndef SIGMA_GRAPHICS_POINT_LIGHT_HPP
 #define SIGMA_GRAPHICS_POINT_LIGHT_HPP
 
@@ -8,7 +10,7 @@
 
 namespace sigma {
 namespace graphics {
-    struct R_COMPONENT() point_light {
+    struct R_EXPORT() point_light {
         glm::vec3 color;
         float intensity;
 

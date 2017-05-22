@@ -1,9 +1,11 @@
+// TEMPLATE(generated.hpp)
+// TEMPLATE(generated.cpp)
 #ifndef GRID_COMPONENT_HPP
 #define GRID_COMPONENT_HPP
 
 #include <sigma/reflect.hpp>
 
-struct R_COMPONENT() grid_component {
+struct R_EXPORT() grid_component {
     int rows;
     int columns;
     float row_spacing;

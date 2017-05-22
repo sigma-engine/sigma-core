@@ -1,0 +1,34 @@
+#ifndef __REFLECTION_PARSER__
+{% for enum in database.enums %}
+#include "{{enum.file}}"
+{% endfor %}
+{% for class in database.classes %}
+#include "{{class.file}}"
+{% endfor %}
+{% for world in database.worlds %}
+#include "{{world.file}}"
+{% endfor %}
+
+#include <sigma/util/std140_conversion.hpp>
+
+#include <cassert>
+
+namespace sigma {
+namespace std140 {
+{%- for class in database.classes if class.std140 %}
+    std::ptrdiff_t to_std140(const {{class.name}}& source, std::uint8_t* output, std::ptrdiff_t& offset)
+    {
+        std::ptrdiff_t start = offset;
+        std::ptrdiff_t field_offset;
+        {% for field in class.fields -%}
+        field_offset = offset;
+        offset = to_std140(source.{{field.name}}, output, field_offset);
+        assert(field_offset == ({{field.std140_offset}} + start) && "'{{field.name}}' of type '{{field.type}}' offset does not match!\n");
+        {% endfor %}
+        return offset;
+    }
+{%- endfor -%}
+}
+}
+
+#endif // __REFLECTION_PARSER__

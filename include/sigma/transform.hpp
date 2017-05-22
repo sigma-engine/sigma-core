@@ -1,3 +1,5 @@
+// TEMPLATE(generated.hpp)
+// TEMPLATE(generated.cpp)
 #ifndef SIGMA_TRANSFORM_HPP
 #define SIGMA_TRANSFORM_HPP
 
@@ -11,7 +13,7 @@
 
 namespace sigma {
 
-struct R_COMPONENT() transform {
+struct R_EXPORT() transform {
     glm::vec3 position;
     glm::quat rotation;
     glm::vec3 scale;

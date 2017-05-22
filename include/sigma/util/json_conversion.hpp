@@ -6,6 +6,9 @@
 #include <json/json.h>
 
 #include <glm/gtc/quaternion.hpp>
+#include <glm/mat2x2.hpp>
+#include <glm/mat3x3.hpp>
+#include <glm/mat4x4.hpp>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
@@ -79,6 +82,21 @@ namespace json {
         return false;
     }
 
+    static bool from_json(const Json::Value& source, glm::mat2& output)
+    {
+        return source.isArray() && source.size() == 2 && from_json(source[0], output[0]) && from_json(source[1], output[1]);
+    }
+
+    static bool from_json(const Json::Value& source, glm::mat3& output)
+    {
+        return source.isArray() && source.size() == 3 && from_json(source[0], output[0]) && from_json(source[1], output[1]) && from_json(source[2], output[2]);
+    }
+
+    static bool from_json(const Json::Value& source, glm::mat4& output)
+    {
+        return source.isArray() && source.size() == 4 && from_json(source[0], output[0]) && from_json(source[1], output[1]) && from_json(source[2], output[2]) && from_json(source[3], output[3]);
+    }
+
     static void to_json(bool source, Json::Value& output)
     {
         output = source;
@@ -126,6 +144,27 @@ namespace json {
     static void to_json(const glm::quat& source, Json::Value& output)
     {
         to_json(glm::degrees(glm::eulerAngles(source)), output);
+    }
+
+    static void to_json(const glm::mat2& source, Json::Value& output)
+    {
+        to_json(source[0], output[0]);
+        to_json(source[1], output[1]);
+    }
+
+    static void to_json(const glm::mat3& source, Json::Value& output)
+    {
+        to_json(source[0], output[0]);
+        to_json(source[1], output[1]);
+        to_json(source[2], output[2]);
+    }
+
+    static void to_json(const glm::mat4& source, Json::Value& output)
+    {
+        to_json(source[0], output[0]);
+        to_json(source[1], output[1]);
+        to_json(source[2], output[2]);
+        to_json(source[3], output[3]);
     }
 }
 }

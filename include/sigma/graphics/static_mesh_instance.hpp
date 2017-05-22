@@ -1,3 +1,5 @@
+// TEMPLATE(generated.hpp)
+// TEMPLATE(generated.cpp)
 #ifndef SIGMA_GRAPHICS_STATIC_MESH_INSTANCE_HPP
 #define SIGMA_GRAPHICS_STATIC_MESH_INSTANCE_HPP
 
@@ -12,7 +14,7 @@
 
 namespace sigma {
 namespace graphics {
-    struct R_COMPONENT() static_mesh_instance {
+    struct R_EXPORT() static_mesh_instance {
         resource::identifier mesh_id;
         bool cast_shadows = true;
 

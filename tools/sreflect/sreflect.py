@@ -15,6 +15,12 @@ IGNORE_NAMESPACES = ["::std", "std", "boost", "mpl_", "literals",
                      "chrono_literals", "__gnu_cxx", "__cxxabiv1", "Json", "glm"]
 
 
+def roundUp(number, multiple):
+    number = int(number)
+    multiple = int(multiple)
+    return ((number + multiple - 1) / multiple) * multiple
+
+
 def make_vaild_identifier(string):
     return re.sub('\W|^(?=\d)', '_', string)
 
@@ -34,9 +40,16 @@ def full_name(cursor):
 
 
 class reflection_decleration(object):
-    def __init__(self, source_directory, source_file):
+    def __init__(self, source_directory, source_file, annotations=[]):
         self.source_directory = source_directory
         self.file = str(source_file)
+        for a in annotations:
+            value = True
+            if '=' in a:
+                a = a.split('=')
+                value = a[1]
+                a = a[0]
+            setattr(self, a.strip(), value)
 
 
 class reflection_field:
@@ -50,8 +63,8 @@ class reflection_field:
 
 
 class reflection_enum(reflection_decleration):
-    def __init__(self, source_directory, cursor):
-        super(reflection_enum, self).__init__(source_directory, cursor.location.file)
+    def __init__(self, source_directory, cursor, annotations):
+        super(reflection_enum, self).__init__(source_directory, cursor.location.file, annotations)
         self.name = full_name(cursor)
         self.constants = []
         for child in cursor.get_children():
@@ -63,8 +76,8 @@ class reflection_enum(reflection_decleration):
 
 
 class reflection_class(reflection_decleration):
-    def __init__(self, source_directory, cursor):
-        super(reflection_class, self).__init__(source_directory, cursor.location.file)
+    def __init__(self, source_directory, cursor, annotations):
+        super(reflection_class, self).__init__(source_directory, cursor.location.file, annotations)
         self.name = full_name(cursor)
         self.fields = []
         for child in cursor.get_children():
@@ -72,6 +85,41 @@ class reflection_class(reflection_decleration):
                 continue
             if child.kind == clang.cindex.CursorKind.FIELD_DECL:
                 self.fields.append(reflection_field(child))
+
+        if hasattr(self, 'std140') and self.std140:
+            self.glsl_name = self.name
+            if '::' in self.glsl_name:
+                self.glsl_name = self.glsl_name.split("::")[-1]
+
+            offset = 0
+            N = 4
+            for field in self.fields:
+                field.glsl_type = field.type.replace("glm::", "")
+                if field.glsl_type == "float":
+                    field.std140_offset = roundUp(offset, N)
+                    offset = field.std140_offset + N
+                elif field.glsl_type == "vec2":
+                    field.std140_offset = roundUp(offset, 2 * N)
+                    offset = field.std140_offset + 2 * N
+                elif field.glsl_type == "vec3":
+                    field.std140_offset = roundUp(offset, 4 * N)
+                    offset = field.std140_offset + 3 * N
+                elif field.glsl_type == "vec4":
+                    field.std140_offset = roundUp(offset, 4 * N)
+                    offset = field.std140_offset + 4 * N
+                elif field.glsl_type == "mat2":
+                    field.std140_offset = roundUp(offset, 4 * N)
+                    offset = field.std140_offset + 2 * 4 * N
+                elif field.glsl_type == "mat3":
+                    field.std140_offset = roundUp(offset, 4 * N)
+                    offset = field.std140_offset + 3 * 4 * N
+                elif field.glsl_type == "mat4":
+                    field.std140_offset = roundUp(offset, 4 * N)
+                    offset = field.std140_offset + 4 * 4 * N
+                else:
+                    raise NotImplementedError(
+                        "std140 layout not implemented for type '{}'".format(field.type))
+            self.std140_size = offset
 
     def __str__(self):
         return self.name
@@ -107,13 +155,18 @@ class reflection_database:
             for ign in IGNORE_NAMESPACES:
                 if fname.startswith(ign):
                     return
-        elif cursor.kind == clang.cindex.CursorKind.ANNOTATE_ATTR and cursor.spelling in ["R_CLASS", "R_ENUM"]:
-            if parent.location.is_from_main_file():
-                if parent.kind in [clang.cindex.CursorKind.CLASS_DECL, clang.cindex.CursorKind.STRUCT_DECL]:
-                    self.classes.append(reflection_class(self.source_directory, parent))
-                elif parent.kind == clang.cindex.CursorKind.ENUM_DECL:
-                    self.enums.append(reflection_enum(self.source_directory, parent))
-            return
+        elif cursor.kind == clang.cindex.CursorKind.ANNOTATE_ATTR:
+            annotations = {a for a in cursor.spelling.split(',') if a != ''}
+            if 'R_EXPORT' in annotations:
+                annotations.remove('R_EXPORT')
+                if parent.location.is_from_main_file():
+                    if parent.kind in [clang.cindex.CursorKind.CLASS_DECL, clang.cindex.CursorKind.STRUCT_DECL]:
+                        self.classes.append(reflection_class(
+                            self.source_directory, parent, annotations))
+                    elif parent.kind == clang.cindex.CursorKind.ENUM_DECL:
+                        self.enums.append(reflection_enum(
+                            self.source_directory, parent, annotations))
+                return
         elif cursor.kind in [clang.cindex.CursorKind.DECL_REF_EXPR,
                              clang.cindex.CursorKind.FUNCTION_DECL,
                              clang.cindex.CursorKind.CXX_METHOD,
@@ -179,7 +232,7 @@ def render_metadata_template(reflection_db, template_file_path, header_file):
 
             with open(generated_file, 'w') as output:
                 output.write(template.render(
-                    generated_gaurd=generated_gaurd, database=reflection_db))
+                    generated_gaurd=generated_gaurd, database=reflection_db) + "\n")
     else:
         sys.exit(-1)
 

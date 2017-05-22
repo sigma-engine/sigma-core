@@ -1,0 +1,21 @@
+#ifndef __REFLECTION_PARSER__
+#ifndef {{generated_gaurd}}
+#define {{generated_gaurd}}
+
+namespace sigma {
+namespace std140 {
+{%- for class in database.classes if class.std140 %}
+    template <class>
+    struct type_traits;
+
+    template<>
+    struct type_traits<{{class.name}}> {
+        static const constexpr std::size_t size = {{class.std140_size}};
+    };
+    std::ptrdiff_t to_std140(const {{class.name}}& source, std::uint8_t* output, std::ptrdiff_t& offset);
+{%- endfor -%}
+}
+}
+
+#endif // {{generated_gaurd}}
+#endif // __REFLECTION_PARSER__

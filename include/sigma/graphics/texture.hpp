@@ -1,3 +1,5 @@
+// TEMPLATE(generated.hpp)
+// TEMPLATE(generated.cpp)
 #ifndef SIGMA_GRAPHICS_TEXTURE_HPP
 #define SIGMA_GRAPHICS_TEXTURE_HPP
 
@@ -12,13 +14,13 @@
 namespace sigma {
 namespace graphics {
 
-    enum class R_ENUM() texture_filter {
+    enum class R_EXPORT() texture_filter {
         LINEAR,
         NEAREST,
         NONE
     };
 
-    enum class R_ENUM() texture_format {
+    enum class R_EXPORT() texture_format {
         RGB8,
         RGBA8,
         RGB32F

@@ -11,23 +11,21 @@ macro(sigma_setup)
     endif()
 endmacro()
 
-function(generate_meta_data generated_header_files)
+function(generate_meta_data generated_source_files)
     set(gen_list)
+    set(TEMPLATE_REGEX "//[ \t]*TEMPLATE[ \t]*\\([ \t]*([a-z/A-Z_0-9]+(\\.[a-zA-Z_]+)?)[ \t]*\\)[ \t]*")
     foreach(header_file ${ARGN})
         file(RELATIVE_PATH header_file "${CMAKE_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/${header_file}")
 
-        set(generated_header_file "${CMAKE_BINARY_DIR}/${header_file}")
-        get_filename_component(dir "${generated_header_file}" DIRECTORY)
-        get_filename_component(name "${generated_header_file}" NAME_WE)
-        get_filename_component(ext "${generated_header_file}" EXT)
+        set(output_file "${CMAKE_BINARY_DIR}/${header_file}")
+        get_filename_component(dir "${output_file}" DIRECTORY)
+        get_filename_component(name "${output_file}" NAME_WE)
+        get_filename_component(ext "${output_file}" EXT)
         set(generated_meta_file "${dir}/${name}${ext}.meta")
-        set(generated_header_file "${dir}/${name}.generated.hpp")
-        set(generated_source_file "${dir}/${name}.generated.cpp")
-
         file(READ "${CMAKE_SOURCE_DIR}/${header_file}" file_text)
-        string(FIND "${file_text}" "${name}.generated${EXT}" match)
 
-        if(NOT ${match} EQUAL -1)
+        string(REGEX MATCHALL ${TEMPLATE_REGEX} templates "${file_text}")
+        if(templates)
             add_custom_command(
                 OUTPUT "${generated_meta_file}"
                 COMMAND python2 ARGS "${CMAKE_SOURCE_DIR}/tools/sreflect/sreflect.py" --source-directory "${CMAKE_SOURCE_DIR}" --build-directory "${CMAKE_BINARY_DIR}" --file "${CMAKE_SOURCE_DIR}/${header_file}" generate
@@ -35,27 +33,35 @@ function(generate_meta_data generated_header_files)
                 DEPENDS "${CMAKE_SOURCE_DIR}/tools/sreflect/sreflect.py"
                 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
             )
+            list(APPEND gen_list "${generated_meta_file}")
 
-            add_custom_command(
-                OUTPUT "${generated_header_file}"
-                COMMAND python2 ARGS "${CMAKE_SOURCE_DIR}/tools/sreflect/sreflect.py" --source-directory "${CMAKE_SOURCE_DIR}" --build-directory "${CMAKE_BINARY_DIR}" --file "${CMAKE_SOURCE_DIR}/${header_file}" template --template-file="${CMAKE_SOURCE_DIR}/tools/sreflect/generated.hpp.j2"
-                MAIN_DEPENDENCY "${generated_meta_file}"
-                DEPENDS "${CMAKE_SOURCE_DIR}/tools/sreflect/generated.hpp.j2" "${CMAKE_SOURCE_DIR}/tools/sreflect/sreflect.py"
-                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-            )
+            foreach(template_file ${templates})
+                STRING(REGEX REPLACE ${TEMPLATE_REGEX} "\\1" template_file "${template_file}")
+                get_filename_component(template_type "${template_file}" NAME)
 
-            add_custom_command(
-                OUTPUT "${generated_source_file}"
-                COMMAND python2 ARGS "${CMAKE_SOURCE_DIR}/tools/sreflect/sreflect.py" --source-directory "${CMAKE_SOURCE_DIR}" --build-directory "${CMAKE_BINARY_DIR}" --file "${CMAKE_SOURCE_DIR}/${header_file}" template --template-file="${CMAKE_SOURCE_DIR}/tools/sreflect/generated.cpp.j2"
-                MAIN_DEPENDENCY "${generated_meta_file}"
-                DEPENDS "${generated_header_file}" "${CMAKE_SOURCE_DIR}/tools/sreflect/generated.cpp.j2" "${CMAKE_SOURCE_DIR}/tools/sreflect/sreflect.py"
-                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-            )
-            list(APPEND gen_list ${generated_source_file})
+                if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${template_file}.j2")
+                    set(template_file "${CMAKE_CURRENT_SOURCE_DIR}/${template_file}")
+                else()
+                    set(template_file "${CMAKE_SOURCE_DIR}/tools/sreflect/${template_file}")
+                endif()
+
+
+                set(generated_file "${dir}/${name}.${template_type}")
+                set(template_file "${template_file}.j2")
+
+                add_custom_command(
+                    OUTPUT "${generated_file}"
+                    COMMAND python2 ARGS "${CMAKE_SOURCE_DIR}/tools/sreflect/sreflect.py" --source-directory "${CMAKE_SOURCE_DIR}" --build-directory "${CMAKE_BINARY_DIR}" --file "${CMAKE_SOURCE_DIR}/${header_file}" template --template-file="${template_file}"
+                    MAIN_DEPENDENCY "${generated_meta_file}"
+                    DEPENDS "${template_file}" "${CMAKE_SOURCE_DIR}/tools/sreflect/sreflect.py"
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                )
+                list(APPEND gen_list "${generated_file}")
+            endforeach()
         endif()
     endforeach()
 
-    set(${generated_header_files} ${gen_list} PARENT_SCOPE)
+    set(${generated_source_files} ${gen_list} PARENT_SCOPE)
 endfunction()
 
 function(add_resources target)

@@ -88,8 +88,8 @@ bool compile_shaders(boost::filesystem::path outputdir, std::vector<boost::files
         try {
             std::ifstream source_file{ file_path.string() };
 
-            source_file.unsetf(std::ios::skipws);
-            std::string input_source{ std::istreambuf_iterator<char>(source_file.rdbuf()), std::istreambuf_iterator<char>() };
+            //source_file.unsetf(std::ios::skipws);
+            std::string input_source{ (std::istreambuf_iterator<char>(source_file.rdbuf())), std::istreambuf_iterator<char>() };
 
             sigma::graphics::shader shader;
             shader.type = ext_to_type[file_path.extension().string()];
