@@ -1,8 +1,10 @@
 #ifndef SIGMA_OPENGL_UNIFORM_BUFFER_HPP
 #define SIGMA_OPENGL_UNIFORM_BUFFER_HPP
 
-#include <glad/glad.h>
 #include <sigma/graphics/opengl/util.hpp>
+#include <sigma/util/std140_conversion.hpp>
+
+#include <glad/glad.h>
 
 #include <cstring>
 
@@ -16,7 +18,7 @@ namespace opengl {
         {
             GL_CHECK(glGenBuffers(1, &object_));
             GL_CHECK(glBindBuffer(GL_UNIFORM_BUFFER, object_));
-            GL_CHECK(glBufferData(GL_UNIFORM_BUFFER, sizeof(UnifomBufferType), nullptr, GL_DYNAMIC_DRAW));
+            GL_CHECK(glBufferData(GL_UNIFORM_BUFFER, std140_sizeof(UnifomBufferType), nullptr, GL_DYNAMIC_DRAW));
         }
 
         uniform_buffer(uniform_buffer&&) = default;
@@ -30,8 +32,11 @@ namespace opengl {
 
         void set_data(const UnifomBufferType& data)
         {
+            std::uint8_t buffer[std140_sizeof(UnifomBufferType)];
+            std::ptrdiff_t offset = 0;
+            std140::to_std140(data, buffer, offset);
             GL_CHECK(glBindBuffer(GL_UNIFORM_BUFFER, object_));
-            GL_CHECK(glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(UnifomBufferType), &data));
+            GL_CHECK(glBufferSubData(GL_UNIFORM_BUFFER, 0, std140_sizeof(UnifomBufferType), buffer));
         }
 
         void set_binding_point(unsigned int index)

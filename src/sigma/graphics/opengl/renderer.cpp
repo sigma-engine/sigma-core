@@ -10,8 +10,6 @@
 
 #include <glad/glad.h>
 
-#include <glm/vec2.hpp>
-
 #include <stdexcept>
 
 namespace sigma {
@@ -24,6 +22,7 @@ namespace opengl {
         resource::cache<graphics::static_mesh>& static_mesh_cache,
         resource::cache<graphics::post_process_effect>& effect_cache)
         : graphics::renderer(size)
+        , size_(size.x, size.y)
         , loader_status_(gladLoadGL())
         , default_fbo_(size)
         , gbuffer_(size)
@@ -39,8 +38,6 @@ namespace opengl {
         if (!loader_status_)
             throw std::runtime_error("error: could not load OpenGL");
 
-        //standard_uniforms_.set_binding_point(shader_technique::STANDARD_UNIFORM_BLOCK_BINDING);
-
         image_based_light_effect_ = effects_.get("post_process_effect://pbr/deffered/lights/image_based");
         point_light_effect_ = effects_.get("post_process_effect://pbr/deffered/lights/point");
         directional_light_effect_ = effects_.get("post_process_effect://pbr/deffered/lights/directional");
@@ -51,6 +48,8 @@ namespace opengl {
 
         vignette_effect_ = effects_.get("post_process_effect://vignette");
         gamma_conversion_ = effects_.get("post_process_effect://pbr/deffered/gamma_conversion");
+
+        standard_uniform_buffer_.set_binding_point(0);
     }
 
     renderer::~renderer()

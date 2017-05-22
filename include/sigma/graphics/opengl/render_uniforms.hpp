@@ -5,21 +5,6 @@
 
 namespace sigma {
 namespace opengl {
-    struct standard_uniforms {
-        glm::mat4 projection_matrix;
-        glm::mat4 view_matrix;
-        glm::mat4 inverse_projection_matrix;
-        glm::mat4 inverse_view_matrix;
-        glm::mat4 projection_view_matrix;
-        glm::mat4 inverse_projection_view_matrix;
-        glm::mat4 light_projection_view_matrix;
-        glm::vec2 view_port_size;
-        glm::vec3 eye_position;
-        float time;
-        float z_near;
-        float z_far;
-    };
-
     struct instance_matrices {
         glm::mat4 model_matrix;
         glm::mat4 model_view_matrix;
