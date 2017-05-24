@@ -8,19 +8,23 @@
 
 #include <glm/vec2.hpp>
 
+#include <vector>
+
 namespace sigma {
 namespace opengl {
     class shadow_buffer : public frame_buffer {
     public:
-        shadow_buffer(glm::ivec2 size);
+        shadow_buffer(glm::ivec2 resolution, std::size_t count);
 
-        void bind_for_shadow_write();
+        std::size_t count() const;
+
+        void bind_for_shadow_write(int index);
 
         void bind_for_shadow_read(texture_unit unit);
 
     private:
-        texture shadow_map_;
         render_buffer depth_buffer_;
+        std::vector<texture> shadow_maps_;
     };
 }
 }

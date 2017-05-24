@@ -2,7 +2,15 @@
 #define SIGMA_MATH_GLSL
 
 #define PI 3.1415926535897932
-#define PI_2 6.2831853071795864769252867665590
+#define PI_2 6.2831853071795864
+
+// TODO Hessian normal form
+// TODO http://mathworld.wolfram.com/Point-PlaneDistance.html
+// TODO http://mathworld.wolfram.com/HessianNormalForm.html
+float plane_point_distance(vec4 plane, vec3 point)
+{
+    return dot(plane, vec4(point, 1)) / length(plane.xyz);
+}
 
 float linstep(float low, float high, float v)
 {

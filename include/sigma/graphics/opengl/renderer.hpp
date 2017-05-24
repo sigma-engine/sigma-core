@@ -309,25 +309,46 @@ namespace opengl {
                 viewport.view_frustum.view(),
                 viewport.view_frustum.projection());
 
-            auto epos = standard_.eye_position;
+            // TODO move this into viewport or
+            // what ever viewport gets refactored into.
+            float cascade_splits[sbuffer_.count() + 1];
+            frustum cascade_frustums[sbuffer_.count()];
+            const float lambda = 0.7f;
+            const float n = viewport.view_frustum.z_near();
+            const float f = viewport.view_frustum.z_far();
+            int m = sbuffer_.count();
+            for (int i = 0; i < m; ++i) {
+                float fi = float(i) / m;
+                float Ci_log = n * std::pow(f / n, fi);
+                float Ci_uni = n + (f - n) * fi;
+                cascade_splits[i] = lambda * Ci_log + (1 - lambda) * Ci_uni;
+            }
+            cascade_splits[sbuffer_.count()] = f;
 
-            float longest_diagonal = viewport.view_frustum.diagonal() / 8.0f;
-            auto projection = glm::ortho(-longest_diagonal, longest_diagonal, -longest_diagonal, longest_diagonal, 0.0f, 2.0f * longest_diagonal);
+            for (int i = 0; i < sbuffer_.count(); ++i) {
+                cascade_frustums[i] = frustum{
+                    viewport.view_frustum.fovy(), viewport.view_frustum.aspect(),
+                    cascade_splits[i], cascade_splits[i + 1],
+                    viewport.view_frustum.view()
+                };
+            }
 
             world.template for_each<transform, graphics::directional_light>([&](entity e, const transform& txform, const graphics::directional_light& light) {
+                auto full_position = viewport.view_frustum.center();
+                auto full_target = full_position + light.direction;
+                auto light_view = glm::lookAt(full_target, full_position, glm::vec3{ 0, 1, 0 });
 
-                auto light_center = epos + (longest_diagonal * light.direction);
-                light_center = glm::round(light_center * float(sbuffer_.size().x)) / float(sbuffer_.size().x);
-                auto view = glm::lookAt(light_center, light_center - light.direction, glm::vec3(0, 1, 0));
+                float minZ, maxZ;
+                viewport.view_frustum.full_light_projection(light_view, minZ, maxZ);
 
-                setup_view_projection(size_,
-                    90.0f,
-                    0.0f,
-                    2.0f * longest_diagonal,
-                    view,
-                    projection);
+                for (int i = 0; i < sbuffer_.count(); ++i) {
+                    auto light_projection = cascade_frustums[i].clip_light_projection(light_view, minZ, maxZ);
+                    shadow_.light_projection_view_matrix[i] = light_projection * light_view;
+                    shadow_.light_frustum_far_plane[i] = cascade_frustums[i].far_plane();
 
-                render_to_shadow_map(world, light.cast_shadows);
+                    setup_view_projection(size_, 1.5708f, 0.0, 0.0, light_view, light_projection);
+                    render_to_shadow_map(i, world, light.cast_shadows);
+                }
 
                 setup_view_projection(size_,
                     viewport.view_frustum.fovy(),
@@ -336,13 +357,11 @@ namespace opengl {
                     viewport.view_frustum.view(),
                     viewport.view_frustum.projection());
 
-                shadow_.light_projection_view_matrix = projection * view;
-                shadow_.frustum_center = light_center;
                 shadow_uniform_buffer_.set_data(shadow_);
                 shadow_uniform_buffer_.set_binding_point(1);
 
                 gbuffer_.bind_for_geometry_read();
-                sbuffer_.bind_for_shadow_read(geometry_buffer::SHADOW_MAP_TEXTURE_UINT);
+                sbuffer_.bind_for_shadow_read(geometry_buffer::SHADOW_MAP0_TEXTURE_UINT);
 
                 analytical_light_setup();
 
@@ -415,7 +434,7 @@ namespace opengl {
                     light.shadow_frustum.view(),
                     light.shadow_frustum.projection());
 
-                render_to_shadow_map(world, light.cast_shadows);
+                render_to_shadow_map(0, world, light.cast_shadows);
 
                 setup_view_projection(size_,
                     viewport.view_frustum.fovy(),
@@ -424,13 +443,12 @@ namespace opengl {
                     viewport.view_frustum.view(),
                     viewport.view_frustum.projection());
 
-                shadow_.light_projection_view_matrix = light.shadow_frustum.projection_view();
-                shadow_.frustum_center = txform.position;
+                shadow_.light_projection_view_matrix[0] = light.shadow_frustum.projection_view();
                 shadow_uniform_buffer_.set_data(shadow_);
                 shadow_uniform_buffer_.set_binding_point(1);
 
                 gbuffer_.bind_for_geometry_read();
-                sbuffer_.bind_for_shadow_read(geometry_buffer::SHADOW_MAP_TEXTURE_UINT);
+                sbuffer_.bind_for_shadow_read(geometry_buffer::SHADOW_MAP0_TEXTURE_UINT);
 
                 analytical_light_setup();
 
@@ -449,9 +467,9 @@ namespace opengl {
         }
 
         template <class World>
-        void render_to_shadow_map(World& world, bool cast_shadows = true)
+        void render_to_shadow_map(int index, World& world, bool cast_shadows = true)
         {
-            sbuffer_.bind_for_shadow_write();
+            sbuffer_.bind_for_shadow_write(index);
 
             GL_CHECK(glDisable(GL_BLEND));
 
@@ -463,7 +481,7 @@ namespace opengl {
             GL_CHECK(glCullFace(GL_BACK));
             GL_CHECK(glEnable(GL_CULL_FACE));
 
-            GL_CHECK(glClearColor(-1.0f, -1.0f, 0.0f, 0.0f));
+            GL_CHECK(glClearColor(1.0f, 1.0f, 0.0f, 0.0f));
             GL_CHECK(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
 
             MATERIAL_PTR(materials_, shadow_material_)->bind(textures_, cubemaps_, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
