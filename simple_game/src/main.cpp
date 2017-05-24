@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
 
     sigma::graphics::view_port viewport{
         window.size(),
-        sigma::graphics::frustum(0.785398f, (float)window.size().x / (float)window.size().y, 0.01f, 50.0f)
+        sigma::frustum(0.785398f, (float)window.size().x / (float)window.size().y, 0.1f, 50.0f)
     };
     sigma::trackball_controller controller;
     auto start = std::chrono::high_resolution_clock::now();

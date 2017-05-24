@@ -4,56 +4,71 @@
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
 
+#include <array>
+
 namespace sigma {
-namespace graphics {
-    class frustum {
-    public:
-        frustum(float fovy, float aspect, float z_near, float z_far, const glm::mat4& view = {});
+class frustum {
+public:
+    frustum();
 
-        float fovy() const;
+    frustum(float fovy, float aspect, float z_near, float z_far, const glm::mat4& view = {});
 
-        float aspect() const;
+    float fovy() const;
 
-        float z_near() const;
+    float aspect() const;
 
-        float z_far() const;
+    float z_near() const;
 
-        float diagonal() const;
+    float z_far() const;
 
-        float radius() const;
+    float diagonal() const;
 
-        glm::vec3 center() const;
+    float radius() const;
 
-        glm::mat4 view() const;
+    glm::vec3 center() const;
 
-        void set_view(const glm::mat4& view);
+    glm::mat4 view() const;
 
-        glm::mat4 projection() const;
+    void set_view(const glm::mat4& view);
 
-        void set_projection(float fovy, float aspect, float z_near, float z_far);
+    glm::mat4 projection() const;
 
-        glm::mat4 projection_view() const;
+    void set_projection(float fovy, float aspect, float z_near, float z_far);
 
-        void set_projection_view(float fovy, float aspect, float z_near, float z_far, const glm::mat4& view);
+    glm::mat4 projection_view() const;
 
-        glm::mat4 inverse_projection_view() const;
+    void set_projection_view(float fovy, float aspect, float z_near, float z_far, const glm::mat4& view);
 
-    private:
-        float fovy_;
-        float aspect_;
-        float z_near_;
-        float z_far_;
-        float diagonal_;
-        float radius_;
-        glm::vec3 center_;
-        glm::mat4 projection_;
-        glm::mat4 view_;
-        glm::mat4 projection_view_;
-        glm::mat4 inverse_projection_view_;
+    glm::mat4 inverse_projection_view() const;
 
-        void rebuild_();
-    };
-}
+    glm::mat4 inverse_projection() const;
+
+    glm::vec4 far_plane() const;
+
+    glm::mat4 full_light_projection(const glm::mat4& light_projection_view_matrix, float& minZ, float& maxZ) const;
+
+    glm::mat4 clip_light_projection(const glm::mat4& light_projection_view_matrix, float minZ, float maxZ) const;
+
+    const std::array<glm::vec4, 8>& corners() const;
+
+private:
+    float fovy_;
+    float aspect_;
+    float z_near_;
+    float z_far_;
+    float diagonal_;
+    float radius_;
+    glm::vec3 center_;
+    glm::mat4 projection_;
+    glm::mat4 view_;
+    glm::mat4 projection_view_;
+    glm::mat4 inverse_projection_view_;
+    std::array<glm::vec4, 8> corners_;
+
+    glm::mat4 light_projection_(const glm::mat4& light_projection_view_matrix, float& minZ, float& maxZ, bool updateZ) const;
+
+    void rebuild_();
+};
 }
 
 #endif // SIGMA_GRAPHICS_FRUSTUM_HPP

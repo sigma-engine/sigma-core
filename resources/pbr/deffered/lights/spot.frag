@@ -39,10 +39,13 @@ void main()
         att = 0;
     }
 
-    vec4 light_space_position = light_projection_view_matrix * vec4(s.position, 1);
+    vec4 light_space_position = light_projection_view_matrix[0] * vec4(s.position, 1);
 
-    float depth = length(s.position - in_light.position);
-    float shadow = calculate_shadow(in_shadow_map, light_space_position, depth); //bias=.00002
+    vec3 ndc_position = (light_space_position.xyz / light_space_position.w) * vec3(.5) + vec3(.5);
+    vec2 shadow_coords = ndc_position.xy;
+    float current_depth = ndc_position.z;
+
+    float shadow = calculate_shadow(in_shadow_maps[0], light_space_position, current_depth);
 
     out_image = shadow * att * in_light.intensity * in_light.color * compute_lighting(s, L, V);
 }
