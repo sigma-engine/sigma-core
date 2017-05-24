@@ -26,7 +26,7 @@ namespace opengl {
         , loader_status_(gladLoadGL())
         , default_fbo_(size)
         , gbuffer_(size)
-        , sbuffer_({ 2048, 2048 })
+        , sbuffer_({ 1024, 1024 }, 3)
         , start_time_(std::chrono::high_resolution_clock::now())
         , textures_(texture_cache)
         , cubemaps_(cubemap_cache)

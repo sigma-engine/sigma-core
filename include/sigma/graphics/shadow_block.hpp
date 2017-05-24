@@ -1,5 +1,4 @@
 // TEMPLATE(generated.hpp)
-// TEMPLATE(generated.cpp)
 // TEMPLATE(std140.hpp)
 // TEMPLATE(glsl)
 #ifndef SIGMA_GRAPHICS_SHADOW_BLOCK_HPP
@@ -16,8 +15,8 @@
 namespace sigma {
 namespace graphics {
     struct R_EXPORT(std140, binding = 1) shadow_block {
-        glm::mat4 light_projection_view_matrix;
-        glm::vec3 frustum_center;
+        glm::mat4 light_projection_view_matrix[3];
+        glm::vec4 light_frustum_far_plane[3];
     };
 }
 }

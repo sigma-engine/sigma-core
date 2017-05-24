@@ -145,9 +145,9 @@ namespace opengl {
 
         texture(const graphics::texture& data);
 
-        texture(texture&&) = default;
+        texture(texture&& other);
 
-        texture& operator=(texture&&) = default;
+        texture& operator=(texture&& other);
 
         ~texture();
 

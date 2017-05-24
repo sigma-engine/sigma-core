@@ -77,6 +77,19 @@ namespace opengl {
     {
     }
 
+    texture::texture(texture&& other)
+    {
+        this->object_ = other.object_;
+        other.object_ = 0;
+    }
+
+    texture& texture::operator=(texture&& other)
+    {
+        this->object_ = other.object_;
+        other.object_ = 0;
+        return *this;
+    }
+
     texture::~texture()
     {
         glDeleteTextures(1, &object_);

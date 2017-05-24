@@ -20,8 +20,10 @@ namespace opengl {
         static constexpr const texture_unit NORMAL_METALNESS_TEXTURE_UINT = texture_unit::TEXTURE1;
         static constexpr const texture_unit DEPTH_STENCIL_TEXTURE_UINT = texture_unit::TEXTURE2;
         static constexpr const texture_unit INPUT_IMAGE_TEXTURE_UINT = texture_unit::TEXTURE3;
-        static constexpr const texture_unit SHADOW_MAP_TEXTURE_UINT = texture_unit::TEXTURE4;
-        static constexpr const texture_unit NEXT_FREE_TEXTURE_UINT = texture_unit::TEXTURE5;
+        static constexpr const texture_unit SHADOW_MAP0_TEXTURE_UINT = texture_unit::TEXTURE4;
+        static constexpr const texture_unit SHADOW_MAP1_TEXTURE_UINT = texture_unit::TEXTURE5;
+        static constexpr const texture_unit SHADOW_MAP2_TEXTURE_UINT = texture_unit::TEXTURE6;
+        static constexpr const texture_unit NEXT_FREE_TEXTURE_UINT = texture_unit::TEXTURE7;
 
         static constexpr const char* DIFFUSE_ROUGHNESS_OUTPUT_NAME = "out_diffuse_roughness";
         static constexpr const char* NORMAL_METALNESS_OUTPUT_NAME = "out_normal_metalness";
@@ -30,13 +32,17 @@ namespace opengl {
         static constexpr const GLuint NORMAL_METALNESS_LOCATION = 1;
         static constexpr const GLuint DEPTH_STENCIL_LOCATION = 2;
         static constexpr const GLuint INPUT_IMAGE_LOCATION = 3;
-        static constexpr const GLuint SHADOW_MAP_LOCATION = 4;
+        static constexpr const GLuint SHADOW_MAP0_LOCATION = 4;
+        static constexpr const GLuint SHADOW_MAP1_LOCATION = 5;
+        static constexpr const GLuint SHADOW_MAP2_LOCATION = 6;
 
         static constexpr const char* DIFFUSE_ROUGHNESS_INPUT_NAME = "in_diffuse_roughness";
         static constexpr const char* NORMAL_METALNESS_INPUT_NAME = "in_normal_metalness";
         static constexpr const char* DEPTH_STENCIL_INPUT_NAME = "in_depth_stencil";
         static constexpr const char* IMAGE_INPUT_NAME = "in_image";
-        static constexpr const char* SHADOW_MAP_INPUT_NAME = "in_shadow_map";
+        static constexpr const char* SHADOW_MAP0_INPUT_NAME = "in_shadow_maps[0]";
+        static constexpr const char* SHADOW_MAP1_INPUT_NAME = "in_shadow_maps[1]";
+        static constexpr const char* SHADOW_MAP2_INPUT_NAME = "in_shadow_maps[2]";
 
         geometry_buffer(glm::ivec2 size);
 
