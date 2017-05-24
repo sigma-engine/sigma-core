@@ -36,7 +36,9 @@ namespace opengl {
         GLint in_diffuse_location_ = -1;
         GLint in_normal_location_ = -1;
         GLint in_depth_stencil_location_ = -1;
-        GLint in_shadow_map_location_ = -1;
+        GLint in_shadow_map0_location_ = -1;
+        GLint in_shadow_map1_location_ = -1;
+        GLint in_shadow_map2_location_ = -1;
 
         resource::handle<graphics::static_mesh> mesh_;
 

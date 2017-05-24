@@ -8,21 +8,18 @@
 
 bool check_coords(vec2 shadow_coords)
 {
-    return shadow_coords.x > 0.001 && shadow_coords.x < .999 && shadow_coords.y > 0.001 && shadow_coords.y < .999;
+    return shadow_coords.x >= 0 && shadow_coords.x <= 1 && shadow_coords.y >= 0 && shadow_coords.y <= 1;
 }
 
 float variance_shadow(vec2 moments, float compare)
 {
-    if (moments.x > 0.0 && moments.y > 0.0) {
-        float p = step(compare, moments.x);
-        float variance = max(moments.y - moments.x * moments.x, .009);
+    float p = step(compare, moments.x);
+    float variance = max(abs(moments.y - moments.x * moments.x), 0.00002);
 
-        float d = compare - moments.x;
-        float p_max = linstep(.2, 1.0, variance / (variance + d * d));
+    float d = compare - moments.x;
+    float p_max = linstep(0.10, 2.0, variance / (variance + d * d));
 
-        return min(max(p, p_max), 1.0);
-    }
-    return 1;
+    return min(max(p, p_max), 1.0);
 }
 
 float calculate_shadow(sampler2D shadow_map, vec4 light_space_position, float compare)
