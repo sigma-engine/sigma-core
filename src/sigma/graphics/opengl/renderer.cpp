@@ -38,6 +38,10 @@ namespace opengl {
         if (!loader_status_)
             throw std::runtime_error("error: could not load OpenGL");
 
+        debug_renderer_.windowWidth = size.x;
+        debug_renderer_.windowHeight = size.y;
+        dd::initialize(&debug_renderer_);
+
         image_based_light_effect_ = effects_.get("post_process_effect://pbr/deffered/lights/image_based");
         point_light_effect_ = effects_.get("post_process_effect://pbr/deffered/lights/point");
         directional_light_effect_ = effects_.get("post_process_effect://pbr/deffered/lights/directional");
@@ -54,6 +58,7 @@ namespace opengl {
 
     renderer::~renderer()
     {
+        dd::shutdown();
     }
 
     void renderer::resize(glm::uvec2 size)

@@ -8,6 +8,7 @@
 #include <sigma/graphics/directional_light.hpp>
 #include <sigma/graphics/material.hpp>
 #include <sigma/graphics/opengl/cubemap.hpp>
+#include <sigma/graphics/opengl/debug_draw_renderer.hpp>
 #include <sigma/graphics/opengl/frame_buffer.hpp>
 #include <sigma/graphics/opengl/geometry_buffer.hpp>
 #include <sigma/graphics/opengl/material.hpp>
@@ -59,6 +60,8 @@ namespace opengl {
         template <class World>
         void render(const graphics::view_port& viewport, World& world)
         {
+            debug_renderer_.mvpMatrix = viewport.view_frustum.projection_view();
+
             setup_view_projection(size_,
                 viewport.view_frustum.fovy(),
                 viewport.view_frustum.z_near(),
@@ -77,6 +80,23 @@ namespace opengl {
             geometry_pass(viewport, world, false);
 
             light_pass(viewport, world);
+
+            gbuffer_.bind_for_geometry_read();
+            GL_CHECK(glStencilMask(0xFF));
+            GL_CHECK(glStencilFunc(GL_ALWAYS, 1, 0xFF));
+            GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE));
+            GL_CHECK(glEnable(GL_STENCIL_TEST));
+            GL_CHECK(glClear(GL_STENCIL_BUFFER_BIT));
+
+            GL_CHECK(glDisable(GL_BLEND));
+
+            GL_CHECK(glDepthMask(GL_TRUE));
+            GL_CHECK(glDepthFunc(GL_LESS));
+            GL_CHECK(glEnable(GL_DEPTH_TEST));
+
+            GL_CHECK(glCullFace(GL_BACK));
+            GL_CHECK(glEnable(GL_CULL_FACE));
+            dd::flush(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time_).count());
 
             // // Transparent objects
             // gbuffer_.swap_input_image();
@@ -154,6 +174,8 @@ namespace opengl {
         resource::handle<graphics::post_process_effect> gamma_conversion_;
 
         resource::handle<graphics::post_process_effect> vignette_effect_;
+
+        debug_draw_renderer debug_renderer_;
 
         void setup_view_projection(const glm::vec2& viewport_size, float fovy, float z_near, float z_far, const glm::mat4& view_matrix, const glm::mat4& projection_matrix)
         {
