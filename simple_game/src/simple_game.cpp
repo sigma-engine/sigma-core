@@ -7,7 +7,7 @@
 #include <chrono>
 #include <cmath>
 
-simple_game::simple_game(sigma::resource::cache<sigma::graphics::static_mesh>& static_meshes)
+simple_game::simple_game(const boost::filesystem::path& cache_path, sigma::resource::cache<sigma::graphics::static_mesh>& static_meshes)
     : sigma::game<simple_world>(static_meshes)
     , generator_(6546534)
     , position_distribution_{ { -50, .5f, -50 }, { 50.0f, .5f, 50.0f } }
@@ -19,7 +19,7 @@ simple_game::simple_game(sigma::resource::cache<sigma::graphics::static_mesh>& s
     // load("../data/proprietary/classroom/classroom.scn");
     // load("../data/water_packed.scn");
     // load("../data/material_test_scene.scn");
-    load("../data/proprietary/sponza/sponza.scn");
+    load(cache_path / "proprietary" / "sponza" / "sponza.scn");
 
     // auto grid_e = world_.create();
     // world_.add<sigma::transform>(grid_e);

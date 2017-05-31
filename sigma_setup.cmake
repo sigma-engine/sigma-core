@@ -51,7 +51,7 @@ function(generate_meta_data generated_source_files)
 
                 add_custom_command(
                     OUTPUT "${generated_file}"
-                    COMMAND python2 ARGS "${CMAKE_SOURCE_DIR}/tools/sreflect/sreflect.py" --source-directory "${CMAKE_SOURCE_DIR}" --build-directory "${CMAKE_BINARY_DIR}" --file "${CMAKE_SOURCE_DIR}/${header_file}" template --template-file="${template_file}"
+                    COMMAND python2 ARGS "${CMAKE_SOURCE_DIR}/tools/sreflect/sreflect.py" --source-directory "${CMAKE_SOURCE_DIR}" --build-directory "${CMAKE_BINARY_DIR}" --file "${CMAKE_SOURCE_DIR}/${header_file}" template --template-file "${template_file}"
                     MAIN_DEPENDENCY "${generated_meta_file}"
                     DEPENDS "${template_file}" "${CMAKE_SOURCE_DIR}/tools/sreflect/sreflect.py"
                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -93,7 +93,7 @@ function(add_resources target)
 
         add_custom_command(
             TARGET ${target}-resources
-            COMMAND ${SCOMPILER} ARGS --output="${CMAKE_BINARY_DIR}/data" ${include_args} ${resource_files}
+            COMMAND ${SCOMPILER} ARGS --output "${CMAKE_BINARY_DIR}/data" ${include_args} ${resource_files}
             WORKING_DIRECTORY ${package_PACKAGE_ROOT}
             DEPENDS always_rebuild
             COMMENT "Compiling ${target} resources..."

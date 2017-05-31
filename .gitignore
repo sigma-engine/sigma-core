@@ -70,3 +70,6 @@ dna.txt
 
 .vimrc_local.vim
 *.pyc
+
+.vs/
+CMakeSettings.json

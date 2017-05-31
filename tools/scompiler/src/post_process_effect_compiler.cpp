@@ -10,6 +10,7 @@
 #include <boost/archive/binary_oarchive.hpp>
 
 #include <fstream>
+#include <iostream>
 
 namespace sigma {
 bool is_post_process_effect(boost::filesystem::path file)

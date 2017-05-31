@@ -10,6 +10,7 @@
 #include <boost/filesystem/path.hpp>
 
 #include <fstream>
+#include <iostream>
 
 namespace sigma {
 bool is_material(boost::filesystem::path file)

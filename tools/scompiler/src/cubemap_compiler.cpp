@@ -10,6 +10,7 @@
 #include <boost/filesystem/path.hpp>
 
 #include <fstream>
+#include <iostream>
 #include <sigma/resource/identifier.hpp>
 #include <string>
 

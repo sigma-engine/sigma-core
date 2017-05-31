@@ -14,6 +14,7 @@
 #include <boost/gil/extension/io/png_io.hpp>
 #include <boost/gil/extension/io/tiff_io.hpp>
 
+#include <iostream>
 #include <unordered_map>
 
 namespace sigma {
