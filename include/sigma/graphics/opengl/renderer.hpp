@@ -43,8 +43,36 @@
 namespace sigma {
 
 namespace opengl {
+    static void calculate_cascade_frustums(const frustum& view_frustum, frustum* cascade_frustums, int count)
+    {
+        // TODO move this into viewport or
+        // what ever viewport gets refactored into.
+        float cascade_splits[count + 1];
+        const float lambda = 0.7f;
+        const float n = view_frustum.z_near();
+        const float f = view_frustum.z_far();
+        int m = count;
+        for (int i = 0; i < m; ++i) {
+            float fi = float(i) / m;
+            float Ci_log = n * std::pow(f / n, fi);
+            float Ci_uni = n + (f - n) * fi;
+            cascade_splits[i] = lambda * Ci_log + (1 - lambda) * Ci_uni;
+        }
+        cascade_splits[count] = f;
+
+        for (int i = 0; i < count; ++i) {
+            cascade_frustums[i] = frustum{
+                view_frustum.fovy(), view_frustum.aspect(),
+                cascade_splits[i], cascade_splits[i + 1],
+                view_frustum.view()
+            };
+        }
+    }
     class SIGMA_API renderer : public graphics::renderer {
     public:
+        bool save_frustums = false;
+        std::vector<std::pair<glm::vec3, glm::mat4>> debug_frustums;
+
         renderer(glm::ivec2 size,
             resource::cache<graphics::texture>& texture_cache,
             resource::cache<graphics::cubemap>& cubemap_cache,
@@ -61,6 +89,8 @@ namespace opengl {
         void render(const graphics::view_port& viewport, World& world)
         {
             debug_renderer_.mvpMatrix = viewport.view_frustum.projection_view();
+            for (const auto& f : debug_frustums)
+                dd::frustum(glm::value_ptr(f.second), glm::value_ptr(f.first));
 
             setup_view_projection(size_,
                 viewport.view_frustum.fovy(),
@@ -309,31 +339,37 @@ namespace opengl {
                 viewport.view_frustum.view(),
                 viewport.view_frustum.projection());
 
-            // TODO move this into viewport or
-            // what ever viewport gets refactored into.
-            float cascade_splits[sbuffer_.count() + 1];
             frustum cascade_frustums[sbuffer_.count()];
-            const float lambda = 0.7f;
-            const float n = viewport.view_frustum.z_near();
-            const float f = viewport.view_frustum.z_far();
-            int m = sbuffer_.count();
-            for (int i = 0; i < m; ++i) {
-                float fi = float(i) / m;
-                float Ci_log = n * std::pow(f / n, fi);
-                float Ci_uni = n + (f - n) * fi;
-                cascade_splits[i] = lambda * Ci_log + (1 - lambda) * Ci_uni;
-            }
-            cascade_splits[sbuffer_.count()] = f;
-
-            for (int i = 0; i < sbuffer_.count(); ++i) {
-                cascade_frustums[i] = frustum{
-                    viewport.view_frustum.fovy(), viewport.view_frustum.aspect(),
-                    cascade_splits[i], cascade_splits[i + 1],
-                    viewport.view_frustum.view()
-                };
-            }
 
             world.template for_each<transform, graphics::directional_light>([&](entity e, const transform& txform, const graphics::directional_light& light) {
+                if (save_frustums) {
+                    save_frustums = false;
+                    debug_frustums.clear();
+                    frustum scaled_frustum{
+                        viewport.view_frustum.fovy(),
+                        viewport.view_frustum.aspect(),
+                        viewport.view_frustum.z_near(),
+                        0.1f * viewport.view_frustum.z_far(),
+                        viewport.view_frustum.view()
+                    };
+                    calculate_cascade_frustums(scaled_frustum, cascade_frustums, sbuffer_.count());
+
+                    auto full_position = viewport.view_frustum.center();
+                    auto full_target = full_position + light.direction;
+                    auto light_view = glm::lookAt(full_target, full_position, glm::vec3{ 0, 1, 0 });
+
+                    float minZ, maxZ;
+                    viewport.view_frustum.full_light_projection(light_view, minZ, maxZ);
+
+                    for (int i = 0; i < sbuffer_.count(); ++i) {
+                        auto light_projection = cascade_frustums[i].clip_light_projection(light_view, minZ, maxZ);
+                        debug_frustums.emplace_back(glm::vec3{ 1, 0, 0 }, glm::inverse(cascade_frustums[i].projection_view()));
+                        debug_frustums.emplace_back(glm::vec3{ 1, 1, 0 }, glm::inverse(light_projection * light_view));
+                    }
+                }
+
+                calculate_cascade_frustums(viewport.view_frustum, cascade_frustums, sbuffer_.count());
+
                 auto full_position = viewport.view_frustum.center();
                 auto full_target = full_position + light.direction;
                 auto light_view = glm::lookAt(full_target, full_position, glm::vec3{ 0, 1, 0 });

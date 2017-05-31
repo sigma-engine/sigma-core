@@ -88,6 +88,8 @@ int main(int argc, char* argv[])
                     game = nullptr;
                     renderer = nullptr;
                     window.close();
+                } else if (event.key.keysym.sym == SDLK_f) {
+                    renderer->save_frustums = true;
                 }
                 if (!controller.isPanning())
                     controller.beginPan();

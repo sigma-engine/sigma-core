@@ -153,20 +153,7 @@ glm::mat4 frustum::light_projection_(const glm::mat4& light_projection_view_matr
         }
     }
 
-    // Calculate the projection matrix
-    // https://developer.nvidia.com/gpugems/GPUGems3/gpugems3_ch10.html
-    float scaleX = 2.0f / (maxX - minX);
-    float scaleY = 2.0f / (maxY - minY);
-    float scaleZ = -2.0f / (maxZ - minZ);
-    float offsetX = -0.5f * (maxX + minX) * scaleX;
-    float offsetY = -0.5f * (maxY + minY) * scaleY;
-    float offsetZ = -0.5f * (maxZ + minZ) * scaleZ;
-
-    return glm::mat4(
-        glm::vec4{ scaleX, 0.0f, 0.0f, 0.0f },
-        glm::vec4{ 0.0f, scaleY, 0.0f, 0.0f },
-        glm::vec4{ 0.0f, 0.0f, scaleZ, 0.0f },
-        glm::vec4{ offsetX, offsetY, offsetZ, 1.0f });
+    return glm::ortho(minX, maxX, minY, maxY, -maxZ, -minZ);
 }
 
 void frustum::rebuild_()

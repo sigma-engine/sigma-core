@@ -18,38 +18,43 @@ simple_game::simple_game(const boost::filesystem::path& cache_path, sigma::resou
 
     // load("../data/proprietary/classroom/classroom.scn");
     // load("../data/water_packed.scn");
-    // load("../data/material_test_scene.scn");
-    load(cache_path / "proprietary" / "sponza" / "sponza.scn");
+    load(cache_path / "material_test_scene.scn");
+    // load(cache_path / "proprietary" / "sponza" / "sponza.scn");
 
-    // auto grid_e = world_.create();
-    // world_.add<sigma::transform>(grid_e);
-    // world_.add<sigma::graphics::static_mesh_instance>(grid_e, renderer->static_meshes().get(sigma::resource::identifier{ "static_mesh://material_ball:material_ball" }));
-    // world_.add<grid_component>(grid_e, 5, 5, 1.5f, 1.5f);
+    auto grid_e = world_.create();
+    world_.add<sigma::transform>(grid_e);
+    auto inst = world_.add<sigma::graphics::static_mesh_instance>(grid_e);
+    inst->mesh_id = sigma::resource::identifier{ "static_mesh://material_ball:material_ball" };
+    inst->mesh = static_meshes.get(inst->mesh_id);
 
-    // world_.for_each<sigma::transform, sigma::graphics::static_mesh_instance, grid_component>([&](sigma::entity e, const sigma::transform& txform, sigma::graphics::static_mesh_instance& mesh_instance, const grid_component& grid) {
-    //     auto material = mesh_instance.mesh->material(0);
-    //     material->set_uniform("roughness", 0.0f);
-    //     material->set_uniform("basecolor", glm::vec3{ 1.0f, 0.0f, 0.0f });
-    //     material->set_uniform("metalness", 1.0f);
-    //
-    //     int number = 0;
-    //     for (int x = 0; x < grid.rows; ++x) {
-    //         for (int z = 0; z < grid.columns; ++z) {
-    //             number++;
-    //             if (x != 0 || z != 0) {
-    //                 auto generated_mat = renderer->materials().duplicate(mesh_instance.mesh->material(0), "material://generated" + std::to_string(number));
-    //                 generated_mat->set_uniform("basecolor", glm::vec3{ 1, 0, 0 });
-    //                 generated_mat->set_uniform("roughness", x / float(grid.rows - 1));
-    //                 generated_mat->set_uniform("metalness", 1.0f - (z / float(grid.columns - 1)));
-    //
-    //                 auto e = world_.create();
-    //                 world_.add<sigma::transform>(e, txform.position + glm::vec3{ grid.row_spacing * x, 0, grid.column_spacing * z });
-    //                 auto minst = world_.add<sigma::graphics::static_mesh_instance>(e, mesh_instance.mesh);
-    //                 minst->materials[0] = generated_mat;
-    //             }
-    //         }
-    //     }
-    // });
+    world_.add<grid_component>(grid_e, 25, 30, 1.5f, 1.5f);
+
+    world_.for_each<sigma::transform, sigma::graphics::static_mesh_instance, grid_component>([&](sigma::entity e, const sigma::transform& txform, sigma::graphics::static_mesh_instance& mesh_instance, const grid_component& grid) {
+        // auto material = mesh_instance.mesh->material(0);
+        // material->set_uniform("roughness", 0.0f);
+        // material->set_uniform("basecolor", glm::vec3{ 1.0f, 0.0f, 0.0f });
+        // material->set_uniform("metalness", 1.0f);
+
+        int number = 0;
+        for (int x = 0; x < grid.rows; ++x) {
+            for (int z = 0; z < grid.columns; ++z) {
+                number++;
+                if (x != 0 || z != 0) {
+                    // auto generated_mat = renderer->materials().duplicate(mesh_instance.mesh->material(0), "material://generated" + std::to_string(number));
+                    // generated_mat->set_uniform("basecolor", glm::vec3{ 1, 0, 0 });
+                    // generated_mat->set_uniform("roughness", x / float(grid.rows - 1));
+                    // generated_mat->set_uniform("metalness", 1.0f - (z / float(grid.columns - 1)));
+
+                    auto e = world_.create();
+                    world_.add<sigma::transform>(e, txform.position + glm::vec3{ grid.row_spacing * x, 0, grid.column_spacing * z });
+                    auto minst = world_.add<sigma::graphics::static_mesh_instance>(e);
+                    minst->mesh_id = mesh_instance.mesh_id;
+                    minst->mesh = mesh_instance.mesh;
+                    // minst->materials[0] = generated_mat;
+                }
+            }
+        }
+    });
 
     // std::uniform_int_distribution<int> point_light_count_distribution_{ 0, 500 };
     // int number_of_point_lights = 512; //point_light_count_distribution_(generator_);
