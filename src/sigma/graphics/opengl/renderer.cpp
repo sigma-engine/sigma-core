@@ -29,7 +29,7 @@ namespace opengl {
         , sbuffer_({ 1024, 1024 }, 3)
         , start_time_(std::chrono::high_resolution_clock::now())
         , textures_(texture_cache)
-        , cubemaps_(cubemap_cache)
+        , cubemaps_(texture_cache, cubemap_cache)
         , shaders_(shader_cache)
         , materials_(textures_, cubemaps_, shaders_, material_cache)
         , static_meshes_(materials_, static_mesh_cache)

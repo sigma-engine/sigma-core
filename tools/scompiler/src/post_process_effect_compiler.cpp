@@ -22,9 +22,6 @@ bool compile_post_process_effects(boost::filesystem::path outputdir, std::vector
 {
     bool all_good = true;
     for (const auto& file_path : post_process_effects) {
-        if (!resource_has_changes(outputdir, file_path))
-            continue;
-        std::cout << file_path.filename().string() << std::endl;
         try {
             std::ifstream file{ file_path.string(), std::ios::in };
             Json::Value json_effect;

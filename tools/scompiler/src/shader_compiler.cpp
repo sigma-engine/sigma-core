@@ -79,11 +79,6 @@ bool compile_shaders(boost::filesystem::path outputdir, std::vector<boost::files
 {
     bool all_good = true;
     for (const auto& file_path : shaders) {
-        // TODO just skip .glsl for now
-        if (!resource_has_changes(outputdir, file_path) || file_path.extension() == ".glsl")
-            continue;
-
-        std::cout << file_path.filename().string() << std::endl;
         boost::wave::util::file_position_type current_position;
         try {
             std::ifstream source_file{ file_path.string() };

@@ -22,10 +22,6 @@ bool compile_materials(boost::filesystem::path outputdir, std::vector<boost::fil
 {
     bool all_good = true;
     for (const auto& file_path : materials) {
-        if (!resource_has_changes(outputdir, file_path))
-            continue;
-
-        std::cout << file_path.filename().string() << std::endl;
         try {
             std::ifstream file{ file_path.string(), std::ios::in };
             Json::Value json_material;

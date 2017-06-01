@@ -65,10 +65,6 @@ bool compile_models(boost::filesystem::path outputdir, std::vector<boost::filesy
 {
     bool all_good = true;
     for (auto file_path : models) {
-        if (!resource_has_changes(outputdir, file_path))
-            continue;
-
-        std::cout << file_path.filename().string() << std::endl;
         try {
             sigma::assimp_converter imported{ boost::filesystem::current_path(), file_path };
 

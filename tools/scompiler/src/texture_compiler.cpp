@@ -100,11 +100,6 @@ bool compile_textures(boost::filesystem::path outputdir, std::vector<boost::file
             file << import_settings;
         }
 
-        if (!resource_has_changes(outputdir, file_path))
-            continue;
-
-        std::cout << file_path.filename().string() << std::endl;
-
         try {
             sigma::resource::identifier rid("texture", file_path);
             auto final_path = outputdir / std::to_string(rid.value());

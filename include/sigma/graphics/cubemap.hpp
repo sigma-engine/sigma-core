@@ -1,7 +1,7 @@
 #ifndef SIGMA_GRAPHICS_CUBEMAP_HPP
 #define SIGMA_GRAPHICS_CUBEMAP_HPP
 
-#include <sigma/graphics/texture.hpp>
+#include <sigma/resource/identifier.hpp>
 
 #include <boost/serialization/version.hpp>
 
@@ -9,12 +9,12 @@ namespace sigma {
 namespace graphics {
 
     struct cubemap {
-        texture right;
-        texture left;
-        texture top;
-        texture bottom;
-        texture back;
-        texture front;
+        resource::identifier right;
+        resource::identifier left;
+        resource::identifier top;
+        resource::identifier bottom;
+        resource::identifier back;
+        resource::identifier front;
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)

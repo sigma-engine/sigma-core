@@ -1,16 +1,5 @@
 set(SCOMPILER scompiler)
 
-macro(sigma_setup)
-    file(COPY ${CONAN_SIGMA-ENGINE_ROOT}/data DESTINATION ${CMAKE_BINARY_DIR})
-    if(DEFINED CONAN_BIN_DIRS_SIGMA-ENGINE)
-        set(SHADER_COMPILER "${CONAN_BIN_DIRS_SIGMA-ENGINE}/${SHADER_COMPILER}")
-        set(TEXTURE_COMPILER "${CONAN_BIN_DIRS_SIGMA-ENGINE}/${TEXTURE_COMPILER}")
-        set(MATERIAL_COMPILER "${CONAN_BIN_DIRS_SIGMA-ENGINE}/${MATERIAL_COMPILER}")
-        set(MODEL_COMPILER "${CONAN_BIN_DIRS_SIGMA-ENGINE}/${MODEL_COMPILER}")
-        set(REFLECTION_COMPILER "${CONAN_BIN_DIRS_SIGMA-ENGINE}/${REFLECTION_COMPILER}")
-    endif()
-endmacro()
-
 function(generate_meta_data generated_source_files)
     set(gen_list)
     set(TEMPLATE_REGEX "//[ \t]*TEMPLATE[ \t]*\\([ \t]*([a-z/A-Z_0-9]+(\\.[a-zA-Z_]+)?)[ \t]*\\)[ \t]*")
@@ -89,17 +78,59 @@ function(add_resources target)
         set(resource_files ${package_UNPARSED_ARGUMENTS})
         list(REMOVE_DUPLICATES resource_files)
 
-        add_custom_target(${target}-resources ALL DEPENDS  ${resource_files})
+        set(stamp_files)
+        set(TEXTURE_EXTENSIONS
+            ".tiff" ".tif" ".jpg" ".jpeg" ".jpe" ".jif" ".jfif" ".jfi" ".png"
+            ".hdr")
+        set(CUBEMAP_EXTENSIONS ".cub")
+        set(SHADER_EXTENSIONS ".vert" ".frag" ".geom")
+        set(EFFECT_EXTENSIONS ".eff")
+        set(MATERIAL_EXTENSIONS ".smat")
+        set(MODEL_EXTENSIONS ".3ds" ".blend" ".dae" ".fbx" ".ifc-step" ".ase"
+            ".dxf" ".hmp" ".md2" ".md3" ".md5" ".mdc" ".mdl" ".nff" ".ply"
+            ".stl" ".x" ".obj" ".opengex" ".smd" ".lwo" ".lxo" ".lws" ".ter"
+            ".ac3d" ".ms3d" ".cob" ".q3bsp" ".xgl" ".csm" ".bvh" ".b3d" ".ndo"
+            ".q3d" ".assbin" ".gltf" ".3mf")
+       set(RESOURCE_EXTENSIONS ${TEXTURE_EXTENSIONS} ${CUBEMAP_EXTENSIONS}
+           ${SHADER_EXTENSIONS} ${EFFECT_EXTENSIONS} ${MATERIAL_EXTENSIONS}
+           ${MODEL_EXTENSIONS})
 
-        add_custom_command(
-            TARGET ${target}-resources
-            COMMAND ${SCOMPILER} ARGS --output "${CMAKE_BINARY_DIR}/data" ${include_args} ${resource_files}
-            WORKING_DIRECTORY ${package_PACKAGE_ROOT}
-            DEPENDS always_rebuild
-            COMMENT "Compiling ${target} resources..."
-        )
+        foreach(resource_file ${resource_files})
+            file(RELATIVE_PATH rel_resource_file ${package_PACKAGE_ROOT} ${resource_file})
+
+            get_filename_component(dir "${rel_resource_file}" DIRECTORY)
+            get_filename_component(name "${rel_resource_file}" NAME_WE)
+            get_filename_component(ext "${rel_resource_file}" EXT)
+
+            if("${dir}" STREQUAL "")
+                set(package_dir "${package_PACKAGE_ROOT}")
+                set(data_dir "${CMAKE_BINARY_DIR}/data")
+            else()
+                set(package_dir "${package_PACKAGE_ROOT}/${dir}")
+                set(data_dir "${CMAKE_BINARY_DIR}/data/${dir}")
+            endif()
+            set(generated_stamp_file "${data_dir}/${name}${ext}.stamp")
+
+            if(${ext} IN_LIST RESOURCE_EXTENSIONS)
+                set(extra_DEPENDS)
+                if(EXISTS "${data_dir}/${name}${ext}.stamp")
+                    file(READ "${data_dir}/${name}${ext}.stamp" extra_DEPENDS)
+                endif()
+
+                list(APPEND stamp_files "${generated_stamp_file}")
+                add_custom_command(
+                    OUTPUT "${generated_stamp_file}"
+                    COMMAND ${SCOMPILER} ARGS --output "${CMAKE_BINARY_DIR}/data" ${include_args} "${package_dir}/${name}${ext}"
+                    MAIN_DEPENDENCY "${package_dir}/${name}${ext}"
+                    DEPENDS ${extra_DEPENDS}
+                    WORKING_DIRECTORY ${package_PACKAGE_ROOT}
+                    COMMENT "Compiling ${rel_resource_file}"
+                )
+            endif()
+        endforeach()
+
+        add_custom_target(${target}-resources ALL DEPENDS ${stamp_files})
         add_custom_command(OUTPUT always_rebuild COMMAND cmake -E echo COMMENT "")
-
         add_dependencies(${target}-resources scompiler)
 
     endif()
