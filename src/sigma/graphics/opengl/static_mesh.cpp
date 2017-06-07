@@ -18,17 +18,25 @@ namespace opengl {
         GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_));
         GL_CHECK(glBufferData(GL_ARRAY_BUFFER, sizeof(graphics::static_mesh::vertex) * data.vertices.size(), data.vertices.data(), GL_STATIC_DRAW));
 
+        // position
         GL_CHECK(glEnableVertexAttribArray(0));
         GL_CHECK(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(graphics::static_mesh::vertex), 0));
 
+        // normal
         GL_CHECK(glEnableVertexAttribArray(1));
         GL_CHECK(glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(graphics::static_mesh::vertex), reinterpret_cast<const void*>(sizeof(glm::vec3))));
 
+        // bitangent
         GL_CHECK(glEnableVertexAttribArray(2));
         GL_CHECK(glVertexAttribPointer(2, 3, GL_FLOAT, GL_TRUE, sizeof(graphics::static_mesh::vertex), reinterpret_cast<const void*>(2 * sizeof(glm::vec3))));
 
+        // tangent
         GL_CHECK(glEnableVertexAttribArray(3));
-        GL_CHECK(glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(graphics::static_mesh::vertex), reinterpret_cast<const void*>(3 * sizeof(glm::vec3))));
+        GL_CHECK(glVertexAttribPointer(3, 3, GL_FLOAT, GL_TRUE, sizeof(graphics::static_mesh::vertex), reinterpret_cast<const void*>(3 * sizeof(glm::vec3))));
+
+        // texcoord
+        GL_CHECK(glEnableVertexAttribArray(4));
+        GL_CHECK(glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, sizeof(graphics::static_mesh::vertex), reinterpret_cast<const void*>(4 * sizeof(glm::vec3))));
 
         index_count_ = GLsizei(3 * data.triangles.size());
         GL_CHECK(glGenBuffers(1, &index_buffer_));

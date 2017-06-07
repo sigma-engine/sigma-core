@@ -29,7 +29,7 @@ void main()
     out_vertex.position = vec4(position_radius.xyz + position_radius.w * in_position, 1);
     out_vertex.normal = normalize(in_normal);
     out_vertex.tangent = normalize(in_tangent);
-    out_vertex.bitangent = normalize(cross(out_vertex.tangent, out_vertex.normal));
+    out_vertex.bitangent = normalize(in_bitangent);
     out_vertex.texcoord = in_texcoord;
 
     gl_Position = projection_view_matrix * out_vertex.position;

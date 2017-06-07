@@ -25,6 +25,7 @@ namespace graphics {
         struct vertex {
             glm::vec3 position;
             glm::vec3 normal;
+            glm::vec3 bitangent;
             glm::vec3 tangent;
             glm::vec2 texcoord;
             template <class Archive>
@@ -32,6 +33,7 @@ namespace graphics {
             {
                 ar& position;
                 ar& normal;
+                ar& bitangent;
                 ar& tangent;
                 ar& texcoord;
             }

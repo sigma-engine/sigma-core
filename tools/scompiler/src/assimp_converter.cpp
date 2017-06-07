@@ -196,11 +196,11 @@ void assimp_converter::convert_material(std::string name, Json::Value& material)
         if (AI_SUCCESS == aimat->Get(AI_MATKEY_COLOR_AMBIENT, color))
             json::to_json(converter_->convert_color(color).x, material["metalness"]);
         if (AI_SUCCESS == aimat->Get(AI_MATKEY_COLOR_EMISSIVE, color))
-            json::to_json(converter_->convert_color(color), material["emissive"]);
+            json::to_json(converter_->convert_color(color), material["emissiveColor"]);
         if (AI_SUCCESS == aimat->Get(AI_MATKEY_COLOR_TRANSPARENT, color))
-            json::to_json(converter_->convert_color(color).x, material["transparent"]);
+            json::to_json(converter_->convert_color(color), material["transparentColor"]);
         if (AI_SUCCESS == aimat->Get(AI_MATKEY_COLOR_REFLECTIVE, color))
-            json::to_json(converter_->convert_color(color).x, material["reflective"]);
+            json::to_json(converter_->convert_color(color), material["reflectiveColor"]);
 
         for (auto texture_type : texture_type_map) {
             if (aimat->GetTextureCount(texture_type.first) > 0) {
@@ -233,7 +233,9 @@ void assimp_converter::convert_static_mesh(std::string name, graphics::static_me
 
             if (aimesh->HasTangentsAndBitangents()) {
                 auto tan = aimesh->mTangents[j];
+                auto bitan = aimesh->mBitangents[j];
                 submesh_vertices[j].tangent = converter_->convert_3d(tan);
+                submesh_vertices[j].bitangent = converter_->convert_3d(bitan);
             }
             if (aimesh->HasTextureCoords(0)) {
                 auto tex = converter_->convert_2d(aimesh->mTextureCoords[0][j]);
