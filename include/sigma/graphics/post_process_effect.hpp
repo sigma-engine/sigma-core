@@ -2,14 +2,13 @@
 #define SIGMA_ENGINE_GRAPHICS_POST_PROCESS_EFFECT_HPP
 
 #include <sigma/graphics/shader_technique.hpp>
-#include <sigma/resource/identifier.hpp>
 
 #include <boost/serialization/version.hpp>
 
 namespace sigma {
 namespace graphics {
     struct post_process_effect : public shader_technique {
-        resource::identifier mesh = "static_mesh://fullscreen_quad:plane";
+        boost::filesystem::path mesh = "static_mesh/fullscreen_quad/plane";
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)

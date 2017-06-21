@@ -10,6 +10,7 @@
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/archive/binary_oarchive.hpp>
+#include <boost/filesystem/operations.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -61,16 +62,16 @@ bool is_model(boost::filesystem::path file)
     return std::find(exts.begin(), exts.end(), file.extension().string()) != exts.end();
 }
 
-bool compile_models(boost::filesystem::path outputdir, std::vector<boost::filesystem::path> models)
+bool compile_models(boost::filesystem::path outputdir, boost::filesystem::path sourcedir, std::vector<boost::filesystem::path> models)
 {
     bool all_good = true;
     for (auto file_path : models) {
         try {
-            sigma::assimp_converter imported{ boost::filesystem::current_path(), file_path };
+            sigma::assimp_converter imported{ sourcedir, file_path };
 
             std::vector<boost::filesystem::path> material_paths;
             for (auto material_name : imported.material_names()) {
-                boost::filesystem::path material_path = boost::filesystem::current_path() / material_name;
+                boost::filesystem::path material_path = sourcedir / material_name;
                 material_path.replace_extension("smat");
                 material_paths.push_back(material_path);
 
@@ -86,15 +87,20 @@ bool compile_models(boost::filesystem::path outputdir, std::vector<boost::filesy
                 file << json_material;
             }
 
-            compile_materials(outputdir, material_paths);
+            compile_materials(outputdir, sourcedir, material_paths);
 
+            auto resource_path = sigma::filesystem::make_relative(sourcedir, file_path).replace_extension("");
             for (auto mesh_name : imported.static_mesh_names()) {
                 if (!boost::algorithm::ends_with(mesh_name, "_high")) {
-                    sigma::resource::identifier rid("static_mesh", file_path, mesh_name);
-                    auto final_path = outputdir / std::to_string(rid.value());
+                    auto rid = boost::filesystem::path{ "static_mesh" } / resource_path / mesh_name;
+                    auto final_path = outputdir / rid;
 
                     sigma::graphics::static_mesh mesh;
                     imported.convert_static_mesh(mesh_name, mesh);
+
+                    auto output_folder = final_path.parent_path();
+                    if (!boost::filesystem::exists(output_folder))
+                        boost::filesystem::create_directories(output_folder);
 
                     std::ofstream stream(final_path.string(), std::ios::binary | std::ios::out);
                     boost::archive::binary_oarchive oa(stream);
@@ -117,7 +123,7 @@ bool compile_models(boost::filesystem::path outputdir, std::vector<boost::filesy
                 }
             }
 
-            auto full_scene_path = sigma::filesystem::make_relative(boost::filesystem::current_path(), scene_path);
+            auto full_scene_path = sigma::filesystem::make_relative(sourcedir, scene_path);
             full_scene_path = outputdir / full_scene_path;
             std::ofstream outscene(full_scene_path.string());
             outscene << json_scene;

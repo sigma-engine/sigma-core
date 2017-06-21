@@ -6,7 +6,6 @@
 #include <sigma/graphics/material.hpp>
 #include <sigma/graphics/static_mesh.hpp>
 #include <sigma/reflect.hpp>
-#include <sigma/resource/identifier.hpp>
 #include <sigma/resource/manager.hpp>
 
 #include <unordered_map>
@@ -14,7 +13,7 @@
 namespace sigma {
 namespace graphics {
     struct R_EXPORT() static_mesh_instance {
-        resource::identifier mesh_id;
+        boost::filesystem::path mesh_id;
         bool cast_shadows = true;
 
         R_FIELD(derived)

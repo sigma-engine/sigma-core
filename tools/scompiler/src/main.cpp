@@ -79,22 +79,23 @@ int main(int argc, char const* argv[])
         }
     }
 
-    if (!sigma::compile_textures(outputdir, textures))
+    auto sourcedir = boost::filesystem::current_path();
+    if (!sigma::compile_textures(outputdir, sourcedir, textures))
         return -1;
 
-    if (!sigma::compile_cubemaps(outputdir, cubemaps))
+    if (!sigma::compile_cubemaps(outputdir, sourcedir, cubemaps))
         return -1;
 
-    if (!sigma::compile_shaders(outputdir, include_dirs, shaders))
+    if (!sigma::compile_shaders(outputdir, sourcedir, include_dirs, shaders))
         return -1;
 
-    if (!sigma::compile_materials(outputdir, materials))
+    if (!sigma::compile_materials(outputdir, sourcedir, materials))
         return -1;
 
-    if (!sigma::compile_models(outputdir, models))
+    if (!sigma::compile_models(outputdir, sourcedir, models))
         return -1;
 
-    if (!sigma::compile_post_process_effects(outputdir, post_process_effects))
+    if (!sigma::compile_post_process_effects(outputdir, sourcedir, post_process_effects))
         return -1;
 
     return 0;

@@ -8,7 +8,7 @@
 namespace sigma {
 bool is_material(boost::filesystem::path file);
 
-bool compile_materials(boost::filesystem::path outputdir, std::vector<boost::filesystem::path> materials);
+bool compile_materials(boost::filesystem::path outputdir, boost::filesystem::path sourcedir, std::vector<boost::filesystem::path> materials);
 }
 
 #endif // SIGMA_MATERIAL_COMPILER_HPP

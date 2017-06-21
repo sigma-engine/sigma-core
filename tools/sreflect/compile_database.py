@@ -23,7 +23,7 @@ class compile_database:
             if diagnostic.severity >= 3:
                 message = str(diagnostic)
                 if not safe_to_ignore_error.match(message):
-                    sys.stderr.write("sreflect:\n" + message + "\n")
+                    sys.stderr.write("sreflect:\n" + self.source_directory + '/' + message + "\n")
                     parse_success = False
         if parse_success:
             return tu

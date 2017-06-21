@@ -2,10 +2,11 @@
 #define SIGMA_ENGINE_RESOURCE_MANAGER_HPP
 
 #include <sigma/handle.hpp>
-#include <sigma/resource/identifier.hpp>
+#include <sigma/util/filesystem.hpp>
 #include <sigma/util/json_conversion.hpp>
 
 #include <boost/archive/binary_iarchive.hpp>
+#include <boost/filesystem/path.hpp>
 
 #include <cassert>
 #include <fstream>
@@ -34,7 +35,7 @@ namespace resource {
 
         virtual ~cache() = default;
 
-        virtual handle<Resource> get(identifier id)
+        virtual handle<Resource> get(boost::filesystem::path id)
         {
             auto it = handle_map_.find(id);
             if (it != handle_map_.end())
@@ -58,10 +59,10 @@ namespace resource {
         cache(const cache<Resource>&) = delete;
         cache& operator=(const cache<Resource>&) = delete;
 
-        std::unique_ptr<Resource> load(identifier id)
+        std::unique_ptr<Resource> load(boost::filesystem::path id)
         {
             std::cout << "loading: " << id << '\n';
-            auto resource_path = cache_directory_ / std::to_string(id.value());
+            auto resource_path = cache_directory_ / id;
             std::ifstream file{ resource_path.string(), std::ios::binary | std::ios::in };
             boost::archive::binary_iarchive ia{ file };
             auto data = std::make_unique<Resource>();
@@ -70,7 +71,7 @@ namespace resource {
         }
 
         boost::filesystem::path cache_directory_;
-        std::unordered_map<identifier, sigma::handle> handle_map_;
+        std::unordered_map<boost::filesystem::path, sigma::handle> handle_map_;
 
         std::vector<sigma::handle> handles_;
         std::vector<std::uint32_t> free_handles_;

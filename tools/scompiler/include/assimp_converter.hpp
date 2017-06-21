@@ -48,6 +48,7 @@ public:
 private:
     boost::filesystem::path root_directroy_;
     boost::filesystem::path source_file_;
+    boost::filesystem::path resource_id_;
     std::unique_ptr<Assimp::Importer> importer_;
     std::unique_ptr<converter> converter_;
 

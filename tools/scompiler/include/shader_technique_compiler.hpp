@@ -13,19 +13,19 @@ void compile_shader_technique(T& technique, const Json::Value& technique_data)
     for (auto it = technique_data.begin(); it != technique_data.end(); ++it) {
         const auto& value = *it;
         if (it.key() == "vertex") {
-            technique.shaders[sigma::graphics::shader_type::vertex] = sigma::resource::identifier{ "vertex", value.asString() }; // TODO warn if tring to set shader more that once
+            technique.shaders[sigma::graphics::shader_type::vertex] = boost::filesystem::path{ "vertex" } / value.asString(); // TODO warn if tring to set shader more that once
         } else if (it.key() == "fragment") {
-            technique.shaders[sigma::graphics::shader_type::fragment] = sigma::resource::identifier{ "fragment", value.asString() }; // TODO warn if tring to set shader more that once
+            technique.shaders[sigma::graphics::shader_type::fragment] = boost::filesystem::path{ "fragment" } / value.asString(); // TODO warn if tring to set shader more that once
         } else if (it.key() == "geometry") {
-            technique.shaders[sigma::graphics::shader_type::geometry] = sigma::resource::identifier{ "geometry", value.asString() }; // TODO warn if tring to set shader more that once
+            technique.shaders[sigma::graphics::shader_type::geometry] = boost::filesystem::path{ "geometry" } / value.asString(); // TODO warn if tring to set shader more that once
         } else if (it.key() == "textures") {
             const auto& texture_object = *it;
             for (auto it2 = texture_object.begin(); it2 != texture_object.end(); ++it2)
-                technique.textures[it2.key().asString()] = sigma::resource::identifier{ "texture", (*it2).asString() }; // TODO warn if tring to set texture more than once
+                technique.textures[it2.key().asString()] = boost::filesystem::path{ "texture" } / (*it2).asString(); // TODO warn if tring to set texture more than once
         } else if (it.key() == "cubemaps") {
             const auto& cubemap_object = *it;
             for (auto it2 = cubemap_object.begin(); it2 != cubemap_object.end(); ++it2)
-                technique.cubemaps[it2.key().asString()] = sigma::resource::identifier{ "cubemap", (*it2).asString() }; // TODO warn if tring to set cubemap more than once
+                technique.cubemaps[it2.key().asString()] = boost::filesystem::path{ "cubemap" } / (*it2).asString(); // TODO warn if tring to set cubemap more than once
         } else {
             float f;
             glm::vec2 v2;

@@ -8,7 +8,7 @@
 namespace sigma {
 bool is_model(boost::filesystem::path file);
 
-bool compile_models(boost::filesystem::path outputdir, std::vector<boost::filesystem::path> models);
+bool compile_models(boost::filesystem::path outputdir, boost::filesystem::path sourcedir, std::vector<boost::filesystem::path> models);
 }
 
 #endif // SIGMA_MODEL_COMPILER_HPP

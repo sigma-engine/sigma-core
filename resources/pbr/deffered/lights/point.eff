@@ -3,6 +3,6 @@
     "position_radius": [0.0, 0.0, 0.0, 1.0],
     "vertex" : "pbr/deffered/lights/point",
     "fragment" : "pbr/deffered/lights/point",
-    
-    "static_mesh" : "pbr/deffered/lights/point:sphere"
+
+    "static_mesh" : "pbr/deffered/lights/point/sphere"
 }

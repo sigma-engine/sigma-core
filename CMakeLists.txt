@@ -41,7 +41,6 @@ set(CORE_SOURCES
     src/sigma/window.cpp
 
     src/sigma/graphics/renderer.cpp
-    src/sigma/resource/identifier.cpp
 
     src/sigma/graphics/opengl/cubemap.cpp
     src/sigma/graphics/opengl/debug_draw_renderer.cpp
@@ -101,7 +100,6 @@ set(CORE_HEADERS
     include/sigma/graphics/opengl/uniform_buffer.hpp
     include/sigma/graphics/opengl/util.hpp
 
-    include/sigma/resource/identifier.hpp
     include/sigma/resource/manager.hpp
 
     include/sigma/util/compile_time_hash.hpp

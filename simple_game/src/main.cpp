@@ -7,6 +7,8 @@
 
 #include <SDL2/SDL.h>
 
+#include <boost/filesystem/operations.hpp>
+
 #include <iostream>
 
 int main(int argc, char* argv[])

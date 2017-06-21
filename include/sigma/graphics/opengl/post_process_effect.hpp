@@ -59,7 +59,7 @@ namespace opengl {
         {
         }
 
-        resource::handle<graphics::post_process_effect> get(resource::identifier id)
+        resource::handle<graphics::post_process_effect> get(boost::filesystem::path id)
         {
             return post_process_effect_cache_.get(id);
         }

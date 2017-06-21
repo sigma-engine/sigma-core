@@ -3,7 +3,7 @@
 #include <shader_validation.hpp>
 
 #include <sigma/graphics/shader.hpp>
-#include <sigma/resource/identifier.hpp>
+#include <sigma/util/filesystem.hpp>
 
 #pragma warning(push, 0)
 #include <boost/wave.hpp>
@@ -75,7 +75,7 @@ bool is_shader(boost::filesystem::path file)
     return ext_to_type.count(file.extension().string()) > 0;
 }
 
-bool compile_shaders(boost::filesystem::path outputdir, std::vector<boost::filesystem::path> include_dirs, std::vector<boost::filesystem::path> shaders)
+bool compile_shaders(boost::filesystem::path outputdir, boost::filesystem::path sourcedir, std::vector<boost::filesystem::path> include_dirs, std::vector<boost::filesystem::path> shaders)
 {
     bool all_good = true;
     for (const auto& file_path : shaders) {
@@ -88,31 +88,32 @@ bool compile_shaders(boost::filesystem::path outputdir, std::vector<boost::files
 
             sigma::graphics::shader shader;
             shader.type = ext_to_type[file_path.extension().string()];
-            sigma::resource::identifier rid;
+            boost::filesystem::path rid;
 
             auto file_name = file_path.string();
             context_type ctx{ input_source.begin(), input_source.end(), file_name.c_str() };
 
             ctx.add_macro_definition("SIGMA_ENGINE_SHADER");
 
+            auto resource_path = sigma::filesystem::make_relative(sourcedir, file_path).replace_extension("");
             switch (shader.type) {
             case graphics::shader_type::vertex: {
                 ctx.add_macro_definition("SIGMA_ENGINE_VERTEX_SHADER");
-                rid = sigma::resource::identifier{ "vertex", file_path };
+                rid = boost::filesystem::path{ "vertex" } / resource_path;
                 break;
             }
             case graphics::shader_type::fragment: {
                 ctx.add_macro_definition("SIGMA_ENGINE_FRAGMENT_SHADER");
-                rid = sigma::resource::identifier{ "fragment", file_path };
+                rid = boost::filesystem::path{ "fragment" } / resource_path;
                 break;
             }
             case graphics::shader_type::geometry: {
                 ctx.add_macro_definition("SIGMA_ENGINE_GEOMETRY_SHADER");
-                rid = sigma::resource::identifier{ "geometry", file_path };
+                rid = boost::filesystem::path{ "geometry" } / resource_path;
                 break;
             }
             case graphics::shader_type::header: {
-                rid = sigma::resource::identifier{ "header", file_path };
+                rid = boost::filesystem::path{ "header" } / resource_path;
                 break;
             }
             }
@@ -134,7 +135,12 @@ bool compile_shaders(boost::filesystem::path outputdir, std::vector<boost::files
 
             auto hooks = ctx.get_hooks();
             if (validate_shader(shader, hooks.source_files)) {
-                auto final_path = outputdir / std::to_string(rid.value());
+                auto final_path = outputdir / rid;
+
+                auto output_folder = final_path.parent_path();
+                if (!boost::filesystem::exists(output_folder))
+                    boost::filesystem::create_directories(output_folder);
+
                 std::ofstream stream{ final_path.string(), std::ios::binary | std::ios::out };
                 boost::archive::binary_oarchive oa{ stream };
                 oa << shader;

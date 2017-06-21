@@ -13,6 +13,7 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
+#include <boost/filesystem/path.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 
 namespace sigma {
@@ -212,6 +213,20 @@ namespace json {
             to_json(source[1], output[1]);
             to_json(source[2], output[2]);
             to_json(source[3], output[3]);
+        }
+    };
+
+    template <>
+    struct type_traits<boost::filesystem::path> {
+        static bool from(const Json::Value& source, boost::filesystem::path& output)
+        {
+            output = source.asString();
+            return true;
+        }
+
+        static void to(const boost::filesystem::path& source, Json::Value& output)
+        {
+            output = source.string();
         }
     };
 

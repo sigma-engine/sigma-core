@@ -54,7 +54,7 @@ namespace opengl {
         {
         }
 
-        resource::handle<graphics::static_mesh> get(resource::identifier id)
+        resource::handle<graphics::static_mesh> get(boost::filesystem::path id)
         {
             return static_mesh_cache_.get(id);
         }

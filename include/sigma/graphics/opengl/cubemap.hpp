@@ -42,7 +42,7 @@ namespace opengl {
         {
         }
 
-        resource::handle<graphics::cubemap> get(resource::identifier id)
+        resource::handle<graphics::cubemap> get(boost::filesystem::path id)
         {
             return cubemap_cache_.get(id);
         }

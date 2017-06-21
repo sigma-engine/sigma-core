@@ -173,7 +173,7 @@ namespace opengl {
         {
         }
 
-        resource::handle<graphics::texture> get(resource::identifier id)
+        resource::handle<graphics::texture> get(boost::filesystem::path id)
         {
             return texture_cache_.get(id);
         }

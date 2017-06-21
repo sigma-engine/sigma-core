@@ -52,7 +52,7 @@ namespace opengl {
         {
         }
 
-        resource::handle<graphics::shader> get(resource::identifier id)
+        resource::handle<graphics::shader> get(boost::filesystem::path id)
         {
             return shader_cache_.get(id);
         }

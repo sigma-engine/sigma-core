@@ -3,7 +3,7 @@
 #include <texture_compiler.hpp>
 
 #include <sigma/graphics/texture.hpp>
-#include <sigma/resource/identifier.hpp>
+#include <sigma/util/filesystem.hpp>
 #include <sigma/util/json_conversion.hpp>
 
 #include <json/json.h>
@@ -81,7 +81,7 @@ void compile_texture(const boost::filesystem::path& file_path, graphics::texture
     copy_texture(image, texture);
 }
 
-bool compile_textures(boost::filesystem::path outputdir, std::vector<boost::filesystem::path> textures)
+bool compile_textures(boost::filesystem::path outputdir, boost::filesystem::path sourcedir, std::vector<boost::filesystem::path> textures)
 {
     bool all_good = true;
     for (const auto& file_path : textures) {
@@ -101,8 +101,8 @@ bool compile_textures(boost::filesystem::path outputdir, std::vector<boost::file
         }
 
         try {
-            sigma::resource::identifier rid("texture", file_path);
-            auto final_path = outputdir / std::to_string(rid.value());
+            auto rid = boost::filesystem::path{ "texture" } / sigma::filesystem::make_relative(sourcedir, file_path).replace_extension("");
+            auto final_path = outputdir / rid;
 
             sigma::graphics::texture texture;
 
@@ -125,6 +125,10 @@ bool compile_textures(boost::filesystem::path outputdir, std::vector<boost::file
                 break;
             }
             }
+
+            auto output_folder = final_path.parent_path();
+            if (!boost::filesystem::exists(output_folder))
+                boost::filesystem::create_directories(output_folder);
 
             std::ofstream stream{ final_path.string(), std::ios::binary };
             boost::archive::binary_oarchive oa(stream);

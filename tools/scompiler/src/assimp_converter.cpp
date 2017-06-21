@@ -23,6 +23,7 @@
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/replace.hpp>
+#include <boost/filesystem/operations.hpp>
 
 #include <unordered_map>
 
@@ -77,6 +78,7 @@ assimp_converter::assimp_converter(boost::filesystem::path package_root, boost::
     , source_file_(source_file)
     , importer_(std::make_unique<Assimp::Importer>())
 {
+    resource_id_ = sigma::filesystem::make_relative(package_root, source_file_).replace_extension("");
     auto filename = source_file_.string();
 
     if (boost::algorithm::ends_with(filename, ".blend"))
@@ -253,7 +255,7 @@ void assimp_converter::convert_static_mesh(std::string name, graphics::static_me
         std::string material_name = get_name(aiScene->mMaterials[aimesh->mMaterialIndex]);
 
         // TODO warn if material slot has been used.
-        mesh.materials[resource::identifier{ "material", material_name }.name()] = std::make_pair(mesh.triangles.size(), aimesh->mNumFaces);
+        mesh.materials[boost::filesystem::path{ "material" } / material_name] = std::make_pair(mesh.triangles.size(), aimesh->mNumFaces);
 
         mesh.vertices.reserve(mesh.vertices.size() + aimesh->mNumVertices);
         mesh.vertices.insert(mesh.vertices.end(), submesh_vertices.begin(), submesh_vertices.end());
@@ -286,7 +288,7 @@ void assimp_converter::convert_object(std::string name, Json::Value& entity) con
         const aiMesh* aimesh = aiScene->mMeshes[ainode->mMeshes[0]];
 
         sigma::graphics::static_mesh_instance inst;
-        inst.mesh_id = sigma::resource::identifier("static_mesh", source_file_, get_name(aimesh));
+        inst.mesh_id = boost::filesystem::path{ "static_mesh" } / resource_id_ / get_name(aimesh);
         json::to_json(inst, entity["sigma::graphics::static_mesh_instance"]);
     }
 

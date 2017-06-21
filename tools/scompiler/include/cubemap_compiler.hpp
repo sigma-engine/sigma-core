@@ -8,7 +8,7 @@
 namespace sigma {
 bool is_cubemap(boost::filesystem::path file);
 
-bool compile_cubemaps(boost::filesystem::path outputdir, std::vector<boost::filesystem::path> cubemaps);
+bool compile_cubemaps(boost::filesystem::path outputdir, boost::filesystem::path sourcedir, std::vector<boost::filesystem::path> cubemaps);
 }
 
 #endif // SIGMA_CUBEMAP_COMPILER_HPP

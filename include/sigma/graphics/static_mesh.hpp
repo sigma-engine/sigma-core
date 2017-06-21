@@ -3,7 +3,7 @@
 
 #include <sigma/config.hpp>
 
-#include <sigma/resource/identifier.hpp>
+#include <sigma/util/filesystem.hpp>
 #include <sigma/util/glm_serialize.hpp>
 
 #include <glm/vec2.hpp>
@@ -42,7 +42,7 @@ namespace graphics {
 
         std::vector<vertex> vertices;
         std::vector<triangle> triangles;
-        std::unordered_map<resource::identifier, std::pair<std::size_t, std::size_t>> materials;
+        std::unordered_map<boost::filesystem::path, std::pair<std::size_t, std::size_t>> materials;
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)

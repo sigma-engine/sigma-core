@@ -2,13 +2,14 @@
 #define SIGMA_GRAPHICS_SHADER_TECHNIQUE_HPP
 
 #include <sigma/graphics/shader.hpp>
-#include <sigma/resource/identifier.hpp>
+#include <sigma/util/filesystem.hpp>
 #include <sigma/util/glm_serialize.hpp>
 
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
+#include <boost/filesystem/path.hpp>
 #include <boost/serialization/unordered_map.hpp>
 #include <boost/serialization/version.hpp>
 
@@ -24,9 +25,9 @@ namespace graphics {
         std::unordered_map<std::string, glm::vec2> vec2s;
         std::unordered_map<std::string, glm::vec3> vec3s;
         std::unordered_map<std::string, glm::vec4> vec4s;
-        std::unordered_map<shader_type, resource::identifier> shaders;
-        std::unordered_map<std::string, resource::identifier> textures;
-        std::unordered_map<std::string, resource::identifier> cubemaps;
+        std::unordered_map<shader_type, boost::filesystem::path> shaders;
+        std::unordered_map<std::string, boost::filesystem::path> textures;
+        std::unordered_map<std::string, boost::filesystem::path> cubemaps;
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
