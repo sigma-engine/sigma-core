@@ -90,7 +90,7 @@ function(add_resources target)
             ".dxf" ".hmp" ".md2" ".md3" ".md5" ".mdc" ".mdl" ".nff" ".ply"
             ".stl" ".x" ".obj" ".opengex" ".smd" ".lwo" ".lxo" ".lws" ".ter"
             ".ac3d" ".ms3d" ".cob" ".q3bsp" ".xgl" ".csm" ".bvh" ".b3d" ".ndo"
-            ".q3d" ".assbin" ".gltf" ".3mf")
+            ".q3d" ".gltf" ".3mf")
        set(RESOURCE_EXTENSIONS ${TEXTURE_EXTENSIONS} ${CUBEMAP_EXTENSIONS}
            ${SHADER_EXTENSIONS} ${EFFECT_EXTENSIONS} ${MATERIAL_EXTENSIONS}
            ${MODEL_EXTENSIONS})
