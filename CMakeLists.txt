@@ -118,8 +118,12 @@ target_link_libraries(sigma-core PUBLIC ${CMAKE_DL_LIBS} ${CONAN_LIBS})
 file(GLOB_RECURSE RESOURCES resources resources/*.*)
 add_resources(sigma-core PACKAGE_ROOT resources ${RESOURCES})
 
-
-add_subdirectory(tools/scompiler)
+add_subdirectory(tools/texcc)
+add_subdirectory(tools/cubcc)
+add_subdirectory(tools/shdcc)
+add_subdirectory(tools/mtlcc)
+add_subdirectory(tools/effcc)
+add_subdirectory(tools/mdlcc)
 
 
 add_subdirectory(simple_game)

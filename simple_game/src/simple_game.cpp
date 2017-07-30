@@ -16,10 +16,10 @@ simple_game::simple_game(const boost::filesystem::path& cache_path, sigma::resou
     , color_distribution_{ glm::vec3{ 0.0f }, glm::vec3{ 1.0f } }
 {
 
-    // load("../data/proprietary/classroom/classroom.scn");
-    // load("../data/water_packed.scn");
-    // load(cache_path / "material_test_scene.scn");
-    load(cache_path / "proprietary" / "sponza" / "sponza.scn");
+    // load(cache_path / "blueprint" / "proprietary" / "classroom" / "classroom");
+    // load(cache_path / "blueprint" / "water_packed");
+    // load(cache_path / "blueprint" / "material_test_scene");
+    load(cache_path / "blueprint" / "proprietary" / "sponza" / "sponza");
 
     // auto grid_e = world_.create();
     // world_.add<sigma::transform>(grid_e);

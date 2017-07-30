@@ -11,6 +11,7 @@ def patch_helper(classtype, name, library_function, args, result):
         return f(*args)
     setattr(classtype, name, impl)
 
+clang.cindex.TranslationUnit.PARSE_KEEP_GOING = 0x200
 
 patch_helper(clang.cindex.Type, 'get_template_argument_type',
              'clang_Type_getTemplateArgumentAsType',

@@ -10,7 +10,6 @@
 #include <fstream>
 #include <vector>
 
-namespace sigma {
 const constexpr unsigned int HDR_MIN_ENCODE_LEN = 8;
 const constexpr unsigned int HDR_MAX_ENCODE_LEN = 0x7FFF;
 
@@ -113,5 +112,5 @@ void hdr_read_and_convert_image(const std::string& filename, Image& res)
             boost::gil::color_convert(hrd_rgbe_to_rgb(scanline[x]), out_view(x, y));
     }
 }
-}
+
 #endif // SIGMA_HDR_IO_HPP

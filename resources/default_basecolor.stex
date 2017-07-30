@@ -1,9 +1,0 @@
-{
-	"filter" : 
-	{
-		"magnification" : "linear",
-		"minification" : "linear",
-		"mipmap" : "linear"
-	},
-	"format" : "rgb8"
-}

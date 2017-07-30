@@ -15,15 +15,14 @@ class compile_database:
     def parse(self, index, source_file):
         ext = os.path.splitext(source_file)[1][1:]
         arguments = self.__get_compile_arguments(source_file)
-        tu = index.parse(source_file, arguments)
+        tu = index.parse(source_file, arguments,options=clang.cindex.TranslationUnit.PARSE_SKIP_FUNCTION_BODIES | clang.cindex.TranslationUnit.PARSE_KEEP_GOING)
         parse_success = True
-        safe_to_ignore_error = re.compile(
-            r"(.*):(\d+):(\d+):\s+fatal\s+error:\s*'(.*\..*\." + ext + r")'\s+file\s+not\s+found")
+        safe_to_ignore_error = re.compile(r"(.*):\d+:\d+:\s+error:\s*'(.*)\.(.*)\.(.*)'\s+file\s+not\s+found")
         for diagnostic in tu.diagnostics:
-            if diagnostic.severity >= 3:
-                message = str(diagnostic)
-                if not safe_to_ignore_error.match(message):
-                    sys.stderr.write("sreflect:\n" + self.source_directory + '/' + message + "\n")
+            if diagnostic.severity > 2:
+                match = re.search(safe_to_ignore_error, str(diagnostic))
+                if not match or not match.group(1).endswith(match.group(2)+"."+ match.group(4)):
+                    sys.stderr.write("sreflect:\n" + str(diagnostic) + "\n")
                     parse_success = False
         if parse_success:
             return tu
@@ -58,7 +57,7 @@ class compile_database:
     def __get_compile_arguments(self, source):
         command = self.__get_best_compile_command(source)
         args = [arg for arg in command.arguments]
-        args += ['-I/usr/lib64/clang/4.0.0/include']
+        args += ['-I/usr/lib64/clang/4.0.1/include']
         args += ['-D__REFLECTION_PARSER__=']
         try:
             i = args.index('-c')

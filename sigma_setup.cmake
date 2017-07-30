@@ -1,4 +1,12 @@
-set(SCOMPILER scompiler)
+set(TEXTURE_EXTENSIONS ".tiff" ".tif" ".jpg" ".jpeg" ".jpe" ".jif" ".jfif" ".jfi" ".png" ".hdr")
+set(CUBEMAP_EXTENSIONS ".cub")
+set(MATERIAL_EXTENSIONS ".smat")
+set(EFFECT_EXTENSIONS ".eff")
+set(MODEL_EXTENSIONS ".3ds" ".dae" ".fbx" ".ifc-step" ".ase" ".dxf" ".hmp" ".md2"
+                     ".md3" ".md5" ".mdc" ".mdl" ".nff" ".ply" ".stl" ".x" ".obj"
+                     ".opengex" ".smd" ".lwo" ".lxo" ".lws" ".ter" ".ac3d" ".ms3d"
+                     ".cob" ".q3bsp" ".xgl" ".csm" ".bvh" ".b3d" ".ndo" ".q3d"
+                     ".gltf" ".blend" ".3mf")
 
 function(generate_meta_data generated_source_files)
     set(gen_list)
@@ -65,35 +73,22 @@ function(add_resources target)
         set(package_PACKAGE_ROOT "${CMAKE_CURRENT_LIST_DIR}")
     endif()
 
+    set(data_root "${CMAKE_BINARY_DIR}/data")
+    set(output_files)
+
     if(package_UNPARSED_ARGUMENTS)
         target_include_directories(${target} PUBLIC ${package_PACKAGE_ROOT})
 
         get_target_property(include_dirs ${target} INCLUDE_DIRECTORIES)
-        set(include_args -I${package_PACKAGE_ROOT})
+        set(include_args "-I \"${package_PACKAGE_ROOT}\"")
         foreach(inc ${include_dirs})
-            list(APPEND include_args -I${inc})
+            list(APPEND include_args "-I \"${inc}\"")
         endforeach()
         list(REMOVE_DUPLICATES include_args)
 
+
         set(resource_files ${package_UNPARSED_ARGUMENTS})
         list(REMOVE_DUPLICATES resource_files)
-
-        set(stamp_files)
-        set(TEXTURE_EXTENSIONS
-            ".tiff" ".tif" ".jpg" ".jpeg" ".jpe" ".jif" ".jfif" ".jfi" ".png"
-            ".hdr")
-        set(CUBEMAP_EXTENSIONS ".cub")
-        set(SHADER_EXTENSIONS ".vert" ".frag" ".geom")
-        set(EFFECT_EXTENSIONS ".eff")
-        set(MATERIAL_EXTENSIONS ".smat")
-        set(MODEL_EXTENSIONS ".3ds" ".blend" ".dae" ".fbx" ".ifc-step" ".ase"
-            ".dxf" ".hmp" ".md2" ".md3" ".md5" ".mdc" ".mdl" ".nff" ".ply"
-            ".stl" ".x" ".obj" ".opengex" ".smd" ".lwo" ".lxo" ".lws" ".ter"
-            ".ac3d" ".ms3d" ".cob" ".q3bsp" ".xgl" ".csm" ".bvh" ".b3d" ".ndo"
-            ".q3d" ".gltf" ".3mf")
-       set(RESOURCE_EXTENSIONS ${TEXTURE_EXTENSIONS} ${CUBEMAP_EXTENSIONS}
-           ${SHADER_EXTENSIONS} ${EFFECT_EXTENSIONS} ${MATERIAL_EXTENSIONS}
-           ${MODEL_EXTENSIONS})
 
         foreach(resource_file ${resource_files})
             file(RELATIVE_PATH rel_resource_file ${package_PACKAGE_ROOT} ${resource_file})
@@ -102,36 +97,69 @@ function(add_resources target)
             get_filename_component(name "${rel_resource_file}" NAME_WE)
             get_filename_component(ext "${rel_resource_file}" EXT)
 
-            if("${dir}" STREQUAL "")
-                set(package_dir "${package_PACKAGE_ROOT}")
-                set(data_dir "${CMAKE_BINARY_DIR}/data")
+            if(NOT "${dir}" STREQUAL "")
+                set(dir "${dir}/")
+            endif()
+
+            if(${ext} IN_LIST TEXTURE_EXTENSIONS)
+                set(resource_type "texture")
+                set(resource_command texcc)
+            elseif(${ext} IN_LIST CUBEMAP_EXTENSIONS)
+                set(resource_type "cubemap")
+                set(resource_command cubcc)
+            elseif(${ext} IN_LIST MATERIAL_EXTENSIONS)
+                set(resource_type "material")
+                set(resource_command mtlcc)
+            elseif(${ext} IN_LIST EFFECT_EXTENSIONS)
+                set(resource_type "post_process_effect")
+                set(resource_command effcc)
+            elseif(${ext} IN_LIST MODEL_EXTENSIONS)
+                set(resource_type "blueprint")
+                set(resource_command mdlcc)
+            elseif(${ext} STREQUAL ".vert")
+                set(resource_type "vertex")
+                set(resource_command shdcc ${include_args})
+            elseif(${ext} STREQUAL ".frag")
+                set(resource_type "fragment")
+                set(resource_command shdcc ${include_args})
+            elseif(${ext} STREQUAL ".geom")
+                set(resource_type "geometry")
+                set(resource_command shdcc ${include_args})
             else()
-                set(package_dir "${package_PACKAGE_ROOT}/${dir}")
-                set(data_dir "${CMAKE_BINARY_DIR}/data/${dir}")
+                continue()
             endif()
-            set(generated_stamp_file "${data_dir}/${name}${ext}.stamp")
 
-            if(${ext} IN_LIST RESOURCE_EXTENSIONS)
-                set(extra_DEPENDS)
-                if(EXISTS "${data_dir}/${name}${ext}.stamp")
-                    file(READ "${data_dir}/${name}${ext}.stamp" extra_DEPENDS)
-                endif()
+            set(resource_command ${resource_command} -H "${package_PACKAGE_ROOT}" -B "${CMAKE_BINARY_DIR}" -c "${resource_file}")
 
-                list(APPEND stamp_files "${generated_stamp_file}")
-                add_custom_command(
-                    OUTPUT "${generated_stamp_file}"
-                    COMMAND ${SCOMPILER} ARGS --output "${CMAKE_BINARY_DIR}/data" ${include_args} "${package_dir}/${name}${ext}"
-                    MAIN_DEPENDENCY "${package_dir}/${name}${ext}"
-                    DEPENDS ${extra_DEPENDS}
-                    WORKING_DIRECTORY ${package_PACKAGE_ROOT}
-                    COMMENT "Compiling ${rel_resource_file}"
-                )
-            endif()
+            set(rid "${resource_type}/${dir}${name}")
+            string(REGEX REPLACE "[^a-zA-Z0-9]" "_" deps_name ${rid})
+
+            set(deps_file "${data_root}/${rid}${ext}.deps")
+            include(${deps_file} OPTIONAL)
+
+            list(APPEND output_files "${data_root}/${rid}")
+            list(APPEND output_files "${deps_file}")
+            add_custom_command(
+                OUTPUT ${data_root}/${rid}
+                COMMAND ${resource_command}
+                MAIN_DEPENDENCY ${resource_file}
+                DEPENDS texcc cubcc shdcc mtlcc effcc ${${deps_name}_deps} ${deps_file}
+                WORKING_DIRECTORY ${package_PACKAGE_ROOT}
+                COMMENT "Compiling ${rel_resource_file}"
+            )
+
+            add_custom_command(
+                OUTPUT ${deps_file}
+                COMMAND ${resource_command} -M
+                MAIN_DEPENDENCY ${resource_file}
+                DEPENDS texcc cubcc shdcc mtlcc effcc
+                WORKING_DIRECTORY ${package_PACKAGE_ROOT}
+                COMMENT "Generating dependencies for ${rel_resource_file}"
+            )
+
         endforeach()
 
-        add_custom_target(${target}-resources ALL DEPENDS ${stamp_files})
-        add_custom_command(OUTPUT always_rebuild COMMAND cmake -E echo COMMENT "")
-        add_dependencies(${target}-resources scompiler)
-
+        add_custom_target(${target}-resources ALL DEPENDS ${output_files})
+        add_dependencies(${target}-resources texcc cubcc shdcc mtlcc effcc)
     endif()
 endfunction()
