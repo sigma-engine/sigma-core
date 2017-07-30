@@ -1,9 +1,7 @@
 set(SOURCES
     src/main.cpp
 )
-set(HEADERS
-)
 
-add_executable(mtlcc ${SOURCES} ${HEADERS})
+add_executable(mtlcc ${SOURCES})
 target_include_directories(mtlcc PUBLIC include)
 target_link_libraries(mtlcc sigma-core)

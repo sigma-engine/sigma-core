@@ -23,7 +23,6 @@ int main(int argc, char const* argv[])
     global.add_options()
     ("source-directory,H", boost::program_options::value<std::string>()->default_value(boost::filesystem::current_path().string()), "The top level package directory.")
     ("build-directory,B", boost::program_options::value<std::string>()->default_value(boost::filesystem::current_path().string()), "The top level project build directory.")
-    ("output,l", "List outputs of the cubemap conversion.")
     ("dependency,M", "List dependencies of the cubemap conversion.")
     ("source-file,c", boost::program_options::value<std::string>()->required(), "The cubemap file to convert.");
     // clang-format on
@@ -55,16 +54,13 @@ int main(int argc, char const* argv[])
                 throw std::runtime_error("missing " + face + " cubemap face.");
         }
 
-        if (vm.count("output")) {
-            std::cout << output_file.string() << '\n';
-            return 0;
-        } else if (vm.count("dependency")) {
+        if (vm.count("dependency")) {
             boost::filesystem::path dependency_path = output_file;
-            dependency_path.replace_extension(source_file.extension().string() + ".deps");
+            dependency_path.replace_extension(source_file.extension().string() + ".dependency");
             std::ofstream dep{ dependency_path.string() };
 
             std::regex re{ "[^a-zA-Z0-9]" };
-            dep << "set(" << std::regex_replace(rid.string(), re, "_") << "_deps\n";
+            dep << "set(" << std::regex_replace(rid.string(), re, "_") << "_DEPENDS\n";
             for (auto face : faces)
                 dep << (build_directory / "data" / "texture" / settings[face].asString()) << '\n';
             dep << ")\n";

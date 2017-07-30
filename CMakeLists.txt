@@ -10,20 +10,20 @@ elseif(CONAN_LIBCXX STREQUAL "libstdc++")
     add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
 endif()
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
     string(TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/bin)
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/bin)
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/lib)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${CMAKE_BINARY_DIR}/bin")
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${CMAKE_BINARY_DIR}/bin")
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${CMAKE_BINARY_DIR}/lib")
 endforeach()
 
 
-include(${CMAKE_SOURCE_DIR}/sigma_setup.cmake)
-if(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-    include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+include("${CMAKE_SOURCE_DIR}/sigma_setup.cmake")
+if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
+    include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
     conan_basic_setup()
 endif()
 
@@ -33,7 +33,7 @@ if(MSVC)
 endif()
 
 
-set(CORE_SOURCES
+set(SOURCES
     src/sigma/frustum.cpp
     src/sigma/game.cpp
     src/sigma/handle.cpp
@@ -58,7 +58,7 @@ set(CORE_SOURCES
     src/sigma/util/filesystem.cpp
 )
 
-set(CORE_HEADERS
+set(HEADERS
     include/sigma/config.hpp
     include/sigma/frustum.hpp
     include/sigma/game.hpp
@@ -109,26 +109,20 @@ set(CORE_HEADERS
     include/sigma/util/variadic.hpp
 )
 
-generate_meta_data(CORE_GENERATED_SOURCES ${CORE_HEADERS})
-add_library(sigma-core STATIC ${CORE_SOURCES} ${CORE_GENERATED_SOURCES})
-target_include_directories(sigma-core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_BINARY_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/resources)
+generate_meta_data(GENERATED_SOURCES ${HEADERS})
+add_library(sigma-core STATIC ${SOURCES} ${GENERATED_SOURCES})
+target_include_directories(sigma-core PUBLIC include "${CMAKE_BINARY_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}/include")
 target_compile_definitions(sigma-core PUBLIC PRIVATE -DSIGMA_EXPORT)
 target_link_libraries(sigma-core PUBLIC ${CMAKE_DL_LIBS} ${CONAN_LIBS})
+add_resources(sigma-core resources)
 
-file(GLOB_RECURSE RESOURCES resources resources/*.*)
-add_resources(sigma-core PACKAGE_ROOT resources ${RESOURCES})
-
+enable_testing()
+add_subdirectory(test)
+add_subdirectory(benchmark)
 add_subdirectory(tools/texcc)
 add_subdirectory(tools/cubcc)
 add_subdirectory(tools/shdcc)
 add_subdirectory(tools/mtlcc)
 add_subdirectory(tools/effcc)
 add_subdirectory(tools/mdlcc)
-
-
 add_subdirectory(simple_game)
-
-
-enable_testing()
-add_subdirectory(test)
-add_subdirectory(benchmark)

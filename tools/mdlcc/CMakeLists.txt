@@ -2,10 +2,7 @@ set(SOURCES
     src/main.cpp
     src/assimp_converter.cpp
 )
-set(HEADERS
-    include/assimp_converter.hpp
-)
 
-add_executable(mdlcc ${SOURCES} ${HEADERS})
+add_executable(mdlcc ${SOURCES})
 target_include_directories(mdlcc PUBLIC include)
 target_link_libraries(mdlcc sigma-core)

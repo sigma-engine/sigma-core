@@ -99,7 +99,6 @@ int main(int argc, char const* argv[])
     global.add_options()
     ("source-directory,H", boost::program_options::value<std::string>()->default_value(boost::filesystem::current_path().string()), "The top level package directory.")
     ("build-directory,B", boost::program_options::value<std::string>()->default_value(boost::filesystem::current_path().string()), "The top level project build directory.")
-    ("output,l", "List outputs of the shader conversion.")
     ("dependency,M", "List dependencies of the shader conversion.")
     ("include-directory,I", boost::program_options::value<std::vector<std::string>>()->default_value(std::vector<std::string>{}, ""), "Extra include directories")
     ("source-file,c", boost::program_options::value<std::string>()->required(), "The shader file to convert.");
@@ -173,17 +172,13 @@ int main(int argc, char const* argv[])
             ++first;
         }
 
-        if (vm.count("output")) {
-            std::cout << output_file.string() << '\n';
-            std::cout << uniforms_file.string() << '\n';
-            return 0;
-        } else if (vm.count("dependency")) {
+        if (vm.count("dependency")) {
             boost::filesystem::path dependency_path = output_file;
-            dependency_path.replace_extension(source_file.extension().string() + ".deps");
+            dependency_path.replace_extension(source_file.extension().string() + ".dependency");
             std::ofstream dep{ dependency_path.string() };
 
             std::regex re{ "[^a-zA-Z0-9]" };
-            dep << "set(" << std::regex_replace(rid.string(), re, "_") << "_deps\n";
+            dep << "set(" << std::regex_replace(rid.string(), re, "_") << "_DEPENDS\n";
             for (int i = 1; i < ctx.get_hooks().source_files.size(); ++i)
                 dep << ctx.get_hooks().source_files[i] << '\n';
             dep << ")\n";
@@ -223,8 +218,6 @@ int main(int argc, char const* argv[])
         std::ofstream stream{ output_file.string(), std::ios::binary };
         boost::archive::binary_oarchive oa(stream);
         oa << shader;
-
-        return 0;
     } catch (const boost::program_options::error& e) {
         std::cerr << "shdrcc\nerror: " << e.what() << '\n';
         std::cerr << global << '\n';
@@ -236,5 +229,5 @@ int main(int argc, char const* argv[])
         std::cerr << "shdrcc\nerror: " << e.what() << '\n';
         return -1;
     }
-    return -1;
+    return 0;
 }

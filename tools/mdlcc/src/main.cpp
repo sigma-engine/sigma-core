@@ -51,11 +51,11 @@ int main(int argc, char const* argv[])
 
         if (vm.count("dependency")) {
             boost::filesystem::path dependency_path = output_file;
-            dependency_path.replace_extension(source_file.extension().string() + ".deps");
+            dependency_path.replace_extension(source_file.extension().string() + ".dependency");
             std::ofstream dep{ dependency_path.string() };
 
             std::regex re{ "[^a-zA-Z0-9]" };
-            dep << "set(" << std::regex_replace(rid.string(), re, "_") << "_deps\n";
+            dep << "set(" << std::regex_replace(rid.string(), re, "_") << "_DEPENDS\n";
             if (boost::filesystem::exists(settings_path))
                 dep << settings_path << "\n";
             dep << ")\n";

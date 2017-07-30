@@ -25,7 +25,6 @@ int main(int argc, char const* argv[])
     global.add_options()
     ("source-directory,H", boost::program_options::value<std::string>()->default_value(boost::filesystem::current_path().string()), "The top level package directory.")
     ("build-directory,B", boost::program_options::value<std::string>()->default_value(boost::filesystem::current_path().string()), "The top level project build directory.")
-    ("output,l", "List outputs of the material conversion.")
     ("dependency,M", "List dependencies of the material conversion.")
     ("source-file,c", boost::program_options::value<std::string>()->required(), "The material file to convert.");
     // clang-format on
@@ -51,16 +50,13 @@ int main(int argc, char const* argv[])
         Json::Value settings;
         file >> settings;
 
-        if (vm.count("output")) {
-            std::cout << output_file.string() << '\n';
-            return 0;
-        } else if (vm.count("dependency")) {
+        if (vm.count("dependency")) {
             boost::filesystem::path dependency_path = output_file;
-            dependency_path.replace_extension(source_file.extension().string() + ".deps");
+            dependency_path.replace_extension(source_file.extension().string() + ".dependency");
             std::ofstream dep{ dependency_path.string() };
 
             std::regex re{ "[^a-zA-Z0-9]" };
-            dep << "set(" << std::regex_replace(rid.string(), re, "_") << "_deps\n";
+            dep << "set(" << std::regex_replace(rid.string(), re, "_") << "_DEPENDS\n";
             for (auto stage : { "vertex", "fragment", "geometry" }) {
                 if (settings.isMember(stage))
                     dep << (build_directory / "data" / stage / settings[stage].asString()) << '\n';
@@ -83,8 +79,6 @@ int main(int argc, char const* argv[])
         std::ofstream stream{ output_file.string(), std::ios::binary };
         boost::archive::binary_oarchive oa(stream);
         oa << material;
-
-        return 0;
     } catch (boost::program_options::error& e) {
         std::cerr << "mtlcc\nerror: " << e.what() << '\n';
         std::cerr << global << '\n';
@@ -93,5 +87,5 @@ int main(int argc, char const* argv[])
         std::cerr << "mtlcc\nerror: " << e.what() << '\n';
         return -1;
     }
-    return -1;
+    return 0;
 }
