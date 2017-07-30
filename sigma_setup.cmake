@@ -88,6 +88,11 @@ function(add_resources RESOURCE_TARGET RESOURCE_PACKAGE_DIRECTORY)
         get_filename_component(SOURCE_NAME "${SOURCE_FILE}" NAME_WE)
         get_filename_component(SOURCE_EXTENTION "${SOURCE_FILE}" EXT)
 
+        # Skip files in hidden folders
+        if("${SOURCE_DIRECTORY}" MATCHES ".*\\..*")
+            continue()
+        endif()
+
         if("${SOURCE_EXTENTION}" IN_LIST TEXTURE_EXTENSIONS)
             set(RESOURCE_TYPE "texture")
             set(RESOURCE_COMMAND texcc)
