@@ -8,7 +8,7 @@
 namespace sigma {
 namespace graphics {
     struct post_process_effect : public shader_technique {
-        boost::filesystem::path mesh = "static_mesh/fullscreen_quad/plane";
+        boost::filesystem::path mesh = "static_mesh/fullscreen_quad";
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)

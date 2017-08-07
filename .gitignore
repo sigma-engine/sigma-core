@@ -1,3 +1,6 @@
+.*
+!/.gitignore
+
 # Thirdparty Library source files
 /thirdparty/*
 !/thirdparty/CMakeLists.txt

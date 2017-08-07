@@ -24,7 +24,7 @@ simple_game::simple_game(const boost::filesystem::path& cache_path, sigma::resou
     // auto grid_e = world_.create();
     // world_.add<sigma::transform>(grid_e);
     // auto inst = world_.add<sigma::graphics::static_mesh_instance>(grid_e);
-    // inst->mesh_id = boost::filesystem::path{ "static_mesh/material_ball/material_ball" };
+    // inst->mesh_id = boost::filesystem::path{ "static_mesh/material_ball" };
     // inst->mesh = static_meshes.get(inst->mesh_id);
     //
     // world_.add<grid_component>(grid_e, 25, 30, 1.5f, 1.5f);

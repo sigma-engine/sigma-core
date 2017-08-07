@@ -1,6 +1,5 @@
 set(SOURCES
     src/main.cpp
-    src/assimp_converter.cpp
 )
 
 add_executable(mdlcc ${SOURCES})

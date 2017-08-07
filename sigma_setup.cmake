@@ -6,7 +6,7 @@ set(MODEL_EXTENSIONS ".3ds" ".dae" ".fbx" ".ifc-step" ".ase" ".dxf" ".hmp" ".md2
                      ".md3" ".md5" ".mdc" ".mdl" ".nff" ".ply" ".stl" ".x" ".obj"
                      ".opengex" ".smd" ".lwo" ".lxo" ".lws" ".ter" ".ac3d" ".ms3d"
                      ".cob" ".q3bsp" ".xgl" ".csm" ".bvh" ".b3d" ".ndo" ".q3d"
-                     ".gltf" ".blend" ".3mf")
+                     ".gltf" ".3mf")
 
 function(generate_meta_data generated_source_files)
     set(gen_list)
@@ -110,9 +110,13 @@ function(add_resources RESOURCE_TARGET RESOURCE_PACKAGE_DIRECTORY)
             set(RESOURCE_COMMAND effcc)
             set(RESOURCE_COMMAND_DEPENDS effcc)
         elseif("${SOURCE_EXTENTION}" IN_LIST MODEL_EXTENSIONS)
-            set(RESOURCE_TYPE "blueprint")
+            set(RESOURCE_TYPE "static_mesh")
             set(RESOURCE_COMMAND mdlcc)
             set(RESOURCE_COMMAND_DEPENDS mdlcc)
+        elseif("${SOURCE_EXTENTION}" STREQUAL ".blend")
+            set(RESOURCE_TYPE "blueprint")
+            set(RESOURCE_COMMAND blender "${RESOURCE_PACKAGE_DIRECTORY}/${SOURCE_FILE}" --background --python "${CMAKE_SOURCE_DIR}/tools/mdlcc/blendcc.py" --)
+            set(RESOURCE_COMMAND_DEPENDS mdlcc "${CMAKE_SOURCE_DIR}/tools/mdlcc/blendcc.py")
         elseif("${SOURCE_EXTENTION}" STREQUAL ".vert")
             set(RESOURCE_TYPE "vertex")
             set(RESOURCE_COMMAND shdcc ${RESOURCE_INCLUDE_ARGUMENTS})
