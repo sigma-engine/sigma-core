@@ -10,7 +10,6 @@
 
 #include <cassert>
 #include <fstream>
-#include <iostream> // TODO this is bad
 #include <unordered_map>
 
 namespace sigma {
@@ -19,23 +18,21 @@ namespace resource {
     template <class>
     using handle = sigma::handle;
 
-    template <class Resource>
+    template <class Resource, class ResourceIdentifier = boost::filesystem::path>
     class cache {
     public:
-        // TODO remove the use of unique_ptr
-
-        cache(boost::filesystem::path cache_directory)
+        cache(const boost::filesystem::path& cache_directory)
             : cache_directory_(cache_directory)
         {
         }
 
-        cache(cache<Resource>&&) = default;
+        cache(cache<Resource, ResourceIdentifier>&&) = default;
 
-        cache& operator=(cache<Resource>&&) = default;
+        cache& operator=(cache<Resource, ResourceIdentifier>&&) = default;
 
         virtual ~cache() = default;
 
-        virtual handle<Resource> get(boost::filesystem::path id)
+        virtual handle<Resource> get(const ResourceIdentifier& id)
         {
             auto it = handle_map_.find(id);
             if (it != handle_map_.end())
@@ -56,12 +53,11 @@ namespace resource {
         }
 
     private:
-        cache(const cache<Resource>&) = delete;
-        cache& operator=(const cache<Resource>&) = delete;
+        cache(const cache<Resource, ResourceIdentifier>&) = delete;
+        cache& operator=(const cache<Resource, ResourceIdentifier>&) = delete;
 
-        std::unique_ptr<Resource> load(boost::filesystem::path id)
+        std::unique_ptr<Resource> load(const ResourceIdentifier& id)
         {
-            std::cout << "loading: " << id << '\n';
             auto resource_path = cache_directory_ / id;
             std::ifstream file{ resource_path.string(), std::ios::binary | std::ios::in };
             boost::archive::binary_iarchive ia{ file };
@@ -71,10 +67,11 @@ namespace resource {
         }
 
         boost::filesystem::path cache_directory_;
-        std::unordered_map<boost::filesystem::path, sigma::handle> handle_map_;
+        std::unordered_map<ResourceIdentifier, sigma::handle> handle_map_;
 
         std::vector<sigma::handle> handles_;
         std::vector<std::uint32_t> free_handles_;
+        // TODO remove the use of unique_ptr
         std::vector<std::unique_ptr<Resource>> resources_;
     };
 }
