@@ -1,6 +1,7 @@
 #ifndef SIGMA_GRAPHICS_TECHNIQUE_HPP
 #define SIGMA_GRAPHICS_TECHNIQUE_HPP
 
+#include <sigma/resource/manager.hpp>
 #include <sigma/util/glm_serialize.hpp>
 
 #include <boost/filesystem/path.hpp>
@@ -30,6 +31,11 @@ namespace graphics {
             ar& tessellation_evaluation;
             ar& geometry;
             ar& fragment;
+        }
+
+        bool operator==(const technique_identifier& rhs) const
+        {
+            return vertex == rhs.vertex && tessellation_control == rhs.tessellation_control && tessellation_evaluation == rhs.tessellation_evaluation && geometry == rhs.geometry && fragment == rhs.fragment;
         }
     };
 
@@ -72,6 +78,19 @@ namespace graphics {
             ar& vec4_uniforms;
             ar& texture_uniforms;
             ar& cubemap_uniforms;
+        }
+    };
+}
+namespace resource {
+    template <>
+    struct resource_loader<graphics::technique> {
+        typedef graphics::technique_identifier identifier_type;
+        std::unique_ptr<graphics::technique> operator()(const boost::filesystem::path& cache_directory, const identifier_type& id) const
+        {
+            // TODO load from file
+            auto tech = std::make_unique<graphics::technique>();
+            tech->shaders = id;
+            return tech;
         }
     };
 }

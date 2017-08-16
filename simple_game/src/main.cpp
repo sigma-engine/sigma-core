@@ -20,13 +20,14 @@ int main(int argc, char* argv[])
     sigma::resource::cache<sigma::graphics::texture> textures{ cache_path };
     sigma::resource::cache<sigma::graphics::cubemap> cubemaps{ cache_path };
     sigma::resource::cache<sigma::graphics::shader> shaders{ cache_path };
+    sigma::resource::cache<sigma::graphics::technique> techniques{ cache_path };
     sigma::resource::cache<sigma::graphics::material> materials{ cache_path };
     sigma::resource::cache<sigma::graphics::static_mesh> static_meshes{ cache_path };
     sigma::resource::cache<sigma::graphics::post_process_effect> effects{ cache_path };
 
     sigma::window window{ glm::ivec2{ 1920, 1080 } };
 
-    auto renderer = std::make_unique<sigma::opengl::renderer>(window.size(), textures, cubemaps, shaders, materials, static_meshes, effects);
+    auto renderer = std::make_unique<sigma::opengl::renderer>(window.size(), textures, cubemaps, shaders, techniques, materials, static_meshes, effects);
     auto game = std::make_unique<simple_game>(cache_path, static_meshes);
 
     sigma::graphics::view_port viewport{

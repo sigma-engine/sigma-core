@@ -18,6 +18,7 @@ namespace opengl {
         resource::cache<graphics::texture>& texture_cache,
         resource::cache<graphics::cubemap>& cubemap_cache,
         resource::cache<graphics::shader>& shader_cache,
+        resource::cache<graphics::technique>& technique_cache,
         resource::cache<graphics::material>& material_cache,
         resource::cache<graphics::static_mesh>& static_mesh_cache,
         resource::cache<graphics::post_process_effect>& effect_cache)
@@ -31,9 +32,10 @@ namespace opengl {
         , textures_(texture_cache)
         , cubemaps_(texture_cache, cubemap_cache)
         , shaders_(shader_cache)
-        , materials_(textures_, cubemaps_, shaders_, material_cache)
+        , techniques_(shaders_, technique_cache)
+        , materials_(techniques_, material_cache)
         , static_meshes_(materials_, static_mesh_cache)
-        , effects_(textures_, cubemaps_, shaders_, static_meshes_, effect_cache)
+        , effects_(techniques_, static_meshes_, effect_cache)
     {
         if (!loader_status_)
             throw std::runtime_error("error: could not load OpenGL");

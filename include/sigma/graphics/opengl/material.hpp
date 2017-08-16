@@ -8,14 +8,15 @@
 
 namespace sigma {
 namespace opengl {
-    class material : public opengl::technique {
+    class material {
     public:
-        material(shader_manager& shader_mgr, const graphics::material& data);
+        material(technique_manager& technique_mgr, const graphics::material& data);
 
         material(material&&) = default;
 
         material& operator=(material&&) = default;
 
+        resource::handle<graphics::technique> technique;
         const graphics::material& data;
 
     private:
@@ -27,10 +28,8 @@ namespace opengl {
     public:
         // TODO remove the use of unique_ptr
 
-        material_manager(texture_manager& textures, cubemap_manager& cubemaps, shader_manager& shaders, resource::cache<graphics::material>& material_cache)
-            : textures_(textures)
-            , cubemaps_(cubemaps)
-            , shaders_(shaders)
+        material_manager(technique_manager& techniques, resource::cache<graphics::material>& material_cache)
+            : techniques_(techniques)
             , material_cache_(material_cache)
         {
         }
@@ -47,15 +46,13 @@ namespace opengl {
                 materials_.resize(hndl.index + 1);
 
             if (materials_[hndl.index] == nullptr)
-                materials_[hndl.index] = std::make_unique<material>(shaders_, *material_cache_.acquire(hndl));
+                materials_[hndl.index] = std::make_unique<material>(techniques_, *material_cache_.acquire(hndl));
 
             return materials_.at(hndl.index).get();
         }
 
     private:
-        texture_manager& textures_;
-        cubemap_manager& cubemaps_;
-        shader_manager& shaders_;
+        technique_manager& techniques_;
         resource::cache<graphics::material>& material_cache_;
         std::vector<std::unique_ptr<material>> materials_;
     };

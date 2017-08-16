@@ -17,6 +17,7 @@
 #include <sigma/graphics/opengl/shader.hpp>
 #include <sigma/graphics/opengl/shadow_buffer.hpp>
 #include <sigma/graphics/opengl/static_mesh.hpp>
+#include <sigma/graphics/opengl/technique.hpp>
 #include <sigma/graphics/opengl/texture.hpp>
 #include <sigma/graphics/opengl/uniform_buffer.hpp>
 #include <sigma/graphics/opengl/util.hpp>
@@ -77,6 +78,7 @@ namespace opengl {
             resource::cache<graphics::texture>& texture_cache,
             resource::cache<graphics::cubemap>& cubemap_cache,
             resource::cache<graphics::shader>& shader_cahce,
+            resource::cache<graphics::technique>& technique_cahce,
             resource::cache<graphics::material>& material_cache,
             resource::cache<graphics::static_mesh>& static_mesh_cache,
             resource::cache<graphics::post_process_effect>& effect_cache);
@@ -165,9 +167,10 @@ namespace opengl {
             GL_CHECK(glClearColor(0, 0, 0, 1));
             GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
 
-            auto gamma_conversion = EFFECT_PTR(effects_, gamma_conversion_);
-            gamma_conversion->bind(textures_, cubemaps_, gamma_conversion->data);
-            gamma_conversion->apply(static_meshes_);
+            auto gamma_conversion_effect = EFFECT_PTR(effects_, gamma_conversion_);
+            auto gamma_conversion_tech = TECHNIQUE_PTR(techniques_, gamma_conversion_effect->technique);
+            gamma_conversion_tech->bind(textures_, cubemaps_, gamma_conversion_effect->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
+            STATIC_MESH_PTR(static_meshes_, gamma_conversion_effect->mesh)->render_all();
         }
 
     private:
@@ -190,6 +193,7 @@ namespace opengl {
         opengl::texture_manager textures_;
         opengl::cubemap_manager cubemaps_;
         opengl::shader_manager shaders_;
+        opengl::technique_manager techniques_;
         opengl::material_manager materials_;
         opengl::static_mesh_manager static_meshes_;
         opengl::post_process_effect_manager effects_;
@@ -207,6 +211,17 @@ namespace opengl {
         resource::handle<graphics::post_process_effect> vignette_effect_;
 
         debug_draw_renderer debug_renderer_;
+
+        void begin_effect(opengl::post_process_effect* effect)
+        {
+            auto tech = TECHNIQUE_PTR(techniques_, effect->technique);
+            tech->bind(textures_, cubemaps_, effect->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
+        }
+
+        void end_effect(opengl::post_process_effect* effect)
+        {
+            STATIC_MESH_PTR(static_meshes_, effect->mesh)->render_all();
+        }
 
         void setup_view_projection(const glm::vec2& viewport_size, float fovy, float z_near, float z_far, const glm::mat4& view_matrix, const glm::mat4& projection_matrix)
         {
@@ -252,6 +267,7 @@ namespace opengl {
 
                 for (unsigned int i = 0; i < mesh->materials_.size(); ++i) {
                     auto mat = MATERIAL_PTR(materials_, mesh->materials_[i]);
+                    auto tech = TECHNIQUE_PTR(techniques_, mat->technique);
 
                     // TODO allow overriding materials
                     // auto mit = mesh_instance.materials.find(i);
@@ -260,8 +276,8 @@ namespace opengl {
                     // }
 
                     if (mat->data.transparent == transparent) {
-                        mat->bind(textures_, cubemaps_, mat->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
-                        mat->set_instance_matrices(&matrices);
+                        tech->bind(textures_, cubemaps_, mat->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
+                        tech->set_instance_matrices(&matrices);
                         mesh->render(i);
                     }
                 }
@@ -314,8 +330,9 @@ namespace opengl {
             GL_CHECK(glDisable(GL_CULL_FACE));
 
             auto image_based_light_effect = EFFECT_PTR(effects_, image_based_light_effect_);
-            image_based_light_effect->bind(textures_, cubemaps_, image_based_light_effect->data);
-            image_based_light_effect->apply(static_meshes_);
+            auto image_based_light_tech = TECHNIQUE_PTR(techniques_, image_based_light_effect->technique);
+            image_based_light_tech->bind(textures_, cubemaps_, image_based_light_effect->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
+            STATIC_MESH_PTR(static_meshes_, image_based_light_effect->mesh)->render_all();
         }
 
         void analytical_light_setup()
@@ -407,10 +424,11 @@ namespace opengl {
                 GL_CHECK(glDisable(GL_CULL_FACE));
 
                 auto directional_light_effect = EFFECT_PTR(effects_, directional_light_effect_);
-                directional_light_effect->bind(textures_, cubemaps_, directional_light_effect->data);
-                directional_light_effect->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
-                directional_light_effect->set_uniform("direction", light.direction);
-                directional_light_effect->apply(static_meshes_);
+                auto directional_light_tech = TECHNIQUE_PTR(techniques_, directional_light_effect->technique);
+                directional_light_tech->bind(textures_, cubemaps_, directional_light_effect->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
+                directional_light_tech->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
+                directional_light_tech->set_uniform("direction", light.direction);
+                STATIC_MESH_PTR(static_meshes_, directional_light_effect->mesh)->render_all();
             });
         }
 
@@ -443,13 +461,13 @@ namespace opengl {
             GL_CHECK(glEnable(GL_CULL_FACE));
 
             auto point_light_effect = EFFECT_PTR(effects_, point_light_effect_);
-
-            point_light_effect->bind(textures_, cubemaps_, point_light_effect->data);
+            auto point_light_tech = TECHNIQUE_PTR(techniques_, point_light_effect->technique);
+            point_light_tech->bind(textures_, cubemaps_, point_light_effect->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
 
             world.template for_each<transform, graphics::point_light>([&](entity e, const transform& txform, const graphics::point_light& light) {
-                point_light_effect->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
-                point_light_effect->set_uniform("position_radius", glm::vec4(txform.position, txform.scale.x));
-                point_light_effect->apply(static_meshes_);
+                point_light_tech->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
+                point_light_tech->set_uniform("position_radius", glm::vec4(txform.position, txform.scale.x));
+                STATIC_MESH_PTR(static_meshes_, point_light_effect->mesh)->render_all();
             });
         }
 
@@ -494,13 +512,13 @@ namespace opengl {
                 GL_CHECK(glDisable(GL_CULL_FACE));
 
                 auto spot_light_effect = EFFECT_PTR(effects_, spot_light_effect_);
-
-                spot_light_effect->bind(textures_, cubemaps_, spot_light_effect->data);
-                spot_light_effect->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
-                spot_light_effect->set_uniform("position", txform.position);
-                spot_light_effect->set_uniform("direction", light.direction);
-                spot_light_effect->set_uniform("cutoff", std::cos(light.cutoff));
-                spot_light_effect->apply(static_meshes_);
+                auto spot_light_tech = TECHNIQUE_PTR(techniques_, spot_light_effect->technique);
+                spot_light_tech->bind(textures_, cubemaps_, spot_light_effect->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
+                spot_light_tech->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
+                spot_light_tech->set_uniform("position", txform.position);
+                spot_light_tech->set_uniform("direction", light.direction);
+                spot_light_tech->set_uniform("cutoff", std::cos(light.cutoff));
+                STATIC_MESH_PTR(static_meshes_, spot_light_effect->mesh)->render_all();
             });
         }
 
@@ -523,7 +541,8 @@ namespace opengl {
             GL_CHECK(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
 
             auto shadow_material = MATERIAL_PTR(materials_, shadow_material_);
-            shadow_material->bind(textures_, cubemaps_, shadow_material->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
+            auto shadow_material_tech = TECHNIQUE_PTR(techniques_, shadow_material->technique);
+            shadow_material_tech->bind(textures_, cubemaps_, shadow_material->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
 
             if (cast_shadows) {
                 world.template for_each<transform, graphics::static_mesh_instance>([&](entity e, const transform& txform, graphics::static_mesh_instance& mesh_instance) {
@@ -533,7 +552,7 @@ namespace opengl {
                         matrices.model_matrix = txform.matrix;
                         matrices.model_view_matrix = standard_.view_matrix * matrices.model_matrix;
 
-                        shadow_material->set_instance_matrices(&matrices);
+                        shadow_material_tech->set_instance_matrices(&matrices);
 
                         mesh->render_all();
                     }

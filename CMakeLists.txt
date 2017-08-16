@@ -51,6 +51,7 @@ set(SOURCES
     src/sigma/graphics/opengl/render_buffer.cpp
     src/sigma/graphics/opengl/renderer.cpp
     src/sigma/graphics/opengl/shader.cpp
+    src/sigma/graphics/opengl/technique.cpp
     src/sigma/graphics/opengl/shadow_buffer.cpp
     src/sigma/graphics/opengl/static_mesh.cpp
     src/sigma/graphics/opengl/texture.cpp

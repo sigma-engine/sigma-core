@@ -18,9 +18,10 @@ namespace resource {
     template <class>
     using handle = sigma::handle;
 
-    template <class Resource, class ResourceIdentifier = boost::filesystem::path>
+    template <class Resource>
     struct resource_loader {
-        std::unique_ptr<Resource> operator()(const boost::filesystem::path& cache_directory, const ResourceIdentifier& id) const
+        typedef boost::filesystem::path identifier_type;
+        std::unique_ptr<Resource> operator()(const boost::filesystem::path& cache_directory, const identifier_type& id) const
         {
             auto resource_path = cache_directory / id;
             std::ifstream file{ resource_path.string(), std::ios::binary | std::ios::in };
@@ -31,21 +32,24 @@ namespace resource {
         }
     };
 
-    template <class Resource, class ResourceIdentifier = boost::filesystem::path>
+    template <class Resource>
     class cache {
     public:
+        typedef resource_loader<Resource> loader_type;
+        typedef typename loader_type::identifier_type identifier_type;
+
         cache(const boost::filesystem::path& cache_directory)
             : cache_directory_(cache_directory)
         {
         }
 
-        cache(cache<Resource, ResourceIdentifier>&&) = default;
+        cache(cache<Resource>&&) = default;
 
-        cache& operator=(cache<Resource, ResourceIdentifier>&&) = default;
+        cache& operator=(cache<Resource>&&) = default;
 
         virtual ~cache() = default;
 
-        virtual handle<Resource> get(const ResourceIdentifier& id)
+        virtual handle<Resource> get(const identifier_type& id)
         {
             auto it = handle_map_.find(id);
             if (it != handle_map_.end())
@@ -66,13 +70,13 @@ namespace resource {
         }
 
     private:
-        cache(const cache<Resource, ResourceIdentifier>&) = delete;
-        cache& operator=(const cache<Resource, ResourceIdentifier>&) = delete;
+        cache(const cache<Resource>&) = delete;
+        cache& operator=(const cache<Resource>&) = delete;
 
-        resource_loader<Resource, ResourceIdentifier> loader_;
+        loader_type loader_;
 
         boost::filesystem::path cache_directory_;
-        std::unordered_map<ResourceIdentifier, sigma::handle> handle_map_;
+        std::unordered_map<identifier_type, sigma::handle> handle_map_;
 
         std::vector<sigma::handle> handles_;
         std::vector<std::uint32_t> free_handles_;
