@@ -2,23 +2,21 @@
 #define SIGMA_ENGINE_MATERIAL_HPP
 
 #include <sigma/graphics/material.hpp>
-#include <sigma/graphics/opengl/shader_technique.hpp>
+#include <sigma/graphics/opengl/technique.hpp>
 
 #define MATERIAL_PTR(material_mgr, x) material_mgr.acquire(x)
 
 namespace sigma {
 namespace opengl {
-    class material : public opengl::shader_technique<graphics::material> {
+    class material : public opengl::technique {
     public:
-        material() = default;
-
-        material(const graphics::material& data);
+        material(shader_manager& shader_mgr, const graphics::material& data);
 
         material(material&&) = default;
 
         material& operator=(material&&) = default;
 
-        void link(texture_manager& texture_mgr, cubemap_manager& cubemap_mgr, shader_manager& shader_mgr);
+        const graphics::material& data;
 
     private:
         material(const material&) = delete;
@@ -48,10 +46,8 @@ namespace opengl {
             if (hndl.index >= materials_.size())
                 materials_.resize(hndl.index + 1);
 
-            if (materials_[hndl.index] == nullptr) {
-                materials_[hndl.index] = std::make_unique<material>(*material_cache_.acquire(hndl));
-                materials_[hndl.index]->link(textures_, cubemaps_, shaders_);
-            }
+            if (materials_[hndl.index] == nullptr)
+                materials_[hndl.index] = std::make_unique<material>(shaders_, *material_cache_.acquire(hndl));
 
             return materials_.at(hndl.index).get();
         }

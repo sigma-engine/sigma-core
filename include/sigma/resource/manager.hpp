@@ -19,6 +19,19 @@ namespace resource {
     using handle = sigma::handle;
 
     template <class Resource, class ResourceIdentifier = boost::filesystem::path>
+    struct resource_loader {
+        std::unique_ptr<Resource> operator()(const boost::filesystem::path& cache_directory, const ResourceIdentifier& id) const
+        {
+            auto resource_path = cache_directory / id;
+            std::ifstream file{ resource_path.string(), std::ios::binary | std::ios::in };
+            boost::archive::binary_iarchive ia{ file };
+            auto data = std::make_unique<Resource>();
+            ia >> *data;
+            return data;
+        }
+    };
+
+    template <class Resource, class ResourceIdentifier = boost::filesystem::path>
     class cache {
     public:
         cache(const boost::filesystem::path& cache_directory)
@@ -42,7 +55,7 @@ namespace resource {
             if (h.index >= resources_.size())
                 resources_.resize(h.index + 1);
 
-            resources_[h.index] = std::move(load(id));
+            resources_[h.index] = std::move(loader_(cache_directory_, id));
 
             return h;
         }
@@ -56,15 +69,7 @@ namespace resource {
         cache(const cache<Resource, ResourceIdentifier>&) = delete;
         cache& operator=(const cache<Resource, ResourceIdentifier>&) = delete;
 
-        std::unique_ptr<Resource> load(const ResourceIdentifier& id)
-        {
-            auto resource_path = cache_directory_ / id;
-            std::ifstream file{ resource_path.string(), std::ios::binary | std::ios::in };
-            boost::archive::binary_iarchive ia{ file };
-            auto data = std::make_unique<Resource>();
-            ia >> *data;
-            return data;
-        }
+        resource_loader<Resource, ResourceIdentifier> loader_;
 
         boost::filesystem::path cache_directory_;
         std::unordered_map<ResourceIdentifier, sigma::handle> handle_map_;

@@ -165,8 +165,9 @@ namespace opengl {
             GL_CHECK(glClearColor(0, 0, 0, 1));
             GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
 
-            EFFECT_PTR(effects_, gamma_conversion_)->bind(textures_, cubemaps_);
-            EFFECT_PTR(effects_, gamma_conversion_)->apply(static_meshes_);
+            auto gamma_conversion = EFFECT_PTR(effects_, gamma_conversion_);
+            gamma_conversion->bind(textures_, cubemaps_, gamma_conversion->data);
+            gamma_conversion->apply(static_meshes_);
         }
 
     private:
@@ -258,8 +259,8 @@ namespace opengl {
                     //     mat = MATERIAL_PTR(materials_, mit->second);
                     // }
 
-                    if (mat->transparent == transparent) {
-                        mat->bind(textures_, cubemaps_, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
+                    if (mat->data.transparent == transparent) {
+                        mat->bind(textures_, cubemaps_, mat->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
                         mat->set_instance_matrices(&matrices);
                         mesh->render(i);
                     }
@@ -312,8 +313,9 @@ namespace opengl {
             GL_CHECK(glDisable(GL_DEPTH_TEST));
             GL_CHECK(glDisable(GL_CULL_FACE));
 
-            EFFECT_PTR(effects_, image_based_light_effect_)->bind(textures_, cubemaps_);
-            EFFECT_PTR(effects_, image_based_light_effect_)->apply(static_meshes_);
+            auto image_based_light_effect = EFFECT_PTR(effects_, image_based_light_effect_);
+            image_based_light_effect->bind(textures_, cubemaps_, image_based_light_effect->data);
+            image_based_light_effect->apply(static_meshes_);
         }
 
         void analytical_light_setup()
@@ -404,12 +406,11 @@ namespace opengl {
                 GL_CHECK(glDisable(GL_DEPTH_TEST));
                 GL_CHECK(glDisable(GL_CULL_FACE));
 
-                EFFECT_PTR(effects_, directional_light_effect_)->bind(textures_, cubemaps_);
-
-                EFFECT_PTR(effects_, directional_light_effect_)->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
-                EFFECT_PTR(effects_, directional_light_effect_)->set_uniform("direction", light.direction);
-                EFFECT_PTR(effects_, directional_light_effect_)->bind(textures_, cubemaps_);
-                EFFECT_PTR(effects_, directional_light_effect_)->apply(static_meshes_);
+                auto directional_light_effect = EFFECT_PTR(effects_, directional_light_effect_);
+                directional_light_effect->bind(textures_, cubemaps_, directional_light_effect->data);
+                directional_light_effect->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
+                directional_light_effect->set_uniform("direction", light.direction);
+                directional_light_effect->apply(static_meshes_);
             });
         }
 
@@ -441,13 +442,14 @@ namespace opengl {
             GL_CHECK(glCullFace(GL_FRONT));
             GL_CHECK(glEnable(GL_CULL_FACE));
 
-            EFFECT_PTR(effects_, point_light_effect_)->bind(textures_, cubemaps_);
+            auto point_light_effect = EFFECT_PTR(effects_, point_light_effect_);
+
+            point_light_effect->bind(textures_, cubemaps_, point_light_effect->data);
 
             world.template for_each<transform, graphics::point_light>([&](entity e, const transform& txform, const graphics::point_light& light) {
-                EFFECT_PTR(effects_, point_light_effect_)->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
-                EFFECT_PTR(effects_, point_light_effect_)->set_uniform("position_radius", glm::vec4(txform.position, txform.scale.x));
-                EFFECT_PTR(effects_, point_light_effect_)->bind(textures_, cubemaps_);
-                EFFECT_PTR(effects_, point_light_effect_)->apply(static_meshes_);
+                point_light_effect->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
+                point_light_effect->set_uniform("position_radius", glm::vec4(txform.position, txform.scale.x));
+                point_light_effect->apply(static_meshes_);
             });
         }
 
@@ -491,14 +493,14 @@ namespace opengl {
                 GL_CHECK(glDisable(GL_DEPTH_TEST));
                 GL_CHECK(glDisable(GL_CULL_FACE));
 
-                EFFECT_PTR(effects_, spot_light_effect_)->bind(textures_, cubemaps_);
+                auto spot_light_effect = EFFECT_PTR(effects_, spot_light_effect_);
 
-                EFFECT_PTR(effects_, spot_light_effect_)->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
-                EFFECT_PTR(effects_, spot_light_effect_)->set_uniform("position", txform.position);
-                EFFECT_PTR(effects_, spot_light_effect_)->set_uniform("direction", light.direction);
-                EFFECT_PTR(effects_, spot_light_effect_)->set_uniform("cutoff", std::cos(light.cutoff));
-                EFFECT_PTR(effects_, spot_light_effect_)->bind(textures_, cubemaps_);
-                EFFECT_PTR(effects_, spot_light_effect_)->apply(static_meshes_);
+                spot_light_effect->bind(textures_, cubemaps_, spot_light_effect->data);
+                spot_light_effect->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
+                spot_light_effect->set_uniform("position", txform.position);
+                spot_light_effect->set_uniform("direction", light.direction);
+                spot_light_effect->set_uniform("cutoff", std::cos(light.cutoff));
+                spot_light_effect->apply(static_meshes_);
             });
         }
 
@@ -520,7 +522,8 @@ namespace opengl {
             GL_CHECK(glClearColor(1.0f, 1.0f, 0.0f, 0.0f));
             GL_CHECK(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
 
-            MATERIAL_PTR(materials_, shadow_material_)->bind(textures_, cubemaps_, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
+            auto shadow_material = MATERIAL_PTR(materials_, shadow_material_);
+            shadow_material->bind(textures_, cubemaps_, shadow_material->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
 
             if (cast_shadows) {
                 world.template for_each<transform, graphics::static_mesh_instance>([&](entity e, const transform& txform, graphics::static_mesh_instance& mesh_instance) {
@@ -530,7 +533,7 @@ namespace opengl {
                         matrices.model_matrix = txform.matrix;
                         matrices.model_view_matrix = standard_.view_matrix * matrices.model_matrix;
 
-                        MATERIAL_PTR(materials_, shadow_material_)->set_instance_matrices(&matrices);
+                        shadow_material->set_instance_matrices(&matrices);
 
                         mesh->render_all();
                     }

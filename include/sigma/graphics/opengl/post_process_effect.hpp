@@ -3,7 +3,7 @@
 
 #include <sigma/graphics/post_process_effect.hpp>
 
-#include <sigma/graphics/opengl/shader_technique.hpp>
+#include <sigma/graphics/opengl/technique.hpp>
 #include <sigma/graphics/static_mesh.hpp>
 
 #include <glad/glad.h>
@@ -17,19 +17,19 @@ namespace opengl {
     class static_mesh_manager;
     class texture_manager;
 
-    class post_process_effect : public shader_technique<graphics::post_process_effect> {
+    class post_process_effect : public technique {
     public:
-        post_process_effect(static_mesh_manager& static_meshes, const graphics::post_process_effect& data);
+        post_process_effect(shader_manager& shader_mgr, static_mesh_manager& static_meshes, const graphics::post_process_effect& data);
 
         post_process_effect(post_process_effect&&) = default;
 
         post_process_effect& operator=(post_process_effect&&) = default;
 
-        void link(texture_manager& texture_mgr, cubemap_manager& cubemap_mgr, shader_manager& shader_mgr);
+        void bind(opengl::texture_manager& texture_mgr, opengl::cubemap_manager& cubemap_mgr, const sigma::graphics::technique_uniform_data& data);
 
-        void bind(opengl::texture_manager& texture_mgr, opengl::cubemap_manager& cubemap_mgr) const;
+        void apply(static_mesh_manager& static_mesh_mgr);
 
-        void apply(static_mesh_manager& static_mesh_mgr) const;
+        const graphics::post_process_effect& data;
 
     private:
         GLint in_position_location_ = -1;
@@ -70,10 +70,8 @@ namespace opengl {
             if (hndl.index >= effects_.size())
                 effects_.resize(hndl.index + 1);
 
-            if (effects_[hndl.index] == nullptr) {
-                effects_[hndl.index] = std::make_unique<post_process_effect>(static_meshes_, *post_process_effect_cache_.acquire(hndl));
-                effects_[hndl.index]->link(textures_, cubemaps_, shaders_);
-            }
+            if (effects_[hndl.index] == nullptr)
+                effects_[hndl.index] = std::make_unique<post_process_effect>(shaders_, static_meshes_, *post_process_effect_cache_.acquire(hndl));
 
             return effects_.at(hndl.index).get();
         }

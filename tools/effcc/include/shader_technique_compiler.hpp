@@ -1,7 +1,7 @@
 #ifndef SIGMA_SHADER_TECHNIQUE_COMPILER_HPP
 #define SIGMA_SHADER_TECHNIQUE_COMPILER_HPP
 
-#include <sigma/graphics/shader_technique.hpp>
+#include <sigma/graphics/technique.hpp>
 #include <sigma/util/json_conversion.hpp>
 
 #include <json/json.h>
@@ -13,11 +13,15 @@ void compile_shader_technique(T& technique, const Json::Value& technique_data)
     for (auto it = technique_data.begin(); it != technique_data.end(); ++it) {
         const auto& value = *it;
         if (it.key() == "vertex") {
-            technique.shaders[sigma::graphics::shader_type::vertex] = boost::filesystem::path{ "vertex" } / value.asString(); // TODO warn if tring to set shader more that once
-        } else if (it.key() == "fragment") {
-            technique.shaders[sigma::graphics::shader_type::fragment] = boost::filesystem::path{ "fragment" } / value.asString(); // TODO warn if tring to set shader more that once
+            technique.technique_id.vertex = boost::filesystem::path{ "vertex" } / value.asString(); // TODO warn if tring to set shader more that once
+        } else if (it.key() == "tessellation_control") {
+            technique.technique_id.tessellation_control = boost::filesystem::path{ "tessellation_control" } / value.asString(); // TODO warn if tring to set shader more that once
+        } else if (it.key() == "tessellation_evaluation") {
+            technique.technique_id.tessellation_evaluation = boost::filesystem::path{ "tessellation_evaluation" } / value.asString(); // TODO warn if tring to set shader more that once
         } else if (it.key() == "geometry") {
-            technique.shaders[sigma::graphics::shader_type::geometry] = boost::filesystem::path{ "geometry" } / value.asString(); // TODO warn if tring to set shader more that once
+            technique.technique_id.geometry = boost::filesystem::path{ "geometry" } / value.asString(); // TODO warn if tring to set shader more that once
+        } else if (it.key() == "fragment") {
+            technique.technique_id.fragment = boost::filesystem::path{ "fragment" } / value.asString(); // TODO warn if tring to set shader more that once
         } else if (it.key() == "textures") {
             const auto& texture_object = *it;
             for (auto it2 = texture_object.begin(); it2 != texture_object.end(); ++it2)

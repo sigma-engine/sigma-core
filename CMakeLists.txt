@@ -75,7 +75,6 @@ set(HEADERS
     include/sigma/graphics/post_process_effect.hpp
     include/sigma/graphics/renderer.hpp
     include/sigma/graphics/shader.hpp
-    include/sigma/graphics/shader_technique.hpp
     include/sigma/graphics/shadow_block.hpp
     include/sigma/graphics/spot_light.hpp
     include/sigma/graphics/standard_block.hpp
@@ -93,7 +92,7 @@ set(HEADERS
     include/sigma/graphics/opengl/render_uniforms.hpp
     include/sigma/graphics/opengl/renderer.hpp
     include/sigma/graphics/opengl/shader.hpp
-    include/sigma/graphics/opengl/shader_technique.hpp
+    include/sigma/graphics/opengl/technique.hpp
     include/sigma/graphics/opengl/shadow_buffer.hpp
     include/sigma/graphics/opengl/static_mesh.hpp
     include/sigma/graphics/opengl/texture.hpp

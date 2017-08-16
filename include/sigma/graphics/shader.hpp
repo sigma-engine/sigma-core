@@ -12,8 +12,10 @@ namespace sigma {
 namespace graphics {
     enum class shader_type : size_t {
         vertex,
-        fragment,
+        tessellation_control,
+        tessellation_evaluation,
         geometry,
+        fragment,
         header
     };
 
