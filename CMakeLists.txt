@@ -24,7 +24,7 @@ endforeach()
 include("${CMAKE_SOURCE_DIR}/sigma_setup.cmake")
 if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
     include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
-    conan_basic_setup()
+    conan_basic_setup(TARGETS)
 endif()
 
 
@@ -32,6 +32,7 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4996")
 endif()
 
+find_package(Threads)
 
 set(SOURCES
     src/sigma/frustum.cpp
@@ -113,7 +114,7 @@ generate_meta_data(GENERATED_SOURCES ${HEADERS})
 add_library(sigma-core STATIC ${SOURCES} ${GENERATED_SOURCES})
 target_include_directories(sigma-core PUBLIC include "${CMAKE_BINARY_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}/include")
 target_compile_definitions(sigma-core PUBLIC PRIVATE -DSIGMA_EXPORT)
-target_link_libraries(sigma-core PUBLIC ${CMAKE_DL_LIBS} ${CONAN_LIBS})
+target_link_libraries(sigma-core PUBLIC ${CMAKE_DL_LIBS} ${CMAKE_THREAD_LIBS_INIT} CONAN_PKG::glm CONAN_PKG::Boost CONAN_PKG::glad CONAN_PKG::debug-draw CONAN_PKG::jsoncpp CONAN_PKG::SDL2)
 add_resources(sigma-core resources)
 
 enable_testing()

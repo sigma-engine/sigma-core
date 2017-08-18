@@ -48,6 +48,7 @@ package_directory, source_file_ext = os.path.splitext(
 rid = os.path.join('blueprint', package_directory)
 output_file = os.path.join(build_directory, 'data', rid)
 
+
 def export_static_mesh(source_directory, build_directory, mesh_objects, export_file, rid):
     bpy.ops.object.select_all(action='DESELECT')
     for obj in mesh_objects:
@@ -97,7 +98,8 @@ else:
         for grp in bpy.data.groups:
             exported_objects += [obj for obj in grp.objects]
             if grp.library is None and not grp.name.endswith('_high'):
-                group_meshes = [obj for obj in grp.objects if obj.type == 'MESH' and not obj.name.endswith('_high')]
+                group_meshes = [obj for obj in grp.objects if obj.type ==
+                                'MESH' and not obj.name.endswith('_high')]
                 if len(group_meshes) > 0:
                     group_dae_file = os.path.join(export_directory, grp.name)
                     rid = os.path.join(package_directory, grp.name)
@@ -121,7 +123,8 @@ else:
                     object_dae_file = os.path.join(export_directory, obj.name)
                     rid = os.path.join(package_directory, obj.name)
                     obj.matrix_world.identity()
-                    export_static_mesh(source_directory, build_directory, [obj], object_dae_file, rid)
+                    export_static_mesh(source_directory, build_directory,
+                                       [obj], object_dae_file, rid)
 
                     scene[obj.name]['sigma::graphics::static_mesh_instance'] = {
                         'mesh_id': os.path.join('static_mesh', rid),
@@ -152,14 +155,19 @@ else:
             elif obj.dupli_group is not None and obj.dupli_group.library is not None:
                 group_package_directory = obj.dupli_group.library.filepath
                 if group_package_directory.startswith("//"):
-                    group_package_directory = os.path.join(os.path.dirname(source_file), group_package_directory[2:])
-                group_package_directory = os.path.splitext(os.path.relpath(group_package_directory, source_directory))[0]
+                    group_package_directory = os.path.join(
+                        os.path.dirname(source_file), group_package_directory[2:])
+                group_package_directory = os.path.splitext(
+                    os.path.relpath(group_package_directory, source_directory))[0]
 
                 scene[obj.name]['sigma::graphics::static_mesh_instance'] = {
                     'mesh_id': os.path.join('static_mesh', group_package_directory, obj.dupli_group.name),
                     'cast_shadows': True
                 }
 
+        output_directory = os.path.dirname(output_file)
+        if not os.path.exists(output_directory):
+            os.makedirs(output_directory)
         blueprint_file = open(output_file, 'w')
         blueprint_file.write(json.dumps(scene, indent=4, sort_keys=True) + '\n')
         blueprint_file.close()

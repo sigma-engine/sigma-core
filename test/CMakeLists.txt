@@ -8,5 +8,5 @@ set(SOURCES
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_executable(sigma-core-tests ${SOURCES})
-target_link_libraries(sigma-core-tests sigma-core ${CONAN_LIBS})
+target_link_libraries(sigma-core-tests sigma-core CONAN_PKG::gtest)
 gtest_add_tests(sigma-core-tests "" AUTO)

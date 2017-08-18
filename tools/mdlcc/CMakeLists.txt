@@ -4,4 +4,4 @@ set(SOURCES
 
 add_executable(mdlcc ${SOURCES})
 target_include_directories(mdlcc PUBLIC include)
-target_link_libraries(mdlcc sigma-core)
+target_link_libraries(mdlcc sigma-core CONAN_PKG::assimp)
