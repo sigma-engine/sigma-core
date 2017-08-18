@@ -45,12 +45,12 @@ namespace opengl {
         {
         }
 
-        resource::handle<graphics::post_process_effect> get(boost::filesystem::path id)
+        resource::handle<graphics::post_process_effect> get(const boost::filesystem::path& id)
         {
             return post_process_effect_cache_.get(id);
         }
 
-        opengl::post_process_effect* acquire(resource::handle<graphics::post_process_effect> hndl)
+        opengl::post_process_effect* acquire(const resource::handle<graphics::post_process_effect>& hndl)
         {
             // TODO not thread safe
             if (hndl.index >= post_process_effects_.size())

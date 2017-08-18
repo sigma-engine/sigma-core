@@ -42,12 +42,12 @@ namespace opengl {
         {
         }
 
-        resource::handle<graphics::cubemap> get(boost::filesystem::path id)
+        resource::handle<graphics::cubemap> get(const boost::filesystem::path& id)
         {
             return cubemap_cache_.get(id);
         }
 
-        opengl::cubemap* acquire(resource::handle<graphics::cubemap> hndl)
+        opengl::cubemap* acquire(const resource::handle<graphics::cubemap>& hndl)
         {
             // TODO not thread safe
             if (hndl.index >= cubemaps_.size())

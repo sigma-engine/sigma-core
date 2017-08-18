@@ -78,7 +78,7 @@ namespace opengl {
             return technique_cache_.get(id);
         }
 
-        opengl::technique* acquire(resource::handle<graphics::technique> hndl)
+        opengl::technique* acquire(const resource::handle<graphics::technique>& hndl)
         {
             // TODO not thread safe
             if (hndl.index >= techniques_.size())

@@ -64,7 +64,7 @@ namespace resource {
             return h;
         }
 
-        Resource* acquire(handle<Resource> hnd) const
+        Resource* acquire(const handle<Resource>& hnd) const
         {
             return resources_.at(hnd.index).get();
         }

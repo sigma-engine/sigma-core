@@ -173,12 +173,12 @@ namespace opengl {
         {
         }
 
-        resource::handle<graphics::texture> get(boost::filesystem::path id)
+        resource::handle<graphics::texture> get(const boost::filesystem::path& id)
         {
             return texture_cache_.get(id);
         }
 
-        opengl::texture* acquire(resource::handle<graphics::texture> hndl)
+        opengl::texture* acquire(const resource::handle<graphics::texture>& hndl)
         {
             // TODO not thread safe
             if (hndl.index >= textures_.size())

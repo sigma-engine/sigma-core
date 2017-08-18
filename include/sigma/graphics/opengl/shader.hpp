@@ -52,12 +52,12 @@ namespace opengl {
         {
         }
 
-        resource::handle<graphics::shader> get(boost::filesystem::path id)
+        resource::handle<graphics::shader> get(const boost::filesystem::path& id)
         {
             return shader_cache_.get(id);
         }
 
-        opengl::shader* acquire(resource::handle<graphics::shader> hndl)
+        opengl::shader* acquire(const resource::handle<graphics::shader>& hndl)
         {
             // TODO not thread safe
             if (hndl.index >= shaders_.size())

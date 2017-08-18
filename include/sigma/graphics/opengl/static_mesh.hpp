@@ -54,12 +54,12 @@ namespace opengl {
         {
         }
 
-        resource::handle<graphics::static_mesh> get(boost::filesystem::path id)
+        resource::handle<graphics::static_mesh> get(const boost::filesystem::path& id)
         {
             return static_mesh_cache_.get(id);
         }
 
-        opengl::static_mesh* acquire(resource::handle<graphics::static_mesh> hndl)
+        opengl::static_mesh* acquire(const resource::handle<graphics::static_mesh>& hndl)
         {
             // TODO not thread safe
             if (hndl.index >= static_meshes_.size())

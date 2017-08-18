@@ -34,12 +34,12 @@ namespace opengl {
         {
         }
 
-        resource::handle<graphics::material> get(boost::filesystem::path id)
+        resource::handle<graphics::material> get(const boost::filesystem::path& id)
         {
             return material_cache_.get(id);
         }
 
-        opengl::material* acquire(resource::handle<graphics::material> hndl)
+        opengl::material* acquire(const resource::handle<graphics::material>& hndl)
         {
             // TODO not thread safe
             if (hndl.index >= materials_.size())
