@@ -101,7 +101,7 @@ set(HEADERS
     include/sigma/graphics/opengl/uniform_buffer.hpp
     include/sigma/graphics/opengl/util.hpp
 
-    include/sigma/resource/manager.hpp
+    include/sigma/resource/cache.hpp
 
     include/sigma/util/compile_time_hash.hpp
     include/sigma/util/filesystem.hpp

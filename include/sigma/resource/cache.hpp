@@ -1,5 +1,6 @@
 #ifndef SIGMA_ENGINE_RESOURCE_MANAGER_HPP
 #define SIGMA_ENGINE_RESOURCE_MANAGER_HPP
+#include <sigma/config.hpp>
 
 #include <sigma/handle.hpp>
 #include <sigma/util/filesystem.hpp>
@@ -8,7 +9,6 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/filesystem/path.hpp>
 
-#include <cassert>
 #include <fstream>
 #include <unordered_map>
 
@@ -19,7 +19,7 @@ namespace resource {
     using handle = sigma::handle;
 
     template <class Resource>
-    struct resource_loader {
+    struct loader {
         typedef boost::filesystem::path identifier_type;
         std::unique_ptr<Resource> operator()(const boost::filesystem::path& cache_directory, const identifier_type& id) const
         {
@@ -35,7 +35,7 @@ namespace resource {
     template <class Resource>
     class cache {
     public:
-        typedef resource_loader<Resource> loader_type;
+        typedef loader<Resource> loader_type;
         typedef typename loader_type::identifier_type identifier_type;
 
         cache(const boost::filesystem::path& cache_directory)

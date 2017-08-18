@@ -1,6 +1,8 @@
 #ifndef SDL2_WINDOW_HPP
 #define SDL2_WINDOW_HPP
 
+#include <sigma/config.hpp>
+
 #include <glm/vec2.hpp>
 
 #include <string>

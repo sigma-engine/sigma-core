@@ -1,6 +1,8 @@
 #ifndef SIGMA_WORLD_HPP
 #define SIGMA_WORLD_HPP
 
+#include <sigma/config.hpp>
+
 #include <sigma/handle.hpp>
 #include <sigma/util/variadic.hpp>
 

@@ -1,6 +1,8 @@
 #ifndef SIGMA_OPENGL_RENDER_BUFFER_HPP
 #define SIGMA_OPENGL_RENDER_BUFFER_HPP
 
+#include <sigma/config.hpp>
+
 #include <sigma/graphics/opengl/texture.hpp>
 
 #include <glad/glad.h>

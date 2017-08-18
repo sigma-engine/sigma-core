@@ -1,6 +1,8 @@
 #ifndef SIGMA_UTIL_VARIADIC_HPP
 #define SIGMA_UTIL_VARIADIC_HPP
 
+#include <sigma/config.hpp>
+
 #include <type_traits>
 
 namespace sigma {

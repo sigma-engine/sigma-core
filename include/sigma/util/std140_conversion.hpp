@@ -1,6 +1,8 @@
 #ifndef SIGMA_STD140_CONVERSION_HPP
 #define SIGMA_STD140_CONVERSION_HPP
 
+#include <sigma/config.hpp>
+
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/mat2x2.hpp>

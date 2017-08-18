@@ -1,6 +1,8 @@
 #ifndef SIGMA_GRAPHICS_FRUSTUM_HPP
 #define SIGMA_GRAPHICS_FRUSTUM_HPP
 
+#include <sigma/config.hpp>
+
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
 

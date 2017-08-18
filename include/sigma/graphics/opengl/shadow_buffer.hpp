@@ -1,6 +1,8 @@
 #ifndef SIGMA_GRAPHICS_OPENGL_SHADOW_BUFFER_HPP
 #define SIGMA_GRAPHICS_OPENGL_SHADOW_BUFFER_HPP
 
+#include <sigma/config.hpp>
+
 #include <sigma/graphics/opengl/frame_buffer.hpp>
 
 #include <sigma/graphics/opengl/render_buffer.hpp>

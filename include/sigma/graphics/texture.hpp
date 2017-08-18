@@ -2,6 +2,8 @@
 #ifndef SIGMA_GRAPHICS_TEXTURE_HPP
 #define SIGMA_GRAPHICS_TEXTURE_HPP
 
+#include <sigma/config.hpp>
+
 #include <sigma/reflect.hpp>
 #include <sigma/util/glm_serialize.hpp>
 

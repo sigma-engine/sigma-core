@@ -5,7 +5,6 @@
 
 #include <boost/serialization/version.hpp>
 
-#include <array>
 #include <string>
 
 namespace sigma {
@@ -19,11 +18,6 @@ namespace graphics {
         header
     };
 
-    static constexpr std::array<shader_type, 3> all_shader_types()
-    {
-        return { shader_type::vertex, shader_type::fragment, shader_type::geometry };
-    }
-
     struct shader {
         shader_type type;
         std::string source;
@@ -36,16 +30,6 @@ namespace graphics {
         }
     };
 }
-}
-
-namespace std {
-template <>
-struct hash<sigma::graphics::shader_type> {
-    size_t operator()(const sigma::graphics::shader_type& type) const
-    {
-        return size_t(type);
-    }
-};
 }
 
 BOOST_CLASS_VERSION(sigma::graphics::shader, 1);

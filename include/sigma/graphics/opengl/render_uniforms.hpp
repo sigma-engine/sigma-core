@@ -1,6 +1,8 @@
 #ifndef SIGMA_GRAPHICS_OPENGL_RENDER_UNIFORMS_HPP
 #define SIGMA_GRAPHICS_OPENGL_RENDER_UNIFORMS_HPP
 
+#include <sigma/config.hpp>
+
 #include <glm/matrix.hpp>
 
 namespace sigma {

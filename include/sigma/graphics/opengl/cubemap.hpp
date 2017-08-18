@@ -1,9 +1,11 @@
 #ifndef SIGMA_GRAPHICS_OPENGL_CUBEMAP_HPP
 #define SIGMA_GRAPHICS_OPENGL_CUBEMAP_HPP
 
+#include <sigma/config.hpp>
+
 #include <sigma/graphics/cubemap.hpp>
 #include <sigma/graphics/texture.hpp>
-#include <sigma/resource/manager.hpp>
+#include <sigma/resource/cache.hpp>
 
 #include <glad/glad.h>
 

@@ -1,6 +1,8 @@
 #ifndef SIGMA_ENGINE_GRAPHICS_POST_PROCESS_EFFECT_HPP
 #define SIGMA_ENGINE_GRAPHICS_POST_PROCESS_EFFECT_HPP
 
+#include <sigma/config.hpp>
+
 #include <sigma/graphics/technique.hpp>
 
 #include <boost/serialization/base_object.hpp>

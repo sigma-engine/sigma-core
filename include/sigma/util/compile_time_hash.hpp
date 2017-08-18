@@ -1,6 +1,8 @@
 #ifndef SIGMA_ENGINE_ENGINE_COMPILE_TIME_HASH_HPP
 #define SIGMA_ENGINE_ENGINE_COMPILE_TIME_HASH_HPP
 
+#include <sigma/config.hpp>
+
 #include <cstdint>
 
 namespace sigma {

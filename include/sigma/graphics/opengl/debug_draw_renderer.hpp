@@ -1,6 +1,8 @@
 #ifndef SIGMA_GRAPHICS_OPENGL_DEBUG_DRAW_RENDER_HPP
 #define SIGMA_GRAPHICS_OPENGL_DEBUG_DRAW_RENDER_HPP
 
+#include <sigma/config.hpp>
+
 #include "debug_draw.hpp"
 
 #include <glad/glad.h>

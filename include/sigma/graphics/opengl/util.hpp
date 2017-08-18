@@ -1,6 +1,8 @@
 #ifndef SIGMA_GRAPHICS_OPENGL_UTIL_HPP
 #define SIGMA_GRAPHICS_OPENGL_UTIL_HPP
 
+#include <sigma/config.hpp>
+
 #include <glad/glad.h>
 
 #include <sstream>

@@ -1,9 +1,10 @@
 #ifndef SIGMA_GRAPHICS_OPENGL_CONTEXT_HPP
 #define SIGMA_GRAPHICS_OPENGL_CONTEXT_HPP
 
+#include <sigma/config.hpp>
+
 #include <sigma/graphics/renderer.hpp>
 
-#include <sigma/config.hpp>
 #include <sigma/graphics/cubemap.hpp>
 #include <sigma/graphics/directional_light.hpp>
 #include <sigma/graphics/material.hpp>
@@ -30,7 +31,7 @@
 #include <sigma/graphics/static_mesh.hpp>
 #include <sigma/graphics/static_mesh_instance.hpp>
 #include <sigma/graphics/texture.hpp>
-#include <sigma/resource/manager.hpp>
+#include <sigma/resource/cache.hpp>
 #include <sigma/transform.hpp>
 #include <sigma/world.hpp>
 

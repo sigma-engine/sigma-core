@@ -4,6 +4,8 @@
 #ifndef SIGMA_GRAPHICS_SHADOW_BLOCK_HPP
 #define SIGMA_GRAPHICS_SHADOW_BLOCK_HPP
 
+#include <sigma/config.hpp>
+
 #include <sigma/reflect.hpp>
 
 #include <glm/mat2x2.hpp>

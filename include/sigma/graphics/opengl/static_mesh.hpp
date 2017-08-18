@@ -1,10 +1,12 @@
 #ifndef SIGMA_ENGINE_STATIC_MESH_HPP
 #define SIGMA_ENGINE_STATIC_MESH_HPP
 
+#include <sigma/config.hpp>
+
 #include <sigma/graphics/static_mesh.hpp>
 
 #include <sigma/graphics/opengl/material.hpp>
-#include <sigma/resource/manager.hpp>
+#include <sigma/resource/cache.hpp>
 
 #include <glad/glad.h>
 

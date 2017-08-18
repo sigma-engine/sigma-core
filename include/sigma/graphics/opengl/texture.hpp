@@ -1,11 +1,12 @@
 #ifndef SIGMA_GRAPHICS_OPENGL_TEXTURE_HPP
 #define SIGMA_GRAPHICS_OPENGL_TEXTURE_HPP
 
+#include <sigma/config.hpp>
+
 #include <sigma/graphics/texture.hpp>
-#include <sigma/resource/manager.hpp>
+#include <sigma/resource/cache.hpp>
 
 #include <glad/glad.h>
-#include <glm/vec2.hpp>
 
 #include <cassert>
 #include <utility>

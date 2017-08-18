@@ -1,6 +1,8 @@
 #ifndef SIGMA_GRAPHICS_CUBEMAP_HPP
 #define SIGMA_GRAPHICS_CUBEMAP_HPP
 
+#include <sigma/config.hpp>
+
 #include <boost/filesystem/path.hpp>
 #include <boost/serialization/version.hpp>
 

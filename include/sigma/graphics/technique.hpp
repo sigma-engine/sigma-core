@@ -1,7 +1,9 @@
 #ifndef SIGMA_GRAPHICS_TECHNIQUE_HPP
 #define SIGMA_GRAPHICS_TECHNIQUE_HPP
 
-#include <sigma/resource/manager.hpp>
+#include <sigma/config.hpp>
+
+#include <sigma/resource/cache.hpp>
 #include <sigma/util/glm_serialize.hpp>
 
 #include <boost/filesystem/path.hpp>
@@ -83,7 +85,7 @@ namespace graphics {
 }
 namespace resource {
     template <>
-    struct resource_loader<graphics::technique> {
+    struct loader<graphics::technique> {
         typedef graphics::technique_identifier identifier_type;
         std::unique_ptr<graphics::technique> operator()(const boost::filesystem::path& cache_directory, const identifier_type& id) const
         {

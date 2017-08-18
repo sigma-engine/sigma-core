@@ -1,8 +1,11 @@
 #ifndef SIGMA_GRAPHICS_OPENGL_FRAME_BUFFER_HPP
 #define SIGMA_GRAPHICS_OPENGL_FRAME_BUFFER_HPP
 
-#include <glad/glad.h>
+#include <sigma/config.hpp>
+
 #include <sigma/graphics/opengl/util.hpp>
+
+#include <glad/glad.h>
 
 #include <glm/vec2.hpp>
 

@@ -1,6 +1,8 @@
 #ifndef SIGMA_GAME_HPP
 #define SIGMA_GAME_HPP
 
+#include <sigma/config.hpp>
+
 #include <sigma/graphics/static_mesh_instance.hpp>
 #include <sigma/world.hpp>
 

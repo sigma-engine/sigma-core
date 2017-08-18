@@ -1,6 +1,8 @@
 #ifndef SIGMA_ENGINE_ENGINE_GLM_SERIALIZE_HPP
 #define SIGMA_ENGINE_ENGINE_GLM_SERIALIZE_HPP
 
+#include <sigma/config.hpp>
+
 #include <glm/mat2x2.hpp>
 #include <glm/mat2x3.hpp>
 #include <glm/mat2x4.hpp>

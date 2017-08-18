@@ -1,6 +1,8 @@
 #ifndef SIGMA_GRAPHICS_OPENGL_POST_PROCESS_EFFECT_HPP
 #define SIGMA_GRAPHICS_OPENGL_POST_PROCESS_EFFECT_HPP
 
+#include <sigma/config.hpp>
+
 #include <sigma/graphics/post_process_effect.hpp>
 
 #include <sigma/graphics/opengl/technique.hpp>

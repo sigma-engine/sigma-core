@@ -3,6 +3,7 @@
 #define SIGMA_TRANSFORM_HPP
 
 #include <sigma/config.hpp>
+
 #include <sigma/reflect.hpp>
 #include <sigma/util/glm_serialize.hpp>
 
