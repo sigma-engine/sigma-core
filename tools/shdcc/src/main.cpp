@@ -87,8 +87,10 @@ int main(int argc, char const* argv[])
 {
     std::unordered_map<std::string, std::tuple<sigma::graphics::shader_type, EShLanguage, std::string>> extention_type_map = {
         { ".vert", { sigma::graphics::shader_type::vertex, EShLangVertex, "vertex" } },
-        { ".frag", { sigma::graphics::shader_type::fragment, EShLangFragment, "fragment" } },
+        { ".tesc", { sigma::graphics::shader_type::geometry, EShLangTessControl, "tessellation_control" } },
+        { ".tese", { sigma::graphics::shader_type::geometry, EShLangTessEvaluation, "tessellation_evaluation" } },
         { ".geom", { sigma::graphics::shader_type::geometry, EShLangGeometry, "geometry" } },
+        { ".frag", { sigma::graphics::shader_type::fragment, EShLangFragment, "fragment" } },
         { ".glsl", { sigma::graphics::shader_type::header, EShLangCount, "header" } }
     };
 
@@ -141,12 +143,20 @@ int main(int argc, char const* argv[])
             ctx.add_macro_definition("SIGMA_ENGINE_VERTEX_SHADER");
             break;
         }
-        case sigma::graphics::shader_type::fragment: {
-            ctx.add_macro_definition("SIGMA_ENGINE_FRAGMENT_SHADER");
+        case sigma::graphics::shader_type::tessellation_control: {
+            ctx.add_macro_definition("SIGMA_ENGINE_TESSELLATION_CONTROL_SHADER");
+            break;
+        }
+        case sigma::graphics::shader_type::tessellation_evaluation: {
+            ctx.add_macro_definition("SIGMA_ENGINE_TESSELLATION_EVALUATION_SHADER");
             break;
         }
         case sigma::graphics::shader_type::geometry: {
             ctx.add_macro_definition("SIGMA_ENGINE_GEOMETRY_SHADER");
+            break;
+        }
+        case sigma::graphics::shader_type::fragment: {
+            ctx.add_macro_definition("SIGMA_ENGINE_FRAGMENT_SHADER");
             break;
         }
         case sigma::graphics::shader_type::header: {
