@@ -5,7 +5,6 @@
 
 #include <cstddef>
 #include <cstdint>
-#include <functional>
 #include <vector>
 
 namespace sigma {
@@ -23,6 +22,13 @@ struct handle {
     bool operator!=(handle o) const noexcept;
 
     bool is_valid() const;
+
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version)
+    {
+        ar & this->index;
+        ar & this->version;
+    }
 };
 
 handle SIGMA_API create_handle(std::vector<handle>& handles, std::vector<std::uint32_t>& free_handles);

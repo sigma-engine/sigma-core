@@ -12,6 +12,7 @@
 #include <array>
 #include <bitset>
 #include <cassert>
+#include <tuple>
 #include <vector>
 
 namespace sigma {

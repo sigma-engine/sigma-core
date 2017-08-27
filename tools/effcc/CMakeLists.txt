@@ -4,4 +4,4 @@ set(SOURCES
 
 add_executable(effcc ${SOURCES})
 target_include_directories(effcc PUBLIC include)
-target_link_libraries(effcc sigma-core)
+target_link_libraries(effcc sigma-core CONAN_PKG::glslang)

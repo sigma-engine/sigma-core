@@ -34,8 +34,6 @@ parser.add_argument('-H', '--source-directory', type=str,
                     help='The top level package directory.', required=True)
 parser.add_argument('-B', '--build-directory', type=str,
                     help='The top level project build directory.', required=True)
-parser.add_argument('-M', '--dependency', action='store_true',
-                    help='List dependencies of the source file.')
 parser.add_argument('-c', '--source-file', type=str,
                     help='The blender file to convert.', required=True)
 arguments = parser.parse_args(sys.argv[sys.argv.index('--') + 1:])
@@ -43,10 +41,11 @@ arguments = parser.parse_args(sys.argv[sys.argv.index('--') + 1:])
 source_file = os.path.realpath(arguments.source_file)
 source_directory = os.path.realpath(arguments.source_directory)
 build_directory = os.path.realpath(arguments.build_directory)
+data_directory = os.path.join(build_directory, 'data')
 package_directory, source_file_ext = os.path.splitext(
     os.path.relpath(source_file, source_directory))
 rid = os.path.join('blueprint', package_directory)
-output_file = os.path.join(build_directory, 'data', rid)
+output_file = os.path.join(data_directory, rid)
 
 
 def export_static_mesh(source_directory, build_directory, mesh_objects, export_file, rid):
@@ -62,115 +61,129 @@ def export_static_mesh(source_directory, build_directory, mesh_objects, export_f
         sys.exit(-1)
 
 
-if arguments.dependency:
-    dep = open(output_file + source_file_ext + '.dependency', 'w')
+try:
+    dependency_path = output_file + source_file_ext + '.dependency'
+    output_directory = os.path.dirname(dependency_path)
+    if not os.path.exists(output_directory):
+        os.makedirs(output_directory)
+
+    dep = open(dependency_path, 'w')
     dep.write('set(' + re.sub('[^a-zA-Z0-9]', '_', rid) + '_DEPENDS\n')
     dep.write(')\n')
-else:
-    try:
-        bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
 
-        scene = {}
-        materials = {}
-        exported_objects = []
+    bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
 
-        # create the temporary export folder
-        export_directory = os.path.join(source_directory, os.path.dirname(
-            source_file), '.' + os.path.split(os.path.splitext(source_file)[0])[1])
-        if not os.path.exists(export_directory):
-            os.makedirs(export_directory)
+    scene = {}
+    materials = {}
+    exported_objects = []
 
-        # Make sure every object is visable on every layer
-        for i in range(len(bpy.context.object.layers)):
-            for obj in bpy.data.objects:
-                obj.layers[i] = True
+    # create the temporary export folder
+    export_directory = os.path.join(source_directory, os.path.dirname(
+        source_file), '.' + os.path.split(os.path.splitext(source_file)[0])[1])
+    if not os.path.exists(export_directory):
+        os.makedirs(export_directory)
 
-        # Export correct material names because collada does not allow '/'
-        # in material names
-        for mtl in bpy.data.materials:
-            materials[re.sub('[^a-zA-Z0-9\-]', '_', mtl.name)] = mtl.name
-
-        material_file = open(os.path.join(export_directory, 'materials'), 'w')
-        material_file.write(json.dumps(materials, indent=4, sort_keys=True) + '\n')
-        material_file.close()
-
-        # Export groups out as static meshes
-        for grp in bpy.data.groups:
-            exported_objects += [obj for obj in grp.objects]
-            if grp.library is None and not grp.name.endswith('_high'):
-                group_meshes = [obj for obj in grp.objects if obj.type ==
-                                'MESH' and not obj.name.endswith('_high')]
-                if len(group_meshes) > 0:
-                    group_dae_file = os.path.join(export_directory, grp.name)
-                    rid = os.path.join(package_directory, grp.name)
-                    export_static_mesh(source_directory, build_directory,
-                                       group_meshes, group_dae_file, rid)
-
+    # Make sure every object is visable on every layer
+    for i in range(len(bpy.context.object.layers)):
         for obj in bpy.data.objects:
-            if obj.name.endswith('_high') or obj in exported_objects:
-                continue
+            obj.layers[i] = True
 
-            scene[obj.name] = {
-                'sigma::transform': {
-                    'position': convert_3d(obj.matrix_world.to_translation()),
-                    'rotation': convert_3d([math.degrees(x) for x in obj.matrix_world.to_euler('XYZ')]),
-                    'scale': convert_3d(obj.matrix_world.to_scale(), False)
-                }
+    # Export correct material names because collada does not allow '/'
+    # in material names
+    for mtl in bpy.data.materials:
+        materials[re.sub('[^a-zA-Z0-9\-]', '_', mtl.name)] = mtl.name
+
+    material_file = open(os.path.join(export_directory, 'materials'), 'w')
+    material_file.write(json.dumps(materials, indent=4, sort_keys=True) + '\n')
+    material_file.close()
+
+    # Export groups out as static meshes
+    for grp in bpy.data.groups:
+        exported_objects += [obj for obj in grp.objects]
+        if grp.library is None and not grp.name.endswith('_high'):
+            group_meshes = [obj for obj in grp.objects if obj.type ==
+                            'MESH' and not obj.name.endswith('_high')]
+            if len(group_meshes) > 0:
+                group_dae_file = os.path.join(export_directory, grp.name)
+                rid = os.path.join(package_directory, grp.name)
+                export_static_mesh(source_directory, build_directory,
+                                   group_meshes, group_dae_file, rid)
+
+    for obj in bpy.data.objects:
+        if obj.name.endswith('_high') or obj in exported_objects:
+            continue
+
+        scene[obj.name] = {
+            'sigma::transform': {
+                'position': convert_3d(obj.matrix_world.to_translation()),
+                'rotation': convert_3d([math.degrees(x) for x in obj.matrix_world.to_euler('XYZ')]),
+                'scale': convert_3d(obj.matrix_world.to_scale(), False)
             }
+        }
 
-            if obj.dupli_group is None and obj.library is None:
-                if obj.type == 'MESH':
-                    object_dae_file = os.path.join(export_directory, obj.name)
-                    rid = os.path.join(package_directory, obj.name)
-                    obj.matrix_world.identity()
-                    export_static_mesh(source_directory, build_directory,
-                                       [obj], object_dae_file, rid)
+        if obj.dupli_group is None and obj.library is None:
+            if obj.type == 'MESH':
+                object_dae_file = os.path.join(export_directory, obj.name)
+                rid = os.path.join(package_directory, obj.name)
+                obj.matrix_world.identity()
+                export_static_mesh(source_directory, build_directory,
+                                   [obj], object_dae_file, rid)
 
-                    scene[obj.name]['sigma::graphics::static_mesh_instance'] = {
-                        'mesh_id': os.path.join('static_mesh', rid),
+                scene[obj.name]['sigma::graphics::static_mesh_instance'] = {
+                    'mesh': os.path.join('static_mesh', rid),
+                    'cast_shadows': True
+                }
+            elif obj.type == 'LAMP':
+                if obj.data.type == 'SUN':
+                    scene[obj.name]['sigma::graphics::directional_light'] = {
+                        'color': list(obj.data.color),
+                        'intensity': obj.data.energy,
                         'cast_shadows': True
                     }
-                elif obj.type == 'LAMP':
-                    if obj.data.type == 'SUN':
-                        scene[obj.name]['sigma::graphics::directional_light'] = {
-                            'color': list(obj.data.color),
-                            'intensity': obj.data.energy,
-                            'cast_shadows': True
-                        }
-                    elif obj.data.type == 'POINT':
-                        scene[obj.name]['sigma::graphics::point_light'] = {
-                            'color': list(obj.data.color),
-                            'intensity': obj.data.energy,
-                            'cast_shadows': True
-                        }
-                    else:
-                        print("WARNING: Can not export light type '{}'".format(obj.data.type))
+                elif obj.data.type == 'POINT':
+                    scene[obj.name]['sigma::graphics::point_light'] = {
+                        'color': list(obj.data.color),
+                        'intensity': obj.data.energy,
+                        'cast_shadows': True
+                    }
                 else:
-                    print("WARNING: Can not export object type '{}'".format(obj.type))
-            elif obj.dupli_group is not None and obj.dupli_group.library is None:
-                scene[obj.name]['sigma::graphics::static_mesh_instance'] = {
-                    'mesh_id': os.path.join('static_mesh', package_directory, obj.dupli_group.name),
-                    'cast_shadows': True
-                }
-            elif obj.dupli_group is not None and obj.dupli_group.library is not None:
-                group_package_directory = obj.dupli_group.library.filepath
-                if group_package_directory.startswith("//"):
-                    group_package_directory = os.path.join(
-                        os.path.dirname(source_file), group_package_directory[2:])
-                group_package_directory = os.path.splitext(
-                    os.path.relpath(group_package_directory, source_directory))[0]
+                    print("WARNING: Can not export light type '{}'".format(obj.data.type))
+            else:
+                print("WARNING: Can not export object type '{}'".format(obj.type))
+        elif obj.dupli_group is not None and obj.dupli_group.library is None:
+            scene[obj.name]['sigma::graphics::static_mesh_instance'] = {
+                'mesh': os.path.join('static_mesh', package_directory, obj.dupli_group.name),
+                'cast_shadows': True
+            }
+        elif obj.dupli_group is not None and obj.dupli_group.library is not None:
+            group_package_directory = obj.dupli_group.library.filepath
+            if group_package_directory.startswith("//"):
+                group_package_directory = os.path.join(
+                    os.path.dirname(source_file), group_package_directory[2:])
+            group_package_directory = os.path.splitext(
+                os.path.relpath(group_package_directory, source_directory))[0]
 
-                scene[obj.name]['sigma::graphics::static_mesh_instance'] = {
-                    'mesh_id': os.path.join('static_mesh', group_package_directory, obj.dupli_group.name),
-                    'cast_shadows': True
-                }
+            scene[obj.name]['sigma::graphics::static_mesh_instance'] = {
+                'mesh': os.path.join('static_mesh', group_package_directory, obj.dupli_group.name),
+                'cast_shadows': True
+            }
 
-        output_directory = os.path.dirname(output_file)
-        if not os.path.exists(output_directory):
-            os.makedirs(output_directory)
-        blueprint_file = open(output_file, 'w')
-        blueprint_file.write(json.dumps(scene, indent=4, sort_keys=True) + '\n')
-        blueprint_file.close()
-    except BaseException as e:
-        print(e)
-        sys.exit(-1)
+    with open(os.path.join(data_directory, 'static_mesh', 'database.json')) as database_file:
+        static_mesh_database = json.load(database_file)
+        for obj_name, obj in scene.items():
+            if 'sigma::graphics::static_mesh_instance' in obj:
+                for mesh_hash, mesh_info in static_mesh_database.items():  # TODO this is going to be very slow
+                    if mesh_hash == 'next_handle':
+                        continue
+                    if mesh_info['cid'][0] == obj['sigma::graphics::static_mesh_instance']['mesh']:
+                        obj['sigma::graphics::static_mesh_instance']['mesh'] = mesh_info['index']
+
+    output_directory = os.path.dirname(output_file)
+    if not os.path.exists(output_directory):
+        os.makedirs(output_directory)
+    blueprint_file = open(output_file, 'w')
+    blueprint_file.write(json.dumps(scene, indent=4, sort_keys=True) + '\n')
+    blueprint_file.close()
+except BaseException as e:
+    print(e)
+    sys.exit(-1)

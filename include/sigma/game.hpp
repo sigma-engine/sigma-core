@@ -35,10 +35,6 @@ public:
         Json::Value scene_data;
         file >> scene_data;
         json::from_json(scene_data, world_);
-
-        world_.template for_each<sigma::graphics::static_mesh_instance>([&](sigma::entity e, sigma::graphics::static_mesh_instance& mesh_instance) {
-            mesh_instance.mesh = static_meshes_.get(mesh_instance.mesh_id);
-        });
     }
 
     virtual void update(std::chrono::duration<float> dt) = 0;

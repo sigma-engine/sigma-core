@@ -12,6 +12,8 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/version.hpp>
 
+#include <vector>
+
 namespace sigma {
 namespace graphics {
 

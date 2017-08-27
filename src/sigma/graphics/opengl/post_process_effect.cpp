@@ -5,11 +5,9 @@
 namespace sigma {
 namespace opengl {
     post_process_effect::post_process_effect(technique_manager& technique_mgr, static_mesh_manager& static_meshes, const graphics::post_process_effect& data)
-        : technique(technique_mgr.get(data.technique_id))
-        , mesh(static_meshes.get(data.mesh))
-        , data(data)
+        : data(data)
     {
-        TECHNIQUE_PTR(technique_mgr, technique)->gather_uniform_locations(data);
+        TECHNIQUE_PTR(technique_mgr, data.technique_id)->gather_uniform_locations(data);
     }
 }
 }

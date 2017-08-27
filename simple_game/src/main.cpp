@@ -17,13 +17,13 @@ int main(int argc, char* argv[])
     if (!boost::filesystem::exists(cache_path))
         cache_path = boost::filesystem::current_path() / ".." / "data";
 
-    sigma::resource::cache<sigma::graphics::texture> textures{ cache_path };
-    sigma::resource::cache<sigma::graphics::cubemap> cubemaps{ cache_path };
-    sigma::resource::cache<sigma::graphics::shader> shaders{ cache_path };
-    sigma::resource::cache<sigma::graphics::technique> techniques{ cache_path };
-    sigma::resource::cache<sigma::graphics::material> materials{ cache_path };
-    sigma::resource::cache<sigma::graphics::static_mesh> static_meshes{ cache_path };
-    sigma::resource::cache<sigma::graphics::post_process_effect> effects{ cache_path };
+    sigma::resource::cache<sigma::graphics::texture> textures{ cache_path / "texture" };
+    sigma::resource::cache<sigma::graphics::cubemap> cubemaps{ cache_path / "cubemap" };
+    sigma::resource::cache<sigma::graphics::shader> shaders{ cache_path / "shader" };
+    sigma::resource::cache<sigma::graphics::technique> techniques{ cache_path / "technique" };
+    sigma::resource::cache<sigma::graphics::material> materials{ cache_path / "material" };
+    sigma::resource::cache<sigma::graphics::static_mesh> static_meshes{ cache_path / "static_mesh" };
+    sigma::resource::cache<sigma::graphics::post_process_effect> effects{ cache_path / "post_process_effect" };
 
     sigma::window window{ glm::ivec2{ 1920, 1080 } };
 

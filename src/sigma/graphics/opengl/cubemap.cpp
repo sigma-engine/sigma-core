@@ -13,12 +13,12 @@ namespace opengl {
         GL_CHECK(glGenTextures(1, &object_));
         GL_CHECK(glBindTexture(GL_TEXTURE_CUBE_MAP, object_));
 
-        auto right_texture = texture_cache.acquire(texture_cache.get(data.right));
-        auto left_texture = texture_cache.acquire(texture_cache.get(data.left));
-        auto top_texture = texture_cache.acquire(texture_cache.get(data.top));
-        auto bottom_texture = texture_cache.acquire(texture_cache.get(data.bottom));
-        auto back_texture = texture_cache.acquire(texture_cache.get(data.back));
-        auto front_texture = texture_cache.acquire(texture_cache.get(data.front));
+        auto right_texture = texture_cache.acquire(data.right);
+        auto left_texture = texture_cache.acquire(data.left);
+        auto top_texture = texture_cache.acquire(data.top);
+        auto bottom_texture = texture_cache.acquire(data.bottom);
+        auto back_texture = texture_cache.acquire(data.back);
+        auto front_texture = texture_cache.acquire(data.front);
 
         int mip_levels = calculate_mipmap_levels(right_texture->size.x, right_texture->size.y);
         GL_CHECK(glTexStorage2D(GL_TEXTURE_CUBE_MAP, mip_levels, (GLenum)convert_internal(right_texture->format), right_texture->size.x, right_texture->size.y));

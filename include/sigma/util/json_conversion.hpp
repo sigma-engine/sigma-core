@@ -3,6 +3,8 @@
 
 #include <sigma/config.hpp>
 
+#include <sigma/resource/cache.hpp>
+
 #include <json/json.h>
 
 #include <glm/gtc/quaternion.hpp>
@@ -13,8 +15,8 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
-#include <boost/filesystem/path.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
+#include <boost/filesystem/path.hpp>
 
 namespace sigma {
 namespace json {
@@ -227,6 +229,23 @@ namespace json {
         static void to(const boost::filesystem::path& source, Json::Value& output)
         {
             output = source.string();
+        }
+    };
+
+    template <>
+    struct type_traits<handle> {
+        static bool from(const Json::Value& source, handle& output)
+        {
+            if (source.isConvertibleTo(Json::uintValue)) {
+                output = { source.asUInt(), 0 }; // TODO version
+                return true;
+            }
+            return false;
+        }
+
+        static void to(handle source, Json::Value& output)
+        {
+            output = source.index; // TODO version
         }
     };
 

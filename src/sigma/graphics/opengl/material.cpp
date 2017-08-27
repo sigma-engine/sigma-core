@@ -3,10 +3,9 @@
 namespace sigma {
 namespace opengl {
     material::material(technique_manager& technique_mgr, const graphics::material& data)
-        : technique(technique_mgr.get(data.technique_id))
-        , data(data)
+        : data(data)
     {
-        TECHNIQUE_PTR(technique_mgr, technique)->gather_uniform_locations(data);
+        TECHNIQUE_PTR(technique_mgr, data.technique_id)->gather_uniform_locations(data);
     }
 }
 }

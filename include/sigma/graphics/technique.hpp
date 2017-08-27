@@ -3,6 +3,9 @@
 
 #include <sigma/config.hpp>
 
+#include <sigma/graphics/cubemap.hpp>
+#include <sigma/graphics/shader.hpp>
+#include <sigma/graphics/texture.hpp>
 #include <sigma/resource/cache.hpp>
 #include <sigma/util/glm_serialize.hpp>
 
@@ -19,11 +22,11 @@
 namespace sigma {
 namespace graphics {
     struct technique_identifier {
-        boost::filesystem::path vertex;
-        boost::filesystem::path tessellation_control;
-        boost::filesystem::path tessellation_evaluation;
-        boost::filesystem::path geometry;
-        boost::filesystem::path fragment;
+        resource::handle<shader> vertex;
+        resource::handle<shader> tessellation_control;
+        resource::handle<shader> tessellation_evaluation;
+        resource::handle<shader> geometry;
+        resource::handle<shader> fragment;
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
@@ -46,8 +49,8 @@ namespace graphics {
         std::unordered_map<std::string, glm::vec2> vec2s;
         std::unordered_map<std::string, glm::vec3> vec3s;
         std::unordered_map<std::string, glm::vec4> vec4s;
-        std::unordered_map<std::string, boost::filesystem::path> textures;
-        std::unordered_map<std::string, boost::filesystem::path> cubemaps;
+        std::unordered_map<std::string, resource::handle<texture>> textures;
+        std::unordered_map<std::string, resource::handle<cubemap>> cubemaps;
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
@@ -83,36 +86,23 @@ namespace graphics {
         }
     };
 }
-namespace resource {
-    template <>
-    struct loader<graphics::technique> {
-        typedef graphics::technique_identifier identifier_type;
-        std::unique_ptr<graphics::technique> operator()(const boost::filesystem::path& cache_directory, const identifier_type& id) const
-        {
-            // TODO load from file
-            auto tech = std::make_unique<graphics::technique>();
-            tech->shaders = id;
-            return tech;
-        }
-    };
-}
 }
 
-namespace std {
-template <>
-struct hash<sigma::graphics::technique_identifier> {
-    size_t operator()(const sigma::graphics::technique_identifier& id) const
-    {
-        std::size_t seed = 0;
-        boost::hash_combine(seed, id.vertex);
-        boost::hash_combine(seed, id.tessellation_control);
-        boost::hash_combine(seed, id.tessellation_evaluation);
-        boost::hash_combine(seed, id.geometry);
-        boost::hash_combine(seed, id.fragment);
-        return seed;
-    }
-};
-}
+// namespace std {
+// template <>
+// struct hash<sigma::graphics::technique_identifier> {
+//     size_t operator()(const sigma::graphics::technique_identifier& id) const
+//     {
+//         std::size_t seed = 0;
+//         boost::hash_combine(seed, id.vertex);
+//         boost::hash_combine(seed, id.tessellation_control);
+//         boost::hash_combine(seed, id.tessellation_evaluation);
+//         boost::hash_combine(seed, id.geometry);
+//         boost::hash_combine(seed, id.fragment);
+//         return seed;
+//     }
+// };
+// }
 
 BOOST_CLASS_VERSION(sigma::graphics::technique_identifier, 1);
 BOOST_CLASS_VERSION(sigma::graphics::technique_uniform_data, 1);

@@ -15,14 +15,16 @@ class compile_database:
     def parse(self, index, source_file):
         ext = os.path.splitext(source_file)[1][1:]
         arguments = self.__get_compile_arguments(source_file)
-        tu = index.parse(source_file, arguments,options=clang.cindex.TranslationUnit.PARSE_SKIP_FUNCTION_BODIES | clang.cindex.TranslationUnit.PARSE_KEEP_GOING)
+        tu = index.parse(source_file, arguments, options=clang.cindex.TranslationUnit.PARSE_SKIP_FUNCTION_BODIES |
+                         clang.cindex.TranslationUnit.PARSE_KEEP_GOING)
         parse_success = True
-        safe_to_ignore_error = re.compile(r"(.*):\d+:\d+:\s+error:\s*'(.*)\.(.*)\.(.*)'\s+file\s+not\s+found")
+        safe_to_ignore_error = re.compile(
+            r"(.*):\d+:\d+:\s+error:\s*'(.*)\.(.*)\.(.*)'\s+file\s+not\s+found")
         for diagnostic in tu.diagnostics:
             if diagnostic.severity > 2:
                 match = re.search(safe_to_ignore_error, str(diagnostic))
-                if not match or not match.group(1).endswith(match.group(2)+"."+ match.group(4)):
-                    sys.stderr.write("sreflect:\n" + str(diagnostic) + "\n")
+                if not match or not match.group(1).endswith(match.group(2) + "." + match.group(4)):
+                    sys.stderr.write("sreflect:\n" + source_file + "\n" + str(diagnostic) + "\n")
                     parse_success = False
         if parse_success:
             return tu

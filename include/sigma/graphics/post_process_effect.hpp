@@ -3,6 +3,7 @@
 
 #include <sigma/config.hpp>
 
+#include <sigma/graphics/static_mesh.hpp>
 #include <sigma/graphics/technique.hpp>
 
 #include <boost/serialization/base_object.hpp>
@@ -12,8 +13,8 @@
 namespace sigma {
 namespace graphics {
     struct post_process_effect : public technique_uniform_data {
-        technique_identifier technique_id;
-        boost::filesystem::path mesh = "static_mesh/fullscreen_quad";
+        resource::handle<technique> technique_id;
+        resource::handle<static_mesh> mesh;
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)

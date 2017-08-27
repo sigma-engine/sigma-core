@@ -3,19 +3,21 @@
 
 #include <sigma/config.hpp>
 
-#include <boost/filesystem/path.hpp>
+#include <sigma/graphics/texture.hpp>
+#include <sigma/resource/cache.hpp>
+
 #include <boost/serialization/version.hpp>
 
 namespace sigma {
 namespace graphics {
 
     struct cubemap {
-        boost::filesystem::path right;
-        boost::filesystem::path left;
-        boost::filesystem::path top;
-        boost::filesystem::path bottom;
-        boost::filesystem::path back;
-        boost::filesystem::path front;
+        resource::handle<graphics::texture> right;
+        resource::handle<graphics::texture> left;
+        resource::handle<graphics::texture> top;
+        resource::handle<graphics::texture> bottom;
+        resource::handle<graphics::texture> back;
+        resource::handle<graphics::texture> front;
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)

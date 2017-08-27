@@ -25,8 +25,8 @@ namespace opengl {
         : graphics::renderer(size)
         , size_(size.x, size.y)
         , loader_status_(gladLoadGL())
-        , default_fbo_(size)
-        , gbuffer_(size)
+        , default_fbo_(size_)
+        , gbuffer_(size_)
         , sbuffer_({ 1024, 1024 }, 3)
         , start_time_(std::chrono::high_resolution_clock::now())
         , textures_(texture_cache)
@@ -43,17 +43,6 @@ namespace opengl {
         debug_renderer_.windowWidth = size.x;
         debug_renderer_.windowHeight = size.y;
         dd::initialize(&debug_renderer_);
-
-        image_based_light_effect_ = effects_.get("post_process_effect/pbr/deffered/lights/image_based");
-        point_light_effect_ = effects_.get("post_process_effect/pbr/deffered/lights/point");
-        directional_light_effect_ = effects_.get("post_process_effect/pbr/deffered/lights/directional");
-        spot_light_effect_ = effects_.get("post_process_effect/pbr/deffered/lights/spot");
-        texture_blit_effect_ = effects_.get("post_process_effect/pbr/deffered/texture_blit");
-
-        shadow_material_ = materials_.get("material/shadow");
-
-        vignette_effect_ = effects_.get("post_process_effect/vignette");
-        gamma_conversion_ = effects_.get("post_process_effect/pbr/deffered/gamma_conversion");
 
         standard_uniform_buffer_.set_binding_point(0);
     }

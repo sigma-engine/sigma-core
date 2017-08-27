@@ -12,7 +12,7 @@
 namespace sigma {
 namespace graphics {
     struct material : public technique_uniform_data {
-        technique_identifier technique_id;
+        resource::handle<technique> technique_id;
         bool transparent = false;
 
         template <class Archive>

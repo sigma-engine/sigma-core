@@ -1,4 +1,5 @@
 #include <sigma/graphics/cubemap.hpp>
+#include <sigma/resource/database.hpp>
 #include <sigma/util/filesystem.hpp>
 
 #include <json/json.h>
@@ -23,7 +24,6 @@ int main(int argc, char const* argv[])
     global.add_options()
     ("source-directory,H", boost::program_options::value<std::string>()->default_value(boost::filesystem::current_path().string()), "The top level package directory.")
     ("build-directory,B", boost::program_options::value<std::string>()->default_value(boost::filesystem::current_path().string()), "The top level project build directory.")
-    ("dependency,M", "List dependencies of the cubemap conversion.")
     ("source-file,c", boost::program_options::value<std::string>()->required(), "The cubemap file to convert.");
     // clang-format on
 
@@ -40,9 +40,12 @@ int main(int argc, char const* argv[])
 
         auto source_directory = boost::filesystem::canonical(vm["source-directory"].as<std::string>());
         auto build_directory = boost::filesystem::canonical(vm["build-directory"].as<std::string>());
+        auto data_directory = build_directory / "data";
+
+        sigma::resource::database<sigma::graphics::texture> texture_database{ data_directory, "texture" };
+        sigma::resource::database<sigma::graphics::cubemap> cubemap_database{ data_directory, "cubemap" };
 
         auto rid = "cubemap" / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
-        auto output_file = build_directory / "data" / rid;
 
         std::ifstream file(source_file.string());
         Json::Value settings;
@@ -54,35 +57,28 @@ int main(int argc, char const* argv[])
                 throw std::runtime_error("missing " + face + " cubemap face.");
         }
 
-        if (vm.count("dependency")) {
-            boost::filesystem::path dependency_path = output_file;
-            dependency_path.replace_extension(source_file.extension().string() + ".dependency");
+        // Output dependency file
+        {
+            auto dependency_path = (data_directory / rid).replace_extension(source_file.extension().string() + ".dependency");
+            if (!boost::filesystem::exists(dependency_path.parent_path()))
+                boost::filesystem::create_directories(dependency_path.parent_path());
             std::ofstream dep{ dependency_path.string() };
 
             std::regex re{ "[^a-zA-Z0-9]" };
             dep << "set(" << std::regex_replace(rid.string(), re, "_") << "_DEPENDS\n";
-            for (auto face : faces)
-                dep << (build_directory / "data" / "texture" / settings[face].asString()) << '\n';
             dep << ")\n";
-
-            return 0;
         }
 
         sigma::graphics::cubemap cubemap;
-        cubemap.right = boost::filesystem::path{ "texture" } / settings["right"].asString();
-        cubemap.left = boost::filesystem::path{ "texture" } / settings["left"].asString();
-        cubemap.top = boost::filesystem::path{ "texture" } / settings["top"].asString();
-        cubemap.bottom = boost::filesystem::path{ "texture" } / settings["bottom"].asString();
-        cubemap.back = boost::filesystem::path{ "texture" } / settings["back"].asString();
-        cubemap.front = boost::filesystem::path{ "texture" } / settings["front"].asString();
+        // TODO:(NOW) error if can not find textures.
+        cubemap.right = texture_database.handle_for({ boost::filesystem::path{ "texture" } / settings["right"].asString() });
+        cubemap.left = texture_database.handle_for({ boost::filesystem::path{ "texture" } / settings["left"].asString() });
+        cubemap.top = texture_database.handle_for({ boost::filesystem::path{ "texture" } / settings["top"].asString() });
+        cubemap.bottom = texture_database.handle_for({ boost::filesystem::path{ "texture" } / settings["bottom"].asString() });
+        cubemap.back = texture_database.handle_for({ boost::filesystem::path{ "texture" } / settings["back"].asString() });
+        cubemap.front = texture_database.handle_for({ boost::filesystem::path{ "texture" } / settings["front"].asString() });
+        cubemap_database.insert({ rid }, cubemap);
 
-        auto output_folder = output_file.parent_path();
-        if (!boost::filesystem::exists(output_folder))
-            boost::filesystem::create_directories(output_folder);
-
-        std::ofstream stream{ output_file.string(), std::ios::binary };
-        boost::archive::binary_oarchive oa(stream);
-        oa << cubemap;
     } catch (boost::program_options::error& e) {
         std::cerr << "cubcc\nerror: " << e.what() << '\n';
         std::cerr << global << '\n';

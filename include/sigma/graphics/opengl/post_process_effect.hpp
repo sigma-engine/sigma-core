@@ -25,10 +25,6 @@ namespace opengl {
 
         post_process_effect& operator=(post_process_effect&&) = default;
 
-        resource::handle<graphics::technique> technique;
-
-        resource::handle<graphics::static_mesh> mesh;
-
         const graphics::post_process_effect& data;
 
     private:
@@ -45,11 +41,6 @@ namespace opengl {
             , static_meshes_(static_meshes)
             , post_process_effect_cache_(post_process_effect_cache)
         {
-        }
-
-        resource::handle<graphics::post_process_effect> get(const boost::filesystem::path& id)
-        {
-            return post_process_effect_cache_.get(id);
         }
 
         opengl::post_process_effect* acquire(const resource::handle<graphics::post_process_effect>& hndl)

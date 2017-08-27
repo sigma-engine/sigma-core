@@ -19,14 +19,15 @@ simple_game::simple_game(const boost::filesystem::path& cache_path, sigma::resou
     // load(cache_path / "blueprint" / "proprietary" / "classroom" / "classroom");
     // load(cache_path / "blueprint" / "water_packed");
     // load(cache_path / "blueprint" / "material_test_scene");
-    load(cache_path / "blueprint" / "proprietary" / "sponza" / "sponza");
+    // load(cache_path / "blueprint" / "test-scene");
+    // load(cache_path / "blueprint" / "proprietary" / "sponza" / "sponza");
+    load(cache_path / "blueprint" / "proprietary" / "san-miguel" / "san-miguel-building");
+    // load(cache_path / "blueprint" / "proprietary" / "san-miguel" / "column");
 
     // auto grid_e = world_.create();
     // world_.add<sigma::transform>(grid_e);
     // auto inst = world_.add<sigma::graphics::static_mesh_instance>(grid_e);
-    // inst->mesh_id = boost::filesystem::path{ "static_mesh/material_ball" };
-    // inst->mesh = static_meshes.get(inst->mesh_id);
-    //
+    // inst->mesh = boost::filesystem::path{ "static_mesh/material_ball" };
     // world_.add<grid_component>(grid_e, 25, 30, 1.5f, 1.5f);
 
     world_.for_each<sigma::transform, sigma::graphics::static_mesh_instance, grid_component>([&](sigma::entity e, const sigma::transform& txform, sigma::graphics::static_mesh_instance& mesh_instance, const grid_component& grid) {
@@ -48,7 +49,6 @@ simple_game::simple_game(const boost::filesystem::path& cache_path, sigma::resou
                     auto e = world_.create();
                     world_.add<sigma::transform>(e, txform.position + glm::vec3{ grid.row_spacing * x, 0, grid.column_spacing * z });
                     auto minst = world_.add<sigma::graphics::static_mesh_instance>(e);
-                    minst->mesh_id = mesh_instance.mesh_id;
                     minst->mesh = mesh_instance.mesh;
                     // minst->materials[0] = generated_mat;
                 }

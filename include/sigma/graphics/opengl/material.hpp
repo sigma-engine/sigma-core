@@ -18,7 +18,6 @@ namespace opengl {
 
         material& operator=(material&&) = default;
 
-        resource::handle<graphics::technique> technique;
         const graphics::material& data;
 
     private:
@@ -34,11 +33,6 @@ namespace opengl {
             : techniques_(techniques)
             , material_cache_(material_cache)
         {
-        }
-
-        resource::handle<graphics::material> get(const boost::filesystem::path& id)
-        {
-            return material_cache_.get(id);
         }
 
         opengl::material* acquire(const resource::handle<graphics::material>& hndl)

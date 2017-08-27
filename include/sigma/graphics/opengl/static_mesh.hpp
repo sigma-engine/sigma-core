@@ -26,20 +26,17 @@ namespace opengl {
 
         ~static_mesh();
 
-        void render() const;
-
         void render(unsigned int material_slot) const;
 
         void render_all() const;
+
+        const graphics::static_mesh& data;
 
         // TODO make private
         GLuint vertex_array_ = 0;
         GLuint vertex_buffer_ = 0;
         GLuint index_buffer_ = 0;
         GLsizei index_count_ = 0;
-
-        std::vector<resource::handle<graphics::material>> materials_;
-        std::vector<std::pair<std::size_t, std::size_t>> material_slots_;
 
     private:
         static_mesh(const static_mesh&) = delete;
@@ -54,11 +51,6 @@ namespace opengl {
             : materials_(materials)
             , static_mesh_cache_(static_mesh_cache)
         {
-        }
-
-        resource::handle<graphics::static_mesh> get(const boost::filesystem::path& id)
-        {
-            return static_mesh_cache_.get(id);
         }
 
         opengl::static_mesh* acquire(const resource::handle<graphics::static_mesh>& hndl)

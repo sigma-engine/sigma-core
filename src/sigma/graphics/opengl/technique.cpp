@@ -14,26 +14,21 @@ namespace opengl {
     {
         GL_CHECK(object_ = glCreateProgram());
 
-        auto vertex_shader = shader_mgr.get(data.shaders.vertex);
-        GL_CHECK(glAttachShader(object_, SHADER_PTR(shader_mgr, vertex_shader)->get_object()));
+        GL_CHECK(glAttachShader(object_, SHADER_PTR(shader_mgr, data.shaders.vertex)->get_object()));
 
-        if (data.shaders.tessellation_control.size() > 0) {
-            auto tessellation_control_shader = shader_mgr.get(data.shaders.tessellation_control);
-            GL_CHECK(glAttachShader(object_, SHADER_PTR(shader_mgr, tessellation_control_shader)->get_object()));
+        if (data.shaders.tessellation_control.is_valid()) {
+            GL_CHECK(glAttachShader(object_, SHADER_PTR(shader_mgr, data.shaders.tessellation_control)->get_object()));
         }
 
-        if (data.shaders.tessellation_evaluation.size() > 0) {
-            auto tessellation_evaluation_shader = shader_mgr.get(data.shaders.tessellation_evaluation);
-            GL_CHECK(glAttachShader(object_, SHADER_PTR(shader_mgr, tessellation_evaluation_shader)->get_object()));
+        if (data.shaders.tessellation_evaluation.is_valid()) {
+            GL_CHECK(glAttachShader(object_, SHADER_PTR(shader_mgr, data.shaders.tessellation_evaluation)->get_object()));
         }
 
-        if (data.shaders.geometry.size() > 0) {
-            auto geometry_shader = shader_mgr.get(data.shaders.geometry);
-            GL_CHECK(glAttachShader(object_, SHADER_PTR(shader_mgr, geometry_shader)->get_object()));
+        if (data.shaders.geometry.is_valid()) {
+            GL_CHECK(glAttachShader(object_, SHADER_PTR(shader_mgr, data.shaders.geometry)->get_object()));
         }
 
-        auto fragment_shader = shader_mgr.get(data.shaders.fragment);
-        GL_CHECK(glAttachShader(object_, SHADER_PTR(shader_mgr, fragment_shader)->get_object()));
+        GL_CHECK(glAttachShader(object_, SHADER_PTR(shader_mgr, data.shaders.fragment)->get_object()));
 
         GL_CHECK(glLinkProgram(object_));
 
@@ -147,10 +142,15 @@ namespace opengl {
         GL_CHECK(glUniformMatrix3fv(normal_matrix_location_, 1, GL_FALSE, glm::value_ptr(matrices->normal_matrix)));
     }
 
-    void technique::bind(const sigma::graphics::technique_uniform_data& data)
+    void technique::bind()
     {
         GL_CHECK(glUseProgram(object_));
         GL_CHECK(glUniform1i(in_image_location_, geometry_buffer::INPUT_IMAGE_LOCATION));
+    }
+
+    void technique::bind(const sigma::graphics::technique_uniform_data& data)
+    {
+        bind();
 
         for (const auto& uniform : data.floats) {
             this->set_uniform(uniform.first, uniform.second);
@@ -183,8 +183,7 @@ namespace opengl {
             if (it != uniform_locations_.end()) {
                 GL_CHECK(glActiveTexture(texture_unit));
                 // TODO this is terrible
-                auto hndl = texture_mgr.get(uniform.second);
-                TEXTURE_PTR(texture_mgr, hndl)->bind();
+                TEXTURE_PTR(texture_mgr, uniform.second)->bind();
                 GL_CHECK(glUniform1i(it->second, unit_number));
                 unit_number++;
                 texture_unit++;
@@ -198,8 +197,7 @@ namespace opengl {
             if (it != uniform_locations_.end()) {
                 GL_CHECK(glActiveTexture(texture_unit));
                 // TODO this is terrible
-                auto hndl = cubemap_mgr.get(uniform.second);
-                CUBEMAP_PTR(cubemap_mgr, hndl)->bind();
+                CUBEMAP_PTR(cubemap_mgr, uniform.second)->bind();
                 GL_CHECK(glUniform1i(it->second, unit_number));
                 unit_number++;
                 texture_unit++;

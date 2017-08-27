@@ -41,6 +41,8 @@ namespace opengl {
 
         void set_instance_matrices(instance_matrices* matrices) const;
 
+        void bind();
+
         void bind(const sigma::graphics::technique_uniform_data& data);
 
         void bind(texture_manager& texture_mgr, cubemap_manager& cubemap_mgr, const sigma::graphics::technique_uniform_data& data, texture_unit first_texture_unit);
@@ -73,11 +75,6 @@ namespace opengl {
             : shaders_(shaders)
             , technique_cache_(technique_cache)
         {
-        }
-
-        resource::handle<graphics::technique> get(const graphics::technique_identifier& id)
-        {
-            return technique_cache_.get(id);
         }
 
         opengl::technique* acquire(const resource::handle<graphics::technique>& hndl)

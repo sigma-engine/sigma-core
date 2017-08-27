@@ -102,6 +102,7 @@ set(HEADERS
     include/sigma/graphics/opengl/util.hpp
 
     include/sigma/resource/cache.hpp
+    include/sigma/resource/database.hpp
 
     include/sigma/util/compile_time_hash.hpp
     include/sigma/util/filesystem.hpp
@@ -122,8 +123,7 @@ add_subdirectory(test)
 add_subdirectory(benchmark)
 add_subdirectory(tools/texcc)
 add_subdirectory(tools/cubcc)
-add_subdirectory(tools/shdcc)
-add_subdirectory(tools/mtlcc)
 add_subdirectory(tools/effcc)
 add_subdirectory(tools/mdlcc)
+add_subdirectory(tools/pakcc)
 add_subdirectory(simple_game)

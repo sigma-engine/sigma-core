@@ -1,4 +1,6 @@
+#include <sigma/graphics/material.hpp>
 #include <sigma/graphics/static_mesh.hpp>
+#include <sigma/resource/database.hpp>
 #include <sigma/util/filesystem.hpp>
 
 #include <assimp/Importer.hpp>
@@ -66,7 +68,7 @@ std::string get_name(const aiMesh* mesh)
     return name;
 }
 
-void convert_mesh(const aiScene* scene, const boost::filesystem::path& package_path, const Json::Value& materials, sigma::graphics::static_mesh& dest_mesh, const aiMesh* src_mesh)
+void convert_mesh(const aiScene* scene, const boost::filesystem::path& package_path, const Json::Value& materials, const sigma::resource::database<sigma::graphics::material>& material_database, sigma::graphics::static_mesh& dest_mesh, const aiMesh* src_mesh)
 {
     std::vector<sigma::graphics::static_mesh::vertex> submesh_vertices(src_mesh->mNumVertices);
     for (unsigned int j = 0; j < src_mesh->mNumVertices; ++j) {
@@ -97,7 +99,8 @@ void convert_mesh(const aiScene* scene, const boost::filesystem::path& package_p
     std::string material_name = get_name(scene->mMaterials[src_mesh->mMaterialIndex], package_path.parent_path().parent_path(), materials);
 
     // TODO warn if material slot has been used.
-    dest_mesh.materials[boost::filesystem::path{ "material" } / material_name] = std::make_pair(dest_mesh.triangles.size(), submesh_triangles.size());
+    dest_mesh.materials.push_back(material_database.handle_for({ boost::filesystem::path{ "material" } / material_name }));
+    dest_mesh.material_slots.push_back(std::make_pair(dest_mesh.triangles.size(), submesh_triangles.size()));
 
     dest_mesh.vertices.reserve(dest_mesh.vertices.size() + submesh_vertices.size());
     dest_mesh.vertices.insert(dest_mesh.vertices.end(), submesh_vertices.begin(), submesh_vertices.end());
@@ -116,7 +119,6 @@ int main(int argc, char const* argv[])
     ("source-directory,H", boost::program_options::value<std::string>()->default_value(boost::filesystem::current_path().string()), "The top level package directory.")
     ("build-directory,B", boost::program_options::value<std::string>()->default_value(boost::filesystem::current_path().string()), "The top level project build directory.")
     ("rid,r", boost::program_options::value<std::string>(), "Override the auto generated resource identifier.")
-    ("dependency,M", "List dependencies of the static mesh conversion.")
     ("source-file,c", boost::program_options::value<std::string>()->required(), "The static mesh file to convert.");
     // clang-format on
 
@@ -129,8 +131,15 @@ int main(int argc, char const* argv[])
 
         auto source_file = boost::filesystem::canonical(vm["source-file"].as<std::string>());
         auto material_file = source_file.parent_path() / "materials";
+
         auto source_directory = boost::filesystem::canonical(vm["source-directory"].as<std::string>());
         auto build_directory = boost::filesystem::canonical(vm["build-directory"].as<std::string>());
+        auto data_directory = build_directory / "data";
+
+        sigma::resource::database<sigma::graphics::texture> texture_database{ data_directory, "texture" };
+        sigma::resource::database<sigma::graphics::cubemap> cubemap_database{ data_directory, "cubemap" };
+        sigma::resource::database<sigma::graphics::material> material_database{ data_directory, "material" };
+        sigma::resource::database<sigma::graphics::static_mesh> static_mesh_database{ data_directory, "static_mesh" };
 
         boost::filesystem::path package_path;
         if (vm.count("rid"))
@@ -139,17 +148,17 @@ int main(int argc, char const* argv[])
             package_path = sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
 
         auto rid = "static_mesh" / package_path;
-        auto output_file = build_directory / "data" / rid;
 
-        if (vm.count("dependency")) {
-            boost::filesystem::path dependency_path = output_file;
-            dependency_path.replace_extension(source_file.extension().string() + ".dependency");
+        // Output dependency file
+        {
+            auto dependency_path = (data_directory / rid).replace_extension(source_file.extension().string() + ".dependency");
+            if (!boost::filesystem::exists(dependency_path.parent_path()))
+                boost::filesystem::create_directories(dependency_path.parent_path());
             std::ofstream dep{ dependency_path.string() };
 
             std::regex re{ "[^a-zA-Z0-9]" };
             dep << "set(" << std::regex_replace(rid.string(), re, "_") << "_DEPENDS\n";
             dep << ")\n";
-            return 0;
         }
 
         Json::Value materials(Json::objectValue);
@@ -197,18 +206,12 @@ int main(int argc, char const* argv[])
         sigma::graphics::static_mesh dest_mesh;
         for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
             if (!boost::ends_with(get_name(scene->mMeshes[i]), "_high"))
-                convert_mesh(scene, package_path, materials, dest_mesh, scene->mMeshes[i]);
+                convert_mesh(scene, package_path, materials, material_database, dest_mesh, scene->mMeshes[i]);
         }
         dest_mesh.vertices.shrink_to_fit();
         dest_mesh.triangles.shrink_to_fit();
 
-        auto output_directory = output_file.parent_path();
-        if (!boost::filesystem::exists(output_directory))
-            boost::filesystem::create_directories(output_directory);
-
-        std::ofstream stream(output_file.string(), std::ios::binary | std::ios::out);
-        boost::archive::binary_oarchive oa(stream);
-        oa << dest_mesh;
+        static_mesh_database.insert({ rid }, dest_mesh);
     } catch (boost::program_options::error& e) {
         std::cerr << "mdlcc\nerror: " << e.what() << '\n';
         std::cerr << global << '\n';
