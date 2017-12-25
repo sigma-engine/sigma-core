@@ -1,5 +1,7 @@
 #include <sigma/world.hpp>
 
+#include <gmock/gmock.h>
+
 struct basic_component {
     basic_component(int x, int y)
         : x(x)

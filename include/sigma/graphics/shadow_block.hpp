@@ -5,7 +5,6 @@
 #define SIGMA_GRAPHICS_SHADOW_BLOCK_HPP
 
 #include <sigma/config.hpp>
-
 #include <sigma/reflect.hpp>
 
 #include <glm/mat2x2.hpp>
@@ -21,8 +20,8 @@ namespace graphics {
     struct R_EXPORT(std140, binding = 1) shadow_block {
         BOOST_HANA_DEFINE_STRUCT(
             shadow_block,
-            (std::array<glm::mat4,3>, light_projection_view_matrix),
-            (std::array<glm::vec4,3>, light_frustum_far_plane));
+            (std::array<glm::mat4, 3>, light_projection_view_matrix),
+            (std::array<glm::vec4, 3>, light_frustum_far_plane));
     };
 }
 }

@@ -2,7 +2,6 @@
 #define SIGMA_ENGINE_GRAPHICS_POST_PROCESS_EFFECT_HPP
 
 #include <sigma/config.hpp>
-
 #include <sigma/graphics/static_mesh.hpp>
 #include <sigma/graphics/technique.hpp>
 

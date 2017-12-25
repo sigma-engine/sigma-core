@@ -5,6 +5,7 @@
 #include <boost/algorithm/string.hpp>
 
 #include <string>
+#include <iostream>
 
 void package_cubemap(
     const sigma::resource::database<sigma::graphics::texture>& texture_database,
@@ -13,9 +14,9 @@ void package_cubemap(
     const boost::filesystem::path& source_file)
 {
     auto rid = "cubemap" / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
-    auto h = cubemap_database.handle_for({ rid });
+    if (cubemap_database.contains({ rid })) {
+        auto h = cubemap_database.handle_for({ rid });
 
-    if (h.is_valid()) {
         auto source_file_time = boost::filesystem::last_write_time(source_file);
         auto resource_time = cubemap_database.last_modification_time(h);
         // TODO(NOW): other dependencies

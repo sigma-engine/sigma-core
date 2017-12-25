@@ -3,7 +3,6 @@
 #define SIGMA_GRAPHICS_DIRECTIONAL_LIGHT_HPP
 
 #include <sigma/config.hpp>
-
 #include <sigma/reflect.hpp>
 
 #include <glm/vec3.hpp>

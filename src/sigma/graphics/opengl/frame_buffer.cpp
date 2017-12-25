@@ -2,7 +2,6 @@
 
 #include <sigma/graphics/opengl/render_buffer.hpp>
 #include <sigma/graphics/opengl/texture.hpp>
-
 #include <sigma/graphics/opengl/util.hpp>
 
 #include <glad/glad.h>

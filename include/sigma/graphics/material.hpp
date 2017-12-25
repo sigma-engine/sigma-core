@@ -2,7 +2,6 @@
 #define SIGMA_GRAPHICS_MATERIAL_HPP
 
 #include <sigma/config.hpp>
-
 #include <sigma/graphics/technique.hpp>
 
 #include <boost/serialization/base_object.hpp>

@@ -25,10 +25,11 @@ simple_game::simple_game(const boost::filesystem::path& cache_path, sigma::resou
     //    load(cache_path / "blueprint" / "proprietary" / "san-miguel" / "column");
 
     auto grid_e = world_.create();
-    world_.add<sigma::transform>(grid_e);
+    auto trans = world_.add<sigma::transform>(grid_e);
+    trans->scale = glm::vec3(.001f);
     auto inst = world_.add<sigma::graphics::static_mesh_instance>(grid_e);
-    inst->mesh = { 1, 0 };
-    //inst->mesh = boost::filesystem::path{ "static_mesh/material_ball" };
+    inst->mesh = { 4, 0 };
+    // inst->mesh = boost::filesystem::path{ "static_mesh/material_ball" };
     world_.add<grid_component>(grid_e, 25, 30, 1.5f, 1.5f);
 
     world_.for_each<sigma::transform, sigma::graphics::static_mesh_instance, grid_component>([&](sigma::entity e, const sigma::transform& txform, sigma::graphics::static_mesh_instance& mesh_instance, const grid_component& grid) {
@@ -48,7 +49,7 @@ simple_game::simple_game(const boost::filesystem::path& cache_path, sigma::resou
                     // generated_mat->set_uniform("metalness", 1.0f - (z / float(grid.columns - 1)));
 
                     auto e = world_.create();
-                    world_.add<sigma::transform>(e, txform.position + glm::vec3{ grid.row_spacing * x, 0, grid.column_spacing * z });
+                    auto trans = world_.add<sigma::transform>(e, txform.position + glm::vec3{ grid.row_spacing * x, 0, grid.column_spacing * z }, glm::quat{}, glm::vec3(.01f));
                     auto minst = world_.add<sigma::graphics::static_mesh_instance>(e);
                     minst->mesh = mesh_instance.mesh;
                     // minst->materials[0] = generated_mat;

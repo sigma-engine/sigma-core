@@ -2,7 +2,6 @@
 #define SIGMA_ENGINE_RESOURCE_MANAGER_HPP
 
 #include <sigma/config.hpp>
-
 #include <sigma/handle.hpp>
 
 #include <boost/archive/binary_iarchive.hpp>

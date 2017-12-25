@@ -2,7 +2,6 @@
 #define SIGMA_GRAPHICS_TECHNIQUE_HPP
 
 #include <sigma/config.hpp>
-
 #include <sigma/graphics/cubemap.hpp>
 #include <sigma/graphics/shader.hpp>
 #include <sigma/graphics/texture.hpp>

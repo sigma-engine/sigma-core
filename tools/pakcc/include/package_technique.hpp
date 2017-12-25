@@ -6,6 +6,7 @@
 #include <sigma/graphics/technique.hpp>
 #include <sigma/graphics/texture.hpp>
 #include <sigma/resource/database.hpp>
+#include <sigma/util/json_conversion.hpp>
 
 #include <boost/filesystem/path.hpp>
 

@@ -1,9 +1,6 @@
 #ifndef SIGMA_REFLECT_HPP
 #define SIGMA_REFLECT_HPP
 
-#include <sigma/util/json_conversion.hpp>
-#include <sigma/util/std140_conversion.hpp>
-
 #include <boost/hana/adapt_struct.hpp>
 #include <boost/hana/define_struct.hpp>
 

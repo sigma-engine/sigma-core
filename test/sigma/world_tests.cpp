@@ -1,9 +1,9 @@
+#include "mock_components.hpp"
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include <unordered_map>
-
-#include "mock_components.hpp"
 
 TEST(world_tests, create_is_valid)
 {

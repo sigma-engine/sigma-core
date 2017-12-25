@@ -2,7 +2,6 @@
 #define SIGMA_OPENGL_UNIFORM_BUFFER_HPP
 
 #include <sigma/config.hpp>
-
 #include <sigma/graphics/opengl/util.hpp>
 #include <sigma/util/std140_conversion.hpp>
 

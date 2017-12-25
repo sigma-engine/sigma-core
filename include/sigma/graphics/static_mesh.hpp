@@ -2,7 +2,6 @@
 #define SIGMA_GRAPHICS_STATIC_MESH_HPP
 
 #include <sigma/config.hpp>
-
 #include <sigma/graphics/material.hpp>
 #include <sigma/resource/cache.hpp>
 #include <sigma/util/filesystem.hpp>

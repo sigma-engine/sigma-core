@@ -1,9 +1,9 @@
 #ifndef SIGMA_ENGINE_MATERIAL_HPP
 #define SIGMA_ENGINE_MATERIAL_HPP
 
-#include <sigma/config.hpp>
-
 #include <sigma/graphics/material.hpp>
+
+#include <sigma/config.hpp>
 #include <sigma/graphics/opengl/technique.hpp>
 
 #define MATERIAL_PTR(material_mgr, x) material_mgr.acquire(x)

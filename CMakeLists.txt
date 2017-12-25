@@ -4,12 +4,6 @@ project(sigma-engine)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# if(CONAN_LIBCXX STREQUAL "libstdc++11")
-#     add_definitions(-D_GLIBCXX_USE_CXX11_ABI=1)
-# elseif(CONAN_LIBCXX STREQUAL "libstdc++")
-#     add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
-# endif()
-
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
@@ -20,41 +14,27 @@ foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${CMAKE_BINARY_DIR}/lib")
 endforeach()
 
-
-# include("${CMAKE_SOURCE_DIR}/sigma_setup.cmake")
-# if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
-#     include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
-#     conan_basic_setup(TARGETS)
-# endif()
-
-
-# if(MSVC)
-#     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4996")
-# endif()
-
-find_package(Boost 1.65.0 REQUIRED COMPONENTS filesystem)
-find_package(glm 0.9.8 REQUIRED)
-find_package(jsoncpp REQUIRED)
-find_package(SDL2 REQUIRED)
-find_package(GTest 1.8.0 REQUIRED)
-find_package(benchmark REQUIRED)
+#find_package(GMock REQUIRED)
 find_package(Assimp 4.0.0 REQUIRED)
+find_package(benchmark REQUIRED)
+find_package(Boost 1.65.0 REQUIRED COMPONENTS filesystem program_options serialization wave)
+find_package(glm 0.9.8 REQUIRED)
+find_package(GTest 1.8.0 REQUIRED)
+find_package(GTest REQUIRED)
+find_package(JPEG REQUIRED)
+find_package(jsoncpp REQUIRED)
+find_package(PNG REQUIRED)
+find_package(SDL2 REQUIRED)
 find_package(Threads REQUIRED)
+find_package(TIFF REQUIRED)
 
 
-set(SOURCES
+add_library(sigma-core STATIC
+    # src/sigma/graphics/opengl/debug_draw_renderer.cpp
     src/glad.c
-
     src/sigma/frustum.cpp
     src/sigma/game.cpp
-    src/sigma/handle.cpp
-    src/sigma/trackball_controller.cpp
-    src/sigma/window.cpp
-
-    src/sigma/graphics/renderer.cpp
-
     src/sigma/graphics/opengl/cubemap.cpp
-    # src/sigma/graphics/opengl/debug_draw_renderer.cpp
     src/sigma/graphics/opengl/frame_buffer.cpp
     src/sigma/graphics/opengl/geometry_buffer.cpp
     src/sigma/graphics/opengl/material.cpp
@@ -62,79 +42,41 @@ set(SOURCES
     src/sigma/graphics/opengl/render_buffer.cpp
     src/sigma/graphics/opengl/renderer.cpp
     src/sigma/graphics/opengl/shader.cpp
-    src/sigma/graphics/opengl/technique.cpp
     src/sigma/graphics/opengl/shadow_buffer.cpp
     src/sigma/graphics/opengl/static_mesh.cpp
+    src/sigma/graphics/opengl/technique.cpp
     src/sigma/graphics/opengl/texture.cpp
-
+    src/sigma/graphics/renderer.cpp
+    src/sigma/handle.cpp
+    src/sigma/trackball_controller.cpp
     src/sigma/util/filesystem.cpp
+    src/sigma/window.cpp
 )
 
-set(HEADERS
-    include/sigma/config.hpp
-    include/sigma/frustum.hpp
-    include/sigma/game.hpp
-    include/sigma/handle.hpp
-    include/sigma/trackball_controller.hpp
-    include/sigma/transform.hpp
-    include/sigma/window.hpp
-    include/sigma/world.hpp
-
-    include/sigma/graphics/cubemap.hpp
-    include/sigma/graphics/directional_light.hpp
-    include/sigma/graphics/material.hpp
-    include/sigma/graphics/point_light.hpp
-    include/sigma/graphics/post_process_effect.hpp
-    include/sigma/graphics/renderer.hpp
-    include/sigma/graphics/shader.hpp
-    include/sigma/graphics/shadow_block.hpp
-    include/sigma/graphics/spot_light.hpp
-    include/sigma/graphics/standard_block.hpp
-    include/sigma/graphics/static_mesh.hpp
-    include/sigma/graphics/static_mesh_instance.hpp
-    include/sigma/graphics/texture.hpp
-
-    include/sigma/graphics/opengl/cubemap.hpp
-    # include/sigma/graphics/opengl/debug_draw_renderer.hpp
-    include/sigma/graphics/opengl/frame_buffer.hpp
-    include/sigma/graphics/opengl/geometry_buffer.hpp
-    include/sigma/graphics/opengl/material.hpp
-    include/sigma/graphics/opengl/post_process_effect.hpp
-    include/sigma/graphics/opengl/render_buffer.hpp
-    include/sigma/graphics/opengl/render_uniforms.hpp
-    include/sigma/graphics/opengl/renderer.hpp
-    include/sigma/graphics/opengl/shader.hpp
-    include/sigma/graphics/opengl/technique.hpp
-    include/sigma/graphics/opengl/shadow_buffer.hpp
-    include/sigma/graphics/opengl/static_mesh.hpp
-    include/sigma/graphics/opengl/texture.hpp
-    include/sigma/graphics/opengl/uniform_buffer.hpp
-    include/sigma/graphics/opengl/util.hpp
-
-    include/sigma/resource/cache.hpp
-    include/sigma/resource/database.hpp
-
-    include/sigma/util/compile_time_hash.hpp
-    include/sigma/util/filesystem.hpp
-    include/sigma/util/glm_serialize.hpp
-    include/sigma/util/json_conversion.hpp
-    include/sigma/util/variadic.hpp
+target_include_directories(sigma-core
+    PUBLIC
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
 
-# generate_meta_data(GENERATED_SOURCES ${HEADERS})
-add_library(sigma-core STATIC ${SOURCES})
-target_include_directories(sigma-core PUBLIC include "${CMAKE_BINARY_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}/include")
-target_compile_definitions(sigma-core PUBLIC PRIVATE -DSIGMA_EXPORT)
-target_link_libraries(sigma-core PUBLIC ${CMAKE_DL_LIBS} ${CMAKE_THREAD_LIBS_INIT} glm Boost::boost jsoncpp SDL2)
-# target_link_libraries(sigma-core PUBLIC CONAN_PKG::glm CONAN_PKG::Boost CONAN_PKG::glad CONAN_PKG::debug-draw CONAN_PKG::jsoncpp CONAN_PKG::SDL2)
-# add_resources(sigma-core resources)
+target_compile_definitions(sigma-core
+    PRIVATE
+    -DSIGMA_EXPORT
+)
+
+target_link_libraries(sigma-core
+    PUBLIC
+    ${CMAKE_DL_LIBS}
+    Boost::boost
+    Boost::filesystem
+    Boost::serialization
+    Threads::Threads
+    glm
+    jsoncpp
+    SDL2
+)
 
 
 add_subdirectory(test)
-# add_subdirectory(benchmark)
-# add_subdirectory(tools/texcc)
-# add_subdirectory(tools/cubcc)
-# add_subdirectory(tools/effcc)
-# add_subdirectory(tools/mdlcc)
-# add_subdirectory(tools/pakcc)
-# add_subdirectory(simple_game)
+#add_subdirectory(benchmark)
+add_subdirectory(tools/pakcc)
+add_subdirectory(simple_game)

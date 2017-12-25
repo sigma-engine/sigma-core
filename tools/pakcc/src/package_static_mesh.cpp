@@ -10,6 +10,7 @@
 
 #include <set>
 #include <string>
+#include <iostream>
 
 glm::vec3 convert_color(aiColor3D c)
 {
@@ -56,13 +57,14 @@ void package_static_mesh(
     const boost::filesystem::path& source_directory,
     const boost::filesystem::path& source_file)
 {
-    // FEATURE add settings?
+    // TODO FEATURE add settings?
     auto package_path = sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
     auto package_directory = package_path.parent_path();
     auto rid = "static_mesh" / package_path;
-    auto h = static_mesh_database.handle_for({ rid });
 
-    if (h.is_valid()) {
+    if (static_mesh_database.contains({ rid })) {
+        auto h = static_mesh_database.handle_for({ rid });
+
         auto source_file_time = boost::filesystem::last_write_time(source_file);
         auto resource_time = static_mesh_database.last_modification_time(h);
         if (source_file_time <= resource_time)

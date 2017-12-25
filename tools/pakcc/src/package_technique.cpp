@@ -7,6 +7,7 @@
 #include <boost/range/adaptor/transformed.hpp>
 
 #include <string>
+#include <iostream>
 
 void package_technique(
     const sigma::resource::database<sigma::graphics::shader>& shader_database,
@@ -44,8 +45,10 @@ void package_technique(
         technique.shaders.fragment = shader_database.handle_for({ cid.back() });
     }
 
-    auto h = technique_database.handle_for(cid);
-    if (h.is_valid()) {
+
+    if (technique_database.contains(cid)) {
+        auto h = technique_database.handle_for(cid);
+
         auto source_file_time = boost::filesystem::last_write_time(source_file);
         auto resource_time = technique_database.last_modification_time(h);
         // TODO(NOW): other dependencies

@@ -2,7 +2,6 @@
 #define SIGMA_GRAPHICS_RENDERER_HPP
 
 #include <sigma/config.hpp>
-
 #include <sigma/frustum.hpp>
 #include <sigma/graphics/post_process_effect.hpp>
 #include <sigma/graphics/technique.hpp>

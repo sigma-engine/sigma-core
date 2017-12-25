@@ -1,10 +1,9 @@
 #ifndef SIGMA_GRAPHICS_OPENGL_SHADER_TECHNIQUE_HPP
 #define SIGMA_GRAPHICS_OPENGL_SHADER_TECHNIQUE_HPP
 
-#include <sigma/config.hpp>
-
 #include <sigma/graphics/technique.hpp>
 
+#include <sigma/config.hpp>
 #include <sigma/graphics/opengl/texture.hpp>
 
 #define TECHNIQUE_PTR(technique_mgr, x) technique_mgr.acquire(x)

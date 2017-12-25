@@ -1,9 +1,9 @@
 #ifndef SIGMA_ENGINE_SHADER_HPP
 #define SIGMA_ENGINE_SHADER_HPP
 
-#include <sigma/config.hpp>
-
 #include <sigma/graphics/shader.hpp>
+
+#include <sigma/config.hpp>
 #include <sigma/resource/cache.hpp>
 
 #include <glad/glad.h>

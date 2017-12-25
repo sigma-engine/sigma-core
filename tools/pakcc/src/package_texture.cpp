@@ -3,6 +3,7 @@
 #include <hdr_io.hpp>
 
 #include <sigma/util/filesystem.hpp>
+#include <sigma/util/json_conversion.hpp>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/gil/extension/io/jpeg_io.hpp>
@@ -11,6 +12,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <iostream>
 
 enum class texture_source_type : unsigned int {
     tiff,
@@ -62,9 +64,10 @@ void package_texture(sigma::resource::database<sigma::graphics::texture>& textur
     auto settings_path = source_file.parent_path() / (source_file.stem().string() + ".stex");
 
     auto rid = "texture" / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
-    auto h = texture_database.handle_for({ rid });
 
-    if (h.is_valid()) {
+    if (texture_database.contains({rid})) {
+        auto h = texture_database.handle_for({rid});
+
         auto source_file_time = boost::filesystem::last_write_time(source_file);
         auto settings_time = source_file_time;
         if (boost::filesystem::exists(settings_path))
@@ -141,7 +144,8 @@ void package_textures(
 
         auto ext = boost::algorithm::to_lower_copy(path.extension().string());
         auto ext_it = ext_to_type.find(ext);
-        if (boost::filesystem::is_regular_file(path) && ext_it != ext_to_type.cend())
+        if (boost::filesystem::is_regular_file(path) && ext_it != ext_to_type.cend()) {
             package_texture(texture_database, source_directory, ext_it->second, path);
+        }
     }
 }

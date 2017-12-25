@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
-
 #include <sigma/frustum.hpp>
+
+#include <gtest/gtest.h>
 
 #include <glm/trigonometric.hpp>
 
