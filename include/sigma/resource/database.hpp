@@ -37,12 +37,18 @@ namespace resource {
             }
         }
 
-        handle<Resource> handle_for(const std::vector<boost::filesystem::path>& cid) const
+        std::size_t hash_code_for(const std::vector<boost::filesystem::path>& cid) const
         {
-            handle<Resource> h;
             std::size_t hash_code = 0;
             for (const auto& id : cid)
                 boost::hash_combine(hash_code, id);
+            return hash_code;
+        }
+
+        handle<Resource> handle_for(const std::vector<boost::filesystem::path>& cid) const
+        {
+            handle<Resource> h;
+            std::size_t hash_code = hash_code_for(cid);
             auto hash_code_string = std::to_string(hash_code);
 
             // Read in the current database.
@@ -67,12 +73,15 @@ namespace resource {
             return h;
         }
 
+        std::time_t last_modification_time(const handle<Resource>& h) const
+        {
+            return boost::filesystem::last_write_time((storage_directory_ / std::to_string(h.index)).string());
+        }
+
         handle<Resource> insert(const std::vector<boost::filesystem::path>& cid, Resource& res)
         {
             handle<Resource> h;
-            std::size_t hash_code = 0;
-            for (const auto& id : cid)
-                boost::hash_combine(hash_code, id);
+            std::size_t hash_code = hash_code_for(cid);
             auto hash_code_string = std::to_string(hash_code);
 
             {

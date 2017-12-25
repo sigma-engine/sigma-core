@@ -1,10 +1,8 @@
-#ifndef SIGMA_STD140_CONVERSION_HPP
-#define SIGMA_STD140_CONVERSION_HPP
+#ifndef SIGMA_STD140_HPP
+#define SIGMA_STD140_HPP
 
-#include <sigma/config.hpp>
+#include <sigma/util/numeric.hpp>
 
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <glm/mat2x2.hpp>
 #include <glm/mat3x3.hpp>
 #include <glm/mat4x4.hpp>
@@ -12,150 +10,371 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
-#include <cstddef>
-#include <cstring>
+#include <boost/hana/for_each.hpp>
+#include <boost/hana/fuse.hpp>
 
-#define std140_sizeof(T) sigma::std140::type_traits<T>::size
+#include <algorithm>
+#include <array>
+#include <cstddef>
+
+#define std140_sizeof(T) sigma::std140::detial::type_traits<T>::size()
 
 namespace sigma {
 namespace std140 {
-    template <class>
-    struct type_traits;
-
-    static const constexpr std::ptrdiff_t round_up(std::ptrdiff_t number, std::ptrdiff_t multiple)
-    {
-        return ((number + multiple - 1) / multiple) * multiple;
+    namespace detial {
+        template <typename>
+        struct type_traits;
     }
 
-    template <class T>
-    std::ptrdiff_t to_std140(const T& source, std::uint8_t* output, std::ptrdiff_t& offset)
+    template <typename T>
+    static constexpr std::size_t alignment()
     {
-        return type_traits<T>::convert(source, output, offset);
+        return detial::type_traits<T>::alignment();
     }
 
-    template <>
-    struct type_traits<float> {
-        static const constexpr std::size_t alignment = sizeof(float);
-        static const constexpr std::size_t size = sizeof(float);
-        static std::ptrdiff_t convert(float source, std::uint8_t* output, std::ptrdiff_t& offset)
-        {
-            auto N = sizeof(float);
-            offset = round_up(offset, alignment);
-            std::memcpy(output + offset, &source, sizeof(float));
-            return offset + N;
-        }
-    };
+    template <typename T>
+    static constexpr std::size_t size()
+    {
+        return detial::type_traits<T>::size();
+    }
 
-    template <>
-    struct type_traits<glm::vec2> {
-        static const constexpr std::size_t alignment = sizeof(glm::vec2);
-        static const constexpr std::size_t size = sizeof(glm::vec2);
-        static std::ptrdiff_t convert(const glm::vec2& source, std::uint8_t* output, std::ptrdiff_t& offset)
-        {
-            auto N = sizeof(float);
-            offset = round_up(offset, alignment);
-            std::memcpy(output + offset, glm::value_ptr(source), sizeof(glm::vec2));
-            return offset + 2 * N;
-        }
-    };
+    template <typename T>
+    static constexpr std::size_t member_offset(std::size_t member_index)
+    {
+        const T temp{};
+        std::size_t i = 0;
+        std::size_t offset = 0;
+        boost::hana::for_each(temp, boost::hana::fuse([&](auto name, auto member) {
+            using member_type = decltype(member);
+            const std::size_t member_size = size<member_type>();
+            const std::size_t member_alignment = alignment<member_type>();
 
-    template <>
-    struct type_traits<glm::vec3> {
-        static const constexpr std::size_t alignment = sizeof(glm::vec4);
-        static const constexpr std::size_t size = sizeof(glm::vec4);
-        static std::ptrdiff_t convert(const glm::vec3& source, std::uint8_t* output, std::ptrdiff_t& offset)
-        {
-            auto N = sizeof(float);
-            offset = round_up(offset, alignment);
-            std::memcpy(output + offset, glm::value_ptr(source), sizeof(glm::vec3));
-            return offset + 3 * N;
-        }
-    };
-
-    template <>
-    struct type_traits<glm::vec4> {
-        static const constexpr std::size_t alignment = sizeof(glm::vec4);
-        static const constexpr std::size_t size = sizeof(glm::vec4);
-        static std::ptrdiff_t convert(const glm::vec4& source, std::uint8_t* output, std::ptrdiff_t& offset)
-        {
-            auto N = sizeof(float);
-            offset = round_up(offset, alignment);
-            std::memcpy(output + offset, glm::value_ptr(source), sizeof(glm::vec4));
-            return offset + 4 * N;
-        }
-    };
-
-    template <>
-    struct type_traits<glm::quat> {
-        static const constexpr std::size_t alignment = sizeof(glm::vec4);
-        static const constexpr std::size_t size = sizeof(glm::vec4);
-        static std::ptrdiff_t convert(const glm::quat& source, std::uint8_t* output, std::ptrdiff_t& offset)
-        {
-            auto N = sizeof(float);
-            offset = round_up(offset, alignment);
-            std::memcpy(output + offset, glm::value_ptr(source), sizeof(glm::vec4));
-            return offset + 4 * N;
-        }
-    };
-
-    template <>
-    struct type_traits<glm::mat2> {
-        static const constexpr std::size_t alignment = sizeof(glm::vec4);
-        static const constexpr std::size_t size = 2 * sizeof(glm::vec4);
-        static std::ptrdiff_t convert(const glm::mat2& source, std::uint8_t* output, std::ptrdiff_t& offset)
-        {
-            auto N = sizeof(float);
-            offset = round_up(offset, alignment);
-            std::memcpy(output + offset, glm::value_ptr(source[0]), sizeof(glm::vec2));
-            std::memcpy(output + offset + alignment, glm::value_ptr(source[1]), sizeof(glm::vec2));
-            return offset + 2 * 4 * N;
-        }
-    };
-
-    template <>
-    struct type_traits<glm::mat3> {
-        static const constexpr std::size_t alignment = sizeof(glm::vec4);
-        static const constexpr std::size_t size = 3 * sizeof(glm::vec4);
-        static std::ptrdiff_t convert(const glm::mat3& source, std::uint8_t* output, std::ptrdiff_t& offset)
-        {
-            auto N = sizeof(float);
-            offset = round_up(offset, alignment);
-            std::memcpy(output + offset, glm::value_ptr(source[0]), sizeof(glm::vec3));
-            std::memcpy(output + offset + alignment, glm::value_ptr(source[1]), sizeof(glm::vec3));
-            std::memcpy(output + offset + 2 * alignment, glm::value_ptr(source[2]), sizeof(glm::vec3));
-            return offset + 3 * 4 * N;
-        }
-    };
-
-    template <>
-    struct type_traits<glm::mat4> {
-        static const constexpr std::size_t alignment = sizeof(glm::vec4);
-        static const constexpr std::size_t size = 4 * sizeof(glm::vec4);
-        static std::ptrdiff_t convert(const glm::mat4& source, std::uint8_t* output, std::ptrdiff_t& offset)
-        {
-            auto N = sizeof(float);
-            offset = round_up(offset, alignment);
-            std::memcpy(output + offset, glm::value_ptr(source), sizeof(glm::mat4));
-            return offset + 4 * 4 * N;
-        }
-    };
-
-    template <class T, long int SIZE>
-    struct type_traits<T[SIZE]> {
-        static const constexpr std::size_t alignment = round_up(type_traits<T>::alignment, type_traits<glm::vec4>::alignment);
-        static const constexpr std::size_t size = round_up(type_traits<T>::size * SIZE, alignment);
-        static std::ptrdiff_t convert(const T* source, std::uint8_t* output, std::ptrdiff_t& offset)
-        {
-            offset = round_up(offset, alignment);
-            std::ptrdiff_t temp_offset = offset;
-            for (long int i = 0; i < SIZE; ++i) {
-                temp_offset = to_std140(source[i], output, temp_offset);
-                temp_offset = round_up(temp_offset, alignment);
+            if (i < member_index) {
+                offset = numeric::round_up(offset, member_alignment);
+                offset += member_size;
+            } else if (i == member_index) {
+                offset = numeric::round_up(offset, member_alignment);
             }
-            return round_up(temp_offset, alignment);
-        }
-    };
+            i++;
+        }));
+
+        return offset;
+    }
+
+    template <typename T>
+    static void to_std140(const T& source, std::uint8_t* dest)
+    {
+        detial::type_traits<T>::write(source, dest, 0);
+    }
+
+    namespace detial {
+        template <class T>
+        struct type_traits {
+            static constexpr std::size_t size()
+            {
+                const T temp{};
+                std::size_t total = 0;
+                boost::hana::for_each(temp, boost::hana::fuse([&total](auto name, auto member) {
+                    using member_type = decltype(member);
+                    const std::size_t member_size = type_traits<member_type>::size();
+                    const std::size_t member_alignment = type_traits<member_type>::alignment();
+                    total = numeric::round_up(total, member_alignment);
+                    total += member_size;
+                }));
+                return total;
+            }
+
+            static std::size_t write(const T& value, std::uint8_t* buffer, std::size_t offset)
+            {
+                boost::hana::for_each(value, boost::hana::fuse([&](auto name, auto member) {
+                    offset = type_traits<decltype(member)>::write(member, buffer, offset);
+                }));
+                return offset;
+            }
+        };
+
+        template <>
+        struct type_traits<float> {
+            static constexpr std::size_t alignment()
+            {
+                return sizeof(float);
+            }
+
+            static constexpr std::size_t size()
+            {
+                return sizeof(float);
+            }
+
+            static std::size_t write(const float& value, std::uint8_t* buffer, std::size_t offset)
+            {
+                const std::uint8_t* data = (const std::uint8_t*)&value;
+                offset = numeric::round_up(offset, alignment());
+                std::copy(data, data + sizeof(float), buffer + offset);
+                offset += size();
+                return offset;
+            }
+        };
+
+        template <>
+        struct type_traits<double> {
+            static constexpr std::size_t alignment()
+            {
+                return sizeof(double);
+            }
+
+            static constexpr std::size_t size()
+            {
+                return sizeof(double);
+            }
+
+            static std::size_t write(const double& value, std::uint8_t* buffer, std::size_t offset)
+            {
+                const std::uint8_t* data = (const std::uint8_t*)&value;
+                offset = numeric::round_up(offset, alignment());
+                std::copy(data, data + sizeof(double), buffer + offset);
+                offset += size();
+                return offset;
+            }
+        };
+
+        template <>
+        struct type_traits<bool> {
+            static constexpr std::size_t alignment()
+            {
+                return type_traits<float>::alignment();
+            }
+
+            static constexpr std::size_t size()
+            {
+                return type_traits<float>::size();
+            }
+
+            static std::size_t write(const bool& value, std::uint8_t* buffer, std::size_t offset)
+            {
+                const std::uint8_t* data = (const std::uint8_t*)&value;
+                offset = numeric::round_up(offset, alignment());
+                std::copy(data, data + sizeof(bool), buffer + offset);
+                offset += size();
+                return offset;
+            }
+        };
+
+        template <>
+        struct type_traits<int> {
+            static constexpr std::size_t alignment()
+            {
+                return type_traits<float>::alignment();
+            }
+
+            static constexpr std::size_t size()
+            {
+                return type_traits<float>::size();
+            }
+
+            static std::size_t write(const int& value, std::uint8_t* buffer, std::size_t offset)
+            {
+                const std::uint8_t* data = (const std::uint8_t*)&value;
+                offset = numeric::round_up(offset, alignment());
+                std::copy(data, data + sizeof(int), buffer + offset);
+                offset += size();
+                return offset;
+            }
+        };
+
+        template <>
+        struct type_traits<unsigned int> {
+            static constexpr std::size_t alignment()
+            {
+                return type_traits<float>::alignment();
+            }
+
+            static constexpr std::size_t size()
+            {
+                return type_traits<float>::size();
+            }
+
+            static std::size_t write(const unsigned int& value, std::uint8_t* buffer, std::size_t offset)
+            {
+                const std::uint8_t* data = (const std::uint8_t*)&value;
+                offset = numeric::round_up(offset, alignment());
+                std::copy(data, data + sizeof(unsigned int), buffer + offset);
+                offset += size();
+                return offset;
+            }
+        };
+
+        template <typename T>
+        struct type_traits<glm::tvec2<T>> {
+            static constexpr std::size_t alignment()
+            {
+                return 2 * type_traits<T>::alignment();
+            }
+
+            static constexpr std::size_t size()
+            {
+                return 2 * type_traits<T>::size();
+            }
+
+            static std::size_t write(const glm::tvec2<T>& value, std::uint8_t* buffer, std::size_t offset)
+            {
+                const std::uint8_t* data = (const std::uint8_t*)&value;
+                offset = numeric::round_up(offset, alignment());
+                std::copy(data, data + sizeof(glm::tvec2<T>), buffer + offset);
+                offset += size();
+                return offset;
+            }
+        };
+
+        template <typename T>
+        struct type_traits<glm::tvec3<T>> {
+            static constexpr std::size_t alignment()
+            {
+                return 4 * type_traits<T>::alignment();
+            }
+
+            static constexpr std::size_t size()
+            {
+                return 3 * type_traits<T>::size();
+            }
+
+            static std::size_t write(const glm::tvec3<T>& value, std::uint8_t* buffer, std::size_t offset)
+            {
+                const std::uint8_t* data = (const std::uint8_t*)&value;
+                offset = numeric::round_up(offset, alignment());
+                std::copy(data, data + sizeof(glm::tvec3<T>), buffer + offset);
+                offset += size();
+                return offset;
+            }
+        };
+
+        template <typename T>
+        struct type_traits<glm::tvec4<T>> {
+            static constexpr std::size_t alignment()
+            {
+                return 4 * type_traits<T>::alignment();
+            }
+
+            static constexpr std::size_t size()
+            {
+                return 4 * type_traits<T>::size();
+            }
+
+            static std::size_t write(const glm::tvec4<T>& value, std::uint8_t* buffer, std::size_t offset)
+            {
+                const std::uint8_t* data = (const std::uint8_t*)&value;
+                offset = numeric::round_up(offset, alignment());
+                std::copy(data, data + sizeof(glm::tvec4<T>), buffer + offset);
+                offset += size();
+                return offset;
+            }
+        };
+
+        template <typename T>
+        struct type_traits<glm::tmat2x2<T>> {
+            static constexpr std::size_t alignment()
+            {
+                return type_traits<glm::tvec4<T>>::alignment();
+            }
+
+            static constexpr std::size_t size()
+            {
+                return 2 * type_traits<glm::tvec4<T>>::size();
+            }
+
+            static std::size_t write(const glm::tmat2x2<T>& value, std::uint8_t* buffer, std::size_t offset)
+            {
+                // TODO investigate this
+                offset = numeric::round_up(offset, alignment());
+                for (unsigned int i = 0; i < 2; ++i) {
+                    const std::uint8_t* data = (const std::uint8_t*)(&value[i]);
+                    std::copy(data, data + sizeof(glm::tvec2<T>), buffer + offset);
+                    offset += alignment();
+                }
+                return offset;
+            }
+        };
+
+        template <typename T>
+        struct type_traits<glm::tmat3x3<T>> {
+            static constexpr std::size_t alignment()
+            {
+                return type_traits<glm::tvec4<T>>::alignment();
+            }
+
+            static constexpr std::size_t size()
+            {
+                return 3 * type_traits<glm::tvec4<T>>::size();
+            }
+
+            static std::size_t write(const glm::tmat3x3<T>& value, std::uint8_t* buffer, std::size_t offset)
+            {
+                // TODO investigate this
+                offset = numeric::round_up(offset, alignment());
+                for (unsigned int i = 0; i < 3; ++i) {
+                    const std::uint8_t* data = (const std::uint8_t*)(&value[i]);
+                    std::copy(data, data + sizeof(glm::tvec3<T>), buffer + offset);
+                    offset += alignment();
+                }
+                return offset;
+            }
+        };
+
+        template <typename T>
+        struct type_traits<glm::tmat4x4<T>> {
+            static constexpr std::size_t alignment()
+            {
+                return type_traits<glm::tvec4<T>>::alignment();
+            }
+
+            static constexpr std::size_t size()
+            {
+                return 4 * type_traits<glm::tvec4<T>>::size();
+            }
+
+            static std::size_t write(const glm::tmat4x4<T>& value, std::uint8_t* buffer, std::size_t offset)
+            {
+                // TODO investigate this
+                offset = numeric::round_up(offset, alignment());
+                for (unsigned int i = 0; i < 4; ++i) {
+                    const std::uint8_t* data = (const std::uint8_t*)(&value[i]);
+                    std::copy(data, data + sizeof(glm::tvec4<T>), buffer + offset);
+                    offset += alignment();
+                }
+                return offset;
+            }
+        };
+
+        template <typename T, std::size_t N>
+        struct type_traits<std::array<T, N>> {
+            static constexpr std::size_t stride()
+            {
+                return numeric::round_up(type_traits<T>::alignment(), type_traits<glm::tvec4<float>>::alignment());
+            }
+
+            static constexpr std::size_t alignment()
+            {
+                return numeric::round_up(type_traits<T>::alignment(), type_traits<glm::tvec4<float>>::alignment());
+            }
+
+            static constexpr std::size_t size()
+            {
+                return N * numeric::round_up(type_traits<T>::size(), type_traits<glm::tvec4<float>>::alignment());
+            }
+
+            static std::size_t write(const std::array<T, N>& value, std::uint8_t* buffer, std::size_t offset)
+            {
+                // TODO investigate this.
+                offset = numeric::round_up(offset, alignment());
+                for (unsigned int i = 0; i < N; ++i) {
+                    // TODO really investigate this, especially when data is more complicated then basic types.
+                    type_traits<T>::write(value[i], buffer, offset);
+                    offset += stride();
+                }
+                return offset;
+            }
+        };
+    }
 }
 }
 
-#endif // SIGMA_STD140_CONVERSION_HPP
+#endif // SIGMA_STD140_HPP

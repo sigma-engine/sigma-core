@@ -5,10 +5,12 @@
 #include <sigma/reflect.hpp>
 
 struct R_EXPORT() grid_component {
-    int rows;
-    int columns;
-    float row_spacing;
-    float column_spacing;
+    BOOST_HANA_DEFINE_STRUCT(
+        grid_component,
+        (int, rows),
+        (int, columns),
+        (float, row_spacing),
+        (float, column_spacing));
 
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version)
@@ -19,7 +21,5 @@ struct R_EXPORT() grid_component {
         ar& column_spacing;
     }
 };
-
-#include "grid_component.generated.hpp"
 
 #endif // GRID_COMPONENT_HPP

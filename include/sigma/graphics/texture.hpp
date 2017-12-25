@@ -30,12 +30,21 @@ namespace graphics {
     };
 
     struct texture {
-        glm::ivec2 size;
-        texture_format format;
-        std::vector<char> data;
-        texture_filter minification_filter = texture_filter::LINEAR;
-        texture_filter magnification_filter = texture_filter::LINEAR;
-        texture_filter mipmap_filter = texture_filter::LINEAR;
+        BOOST_HANA_DEFINE_STRUCT(
+            texture,
+            (glm::ivec2, size),
+            (texture_format, format),
+            (std::vector<char>, data),
+            (texture_filter, minification_filter),
+            (texture_filter, magnification_filter),
+            (texture_filter, mipmap_filter));
+
+        texture()
+            : minification_filter{ texture_filter::LINEAR }
+            , magnification_filter{ texture_filter::LINEAR }
+            , mipmap_filter{ texture_filter::LINEAR }
+        {
+        }
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
@@ -52,7 +61,5 @@ namespace graphics {
 }
 
 BOOST_CLASS_VERSION(sigma::graphics::texture, 1);
-
-#include <sigma/graphics/texture.generated.hpp>
 
 #endif // SIGMA_GRAPHICS_TEXTURE_HPP

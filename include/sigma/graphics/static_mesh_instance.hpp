@@ -11,8 +11,15 @@
 namespace sigma {
 namespace graphics {
     struct R_EXPORT() static_mesh_instance {
-        resource::handle<static_mesh> mesh;
-        bool cast_shadows = true;
+        BOOST_HANA_DEFINE_STRUCT(static_mesh_instance,
+
+            (resource::handle<static_mesh>, mesh),
+            (bool, cast_shadows));
+
+        static_mesh_instance()
+            : cast_shadows{ true }
+        {
+        }
 
         // R_FIELD(derived) //TODO:RESOURCE remove this when new resource system is added.
         // std::unordered_map<std::size_t, resource::handle<material>> materials;
@@ -27,7 +34,5 @@ namespace graphics {
     };
 }
 }
-
-#include <sigma/graphics/static_mesh_instance.generated.hpp>
 
 #endif // SIGMA_GRAPHICS_STATIC_MESH_INSTANCE_HPP

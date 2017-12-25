@@ -1,3 +1,4 @@
 {
-    "fragment" : "pbr/deffered/gamma_conversion"
+    "fragment" : "pbr/deffered/gamma_conversion",
+    "vertex": "fullscreen_quad"
 }

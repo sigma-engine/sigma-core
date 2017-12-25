@@ -6,5 +6,6 @@
         "environment_map": "proprietary/06-07_Day_H_4K",
         "irradiance_map": "proprietary/06-07_Day_H_4K_irradiance"
     },
-    "fragment" : "pbr/deffered/lights/image_based"
+    "fragment" : "pbr/deffered/lights/image_based",
+    "vertex": "fullscreen_quad"
 }

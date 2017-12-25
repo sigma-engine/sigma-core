@@ -17,28 +17,29 @@
 namespace sigma {
 namespace graphics {
     struct R_EXPORT(std140, binding = 0) standard_block {
-        glm::mat4 projection_matrix;
-        glm::mat4 inverse_projection_matrix;
+        BOOST_HANA_DEFINE_STRUCT(standard_block,
 
-        glm::mat4 view_matrix;
-        glm::mat4 inverse_view_matrix;
+            (glm::mat4, projection_matrix),
+            (glm::mat4, inverse_projection_matrix),
 
-        glm::mat4 projection_view_matrix;
-        glm::mat4 inverse_projection_view_matrix;
+            (glm::mat4, view_matrix),
+            (glm::mat4, inverse_view_matrix),
 
-        glm::vec2 view_port_size;
-        glm::vec3 eye_position;
+            (glm::mat4, projection_view_matrix),
+            (glm::mat4, inverse_projection_view_matrix),
 
-        float time;
+            (glm::vec2, view_port_size),
+            (glm::vec3, eye_position),
 
-        float fovy;
-        float z_near;
-        float z_far;
+            (float, time),
+
+            (float, fovy),
+            (float, z_near),
+            (float, z_far));
     };
 }
 }
 
-#include <sigma/graphics/standard_block.generated.hpp>
-#include <sigma/graphics/standard_block.std140.hpp>
+// #include <sigma/graphics/standard_block.std140.hpp>
 
 #endif // SIGMA_GRAPHICS_STANDARD_BLOCK_HPP

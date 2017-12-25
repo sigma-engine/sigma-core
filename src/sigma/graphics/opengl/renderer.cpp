@@ -40,16 +40,16 @@ namespace opengl {
         if (!loader_status_)
             throw std::runtime_error("error: could not load OpenGL");
 
-        debug_renderer_.windowWidth = size.x;
-        debug_renderer_.windowHeight = size.y;
-        dd::initialize(&debug_renderer_);
+//        debug_renderer_.windowWidth = size.x;
+//        debug_renderer_.windowHeight = size.y;
+//        dd::initialize(&debug_renderer_);
 
         standard_uniform_buffer_.set_binding_point(0);
     }
 
     renderer::~renderer()
     {
-        dd::shutdown();
+//        dd::shutdown();
     }
 
     void renderer::resize(glm::uvec2 size)

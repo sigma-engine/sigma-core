@@ -17,6 +17,4 @@ using simple_world = sigma::world<sigma::transform,
     sigma::graphics::static_mesh_instance,
     grid_component>;
 
-#include <simple_world.generated.hpp>
-
 #endif // SIMPLE_WORLD_HPP

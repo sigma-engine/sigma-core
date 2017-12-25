@@ -35,8 +35,7 @@ namespace opengl {
         void set_data(const UnifomBufferType& data)
         {
             std::uint8_t buffer[std140_sizeof(UnifomBufferType)];
-            std::ptrdiff_t offset = 0;
-            std140::to_std140(data, buffer, offset);
+            std140::to_std140(data, buffer);
             GL_CHECK(glBindBuffer(GL_UNIFORM_BUFFER, object_));
             GL_CHECK(glBufferSubData(GL_UNIFORM_BUFFER, 0, std140_sizeof(UnifomBufferType), buffer));
         }

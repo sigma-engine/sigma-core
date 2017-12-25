@@ -14,11 +14,11 @@
 namespace sigma {
 
 struct R_EXPORT() transform {
-    glm::vec3 position;
-    glm::quat rotation;
-    glm::vec3 scale;
-
-    R_FIELD(derived)
+    BOOST_HANA_DEFINE_STRUCT(
+        transform,
+        (glm::vec3, position),
+        (glm::quat, rotation),
+        (glm::vec3, scale));
     glm::mat4 matrix;
 
     transform(glm::vec3 position = glm::vec3{ 0 }, glm::quat rotation = glm::quat{}, glm::vec3 scale = glm::vec3{ 1 })
@@ -42,7 +42,5 @@ struct R_EXPORT() transform {
     }
 };
 }
-
-#include <sigma/transform.generated.hpp>
 
 #endif // SIGMA_TRANSFORM_HPP

@@ -11,11 +11,18 @@
 namespace sigma {
 namespace graphics {
     struct R_EXPORT() directional_light {
-        glm::vec3 color;
-        float intensity;
-        bool cast_shadows = true;
-        R_FIELD(derived)
+        BOOST_HANA_DEFINE_STRUCT(
+            directional_light,
+            (glm::vec3, color),
+            (float, intensity),
+            (bool, cast_shadows));
         glm::vec3 direction{ 0.0f, 1.0f, 0.0f };
+
+        directional_light()
+            : cast_shadows{ true }
+            , direction{ 0.0f, 1.0f, 0.0f }
+        {
+        }
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
@@ -27,7 +34,5 @@ namespace graphics {
     };
 }
 }
-
-#include <sigma/graphics/directional_light.generated.hpp>
 
 #endif // SIGMA_GRAPHICS_DIRECTIONAL_LIGHT_HPP

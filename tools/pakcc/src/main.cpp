@@ -1,3 +1,11 @@
+#include <package_cubemap.hpp>
+#include <package_material.hpp>
+#include <package_post_process_effect.hpp>
+#include <package_shader.hpp>
+#include <package_static_mesh.hpp>
+#include <package_technique.hpp>
+#include <package_texture.hpp>
+
 #include <sigma/graphics/cubemap.hpp>
 #include <sigma/graphics/material.hpp>
 #include <sigma/graphics/post_process_effect.hpp>
@@ -23,7 +31,7 @@ int main(int argc, char const* argv[])
     // clang-format off
     global.add_options()
     ("include-directory,I", boost::program_options::value<std::vector<std::string>>()->default_value(std::vector<std::string>{}, ""), "Extra include directories")
-    ("source-directory,H", boost::program_options::value<std::string>()->default_value(boost::filesystem::current_path().string()), "The top level package directory.")
+    ("source-directory,H", boost::program_options::value<std::vector<std::string>>()->default_value(std::vector<std::string>{}, ""), "The top level package directory.")
     ("build-directory,B", boost::program_options::value<std::string>()->default_value(boost::filesystem::current_path().string()), "The top level project build directory.");
     // clang-format on
 
@@ -32,16 +40,8 @@ int main(int argc, char const* argv[])
         boost::program_options::store(boost::program_options::command_line_parser(argc, argv).options(global).positional(positional).run(), vm);
         boost::program_options::notify(vm);
 
-        auto source_directory = boost::filesystem::canonical(vm["source-directory"].as<std::string>());
         auto build_directory = boost::filesystem::canonical(vm["build-directory"].as<std::string>());
         auto data_directory = build_directory / "data";
-
-        std::vector<boost::filesystem::path> include_directories;
-        for (auto path : vm["include-directory"].as<std::vector<std::string>>()) {
-            boost::trim(path);
-            if (path.size() > 0)
-                include_directories.push_back(path);
-        }
 
         if (!boost::filesystem::exists(data_directory))
             boost::filesystem::create_directories(data_directory);
@@ -54,12 +54,51 @@ int main(int argc, char const* argv[])
         sigma::resource::database<sigma::graphics::static_mesh> static_mesh_database{ data_directory, "static_mesh" };
         sigma::resource::database<sigma::graphics::post_process_effect> post_process_effect_database{ data_directory, "post_process_effect" };
 
-        // TODO integrate all resource compiling here
+        std::vector<boost::filesystem::path> include_directories;
+        // Add the source directories to the include path
+        for (auto path : vm["source-directory"].as<std::vector<std::string>>()) {
+            boost::trim(path);
+            if (path.size() > 0)
+                include_directories.push_back(path);
+        }
+
+        // Add the extra include paths
+        for (auto path : vm["include-directory"].as<std::vector<std::string>>()) {
+            boost::trim(path);
+            if (path.size() > 0)
+                include_directories.push_back(path);
+        }
+
+        std::vector<boost::filesystem::path> source_directories;
+        for (auto path : vm["source-directory"].as<std::vector<std::string>>())
+            source_directories.push_back(boost::filesystem::canonical(path));
+
+        for (auto source_directory : source_directories)
+            package_textures(texture_database, source_directory);
+
+        for (auto source_directory : source_directories)
+            package_cubemaps(texture_database, cubemap_database, source_directory);
+
+        for (auto source_directory : source_directories)
+            package_shaders(shader_database, source_directory, include_directories);
+
+        for (auto source_directory : source_directories)
+            package_techniques(shader_database, technique_database, source_directory, include_directories);
+
+        for (auto source_directory : source_directories)
+            package_materials(texture_database, cubemap_database, technique_database, material_database, source_directory);
+
+        for (auto source_directory : source_directories)
+            package_static_meshes(material_database, static_mesh_database, source_directory);
+
+        for (auto source_directory : source_directories)
+            package_post_process_effects(texture_database, cubemap_database, technique_database, static_mesh_database, post_process_effect_database, source_directory);
+
+        // TODO: (NOW) blueprints
 
         auto graphics_directory = data_directory / "graphics";
         if (!boost::filesystem::exists(graphics_directory))
             boost::filesystem::create_directories(graphics_directory);
-
         sigma::graphics::renderer::settings settings;
         settings.image_based_light_effect = post_process_effect_database.handle_for({ "post_process_effect/pbr/deffered/lights/image_based" });
         settings.point_light_effect = post_process_effect_database.handle_for({ "post_process_effect/pbr/deffered/lights/point" });

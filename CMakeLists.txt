@@ -4,11 +4,11 @@ project(sigma-engine)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-if(CONAN_LIBCXX STREQUAL "libstdc++11")
-    add_definitions(-D_GLIBCXX_USE_CXX11_ABI=1)
-elseif(CONAN_LIBCXX STREQUAL "libstdc++")
-    add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
-endif()
+# if(CONAN_LIBCXX STREQUAL "libstdc++11")
+#     add_definitions(-D_GLIBCXX_USE_CXX11_ABI=1)
+# elseif(CONAN_LIBCXX STREQUAL "libstdc++")
+#     add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
+# endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
@@ -21,20 +21,30 @@ foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
 endforeach()
 
 
-include("${CMAKE_SOURCE_DIR}/sigma_setup.cmake")
-if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
-    include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
-    conan_basic_setup(TARGETS)
-endif()
+# include("${CMAKE_SOURCE_DIR}/sigma_setup.cmake")
+# if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
+#     include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
+#     conan_basic_setup(TARGETS)
+# endif()
 
 
-if(MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4996")
-endif()
+# if(MSVC)
+#     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4996")
+# endif()
 
-find_package(Threads)
+find_package(Boost 1.65.0 REQUIRED COMPONENTS filesystem)
+find_package(glm 0.9.8 REQUIRED)
+find_package(jsoncpp REQUIRED)
+find_package(SDL2 REQUIRED)
+find_package(GTest 1.8.0 REQUIRED)
+find_package(benchmark REQUIRED)
+find_package(Assimp 4.0.0 REQUIRED)
+find_package(Threads REQUIRED)
+
 
 set(SOURCES
+    src/glad.c
+
     src/sigma/frustum.cpp
     src/sigma/game.cpp
     src/sigma/handle.cpp
@@ -44,7 +54,7 @@ set(SOURCES
     src/sigma/graphics/renderer.cpp
 
     src/sigma/graphics/opengl/cubemap.cpp
-    src/sigma/graphics/opengl/debug_draw_renderer.cpp
+    # src/sigma/graphics/opengl/debug_draw_renderer.cpp
     src/sigma/graphics/opengl/frame_buffer.cpp
     src/sigma/graphics/opengl/geometry_buffer.cpp
     src/sigma/graphics/opengl/material.cpp
@@ -85,7 +95,7 @@ set(HEADERS
     include/sigma/graphics/texture.hpp
 
     include/sigma/graphics/opengl/cubemap.hpp
-    include/sigma/graphics/opengl/debug_draw_renderer.hpp
+    # include/sigma/graphics/opengl/debug_draw_renderer.hpp
     include/sigma/graphics/opengl/frame_buffer.hpp
     include/sigma/graphics/opengl/geometry_buffer.hpp
     include/sigma/graphics/opengl/material.hpp
@@ -111,19 +121,20 @@ set(HEADERS
     include/sigma/util/variadic.hpp
 )
 
-generate_meta_data(GENERATED_SOURCES ${HEADERS})
-add_library(sigma-core STATIC ${SOURCES} ${GENERATED_SOURCES})
+# generate_meta_data(GENERATED_SOURCES ${HEADERS})
+add_library(sigma-core STATIC ${SOURCES})
 target_include_directories(sigma-core PUBLIC include "${CMAKE_BINARY_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}/include")
 target_compile_definitions(sigma-core PUBLIC PRIVATE -DSIGMA_EXPORT)
-target_link_libraries(sigma-core PUBLIC ${CMAKE_DL_LIBS} ${CMAKE_THREAD_LIBS_INIT} CONAN_PKG::glm CONAN_PKG::Boost CONAN_PKG::glad CONAN_PKG::debug-draw CONAN_PKG::jsoncpp CONAN_PKG::SDL2)
-add_resources(sigma-core resources)
+target_link_libraries(sigma-core PUBLIC ${CMAKE_DL_LIBS} ${CMAKE_THREAD_LIBS_INIT} glm Boost::boost jsoncpp SDL2)
+# target_link_libraries(sigma-core PUBLIC CONAN_PKG::glm CONAN_PKG::Boost CONAN_PKG::glad CONAN_PKG::debug-draw CONAN_PKG::jsoncpp CONAN_PKG::SDL2)
+# add_resources(sigma-core resources)
 
-enable_testing()
+
 add_subdirectory(test)
-add_subdirectory(benchmark)
-add_subdirectory(tools/texcc)
-add_subdirectory(tools/cubcc)
-add_subdirectory(tools/effcc)
-add_subdirectory(tools/mdlcc)
-add_subdirectory(tools/pakcc)
-add_subdirectory(simple_game)
+# add_subdirectory(benchmark)
+# add_subdirectory(tools/texcc)
+# add_subdirectory(tools/cubcc)
+# add_subdirectory(tools/effcc)
+# add_subdirectory(tools/mdlcc)
+# add_subdirectory(tools/pakcc)
+# add_subdirectory(simple_game)

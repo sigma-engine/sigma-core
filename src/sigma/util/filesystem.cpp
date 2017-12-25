@@ -36,5 +36,11 @@ namespace filesystem {
         } while (fbegin != fend);
         return output;
     }
+
+    bool is_hidden(const boost::filesystem::path& path)
+    {
+        auto name = path.filename().string();
+        return !name.empty() && name != ".." && name != "." && name[0] == '.';
+    }
 }
 }

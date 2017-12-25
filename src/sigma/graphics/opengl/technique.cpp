@@ -8,6 +8,8 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+#include <iostream>
+
 namespace sigma {
 namespace opengl {
     technique::technique(shader_manager& shader_mgr, const sigma::graphics::technique& data)

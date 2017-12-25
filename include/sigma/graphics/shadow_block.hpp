@@ -14,16 +14,19 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
+#include <array>
+
 namespace sigma {
 namespace graphics {
     struct R_EXPORT(std140, binding = 1) shadow_block {
-        glm::mat4 light_projection_view_matrix[3];
-        glm::vec4 light_frustum_far_plane[3];
+        BOOST_HANA_DEFINE_STRUCT(
+            shadow_block,
+            (std::array<glm::mat4,3>, light_projection_view_matrix),
+            (std::array<glm::vec4,3>, light_frustum_far_plane));
     };
 }
 }
 
-#include <sigma/graphics/shadow_block.generated.hpp>
-#include <sigma/graphics/shadow_block.std140.hpp>
+// #include <sigma/graphics/shadow_block.std140.hpp>
 
 #endif // SIGMA_GRAPHICS_SHADOW_BLOCK_HPP

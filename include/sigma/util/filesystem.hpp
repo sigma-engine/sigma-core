@@ -13,6 +13,8 @@ namespace filesystem {
     bool SIGMA_API contains_file(boost::filesystem::path directory, boost::filesystem::path file);
 
     boost::filesystem::path SIGMA_API make_relative(boost::filesystem::path directory, boost::filesystem::path file);
+
+    bool SIGMA_API is_hidden(const boost::filesystem::path& path);
 }
 }
 

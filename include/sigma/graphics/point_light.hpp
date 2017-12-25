@@ -11,8 +11,10 @@
 namespace sigma {
 namespace graphics {
     struct R_EXPORT() point_light {
-        glm::vec3 color;
-        float intensity;
+        BOOST_HANA_DEFINE_STRUCT(
+            point_light,
+            (glm::vec3, color),
+            (float, intensity));
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
@@ -23,7 +25,5 @@ namespace graphics {
     };
 }
 }
-
-#include <sigma/graphics/point_light.generated.hpp>
 
 #endif // SIGMA_GRAPHICS_POINT_LIGHT_HPP
