@@ -152,7 +152,8 @@ const TBuiltInResource DefaultTBuiltInResource = {
         /* .generalSamplerIndexing = */ 1,
         /* .generalVariableIndexing = */ 1,
         /* .generalConstantMatrixVectorIndexing = */ 1,
-    }};
+    }
+};
 struct process {
     process()
     {
@@ -193,7 +194,6 @@ void package_shader(
     };
 
     auto rid = type_name_map.at(source_type) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
-
 
     if (shader_database.contains({ rid })) {
         auto h = shader_database.handle_for({ rid });
@@ -319,7 +319,12 @@ void package_shaders(
 
         auto ext = boost::algorithm::to_lower_copy(path.extension().string());
         auto ext_it = ext_to_type.find(ext);
-        if (boost::filesystem::is_regular_file(path) && ext_it != ext_to_type.cend())
-            package_shader(shader_database, source_directory, include_directories, ext_it->second, path);
+        if (boost::filesystem::is_regular_file(path) && ext_it != ext_to_type.cend()) {
+            try {
+                package_shader(shader_database, source_directory, include_directories, ext_it->second, path);
+            } catch (const std::runtime_error& e) {
+                std::cerr << "error: " << e.what() << '\n';
+            }
+        }
     }
 }

@@ -5,8 +5,8 @@
 
 #include <boost/algorithm/string.hpp>
 
-#include <string>
 #include <iostream>
+#include <string>
 
 void package_material(
     const sigma::resource::database<sigma::graphics::texture>& texture_database,
@@ -59,7 +59,12 @@ void package_materials(
         }
 
         auto ext = boost::algorithm::to_lower_copy(path.extension().string());
-        if (boost::filesystem::is_regular_file(path) && ext == ".smat")
-            package_material(texture_database, cubemap_database, technique_database, material_database, source_directory, path);
+        if (boost::filesystem::is_regular_file(path) && ext == ".smat") {
+            try {
+                package_material(texture_database, cubemap_database, technique_database, material_database, source_directory, path);
+            } catch (const std::runtime_error& e) {
+                std::cerr << "error: " << e.what() << '\n';
+            }
+        }
     }
 }

@@ -4,8 +4,8 @@
 
 #include <boost/algorithm/string.hpp>
 
-#include <string>
 #include <iostream>
+#include <string>
 
 void package_cubemap(
     const sigma::resource::database<sigma::graphics::texture>& texture_database,
@@ -59,7 +59,12 @@ void package_cubemaps(
         }
 
         auto ext = boost::algorithm::to_lower_copy(path.extension().string());
-        if (boost::filesystem::is_regular_file(path) && ext == ".cub")
-            package_cubemap(texture_database, cubemap_database, source_directory, path);
+        if (boost::filesystem::is_regular_file(path) && ext == ".cub") {
+            try {
+                package_cubemap(texture_database, cubemap_database, source_directory, path);
+            } catch (const std::runtime_error& e) {
+                std::cerr << "error: " << e.what() << '\n';
+            }
+        }
     }
 }

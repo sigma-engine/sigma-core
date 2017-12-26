@@ -5,8 +5,8 @@
 
 #include <boost/algorithm/string.hpp>
 
-#include <string>
 #include <iostream>
+#include <string>
 
 void package_post_process_effect(
     const sigma::resource::database<sigma::graphics::texture>& texture_database,
@@ -66,7 +66,12 @@ void package_post_process_effects(
         }
 
         auto ext = boost::algorithm::to_lower_copy(path.extension().string());
-        if (boost::filesystem::is_regular_file(path) && ext == ".eff")
-            package_post_process_effect(texture_database, cubemap_database, technique_database, static_mesh_database, post_process_effect_database, source_directory, path);
+        if (boost::filesystem::is_regular_file(path) && ext == ".eff") {
+            try {
+                package_post_process_effect(texture_database, cubemap_database, technique_database, static_mesh_database, post_process_effect_database, source_directory, path);
+            } catch (const std::runtime_error& e) {
+                std::cerr << "error: " << e.what() << '\n';
+            }
+        }
     }
 }

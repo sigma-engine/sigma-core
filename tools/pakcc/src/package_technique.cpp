@@ -6,8 +6,8 @@
 #include <boost/algorithm/string/join.hpp>
 #include <boost/range/adaptor/transformed.hpp>
 
-#include <string>
 #include <iostream>
+#include <string>
 
 void package_technique(
     const sigma::resource::database<sigma::graphics::shader>& shader_database,
@@ -45,7 +45,6 @@ void package_technique(
         technique.shaders.fragment = shader_database.handle_for({ cid.back() });
     }
 
-
     if (technique_database.contains(cid)) {
         auto h = technique_database.handle_for(cid);
 
@@ -81,7 +80,12 @@ void package_techniques(
         }
 
         auto ext = boost::algorithm::to_lower_copy(path.extension().string());
-        if (boost::filesystem::is_regular_file(path) && (ext == ".stech" || ext == ".smat" || ext == ".eff"))
-            package_technique(shader_database, technique_database, source_directory, include_directories, path);
+        if (boost::filesystem::is_regular_file(path) && (ext == ".stech" || ext == ".smat" || ext == ".eff")) {
+            try {
+                package_technique(shader_database, technique_database, source_directory, include_directories, path);
+            } catch (const std::runtime_error& e) {
+                std::cerr << "error: " << e.what() << '\n';
+            }
+        }
     }
 }

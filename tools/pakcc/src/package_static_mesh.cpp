@@ -8,9 +8,9 @@
 
 #include <boost/algorithm/string.hpp>
 
+#include <iostream>
 #include <set>
 #include <string>
-#include <iostream>
 
 glm::vec3 convert_color(aiColor3D c)
 {
@@ -186,7 +186,12 @@ void package_static_meshes(
 
         auto ext = boost::algorithm::to_lower_copy(path.extension().string());
         auto ext_it = supported_ext.find(ext);
-        if (boost::filesystem::is_regular_file(path) && ext_it != supported_ext.cend())
-            package_static_mesh(material_database, static_mesh_database, source_directory, path);
+        if (boost::filesystem::is_regular_file(path) && ext_it != supported_ext.cend()) {
+            try {
+                package_static_mesh(material_database, static_mesh_database, source_directory, path);
+            } catch (const std::runtime_error& e) {
+                std::cerr << "error: " << e.what() << '\n';
+            }
+        }
     }
 }

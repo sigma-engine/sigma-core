@@ -10,9 +10,9 @@
 #include <boost/gil/extension/io/png_io.hpp>
 #include <boost/gil/extension/io/tiff_io.hpp>
 
+#include <iostream>
 #include <string>
 #include <unordered_map>
-#include <iostream>
 
 enum class texture_source_type : unsigned int {
     tiff,
@@ -65,8 +65,8 @@ void package_texture(sigma::resource::database<sigma::graphics::texture>& textur
 
     auto rid = "texture" / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
 
-    if (texture_database.contains({rid})) {
-        auto h = texture_database.handle_for({rid});
+    if (texture_database.contains({ rid })) {
+        auto h = texture_database.handle_for({ rid });
 
         auto source_file_time = boost::filesystem::last_write_time(source_file);
         auto settings_time = source_file_time;
@@ -145,7 +145,11 @@ void package_textures(
         auto ext = boost::algorithm::to_lower_copy(path.extension().string());
         auto ext_it = ext_to_type.find(ext);
         if (boost::filesystem::is_regular_file(path) && ext_it != ext_to_type.cend()) {
-            package_texture(texture_database, source_directory, ext_it->second, path);
+            try {
+                package_texture(texture_database, source_directory, ext_it->second, path);
+            } catch (const std::runtime_error& e) {
+                std::cerr << "error: " << e.what() << '\n';
+            }
         }
     }
 }
