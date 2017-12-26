@@ -51,13 +51,61 @@ std::string get_name(const aiMesh* mesh)
     return name;
 }
 
+void convert_static_mesh(const boost::filesystem::path& package_directory,
+                         const sigma::resource::database<sigma::graphics::material>& material_database,
+                         const aiScene* scene,
+                         const aiMesh* src_mesh,
+                         sigma::graphics::static_mesh& dest_mesh)
+{
+    std::vector<sigma::graphics::static_mesh::vertex> submesh_vertices(src_mesh->mNumVertices);
+    std::vector<sigma::graphics::static_mesh::triangle> submesh_triangles(src_mesh->mNumFaces);
+
+    for (unsigned int j = 0; j < src_mesh->mNumVertices; ++j) {
+        auto pos = src_mesh->mVertices[j];
+        submesh_vertices[j].position = convert_3d(pos);
+
+        if (src_mesh->HasNormals()) {
+            submesh_vertices[j].normal = convert_3d(src_mesh->mNormals[j]);
+        }
+
+        if (src_mesh->HasTangentsAndBitangents()) {
+            submesh_vertices[j].tangent = convert_3d(src_mesh->mTangents[j]);
+            submesh_vertices[j].bitangent = convert_3d(src_mesh->mBitangents[j]);
+        }
+
+        if (src_mesh->HasTextureCoords(0)) {
+            submesh_vertices[j].texcoord = convert_2d(src_mesh->mTextureCoords[0][j]);
+        }
+    }
+
+    for (unsigned int j = 0; j < src_mesh->mNumFaces; ++j) {
+        aiFace f = src_mesh->mFaces[j];
+        for (unsigned int k = 0; k < 3; ++k)
+            submesh_triangles[j][k] = f.mIndices[k] + static_cast<unsigned int>(dest_mesh.vertices.size());
+    }
+
+    std::string material_name = get_name(scene->mMaterials[src_mesh->mMaterialIndex], package_directory);
+
+    // TODO warn if material slot has been used.
+    // TODO error if missing material.
+    dest_mesh.materials.push_back(material_database.handle_for({ boost::filesystem::path{ "material" } / material_name }));
+    dest_mesh.material_slots.push_back(std::make_pair(dest_mesh.triangles.size(), submesh_triangles.size()));
+
+    dest_mesh.vertices.reserve(dest_mesh.vertices.size() + submesh_vertices.size());
+    dest_mesh.vertices.insert(dest_mesh.vertices.end(), submesh_vertices.begin(), submesh_vertices.end());
+
+    dest_mesh.triangles.reserve(dest_mesh.triangles.size() + submesh_triangles.size());
+    dest_mesh.triangles.insert(dest_mesh.triangles.end(), submesh_triangles.begin(), submesh_triangles.end());
+}
+
 void package_static_mesh(
     const sigma::resource::database<sigma::graphics::material>& material_database,
     sigma::resource::database<sigma::graphics::static_mesh>& static_mesh_database,
     const boost::filesystem::path& source_directory,
     const boost::filesystem::path& source_file)
 {
-    // TODO FEATURE add settings?
+    auto settings_path = source_file.parent_path() / (source_file.stem().string() + ".mdl");
+
     auto package_path = sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
     auto package_directory = package_path.parent_path();
     auto rid = "static_mesh" / package_path;
@@ -66,16 +114,28 @@ void package_static_mesh(
         auto h = static_mesh_database.handle_for({ rid });
 
         auto source_file_time = boost::filesystem::last_write_time(source_file);
+        auto settings_time = source_file_time;
+        if (boost::filesystem::exists(settings_path))
+            settings_time = boost::filesystem::last_write_time(settings_path);
+
         auto resource_time = static_mesh_database.last_modification_time(h);
-        if (source_file_time <= resource_time)
+        if (source_file_time <= resource_time && settings_time <= resource_time)
             return;
     }
 
     std::cout << "packaging: " << rid << "\n";
 
+    Json::Value settings(Json::objectValue);
+    if (boost::filesystem::exists(settings_path)) {
+        std::ifstream file(settings_path.string());
+        file >> settings;
+    }
+
+    // TODO FEATURE add settings.
+
     Assimp::Importer importer;
 
-    const aiScene* scene = importer.ReadFile(source_file.c_str(),
+    const aiScene *scene = importer.ReadFile(source_file.c_str(),
         aiProcess_CalcTangentSpace
             | aiProcess_JoinIdenticalVertices
             | aiProcess_Triangulate
@@ -94,7 +154,7 @@ void package_static_mesh(
             | aiProcess_RemoveComponent
             // | aiProcess_GenNormals
             // | aiProcess_GenSmoothNormals
-            | aiProcess_SplitLargeMeshes
+//            | aiProcess_SplitLargeMeshes
             | aiProcess_PreTransformVertices
             // | aiProcess_FixInfacingNormals
             // | aiProcess_TransformUVCoords
@@ -110,50 +170,10 @@ void package_static_mesh(
         throw std::runtime_error(importer.GetErrorString());
 
     sigma::graphics::static_mesh dest_mesh;
-
     for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
         if (boost::ends_with(get_name(scene->mMeshes[i]), "_high"))
             continue;
-
-        auto src_mesh = scene->mMeshes[i];
-        std::vector<sigma::graphics::static_mesh::vertex> submesh_vertices(src_mesh->mNumVertices);
-        for (unsigned int j = 0; j < src_mesh->mNumVertices; ++j) {
-            auto pos = src_mesh->mVertices[j];
-            submesh_vertices[j].position = convert_3d(pos);
-
-            if (src_mesh->HasNormals()) {
-                submesh_vertices[j].normal = convert_3d(src_mesh->mNormals[j]);
-            }
-
-            if (src_mesh->HasTangentsAndBitangents()) {
-                submesh_vertices[j].tangent = convert_3d(src_mesh->mTangents[j]);
-                submesh_vertices[j].bitangent = convert_3d(src_mesh->mBitangents[j]);
-            }
-
-            if (src_mesh->HasTextureCoords(0)) {
-                submesh_vertices[j].texcoord = convert_2d(src_mesh->mTextureCoords[0][j]);
-            }
-        }
-
-        std::vector<sigma::graphics::static_mesh::triangle> submesh_triangles(src_mesh->mNumFaces);
-        for (unsigned int j = 0; j < src_mesh->mNumFaces; ++j) {
-            aiFace f = src_mesh->mFaces[j];
-            for (unsigned int k = 0; k < 3; ++k)
-                submesh_triangles[j][k] = f.mIndices[k] + static_cast<unsigned int>(dest_mesh.vertices.size());
-        }
-
-        std::string material_name = get_name(scene->mMaterials[src_mesh->mMaterialIndex], package_directory);
-
-        // TODO warn if material slot has been used.
-        // TODO error if missing material.
-        dest_mesh.materials.push_back(material_database.handle_for({ boost::filesystem::path{ "material" } / material_name }));
-        dest_mesh.material_slots.push_back(std::make_pair(dest_mesh.triangles.size(), submesh_triangles.size()));
-
-        dest_mesh.vertices.reserve(dest_mesh.vertices.size() + submesh_vertices.size());
-        dest_mesh.vertices.insert(dest_mesh.vertices.end(), submesh_vertices.begin(), submesh_vertices.end());
-
-        dest_mesh.triangles.reserve(dest_mesh.triangles.size() + submesh_triangles.size());
-        dest_mesh.triangles.insert(dest_mesh.triangles.end(), submesh_triangles.begin(), submesh_triangles.end());
+        convert_static_mesh(package_directory, material_database, scene, scene->mMeshes[i], dest_mesh);
     }
     dest_mesh.vertices.shrink_to_fit();
     dest_mesh.triangles.shrink_to_fit();
