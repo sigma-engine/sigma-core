@@ -2,6 +2,7 @@
 #ifndef SIGMA_TRANSFORM_HPP
 #define SIGMA_TRANSFORM_HPP
 
+#include <sigma/component.hpp>
 #include <sigma/config.hpp>
 #include <sigma/reflect.hpp>
 #include <sigma/util/glm_serialize.hpp>
@@ -41,5 +42,7 @@ struct R_EXPORT() transform {
     }
 };
 }
+
+REGISTER_COMPONENT(sigma::transform)
 
 #endif // SIGMA_TRANSFORM_HPP

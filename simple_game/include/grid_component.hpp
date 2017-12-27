@@ -2,6 +2,7 @@
 #ifndef GRID_COMPONENT_HPP
 #define GRID_COMPONENT_HPP
 
+#include <sigma/component.hpp>
 #include <sigma/reflect.hpp>
 
 struct R_EXPORT() grid_component {
@@ -21,5 +22,7 @@ struct R_EXPORT() grid_component {
         ar& column_spacing;
     }
 };
+
+REGISTER_COMPONENT(grid_component)
 
 #endif // GRID_COMPONENT_HPP

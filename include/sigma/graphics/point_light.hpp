@@ -2,6 +2,7 @@
 #ifndef SIGMA_GRAPHICS_POINT_LIGHT_HPP
 #define SIGMA_GRAPHICS_POINT_LIGHT_HPP
 
+#include <sigma/component.hpp>
 #include <sigma/config.hpp>
 #include <sigma/reflect.hpp>
 
@@ -15,6 +16,12 @@ namespace graphics {
             (glm::vec3, color),
             (float, intensity));
 
+        point_light(const glm::vec3& color = { 1.0f, 1.0f, 1.0f }, float intensity = 1.0f)
+            : color{ color }
+            , intensity{ intensity }
+        {
+        }
+
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
         {
@@ -24,5 +31,7 @@ namespace graphics {
     };
 }
 }
+
+REGISTER_COMPONENT(sigma::graphics::point_light)
 
 #endif // SIGMA_GRAPHICS_POINT_LIGHT_HPP

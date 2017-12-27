@@ -2,6 +2,7 @@
 #ifndef SIGMA_GRAPHICS_SPOT_LIGHT_HPP
 #define SIGMA_GRAPHICS_SPOT_LIGHT_HPP
 
+#include <sigma/component.hpp>
 #include <sigma/config.hpp>
 #include <sigma/frustum.hpp>
 #include <sigma/reflect.hpp>
@@ -40,5 +41,7 @@ namespace graphics {
     };
 }
 }
+
+REGISTER_COMPONENT(sigma::graphics::spot_light)
 
 #endif // SIGMA_GRAPHICS_SPOT_LIGHT_HPP
