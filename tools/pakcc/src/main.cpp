@@ -2,7 +2,7 @@
 #include <package_material.hpp>
 #include <package_post_process_effect.hpp>
 #include <package_shader.hpp>
-#include <package_static_mesh.hpp>
+#include <package_model.hpp>
 #include <package_technique.hpp>
 #include <package_texture.hpp>
 
@@ -89,7 +89,7 @@ int main(int argc, char const* argv[])
             package_materials(texture_database, cubemap_database, technique_database, material_database, source_directory);
 
         for (auto source_directory : source_directories)
-            package_static_meshes(material_database, static_mesh_database, source_directory);
+            package_models(material_database, static_mesh_database, source_directory);
 
         for (auto source_directory : source_directories)
             package_post_process_effects(texture_database, cubemap_database, technique_database, static_mesh_database, post_process_effect_database, source_directory);
