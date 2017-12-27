@@ -31,7 +31,7 @@ private:
 
 class simple_game : public sigma::game<simple_world> {
 public:
-    simple_game(const boost::filesystem::path& cache_path, sigma::resource::cache<sigma::graphics::static_mesh>& static_meshes);
+    simple_game(const boost::filesystem::path& cache_path);
 
     sigma::transform& random_transform(sigma::entity e);
 

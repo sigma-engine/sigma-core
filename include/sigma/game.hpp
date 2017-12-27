@@ -3,8 +3,8 @@
 
 #include <sigma/config.hpp>
 #include <sigma/graphics/static_mesh_instance.hpp>
-#include <sigma/world.hpp>
 #include <sigma/util/json_conversion.hpp>
+#include <sigma/world.hpp>
 
 #include <json/json.h>
 
@@ -17,10 +17,11 @@ namespace sigma {
 template <class World>
 class game {
 public:
-    game(resource::cache<graphics::static_mesh>& static_meshes)
-        : static_meshes_(static_meshes)
-    {
-    }
+    game() = default;
+
+    game(game<World>&&) = default;
+
+    game<World>& operator=(game<World>&&) = default;
 
     virtual ~game() = default;
 
@@ -40,8 +41,10 @@ public:
     virtual void update(std::chrono::duration<float> dt) = 0;
 
 protected:
+    game(const game<World>&) = delete;
+    game<World>& operator=(const game<World>&) = delete;
+
     World world_;
-    resource::cache<graphics::static_mesh>& static_meshes_;
 };
 }
 
