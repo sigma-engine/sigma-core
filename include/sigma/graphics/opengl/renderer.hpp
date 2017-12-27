@@ -45,7 +45,7 @@
 namespace sigma {
 
 namespace opengl {
-    static void calculate_cascade_frustums(const frustum& view_frustum, frustum* cascade_frustums, int count)
+    static inline void calculate_cascade_frustums(const frustum& view_frustum, frustum* cascade_frustums, int count)
     {
         // TODO move this into viewport or
         // what ever viewport gets refactored into.
@@ -369,7 +369,7 @@ namespace opengl {
                     float minZ, maxZ;
                     viewport.view_frustum.full_light_projection(light_view, minZ, maxZ);
 
-                    for (int i = 0; i < sbuffer_.count(); ++i) {
+                    for (std::size_t i = 0; i < sbuffer_.count(); ++i) {
                         auto light_projection = cascade_frustums[i].clip_light_projection(light_view, minZ, maxZ);
                         debug_frustums.emplace_back(glm::vec3{ 1, 0, 0 }, glm::inverse(cascade_frustums[i].projection_view()));
                         debug_frustums.emplace_back(glm::vec3{ 1, 1, 0 }, glm::inverse(light_projection * light_view));
@@ -385,7 +385,7 @@ namespace opengl {
                 float minZ, maxZ;
                 viewport.view_frustum.full_light_projection(light_view, minZ, maxZ);
 
-                for (int i = 0; i < sbuffer_.count(); ++i) {
+                for (std::size_t i = 0; i < sbuffer_.count(); ++i) {
                     auto light_projection = cascade_frustums[i].clip_light_projection(light_view, minZ, maxZ);
                     shadow_.light_projection_view_matrix[i] = light_projection * light_view;
                     shadow_.light_frustum_far_plane[i] = cascade_frustums[i].far_plane();
