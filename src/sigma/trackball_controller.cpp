@@ -48,7 +48,7 @@ void trackball_controller::update(float x, float y)
 
     lastLocation_ = currentLocation_;
     currentLocation_ = location;
-    auto view_vector = glm::rotate(rotation_, VIEW * glm::length(position_));
+    // auto view_vector = glm::rotate(rotation_, VIEW * glm::length(position_));
     auto right_vector = glm::rotate(rotation_, RIGHT);
     auto up_vector = glm::rotate(rotation_, UP);
     if (panning_) {

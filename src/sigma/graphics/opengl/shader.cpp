@@ -20,8 +20,13 @@ namespace opengl {
             return shader_type::FRAGMENT_SHADER;
         case graphics::shader_type::geometry:
             return shader_type::GEOMETRY_SHADER;
+        case graphics::shader_type::tessellation_control:
+            return shader_type::TESS_CONTROL_SHADER;
+        case graphics::shader_type::tessellation_evaluation:
+            return shader_type::TESS_EVALUATION_SHADER;
+        default:
+            return shader_type::NONE_SHADER;
         }
-        return shader_type::NONE_SHADER;
     }
 
     shader::shader(shader_type type, std::string source)

@@ -206,7 +206,7 @@ TEST(world_tests, for_each_10_entites_with_two_components_10_with_one)
     EXPECT_EQ(10, count);
 }
 
-TEST(world_test, for_each_should_not_loop_over_dead_entities)
+TEST(world_tests, for_each_should_not_loop_over_dead_entities)
 {
     test_world w;
     std::vector<sigma::entity> entities;

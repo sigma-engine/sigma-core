@@ -23,8 +23,8 @@ namespace opengl {
         resource::cache<graphics::static_mesh>& static_mesh_cache,
         resource::cache<graphics::post_process_effect>& effect_cache)
         : graphics::renderer(size)
-        , size_(size.x, size.y)
         , loader_status_(gladLoadGL())
+        , size_(size.x, size.y)
         , default_fbo_(size_)
         , gbuffer_(size_)
         , sbuffer_({ 1024, 1024 }, 3)

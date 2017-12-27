@@ -27,7 +27,7 @@ boost::gil::rgb32f_pixel_t hrd_rgbe_to_rgb(const rgbe8_pixel_t& pixel)
 bool hdr_old_rle_decode(std::vector<rgbe8_pixel_t>& scanline, int start, std::ifstream& file)
 {
     int rshift = 0;
-    for (int i = start; i < scanline.size();) {
+    for (std::size_t i = start; i < scanline.size();) {
         file.read((char*)&scanline[i], sizeof(rgbe8_pixel_t));
         if (file.eof())
             return false;
@@ -55,7 +55,7 @@ bool hdr_rle_decode(std::vector<rgbe8_pixel_t>& scanline, std::ifstream& file)
         return hdr_old_rle_decode(scanline, 1, file);
 
     for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < scanline.size();) {
+        for (std::size_t j = 0; j < scanline.size();) {
             unsigned char count = file.get();
             if (count > 128) { // RLE run
                 count &= 127;
