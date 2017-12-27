@@ -261,7 +261,8 @@ namespace json {
             static bool from(const Json::Value& source, handle& output)
             {
                 if (source.isConvertibleTo(Json::uintValue)) {
-                    output = { source.asUInt(), 0 }; // TODO version
+                    output.index = source.asUInt();
+                    output.version = 0; // TODO version
                     return true;
                 }
                 return false;
@@ -277,8 +278,11 @@ namespace json {
         struct type_traits<T[N]> {
             static bool from(const Json::Value& source, T* output)
             {
-                for (long int i = 0; i < N; ++i)
-                    from_json(source[(int)i], output[i]);
+                for (long int i = 0; i < N; ++i) {
+                    if (!from_json(source[(int)i], output[i]))
+                        return false;
+                }
+                return true;
             }
 
             static void to(const T* source, Json::Value& output)
@@ -299,6 +303,10 @@ namespace json {
                     output = graphics::texture_filter::NEAREST;
                 else if (lower == "NONE")
                     output = graphics::texture_filter::NONE;
+                else
+                    return false;
+
+                return true;
             }
 
             static void to(const sigma::graphics::texture_filter& source, Json::Value& output)
@@ -328,6 +336,9 @@ namespace json {
                     output = sigma::graphics::texture_format::RGBA8;
                 else if (lower == "RGB32F")
                     output = sigma::graphics::texture_format::RGB32F;
+                else
+                    return false;
+                return true;
             }
 
             static void to(const sigma::graphics::texture_format& source, Json::Value& output)
