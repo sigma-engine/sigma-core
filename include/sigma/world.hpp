@@ -181,7 +181,8 @@ struct world {
     void remove_components(entity e)
     {
         using expand_type = int[];
-        expand_type{ (world::template remove<Components>(e), 0)... };
+        expand_type d{ (world::template remove<Components>(e), 0)... };
+        (void)d;
     }
 
     void destroy(entity e)
