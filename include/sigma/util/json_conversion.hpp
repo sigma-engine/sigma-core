@@ -1,9 +1,11 @@
 #ifndef SIGMA_ENGINE_JSON_CONVERSION_HPP
 #define SIGMA_ENGINE_JSON_CONVERSION_HPP
 
+#include <sigma/component.hpp>
 #include <sigma/config.hpp>
 #include <sigma/graphics/texture.hpp>
 #include <sigma/handle.hpp>
+#include <sigma/world.hpp>
 
 #include <json/json.h>
 
@@ -17,6 +19,9 @@
 
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem/path.hpp>
+#include <boost/hana/at_key.hpp>
+#include <boost/hana/for_each.hpp>
+#include <boost/hana/keys.hpp>
 
 namespace sigma {
 namespace json {
@@ -354,6 +359,63 @@ namespace json {
                     output = "RGB32F";
                     break;
                 }
+            }
+        };
+
+        template <class T>
+        struct type_traits {
+            static bool from(const Json::Value& source, T& output)
+            {
+                bool good = true;
+                boost::hana::for_each(boost::hana::keys(output), [&](auto key) {
+                    auto& member = boost::hana::at_key(output, key);
+                    using member_type = std::remove_reference_t<decltype(member)>;
+                    if (!type_traits<member_type>::from(source[key.c_str()], member))
+                        good = false;
+                });
+                return true;
+            }
+
+            static void to(const T& source, Json::Value& output)
+            {
+                boost::hana::for_each(boost::hana::keys(source), [&](auto key) {
+                    const auto& member = boost::hana::at_key(source, key);
+                    using member_type = std::remove_const_t<std::remove_reference_t<decltype(member)>>;
+                    type_traits<member_type>::to(member, output[key.c_str()]);
+                });
+            }
+        };
+
+        template <class... Components>
+        struct type_traits<sigma::world<Components...>> {
+            template <class T>
+            struct component_tag {
+                using component_type = T;
+            };
+
+            template <class Func>
+            static void foreach_component(Func f)
+            {
+                auto l = { (f(component_tag<Components>{}), 0)... };
+                (void)l;
+            }
+
+            static bool from(const Json::Value& source, sigma::world<Components...>& output)
+            {
+                bool good = true;
+                for (auto entity : source.getMemberNames()) {
+                    auto e = output.create();
+                    auto& src = source[entity];
+                    foreach_component([&](auto comp_tag) {
+                        using component_type = typename decltype(comp_tag)::component_type;
+                        if (src.isMember(component_name(component_type))) {
+                            component_type* cmp = output.template add<component_type>(e);
+                            if (!type_traits<component_type>::from(src[component_name(component_type)], *cmp))
+                                good = false;
+                        }
+                    });
+                }
+                return good;
             }
         };
     }
