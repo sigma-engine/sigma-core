@@ -142,17 +142,17 @@ namespace json {
         struct type_traits<glm::vec4> {
             static bool from(const Json::Value& source, glm::vec4& output)
             {
-                // TODO support x,y,z,w
-                return source.isArray() && source.size() == 4 && from_json(source[0], output.x) && from_json(source[1], output.y) && from_json(source[2], output.z) && from_json(source[3], output.w);
+                // TODO support w,x,y,z
+                return source.isArray() && source.size() == 4 && from_json(source[0], output.w) && from_json(source[1], output.x) && from_json(source[2], output.y) && from_json(source[3], output.z);
             }
 
             static void to(const glm::vec4& source, Json::Value& output)
             {
-                // TODO support x,y,z,w
-                output[0] = source.x;
-                output[1] = source.y;
-                output[2] = source.z;
-                output[3] = source.w;
+                // TODO support w,x,y,z
+                output[0] = source.w;
+                output[1] = source.x;
+                output[2] = source.y;
+                output[3] = source.z;
             }
         };
 
