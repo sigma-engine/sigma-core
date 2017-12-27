@@ -160,18 +160,40 @@ namespace json {
         struct type_traits<glm::quat> {
             static bool from(const Json::Value& source, glm::quat& output)
             {
-                glm::vec3 e;
-                if (from_json(source, e)) {
-                    output = glm::quat{ glm::radians(e) };
-                    return true;
+                if (source.isArray()) {
+                    if (source.size() == 4) {
+                        return from_json(source[0], output.w) && from_json(source[1], output.x) && from_json(source[2], output.y) && from_json(source[3], output.z);
+                    } else if (source.size() == 3) {
+                        glm::vec3 e;
+                        if (from_json(source, e)) {
+                            output = glm::quat{ glm::radians(e) };
+                            return true;
+                        }
+                    }
+                    return false;
+                } else {
+                    if (!source.isMember("x") || !source.isMember("y") || !source.isMember("z"))
+                        return false;
+                    if (source.isMember("w")) {
+                        return from_json(source["w"], output.w) && from_json(source["x"], output.x) && from_json(source["y"], output.y) && from_json(source["z"], output.z);
+                    } else {
+                        glm::vec3 e;
+                        if (from_json(source, e)) {
+                            output = glm::quat{ glm::radians(e) };
+                            return true;
+                        }
+                    }
                 }
-                // TODO support x,y,z,w
                 return false;
             }
 
             static void to(const glm::quat& source, Json::Value& output)
             {
-                to_json(glm::degrees(glm::eulerAngles(source)), output);
+                // TODO support w,x,y,z
+                output[0] = source.w;
+                output[1] = source.x;
+                output[2] = source.y;
+                output[3] = source.z;
             }
         };
 
