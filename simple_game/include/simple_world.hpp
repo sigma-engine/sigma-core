@@ -1,4 +1,3 @@
-// TEMPLATE(generated.hpp)
 #ifndef SIMPLE_WORLD_HPP
 #define SIMPLE_WORLD_HPP
 

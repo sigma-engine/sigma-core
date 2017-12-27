@@ -1,4 +1,3 @@
-// TEMPLATE(generated.hpp)
 #ifndef GRID_COMPONENT_HPP
 #define GRID_COMPONENT_HPP
 

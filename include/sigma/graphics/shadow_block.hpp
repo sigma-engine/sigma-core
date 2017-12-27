@@ -1,6 +1,3 @@
-// TEMPLATE(generated.hpp)
-// TEMPLATE(std140.hpp)
-// TEMPLATE(glsl)
 #ifndef SIGMA_GRAPHICS_SHADOW_BLOCK_HPP
 #define SIGMA_GRAPHICS_SHADOW_BLOCK_HPP
 

@@ -1,4 +1,3 @@
-// TEMPLATE(generated.hpp)
 #ifndef SIGMA_GRAPHICS_SPOT_LIGHT_HPP
 #define SIGMA_GRAPHICS_SPOT_LIGHT_HPP
 
