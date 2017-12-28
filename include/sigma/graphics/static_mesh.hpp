@@ -4,6 +4,7 @@
 #include <sigma/config.hpp>
 #include <sigma/graphics/material.hpp>
 #include <sigma/resource/cache.hpp>
+#include <sigma/resource/resource.hpp>
 #include <sigma/util/filesystem.hpp>
 #include <sigma/util/glm_serialize.hpp>
 
@@ -13,7 +14,6 @@
 #include <boost/serialization/array.hpp>
 #include <boost/serialization/unordered_map.hpp>
 #include <boost/serialization/vector.hpp>
-#include <boost/serialization/version.hpp>
 
 #include <array>
 #include <cstddef>
@@ -58,6 +58,6 @@ namespace graphics {
 }
 }
 
-BOOST_CLASS_VERSION(sigma::graphics::static_mesh, 1);
+REGISTER_RESOURCE(sigma::graphics::static_mesh, static_mesh, 1);
 
 #endif // SIGMA_GRAPHICS_STATIC_MESH_HPP

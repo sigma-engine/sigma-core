@@ -13,7 +13,7 @@ void package_cubemap(
     const boost::filesystem::path& source_directory,
     const boost::filesystem::path& source_file)
 {
-    auto rid = "cubemap" / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
+    auto rid = resource_shortname(sigma::graphics::cubemap) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
     if (cubemap_database.contains({ rid })) {
         auto h = cubemap_database.handle_for({ rid });
 
@@ -34,12 +34,13 @@ void package_cubemap(
     sigma::graphics::cubemap cubemap;
     // TODO:(NOW) error if can not find textures.
     // TODO: (NOW) throw if missing a face.
-    cubemap.right = texture_database.handle_for({ boost::filesystem::path{ "texture" } / settings["right"].asString() });
-    cubemap.left = texture_database.handle_for({ boost::filesystem::path{ "texture" } / settings["left"].asString() });
-    cubemap.top = texture_database.handle_for({ boost::filesystem::path{ "texture" } / settings["top"].asString() });
-    cubemap.bottom = texture_database.handle_for({ boost::filesystem::path{ "texture" } / settings["bottom"].asString() });
-    cubemap.back = texture_database.handle_for({ boost::filesystem::path{ "texture" } / settings["back"].asString() });
-    cubemap.front = texture_database.handle_for({ boost::filesystem::path{ "texture" } / settings["front"].asString() });
+    boost::filesystem::path texture_prefix{resource_shortname(sigma::graphics::texture)};
+    cubemap.right = texture_database.handle_for({ texture_prefix / settings["right"].asString() });
+    cubemap.left = texture_database.handle_for({ texture_prefix / settings["left"].asString() });
+    cubemap.top = texture_database.handle_for({ texture_prefix / settings["top"].asString() });
+    cubemap.bottom = texture_database.handle_for({ texture_prefix / settings["bottom"].asString() });
+    cubemap.back = texture_database.handle_for({ texture_prefix / settings["back"].asString() });
+    cubemap.front = texture_database.handle_for({ texture_prefix / settings["front"].asString() });
     cubemap_database.insert({ rid }, cubemap);
 }
 

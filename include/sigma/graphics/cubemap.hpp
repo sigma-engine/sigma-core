@@ -4,8 +4,7 @@
 #include <sigma/config.hpp>
 #include <sigma/graphics/texture.hpp>
 #include <sigma/resource/cache.hpp>
-
-#include <boost/serialization/version.hpp>
+#include <sigma/resource/resource.hpp>
 
 namespace sigma {
 namespace graphics {
@@ -32,6 +31,6 @@ namespace graphics {
 }
 }
 
-BOOST_CLASS_VERSION(sigma::graphics::cubemap, 1);
+REGISTER_RESOURCE(sigma::graphics::cubemap, cubemap, 1);
 
 #endif // SIGMA_GRAPHICS_CUBEMAP_HPP

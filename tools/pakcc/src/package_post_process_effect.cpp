@@ -17,7 +17,7 @@ void package_post_process_effect(
     const boost::filesystem::path& source_directory,
     const boost::filesystem::path& source_file)
 {
-    auto rid = "post_process_effect" / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
+    auto rid = resource_shortname(sigma::graphics::post_process_effect) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
     if (post_process_effect_database.contains({ rid })) {
         auto h = post_process_effect_database.handle_for({ rid });
 
@@ -39,10 +39,10 @@ void package_post_process_effect(
 
     convert_effect(texture_database, cubemap_database, technique_database, effect, settings);
 
-    if (settings.isMember("static_mesh"))
-        effect.mesh = static_mesh_database.handle_for({ boost::filesystem::path{ "static_mesh" } / settings["static_mesh"].asString() });
+    if (settings.isMember(resource_shortname(sigma::graphics::static_mesh)))
+        effect.mesh = static_mesh_database.handle_for({ boost::filesystem::path{ resource_shortname(sigma::graphics::static_mesh) } / settings[resource_shortname(sigma::graphics::static_mesh)].asString() });
     else
-        effect.mesh = static_mesh_database.handle_for({ boost::filesystem::path{ "static_mesh/fullscreen_quad" } });
+        effect.mesh = static_mesh_database.handle_for({ resource_shortname(sigma::graphics::static_mesh) / boost::filesystem::path{ "fullscreen_quad" } });
 
     post_process_effect_database.insert({ rid }, effect);
 }

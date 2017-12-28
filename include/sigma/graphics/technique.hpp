@@ -6,13 +6,11 @@
 #include <sigma/graphics/shader.hpp>
 #include <sigma/graphics/texture.hpp>
 #include <sigma/resource/cache.hpp>
+#include <sigma/resource/resource.hpp>
 #include <sigma/util/glm_serialize.hpp>
 
-#include <boost/filesystem/path.hpp>
-#include <boost/serialization/serialization.hpp>
 #include <boost/serialization/set.hpp>
 #include <boost/serialization/unordered_map.hpp>
-#include <boost/serialization/version.hpp>
 
 #include <set>
 #include <string>
@@ -105,6 +103,6 @@ namespace graphics {
 
 BOOST_CLASS_VERSION(sigma::graphics::technique_identifier, 1);
 BOOST_CLASS_VERSION(sigma::graphics::technique_uniform_data, 1);
-BOOST_CLASS_VERSION(sigma::graphics::technique, 1);
+REGISTER_RESOURCE(sigma::graphics::technique, technique, 1);
 
 #endif // SIGMA_GRAPHICS_TECHNIQUE_HPP

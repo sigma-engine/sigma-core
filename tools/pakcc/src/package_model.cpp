@@ -1,9 +1,9 @@
 #include <package_model.hpp>
 
+#include <sigma/graphics/static_mesh_instance.hpp>
+#include <sigma/transform.hpp>
 #include <sigma/util/filesystem.hpp>
 #include <sigma/util/json_conversion.hpp>
-#include <sigma/transform.hpp>
-#include <sigma/graphics/static_mesh_instance.hpp>
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
@@ -25,7 +25,8 @@ glm::vec3 convert_3d(aiVector3D v)
     return { v.x, v.y, v.z };
 }
 
-glm::quat convert(aiQuaternion q) {
+glm::quat convert(aiQuaternion q)
+{
     return { q.w, q.x, q.y, q.z };
 }
 
@@ -104,7 +105,8 @@ void convert_static_mesh(
 
     // TODO warn if material slot has been used.
     // TODO error if missing material.
-    dest_mesh.materials.push_back(material_database.handle_for({ boost::filesystem::path{ "material" } / material_name }));
+    boost::filesystem::path material_prefix{ resource_shortname(sigma::graphics::material) };
+    dest_mesh.materials.push_back(material_database.handle_for({ material_prefix / material_name }));
     dest_mesh.material_slots.push_back(std::make_pair(dest_mesh.triangles.size(), submesh_triangles.size()));
 
     dest_mesh.vertices.reserve(dest_mesh.vertices.size() + submesh_vertices.size());
@@ -123,7 +125,7 @@ void package_static_mesh(
 {
     auto package_directory = package_path.parent_path();
 
-    auto rid = "static_mesh" / package_path;
+    auto rid = resource_shortname(sigma::graphics::static_mesh) / package_path;
 
     if (static_mesh_database.contains({ rid })) {
         auto h = static_mesh_database.handle_for({ rid });
@@ -171,11 +173,11 @@ void package_static_mesh(
             // | aiProcess_GenSmoothNormals
             // | aiProcess_SplitLargeMeshes
             | aiProcess_PreTransformVertices
-        // | aiProcess_FixInfacingNormals
-        // | aiProcess_TransformUVCoords
-        // | aiProcess_ConvertToLeftHanded
-         | aiProcess_OptimizeMeshes
-//         | aiProcess_OptimizeGraph
+            // | aiProcess_FixInfacingNormals
+            // | aiProcess_TransformUVCoords
+            // | aiProcess_ConvertToLeftHanded
+            | aiProcess_OptimizeMeshes
+        //         | aiProcess_OptimizeGraph
         // | aiProcess_FlipWindingOrder
         // | aiProcess_SplitByBoneCount
         // | aiProcess_Debone
@@ -196,13 +198,13 @@ void package_static_mesh(
     static_mesh_database.insert({ rid }, dest_mesh);
 }
 
-void convert(const sigma::resource::database<sigma::graphics::static_mesh> &static_mesh_database,
-             const boost::filesystem::path& package_path,
-             const aiScene* scene,
-             std::string parent_name,
-             const aiMatrix4x4 parent_matrix,
-             const aiNode* root,
-             Json::Value& settings)
+void convert(const sigma::resource::database<sigma::graphics::static_mesh>& static_mesh_database,
+    const boost::filesystem::path& package_path,
+    const aiScene* scene,
+    std::string parent_name,
+    const aiMatrix4x4 parent_matrix,
+    const aiNode* root,
+    Json::Value& settings)
 {
     auto node_name = parent_name + "/" + get_name(root);
     auto matrix = parent_matrix * root->mTransformation;
@@ -212,22 +214,22 @@ void convert(const sigma::resource::database<sigma::graphics::static_mesh> &stat
     aiVector3D position;
     matrix.Decompose(scale, rotation, position);
 
-    for(unsigned int j = 0; j < root->mNumMeshes; ++j) {
+    for (unsigned int j = 0; j < root->mNumMeshes; ++j) {
         std::string entity_name = node_name;
-        if(j > 0)
+        if (j > 0)
             entity_name += std::to_string(j);
 
         auto mesh = scene->mMeshes[root->mMeshes[j]];
-        auto rid = "static_mesh" / package_path / (get_name(mesh) + std::to_string(root->mMeshes[j]));
+        auto rid = resource_shortname(sigma::graphics::static_mesh) / package_path / (get_name(mesh) + std::to_string(root->mMeshes[j]));
 
         sigma::graphics::static_mesh_instance mshinst;
-        mshinst.mesh = static_mesh_database.handle_for({rid});
+        mshinst.mesh = static_mesh_database.handle_for({ rid });
         sigma::json::to_json(mshinst, settings[entity_name][component_name(sigma::graphics::static_mesh_instance)]);
 
         sigma::transform txfrom{
             convert_3d(position),
             convert(rotation),
-           convert_3d(scale)
+            convert_3d(scale)
         };
         sigma::json::to_json(txfrom, settings[entity_name][component_name(sigma::transform)]);
     }
@@ -248,18 +250,18 @@ void package_scene(
     auto package_directory = package_path.parent_path();
     auto scene_rid = "scene" / package_path;
 
-//    if (static_mesh_database.contains({ rid })) {
-//        auto h = static_mesh_database.handle_for({ rid });
+    //    if (static_mesh_database.contains({ rid })) {
+    //        auto h = static_mesh_database.handle_for({ rid });
 
-//        auto source_file_time = boost::filesystem::last_write_time(source_file);
-//        auto settings_time = source_file_time;
-//        if (boost::filesystem::exists(settings_path))
-//            settings_time = boost::filesystem::last_write_time(settings_path);
+    //        auto source_file_time = boost::filesystem::last_write_time(source_file);
+    //        auto settings_time = source_file_time;
+    //        if (boost::filesystem::exists(settings_path))
+    //            settings_time = boost::filesystem::last_write_time(settings_path);
 
-//        auto resource_time = static_mesh_database.last_modification_time(h);
-//        if (source_file_time <= resource_time && settings_time <= resource_time)
-//            return;
-//    }
+    //        auto resource_time = static_mesh_database.last_modification_time(h);
+    //        if (source_file_time <= resource_time && settings_time <= resource_time)
+    //            return;
+    //    }
 
     std::cout << "packaging: " << scene_rid << "\n";
 
@@ -269,61 +271,61 @@ void package_scene(
         file >> settings;
     }
 
-     Assimp::Importer importer;
+    Assimp::Importer importer;
 
-     const aiScene* scene = importer.ReadFile(source_file.c_str(),
-         aiProcess_CalcTangentSpace
-             | aiProcess_JoinIdenticalVertices
-             | aiProcess_Triangulate
-             // | aiProcess_LimitBoneWeights
-             | aiProcess_ValidateDataStructure
-             | aiProcess_ImproveCacheLocality
-             // | aiProcess_RemoveRedundantMaterials
-             | aiProcess_SortByPType
-             | aiProcess_FindDegenerates
-             | aiProcess_FindInvalidData
-             // | aiProcess_GenUVCoords
-             // | aiProcess_FindInstances
-             | aiProcess_FlipUVs
-             | aiProcess_CalcTangentSpace
-             // | aiProcess_MakeLeftHanded
-             | aiProcess_RemoveComponent
-         // | aiProcess_GenNormals
-         // | aiProcess_GenSmoothNormals
-         // | aiProcess_SplitLargeMeshes
-         // | aiProcess_PreTransformVertices
-         // | aiProcess_FixInfacingNormals
-         // | aiProcess_TransformUVCoords
-         // | aiProcess_ConvertToLeftHanded
-          | aiProcess_OptimizeMeshes
-         // | aiProcess_OptimizeGraph
-         // | aiProcess_FlipWindingOrder
-         // | aiProcess_SplitByBoneCount
-         // | aiProcess_Debone
-     );
+    const aiScene* scene = importer.ReadFile(source_file.c_str(),
+        aiProcess_CalcTangentSpace
+            | aiProcess_JoinIdenticalVertices
+            | aiProcess_Triangulate
+            // | aiProcess_LimitBoneWeights
+            | aiProcess_ValidateDataStructure
+            | aiProcess_ImproveCacheLocality
+            // | aiProcess_RemoveRedundantMaterials
+            | aiProcess_SortByPType
+            | aiProcess_FindDegenerates
+            | aiProcess_FindInvalidData
+            // | aiProcess_GenUVCoords
+            // | aiProcess_FindInstances
+            | aiProcess_FlipUVs
+            | aiProcess_CalcTangentSpace
+            // | aiProcess_MakeLeftHanded
+            | aiProcess_RemoveComponent
+            // | aiProcess_GenNormals
+            // | aiProcess_GenSmoothNormals
+            // | aiProcess_SplitLargeMeshes
+            // | aiProcess_PreTransformVertices
+            // | aiProcess_FixInfacingNormals
+            // | aiProcess_TransformUVCoords
+            // | aiProcess_ConvertToLeftHanded
+            | aiProcess_OptimizeMeshes
+        // | aiProcess_OptimizeGraph
+        // | aiProcess_FlipWindingOrder
+        // | aiProcess_SplitByBoneCount
+        // | aiProcess_Debone
+    );
 
-     if (scene == nullptr)
-         throw std::runtime_error(importer.GetErrorString());
+    if (scene == nullptr)
+        throw std::runtime_error(importer.GetErrorString());
 
-     for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
-         if (boost::ends_with(get_name(scene->mMeshes[i]), "_high"))
-             continue;
+    for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
+        if (boost::ends_with(get_name(scene->mMeshes[i]), "_high"))
+            continue;
 
-         auto rid = "static_mesh" / package_path / (get_name(scene->mMeshes[i]) + std::to_string(i));
-         std::cout << "packaging: " << rid << "\n";
+        auto rid = resource_shortname(sigma::graphics::static_mesh) / package_path / (get_name(scene->mMeshes[i]) + std::to_string(i));
+        std::cout << "packaging: " << rid << "\n";
 
-         sigma::graphics::static_mesh dest_mesh;
-         convert_static_mesh(package_directory, material_database, scene, scene->mMeshes[i], dest_mesh);
-         dest_mesh.vertices.shrink_to_fit();
-         dest_mesh.triangles.shrink_to_fit();
+        sigma::graphics::static_mesh dest_mesh;
+        convert_static_mesh(package_directory, material_database, scene, scene->mMeshes[i], dest_mesh);
+        dest_mesh.vertices.shrink_to_fit();
+        dest_mesh.triangles.shrink_to_fit();
 
-         static_mesh_database.insert({ rid }, dest_mesh);
-     }
+        static_mesh_database.insert({ rid }, dest_mesh);
+    }
 
-     convert(static_mesh_database, package_path, scene, "", aiMatrix4x4{}, scene->mRootNode, settings);
+    convert(static_mesh_database, package_path, scene, "", aiMatrix4x4{}, scene->mRootNode, settings);
 
-     std::ofstream outfile{"/home/aaron/projects/sigma-engine/build/data/scene/0"};
-     outfile << settings;
+    std::ofstream outfile{ "/home/aaron/projects/sigma-engine/build/data/scene/0" };
+    outfile << settings;
 }
 
 void package_model(

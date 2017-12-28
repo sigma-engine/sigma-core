@@ -3,12 +3,12 @@
 
 #include <sigma/config.hpp>
 #include <sigma/reflect.hpp>
+#include <sigma/resource/resource.hpp>
 #include <sigma/util/glm_serialize.hpp>
 
 #include <glm/vec2.hpp>
 
 #include <boost/serialization/vector.hpp>
-#include <boost/serialization/version.hpp>
 
 #include <vector>
 
@@ -58,6 +58,6 @@ namespace graphics {
 }
 }
 
-BOOST_CLASS_VERSION(sigma::graphics::texture, 1);
+REGISTER_RESOURCE(sigma::graphics::texture, texture, 1);
 
 #endif // SIGMA_GRAPHICS_TEXTURE_HPP

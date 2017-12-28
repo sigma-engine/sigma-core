@@ -63,7 +63,7 @@ void package_texture(sigma::resource::database<sigma::graphics::texture>& textur
 {
     auto settings_path = source_file.parent_path() / (source_file.stem().string() + ".stex");
 
-    auto rid = "texture" / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
+    auto rid = resource_shortname(sigma::graphics::texture) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
 
     if (texture_database.contains({ rid })) {
         auto h = texture_database.handle_for({ rid });

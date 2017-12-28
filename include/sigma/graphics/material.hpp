@@ -3,10 +3,9 @@
 
 #include <sigma/config.hpp>
 #include <sigma/graphics/technique.hpp>
+#include <sigma/resource/resource.hpp>
 
 #include <boost/serialization/base_object.hpp>
-#include <boost/serialization/serialization.hpp>
-#include <boost/serialization/version.hpp>
 
 namespace sigma {
 namespace graphics {
@@ -25,6 +24,6 @@ namespace graphics {
 }
 }
 
-BOOST_CLASS_VERSION(sigma::graphics::material, 1);
+REGISTER_RESOURCE(sigma::graphics::material, material, 1);
 
 #endif // SIGMA_GRAPHICS_MATERIAL_HPP

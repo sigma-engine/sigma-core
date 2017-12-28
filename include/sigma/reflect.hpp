@@ -1,7 +1,6 @@
 #ifndef SIGMA_REFLECT_HPP
 #define SIGMA_REFLECT_HPP
 
-#include <boost/hana/adapt_struct.hpp>
 #include <boost/hana/define_struct.hpp>
 
 #ifdef __REFLECTION_PARSER__

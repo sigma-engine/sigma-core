@@ -16,7 +16,7 @@ void package_material(
     const boost::filesystem::path& source_directory,
     const boost::filesystem::path& source_file)
 {
-    auto rid = "material" / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
+    auto rid = resource_shortname(sigma::graphics::material) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
     if (material_database.contains({ rid })) {
         auto h = material_database.handle_for({ rid });
 

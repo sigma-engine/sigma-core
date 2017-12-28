@@ -2,8 +2,7 @@
 #define SIGMA_GRAPHICS_SHADER_HPP
 
 #include <sigma/config.hpp>
-
-#include <boost/serialization/version.hpp>
+#include <sigma/resource/resource.hpp>
 
 #include <string>
 
@@ -32,6 +31,6 @@ namespace graphics {
 }
 }
 
-BOOST_CLASS_VERSION(sigma::graphics::shader, 1);
+REGISTER_RESOURCE(sigma::graphics::shader, shader, 1);
 
 #endif // SIGMA_GRAPHICS_SHADER_HPP
