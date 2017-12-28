@@ -32,7 +32,6 @@ find_package(TIFF REQUIRED)
 
 add_library(sigma-core STATIC
     # src/sigma/graphics/opengl/debug_draw_renderer.cpp
-    src/glad.c
     src/sigma/frustum.cpp
     src/sigma/game.cpp
     src/sigma/graphics/opengl/cubemap.cpp
@@ -71,6 +70,7 @@ target_link_libraries(sigma-core
     Boost::filesystem
     Boost::serialization
     Threads::Threads
+    glad
     glm
     jsoncpp
     SDL2
