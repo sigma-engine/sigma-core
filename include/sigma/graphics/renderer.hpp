@@ -2,6 +2,7 @@
 #define SIGMA_GRAPHICS_RENDERER_HPP
 
 #include <sigma/config.hpp>
+#include <sigma/context.hpp>
 #include <sigma/frustum.hpp>
 #include <sigma/graphics/post_process_effect.hpp>
 #include <sigma/graphics/technique.hpp>
@@ -41,13 +42,22 @@ namespace graphics {
             }
         };
 
-        renderer(glm::ivec2 size);
+        using context_view_type = context_view<sigma::graphics::texture,
+            sigma::graphics::cubemap,
+            sigma::graphics::shader,
+            sigma::graphics::technique,
+            sigma::graphics::material,
+            sigma::graphics::static_mesh,
+            sigma::graphics::post_process_effect>;
+
+        renderer(glm::ivec2 size, context_view_type ctx);
 
         virtual ~renderer();
 
         virtual void resize(glm::uvec2 size) = 0;
 
     protected:
+        context_view_type context_;
         settings settings_;
 
     private:

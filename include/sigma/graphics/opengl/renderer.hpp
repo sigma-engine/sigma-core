@@ -75,14 +75,7 @@ namespace opengl {
         bool save_frustums = false;
         std::vector<std::pair<glm::vec3, glm::mat4>> debug_frustums;
 
-        renderer(glm::ivec2 size,
-            resource::cache<graphics::texture>& texture_cache,
-            resource::cache<graphics::cubemap>& cubemap_cache,
-            resource::cache<graphics::shader>& shader_cahce,
-            resource::cache<graphics::technique>& technique_cahce,
-            resource::cache<graphics::material>& material_cache,
-            resource::cache<graphics::static_mesh>& static_mesh_cache,
-            resource::cache<graphics::post_process_effect>& effect_cache);
+        renderer(glm::ivec2 size, graphics::renderer::context_view_type ctx);
 
         virtual ~renderer();
 

@@ -7,15 +7,13 @@
 #include <chrono>
 #include <cmath>
 
-simple_game::simple_game(const boost::filesystem::path& cache_path)
+simple_game::simple_game()
     : generator_(6546534)
     , position_distribution_{ { -50, .5f, -50 }, { 50.0f, .5f, 50.0f } }
     , rotation_distribution_{ glm::vec3{ 0.0f }, glm::vec3{ 2.0f * boost::math::constants::pi<float>() } }
     , scale_distribution_{ 0.1f, 10.0f }
     , color_distribution_{ glm::vec3{ 0.0f }, glm::vec3{ 1.0f } }
 {
-    load(cache_path / "scene" / "0");
-
     world_.for_each<sigma::transform, sigma::graphics::static_mesh_instance, grid_component>([&](sigma::entity e, const sigma::transform& txform, sigma::graphics::static_mesh_instance& mesh_instance, const grid_component& grid) {
         for (int x = 0; x < grid.rows; ++x) {
             for (int z = 0; z < grid.columns; ++z) {

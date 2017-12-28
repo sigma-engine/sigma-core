@@ -1,13 +1,13 @@
 #include <simple_game.hpp>
 
+#include <sigma/config.hpp>
+#include <sigma/context.hpp>
 #include <sigma/graphics/opengl/renderer.hpp>
 #include <sigma/graphics/renderer.hpp>
 #include <sigma/trackball_controller.hpp>
 #include <sigma/window.hpp>
 
 #include <SDL2/SDL.h>
-
-#include <boost/filesystem/operations.hpp>
 
 #include <iostream>
 
@@ -17,18 +17,20 @@ int main(int argc, char* argv[])
     if (!boost::filesystem::exists(cache_path))
         cache_path = boost::filesystem::current_path() / ".." / "data";
 
-    sigma::resource::cache<sigma::graphics::texture> textures{ cache_path / "texture" };
-    sigma::resource::cache<sigma::graphics::cubemap> cubemaps{ cache_path / "cubemap" };
-    sigma::resource::cache<sigma::graphics::shader> shaders{ cache_path / "shader" };
-    sigma::resource::cache<sigma::graphics::technique> techniques{ cache_path / "technique" };
-    sigma::resource::cache<sigma::graphics::material> materials{ cache_path / "material" };
-    sigma::resource::cache<sigma::graphics::static_mesh> static_meshes{ cache_path / "static_mesh" };
-    sigma::resource::cache<sigma::graphics::post_process_effect> effects{ cache_path / "post_process_effect" };
+    sigma::context<sigma::graphics::texture,
+        sigma::graphics::cubemap,
+        sigma::graphics::shader,
+        sigma::graphics::technique,
+        sigma::graphics::material,
+        sigma::graphics::static_mesh,
+        sigma::graphics::post_process_effect>
+        context{ cache_path };
 
     sigma::window window{ glm::ivec2{ 1920, 1080 } };
 
-    auto renderer = std::make_unique<sigma::opengl::renderer>(window.size(), textures, cubemaps, shaders, techniques, materials, static_meshes, effects);
-    auto game = std::make_unique<simple_game>(cache_path);
+    auto renderer = std::make_unique<sigma::opengl::renderer>(window.size(), sigma::graphics::renderer::context_view_type{ context });
+
+    auto game = std::make_unique<simple_game>();
 
     sigma::graphics::view_port viewport{
         window.size(),

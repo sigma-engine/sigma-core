@@ -14,42 +14,35 @@
 
 namespace sigma {
 namespace opengl {
-    renderer::renderer(glm::ivec2 size,
-        resource::cache<graphics::texture>& texture_cache,
-        resource::cache<graphics::cubemap>& cubemap_cache,
-        resource::cache<graphics::shader>& shader_cache,
-        resource::cache<graphics::technique>& technique_cache,
-        resource::cache<graphics::material>& material_cache,
-        resource::cache<graphics::static_mesh>& static_mesh_cache,
-        resource::cache<graphics::post_process_effect>& effect_cache)
-        : graphics::renderer(size)
+    renderer::renderer(glm::ivec2 size, graphics::renderer::context_view_type ctx)
+        : graphics::renderer(size, ctx)
         , loader_status_(gladLoadGL())
         , size_(size.x, size.y)
         , default_fbo_(size_)
         , gbuffer_(size_)
         , sbuffer_({ 1024, 1024 }, 3)
         , start_time_(std::chrono::high_resolution_clock::now())
-        , textures_(texture_cache)
-        , cubemaps_(texture_cache, cubemap_cache)
-        , shaders_(shader_cache)
-        , techniques_(shaders_, technique_cache)
-        , materials_(techniques_, material_cache)
-        , static_meshes_(materials_, static_mesh_cache)
-        , effects_(techniques_, static_meshes_, effect_cache)
+        , textures_(ctx.get_cache<graphics::texture>())
+        , cubemaps_(ctx.get_cache<graphics::texture>(), ctx.get_cache<graphics::cubemap>())
+        , shaders_(ctx.get_cache<graphics::shader>())
+        , techniques_(shaders_, ctx.get_cache<graphics::technique>())
+        , materials_(techniques_, ctx.get_cache<graphics::material>())
+        , static_meshes_(materials_, ctx.get_cache<graphics::static_mesh>())
+        , effects_(techniques_, static_meshes_, ctx.get_cache<graphics::post_process_effect>())
     {
         if (!loader_status_)
             throw std::runtime_error("error: could not load OpenGL");
 
-//        debug_renderer_.windowWidth = size.x;
-//        debug_renderer_.windowHeight = size.y;
-//        dd::initialize(&debug_renderer_);
+        //        debug_renderer_.windowWidth = size.x;
+        //        debug_renderer_.windowHeight = size.y;
+        //        dd::initialize(&debug_renderer_);
 
         standard_uniform_buffer_.set_binding_point(0);
     }
 
     renderer::~renderer()
     {
-//        dd::shutdown();
+        //        dd::shutdown();
     }
 
     void renderer::resize(glm::uvec2 size)
