@@ -4,7 +4,7 @@ add_executable(pakcc
     src/package_material.cpp
     src/package_post_process_effect.cpp
     src/package_shader.cpp
-    src/package_static_mesh.cpp
+    src/package_model.cpp
     src/package_technique.cpp
     src/package_texture.cpp
 )

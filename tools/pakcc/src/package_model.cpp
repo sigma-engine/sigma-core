@@ -296,7 +296,7 @@ void package_scene(
          // | aiProcess_TransformUVCoords
          // | aiProcess_ConvertToLeftHanded
           | aiProcess_OptimizeMeshes
-          | aiProcess_OptimizeGraph
+         // | aiProcess_OptimizeGraph
          // | aiProcess_FlipWindingOrder
          // | aiProcess_SplitByBoneCount
          // | aiProcess_Debone
@@ -341,7 +341,7 @@ void package_model(
             static_mesh_database,
             package_path,
             source_file,
-            model_settings_path);
+            scene_settings_path);
     } else {
         package_static_mesh(material_database,
             static_mesh_database,
@@ -361,7 +361,7 @@ void package_models(
         ".md3", ".md5", ".mdc", ".mdl", ".nff", ".ply", ".stl", ".x", ".obj",
         ".opengex", ".smd", ".lwo", ".lxo", ".lws", ".ter", ".ac3d", ".ms3d",
         ".cob", ".q3bsp", ".xgl", ".csm", ".bvh", ".b3d", ".ndo", ".q3d",
-        ".gltf", ".3mf", ".blend"
+        ".gltf", ".3mf"
     };
 
     boost::filesystem::recursive_directory_iterator it{ source_directory };
