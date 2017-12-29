@@ -7,13 +7,11 @@
 #include <chrono>
 #include <cmath>
 
-simple_game::simple_game()
-    : generator_(6546534)
-    , position_distribution_{ { -50, .5f, -50 }, { 50.0f, .5f, 50.0f } }
-    , rotation_distribution_{ glm::vec3{ 0.0f }, glm::vec3{ 2.0f * boost::math::constants::pi<float>() } }
-    , scale_distribution_{ 0.1f, 10.0f }
-    , color_distribution_{ glm::vec3{ 0.0f }, glm::vec3{ 1.0f } }
+simple_game::simple_game(simple_context& ctx)
+    : context_(ctx)
 {
+    load(ctx.get_cache_path() / "scene" / "0");
+
     world_.for_each<sigma::transform, sigma::graphics::static_mesh_instance, grid_component>([&](sigma::entity e, const sigma::transform& txform, sigma::graphics::static_mesh_instance& mesh_instance, const grid_component& grid) {
         for (int x = 0; x < grid.rows; ++x) {
             for (int z = 0; z < grid.columns; ++z) {
@@ -25,57 +23,15 @@ simple_game::simple_game()
             }
         }
     });
-
-    // std::uniform_int_distribution<int> point_light_count_distribution_{ 0, 500 };
-    // int number_of_point_lights = 512; //point_light_count_distribution_(generator_);
-    // for (int i = 0; i < number_of_point_lights; ++i) {
-    //     auto e = world_.create();
-    //     random_transform(e);
-    //     world_.add<sigma::graphics::point_light>(e, color_distribution_(generator_), scale_distribution_(generator_));
-    // }
-
-    // std::vector<boost::filesystem::path> static_mesh_ids = {
-    //     "static_mesh/water_packed:Torus",
-    //     "static_mesh/water_packed:cube",
-    //     "static_mesh/water_packed:piller.000",
-    //     "static_mesh/water_packed:piller.001",
-    //     "static_mesh/water_packed:piller.002",
-    //     "static_mesh/water_packed:piller.003",
-    //     "static_mesh/water_packed:piller.004",
-    //     "static_mesh/water_packed:shape",
-    //     "static_mesh/water_packed:sphere",
-    //     "static_mesh/water_packed:suzan",
-    // };
-    //
-    // std::uniform_int_distribution<int> static_mesh_count_distribution_{ 0, 1500 };
-    // int number_of_static_meshes = 512; //static_mesh_count_distribution_(generator_);
-    // std::uniform_int_distribution<std::size_t> static_mesh_distribution_{ 0, static_mesh_ids.size() - 1 };
-    // for (int i = 0; i < number_of_static_meshes; ++i) {
-    //     auto e = world_.create();
-    //     auto& txform = random_transform(e);
-    //     auto random_mesh_id = static_mesh_ids[static_mesh_distribution_(generator_)];
-    //     world_.add<sigma::graphics::static_mesh_instance>(e, renderer_->static_meshes().get(random_mesh_id));
-    // }
-    //
-    // std::cout << "Rendering " << number_of_point_lights << " point lights." << '\n';
-    // std::cout << "Rendering " << number_of_static_meshes << " static meshes." << '\n';
-}
-
-sigma::transform& simple_game::random_transform(sigma::entity e)
-{
-    return *world_.add<sigma::transform>(e, position_distribution_(generator_),
-        glm::quat{ rotation_distribution_(generator_) },
-        glm::vec3{ scale_distribution_(generator_) });
 }
 
 void simple_game::update(std::chrono::duration<float> dt)
 {
     static auto start = std::chrono::system_clock::now();
-    //    static auto start = std::chrono::system_clock::now();
-    //    auto elapsed = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::system_clock::now() - start);
-    //    world_.for_each<sigma::transform, sigma::graphics::point_light>([elapsed, dt](sigma::entity e, sigma::transform& txform, const sigma::graphics::point_light& light) {
-    //        txform.position.y += std::cos(elapsed.count()) * dt.count();
-    //    });
+    auto elapsed = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::system_clock::now() - start);
+    // world_.for_each<sigma::transform, sigma::graphics::point_light>([elapsed, dt](sigma::entity e, sigma::transform& txform, const sigma::graphics::point_light& light) {
+    //     txform.position.y += std::cos(elapsed.count()) * dt.count();
+    // });
 
     world_.for_each<sigma::transform>([&](sigma::entity e, sigma::transform& txform) {
         txform.matrix = txform.get_matrix();

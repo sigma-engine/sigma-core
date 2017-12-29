@@ -17,20 +17,10 @@ int main(int argc, char* argv[])
     if (!boost::filesystem::exists(cache_path))
         cache_path = boost::filesystem::current_path() / ".." / "data";
 
-    sigma::context<sigma::graphics::texture,
-        sigma::graphics::cubemap,
-        sigma::graphics::shader,
-        sigma::graphics::technique,
-        sigma::graphics::material,
-        sigma::graphics::static_mesh,
-        sigma::graphics::post_process_effect>
-        context{ cache_path };
-
+    simple_context context{ cache_path };
     sigma::window window{ glm::ivec2{ 1920, 1080 } };
-
-    auto renderer = std::make_unique<sigma::opengl::renderer>(window.size(), sigma::graphics::renderer::context_view_type{ context });
-
-    auto game = std::make_unique<simple_game>();
+    auto renderer = std::make_unique<sigma::opengl::renderer>(window.size(), context);
+    auto game = std::make_unique<simple_game>(context);
 
     sigma::graphics::view_port viewport{
         window.size(),
