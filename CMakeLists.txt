@@ -31,21 +31,8 @@ find_package(TIFF REQUIRED)
 
 
 add_library(sigma-core STATIC
-    src/sigma/graphics/opengl/debug_draw_renderer.cpp
     src/sigma/frustum.cpp
     src/sigma/game.cpp
-    src/sigma/graphics/opengl/cubemap.cpp
-    src/sigma/graphics/opengl/frame_buffer.cpp
-    src/sigma/graphics/opengl/geometry_buffer.cpp
-    src/sigma/graphics/opengl/material.cpp
-    src/sigma/graphics/opengl/post_process_effect.cpp
-    src/sigma/graphics/opengl/render_buffer.cpp
-    src/sigma/graphics/opengl/renderer.cpp
-    src/sigma/graphics/opengl/shader.cpp
-    src/sigma/graphics/opengl/shadow_buffer.cpp
-    src/sigma/graphics/opengl/static_mesh.cpp
-    src/sigma/graphics/opengl/technique.cpp
-    src/sigma/graphics/opengl/texture.cpp
     src/sigma/graphics/renderer.cpp
     src/sigma/handle.cpp
     src/sigma/trackball_controller.cpp
@@ -70,13 +57,43 @@ target_link_libraries(sigma-core
     Boost::filesystem
     Boost::serialization
     Threads::Threads
-    glad
-    debug-draw
     glm
     jsoncpp
     SDL2
 )
 
+add_library(sigma-opengl-graphics STATIC
+    src/sigma/graphics/opengl/debug_draw_renderer.cpp
+    src/sigma/graphics/opengl/cubemap.cpp
+    src/sigma/graphics/opengl/frame_buffer.cpp
+    src/sigma/graphics/opengl/geometry_buffer.cpp
+    src/sigma/graphics/opengl/material.cpp
+    src/sigma/graphics/opengl/post_process_effect.cpp
+    src/sigma/graphics/opengl/render_buffer.cpp
+    src/sigma/graphics/opengl/renderer.cpp
+    src/sigma/graphics/opengl/shader.cpp
+    src/sigma/graphics/opengl/shadow_buffer.cpp
+    src/sigma/graphics/opengl/static_mesh.cpp
+    src/sigma/graphics/opengl/technique.cpp
+    src/sigma/graphics/opengl/texture.cpp
+)
+
+target_include_directories(sigma-opengl-graphics
+    PUBLIC
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+)
+
+target_compile_definitions(sigma-opengl-graphics
+    PRIVATE
+    -DSIGMA_EXPORT
+)
+
+target_link_libraries(sigma-opengl-graphics
+    PUBLIC
+    sigma-core
+    glad
+    debug-draw
+)
 
 add_subdirectory(test)
 #add_subdirectory(benchmark)

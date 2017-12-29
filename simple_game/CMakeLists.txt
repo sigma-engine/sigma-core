@@ -12,5 +12,5 @@ set(HEADERS
 #generate_meta_data(GENERATED_SOURCES ${HEADERS})
 add_executable(simple-game ${SOURCES} ${GENERATED_SOURCES})
 target_include_directories(simple-game PUBLIC include ../resources "${CMAKE_BINARY_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}/include")
-target_link_libraries(simple-game sigma-core)
+target_link_libraries(simple-game sigma-core sigma-opengl-graphics)
 #add_resources(simple-game resources)
