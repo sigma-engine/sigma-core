@@ -21,7 +21,7 @@ void main()
 {
     surface s = read_geometry_buffer();
 
-    vec3 V = normalize(eye_position - s.position);
+    vec3 V = normalize(eye_position.xyz - s.position);
     vec3 L = in_light.position - s.position;
     float light_distance = length(L);
     L = normalize(L);

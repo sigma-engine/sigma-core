@@ -80,7 +80,7 @@ void main()
 
     surface s = read_geometry_buffer();
 
-    vec3 V = normalize(eye_position - s.position);
+    vec3 V = normalize(eye_position.xyz - s.position);
 
     // out_image = texture(environment_map, -V, 0.0).rgb;
     if (s.depth == 1.0)

@@ -13,7 +13,7 @@ layout (std140, binding = 0) uniform standard_block {
     mat4 inverse_projection_view_matrix;
 
     vec2 view_port_size;
-    vec3 eye_position;
+    vec4 eye_position;
 
     float time;
 

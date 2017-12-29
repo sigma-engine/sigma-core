@@ -25,7 +25,7 @@ namespace graphics {
             (glm::mat4, inverse_projection_view_matrix),
 
             (glm::vec2, view_port_size),
-            (glm::vec3, eye_position),
+            (glm::vec4, eye_position),
 
             (float, time),
 

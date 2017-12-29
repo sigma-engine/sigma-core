@@ -19,7 +19,7 @@ void main()
 {
     surface s = read_geometry_buffer();
 
-    vec3 V = normalize(eye_position - s.position);
+    vec3 V = normalize(eye_position.xyz - s.position);
     vec3 L = in_light.direction;
 
     float shadow = 0;

@@ -214,7 +214,7 @@ namespace opengl {
             standard_.projection_view_matrix = projection_matrix * view_matrix;
             standard_.inverse_projection_view_matrix = glm::inverse(standard_.projection_view_matrix);
             standard_.view_port_size = viewport_size;
-            standard_.eye_position = glm::vec3(standard_.inverse_view_matrix * glm::vec4(0, 0, 0, 1));
+            standard_.eye_position = standard_.inverse_view_matrix * glm::vec4(0, 0, 0, 1);
             standard_.time = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::high_resolution_clock::now() - start_time_).count();
             standard_.fovy = fovy;
             standard_.z_near = z_near;
