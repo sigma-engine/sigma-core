@@ -18,14 +18,21 @@ namespace graphics {
             (float, cutoff),
             (bool, cast_shadows));
 
-        glm::vec3 direction{ 0.0f, 1.0f, 0.0f };
-        frustum shadow_frustum{ 2.0f * cutoff, 1.0f, .01f, 100.0f };
+        glm::vec3 direction;
+        frustum shadow_frustum;
 
-        spot_light()
-            : color{ 1.0f, 1.0f, 1.0f }
-            , intensity{ 1.0f }
-            , cutoff{ 0.3926991f }
-            , cast_shadows{ true }
+        spot_light(const glm::vec3& color = { 1.0f, 1.0f, 1.0f },
+            float intensity = 1.0f,
+            float cutoff = 0.3926991f,
+            bool cast_shadows = true,
+            const glm::vec3& direction = { 0.0f, 1.0f, 0.0f },
+            const frustum& shadow_frustum = { 2.0f * 0.3926991f, 1.0f, .01f, 100.0f })
+            : color{ color }
+            , intensity{ intensity }
+            , cutoff{ cutoff }
+            , cast_shadows{ cast_shadows }
+            , direction{ direction }
+            , shadow_frustum{ shadow_frustum }
         {
         }
 
