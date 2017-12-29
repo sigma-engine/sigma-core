@@ -9,7 +9,7 @@
 #include <sigma/graphics/directional_light.hpp>
 #include <sigma/graphics/material.hpp>
 #include <sigma/graphics/opengl/cubemap.hpp>
-// #include <sigma/graphics/opengl/debug_draw_renderer.hpp>
+#include <sigma/graphics/opengl/debug_draw_renderer.hpp>
 #include <sigma/graphics/opengl/frame_buffer.hpp>
 #include <sigma/graphics/opengl/geometry_buffer.hpp>
 #include <sigma/graphics/opengl/material.hpp>
@@ -84,9 +84,9 @@ namespace opengl {
         template <class World>
         void render(const graphics::view_port& viewport, World& world)
         {
-            // debug_renderer_.mvpMatrix = viewport.view_frustum.projection_view();
-            // for (const auto& f : debug_frustums)
-            //     dd::frustum(glm::value_ptr(f.second), glm::value_ptr(f.first));
+            debug_renderer_.mvpMatrix = viewport.view_frustum.projection_view();
+            for (const auto& f : debug_frustums)
+                dd::frustum(glm::value_ptr(f.second), glm::value_ptr(f.first));
 
             setup_view_projection(size_,
                 viewport.view_frustum.fovy(),
@@ -122,7 +122,7 @@ namespace opengl {
 
             GL_CHECK(glCullFace(GL_BACK));
             GL_CHECK(glEnable(GL_CULL_FACE));
-            // dd::flush(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time_).count());
+            dd::flush(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time_).count());
 
             // // Transparent objects
             // gbuffer_.swap_input_image();
@@ -192,7 +192,7 @@ namespace opengl {
         opengl::static_mesh_manager static_meshes_;
         opengl::post_process_effect_manager effects_;
 
-        // debug_draw_renderer debug_renderer_;
+        debug_draw_renderer debug_renderer_;
 
         void begin_effect(opengl::post_process_effect* effect)
         {
