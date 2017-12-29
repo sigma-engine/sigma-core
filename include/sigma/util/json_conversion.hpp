@@ -370,8 +370,10 @@ namespace json {
                 boost::hana::for_each(boost::hana::keys(output), [&](auto key) {
                     auto& member = boost::hana::at_key(output, key);
                     using member_type = std::remove_reference_t<decltype(member)>;
-                    if (!type_traits<member_type>::from(source[key.c_str()], member))
-                        good = false;
+                    if (source.isMember(key.c_str())) {
+                        if (!type_traits<member_type>::from(source[key.c_str()], member))
+                            good = false;
+                    }
                 });
                 return true;
             }
