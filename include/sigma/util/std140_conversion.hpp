@@ -3,6 +3,7 @@
 
 #include <sigma/util/numeric.hpp>
 
+#include <glm/gtc/type_ptr.hpp>
 #include <glm/mat2x2.hpp>
 #include <glm/mat3x3.hpp>
 #include <glm/mat4x4.hpp>
@@ -217,7 +218,7 @@ namespace std140 {
 
             static std::size_t write(const glm::tvec2<T>& value, std::uint8_t* buffer, std::size_t offset)
             {
-                const std::uint8_t* data = (const std::uint8_t*)&value;
+                const std::uint8_t* data = (const std::uint8_t*)glm::value_ptr(value);
                 offset = numeric::round_up(offset, alignment());
                 std::copy(data, data + sizeof(glm::tvec2<T>), buffer + offset);
                 offset += size();
@@ -239,7 +240,7 @@ namespace std140 {
 
             static std::size_t write(const glm::tvec3<T>& value, std::uint8_t* buffer, std::size_t offset)
             {
-                const std::uint8_t* data = (const std::uint8_t*)&value;
+                const std::uint8_t* data = (const std::uint8_t*)glm::value_ptr(value);
                 offset = numeric::round_up(offset, alignment());
                 std::copy(data, data + sizeof(glm::tvec3<T>), buffer + offset);
                 offset += size();
@@ -261,7 +262,7 @@ namespace std140 {
 
             static std::size_t write(const glm::tvec4<T>& value, std::uint8_t* buffer, std::size_t offset)
             {
-                const std::uint8_t* data = (const std::uint8_t*)&value;
+                const std::uint8_t* data = (const std::uint8_t*)glm::value_ptr(value);
                 offset = numeric::round_up(offset, alignment());
                 std::copy(data, data + sizeof(glm::tvec4<T>), buffer + offset);
                 offset += size();
@@ -286,8 +287,8 @@ namespace std140 {
                 // TODO investigate this
                 offset = numeric::round_up(offset, alignment());
                 for (unsigned int i = 0; i < 2; ++i) {
-                    const std::uint8_t* data = (const std::uint8_t*)(&value[i]);
-                    std::copy(data, data + sizeof(glm::tvec2<T>), buffer + offset);
+                    const std::uint8_t* data = (const std::uint8_t*)glm::value_ptr(value[i]);
+                    std::copy(data, data + 2 * sizeof(T), buffer + offset);
                     offset += alignment();
                 }
                 return offset;
@@ -311,8 +312,8 @@ namespace std140 {
                 // TODO investigate this
                 offset = numeric::round_up(offset, alignment());
                 for (unsigned int i = 0; i < 3; ++i) {
-                    const std::uint8_t* data = (const std::uint8_t*)(&value[i]);
-                    std::copy(data, data + sizeof(glm::tvec3<T>), buffer + offset);
+                    const std::uint8_t* data = (const std::uint8_t*)glm::value_ptr(value[i]);
+                    std::copy(data, data + 3 * sizeof(T), buffer + offset);
                     offset += alignment();
                 }
                 return offset;
@@ -336,8 +337,8 @@ namespace std140 {
                 // TODO investigate this
                 offset = numeric::round_up(offset, alignment());
                 for (unsigned int i = 0; i < 4; ++i) {
-                    const std::uint8_t* data = (const std::uint8_t*)(&value[i]);
-                    std::copy(data, data + sizeof(glm::tvec4<T>), buffer + offset);
+                    const std::uint8_t* data = (const std::uint8_t*)glm::value_ptr(value[i]);
+                    std::copy(data, data + 4 * sizeof(T), buffer + offset);
                     offset += alignment();
                 }
                 return offset;
@@ -346,19 +347,14 @@ namespace std140 {
 
         template <typename T, std::size_t N>
         struct type_traits<std::array<T, N>> {
-            static constexpr std::size_t stride()
-            {
-                return numeric::round_up(type_traits<T>::alignment(), type_traits<glm::tvec4<float>>::alignment());
-            }
-
             static constexpr std::size_t alignment()
             {
-                return numeric::round_up(type_traits<T>::alignment(), type_traits<glm::tvec4<float>>::alignment());
+                return numeric::round_up(type_traits<T>::alignment(), type_traits<glm::vec4>::alignment());
             }
 
             static constexpr std::size_t size()
             {
-                return N * numeric::round_up(type_traits<T>::size(), type_traits<glm::tvec4<float>>::alignment());
+                return N * numeric::round_up(type_traits<T>::size(), type_traits<glm::vec4>::alignment());
             }
 
             static std::size_t write(const std::array<T, N>& value, std::uint8_t* buffer, std::size_t offset)
@@ -367,8 +363,8 @@ namespace std140 {
                 offset = numeric::round_up(offset, alignment());
                 for (unsigned int i = 0; i < N; ++i) {
                     // TODO really investigate this, especially when data is more complicated then basic types.
-                    type_traits<T>::write(value[i], buffer, offset);
-                    offset += stride();
+                    offset = type_traits<T>::write(value[i], buffer, offset);
+                    offset = numeric::round_up(offset, alignment());
                 }
                 return offset;
             }
