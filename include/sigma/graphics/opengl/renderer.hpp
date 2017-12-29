@@ -82,12 +82,8 @@ namespace opengl {
         virtual void resize(glm::uvec2 size) override;
 
         template <class World>
-        void render(const graphics::view_port& viewport, World& world)
+        void render(const graphics::view_port& viewport, const World& world)
         {
-            debug_renderer_.mvpMatrix = viewport.view_frustum.projection_view();
-            for (const auto& f : debug_frustums)
-                dd::frustum(glm::value_ptr(f.second), glm::value_ptr(f.first));
-
             setup_view_projection(size_,
                 viewport.view_frustum.fovy(),
                 viewport.view_frustum.z_near(),
@@ -122,6 +118,10 @@ namespace opengl {
 
             GL_CHECK(glCullFace(GL_BACK));
             GL_CHECK(glEnable(GL_CULL_FACE));
+
+            debug_renderer_.mvpMatrix = viewport.view_frustum.projection_view();
+            for (const auto& f : debug_frustums)
+                dd::frustum(glm::value_ptr(f.second), glm::value_ptr(f.first));
             dd::flush(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time_).count());
 
             // // Transparent objects
@@ -151,8 +151,10 @@ namespace opengl {
 
             // gbuffer_.swap_input_image();
             // gbuffer_.bind_for_geometry_read();
-            // EFFECT_PTR(vignette_effect_)->bind();
-            // EFFECT_PTR(vignette_effect_)->apply();
+            // auto vignette_effect = EFFECT_PTR(effects_, settings_.vignette_effect);
+            // auto vignette_effect_tech = TECHNIQUE_PTR(techniques_, vignette_effect->data.technique_id);
+            // vignette_effect_tech->bind(textures_, cubemaps_, vignette_effect->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
+            // STATIC_MESH_PTR(static_meshes_, vignette_effect->data.mesh)->render_all();
 
             gbuffer_.swap_input_image();
             gbuffer_.bind_for_geometry_read();
@@ -240,7 +242,7 @@ namespace opengl {
             GL_CHECK(glCullFace(GL_BACK));
             GL_CHECK(glEnable(GL_CULL_FACE));
 
-            world.template for_each<transform, graphics::static_mesh_instance>([&](entity e, const transform& txform, graphics::static_mesh_instance& mesh_instance) {
+            world.template for_each<transform, graphics::static_mesh_instance>([&](entity e, const transform& txform, const graphics::static_mesh_instance& mesh_instance) {
                 auto mesh = STATIC_MESH_PTR(static_meshes_, mesh_instance.mesh);
                 instance_matrices matrices;
                 matrices.model_matrix = txform.matrix;
@@ -270,7 +272,7 @@ namespace opengl {
         }
 
         template <class World>
-        void light_pass(const graphics::view_port& viewport, World& world)
+        void light_pass(const graphics::view_port& viewport, const World& world)
         {
             // GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
 
@@ -293,7 +295,7 @@ namespace opengl {
         }
 
         template <class World>
-        void image_based_light_pass(const graphics::view_port& viewport, World& world)
+        void image_based_light_pass(const graphics::view_port& viewport, const World& world)
         {
             // TODO IBL breaks energy conservation of the environment map
             // when transparancies are rendered.
@@ -330,7 +332,7 @@ namespace opengl {
         }
 
         template <class World>
-        void directional_light_pass(const graphics::view_port& viewport, World& world)
+        void directional_light_pass(const graphics::view_port& viewport, const World& world)
         {
             // TODO:perf we can use one fullscreen quad to render all of the directional lights and save on gbuffer lookups.
             setup_view_projection(size_,
@@ -415,7 +417,7 @@ namespace opengl {
         }
 
         template <class World>
-        void point_light_pass(const graphics::view_port& viewport, World& world)
+        void point_light_pass(const graphics::view_port& viewport, const World& world)
         {
             // TODO:perf re-incorporate the stencil test that limits the pixels being light see
             // http://forum.devmaster.net/t/deferred-lighting-rendering-light-volumes/14998/5
@@ -454,7 +456,7 @@ namespace opengl {
         }
 
         template <class World>
-        void spot_light_pass(const graphics::view_port& viewport, World& world)
+        void spot_light_pass(const graphics::view_port& viewport, const World& world)
         {
             // TODO:perf render cones for spot lights to limit there effects.
             setup_view_projection(size_,
@@ -464,7 +466,7 @@ namespace opengl {
                 viewport.view_frustum.view(),
                 viewport.view_frustum.projection());
 
-            world.template for_each<transform, graphics::spot_light>([&](entity e, transform& txform, const graphics::spot_light& light) {
+            world.template for_each<transform, graphics::spot_light>([&](entity e, const transform& txform, const graphics::spot_light& light) {
                 setup_view_projection(size_,
                     light.shadow_frustum.fovy(),
                     light.shadow_frustum.z_near(),
@@ -505,7 +507,7 @@ namespace opengl {
         }
 
         template <class World>
-        void render_to_shadow_map(int index, World& world, bool cast_shadows = true)
+        void render_to_shadow_map(int index, const World& world, bool cast_shadows = true)
         {
             sbuffer_.bind_for_shadow_write(index);
 
@@ -526,7 +528,7 @@ namespace opengl {
             shadow_technique->bind();
 
             if (cast_shadows) {
-                world.template for_each<transform, graphics::static_mesh_instance>([&](entity e, const transform& txform, graphics::static_mesh_instance& mesh_instance) {
+                world.template for_each<transform, graphics::static_mesh_instance>([&](entity e, const transform& txform, const graphics::static_mesh_instance& mesh_instance) {
                     if (mesh_instance.cast_shadows) {
                         auto mesh = STATIC_MESH_PTR(static_meshes_, mesh_instance.mesh);
                         instance_matrices matrices;
