@@ -4,8 +4,13 @@
 #include <sigma/config.hpp>
 #include <sigma/context.hpp>
 #include <sigma/frustum.hpp>
+#include <sigma/graphics/cubemap.hpp>
+#include <sigma/graphics/material.hpp>
 #include <sigma/graphics/post_process_effect.hpp>
+#include <sigma/graphics/shader.hpp>
+#include <sigma/graphics/static_mesh.hpp>
 #include <sigma/graphics/technique.hpp>
+#include <sigma/graphics/texture.hpp>
 
 #include <glm/vec2.hpp>
 

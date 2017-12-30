@@ -5,9 +5,6 @@
 
 #include <sigma/graphics/renderer.hpp>
 
-#include <sigma/graphics/cubemap.hpp>
-#include <sigma/graphics/directional_light.hpp>
-#include <sigma/graphics/material.hpp>
 #include <sigma/graphics/opengl/cubemap.hpp>
 #include <sigma/graphics/opengl/debug_draw_renderer.hpp>
 #include <sigma/graphics/opengl/frame_buffer.hpp>
@@ -22,17 +19,18 @@
 #include <sigma/graphics/opengl/texture.hpp>
 #include <sigma/graphics/opengl/uniform_buffer.hpp>
 #include <sigma/graphics/opengl/util.hpp>
+
+#include <sigma/graphics/directional_light.hpp>
 #include <sigma/graphics/point_light.hpp>
-#include <sigma/graphics/post_process_effect.hpp>
-#include <sigma/graphics/shader.hpp>
-#include <sigma/graphics/shadow_block.hpp>
 #include <sigma/graphics/spot_light.hpp>
-#include <sigma/graphics/standard_block.hpp>
-#include <sigma/graphics/static_mesh.hpp>
 #include <sigma/graphics/static_mesh_instance.hpp>
-#include <sigma/graphics/texture.hpp>
-#include <sigma/resource/cache.hpp>
 #include <sigma/transform.hpp>
+
+#include <sigma/graphics/shadow_block.hpp>
+#include <sigma/graphics/standard_block.hpp>
+
+#include <sigma/resource/cache.hpp>
+
 #include <sigma/world.hpp>
 
 #include <glad/glad.h>
@@ -45,31 +43,8 @@
 namespace sigma {
 
 namespace opengl {
-    static inline void calculate_cascade_frustums(const frustum& view_frustum, frustum* cascade_frustums, int count)
-    {
-        // TODO move this into viewport or
-        // what ever viewport gets refactored into.
-        float cascade_splits[count + 1];
-        const float lambda = 0.7f;
-        const float n = view_frustum.z_near();
-        const float f = view_frustum.z_far();
-        int m = count;
-        for (int i = 0; i < m; ++i) {
-            float fi = float(i) / m;
-            float Ci_log = n * std::pow(f / n, fi);
-            float Ci_uni = n + (f - n) * fi;
-            cascade_splits[i] = lambda * Ci_log + (1 - lambda) * Ci_uni;
-        }
-        cascade_splits[count] = f;
+    void calculate_cascade_frustums(const frustum& view_frustum, frustum* cascade_frustums, int count);
 
-        for (int i = 0; i < count; ++i) {
-            cascade_frustums[i] = frustum{
-                view_frustum.fovy(), view_frustum.aspect(),
-                cascade_splits[i], cascade_splits[i + 1],
-                view_frustum.view()
-            };
-        }
-    }
     class SIGMA_API renderer : public graphics::renderer {
     public:
         bool save_frustums = false;
@@ -91,24 +66,11 @@ namespace opengl {
                 viewport.view_frustum.view(),
                 viewport.view_frustum.projection());
 
-            // Begin rendering
-            GL_CHECK(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
-            GL_CHECK(glClearStencil(0));
-
             // Opaque objects
-            gbuffer_.bind_for_geometry_write();
-            GL_CHECK(glDepthMask(GL_TRUE));
-            GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
             geometry_pass(viewport, world, false);
-
             light_pass(viewport, world);
 
-            gbuffer_.bind_for_geometry_read();
-            GL_CHECK(glStencilMask(0xFF));
-            GL_CHECK(glStencilFunc(GL_ALWAYS, 1, 0xFF));
-            GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE));
-            GL_CHECK(glEnable(GL_STENCIL_TEST));
-            GL_CHECK(glClear(GL_STENCIL_BUFFER_BIT));
+            // TODO Transparent objects
 
             GL_CHECK(glDisable(GL_BLEND));
 
@@ -124,28 +86,8 @@ namespace opengl {
                 dd::frustum(glm::value_ptr(f.second), glm::value_ptr(f.first));
             dd::flush(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time_).count());
 
-            // // Transparent objects
-            // gbuffer_.swap_input_image();
-            // gbuffer_.bind_for_geometry_write();
-            // geometry_pass(viewport, true);
-            //
-            // // TODO is energy conserved here??
-            // gbuffer_.bind_for_geometry_read();
-            // GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
-            // light_pass(viewport);
-            //
-            // // Final transparancy composition
-            // gbuffer_.bind_for_geometry_read();
-            // GL_CHECK(glStencilFunc(GL_NOTEQUAL, 1, 0xFF));
-            // GL_CHECK(glDisable(GL_DEPTH_TEST));
-            // GL_CHECK(glDisable(GL_CULL_FACE));
-            //
-            // EFFECT_PTR(texture_blit_effect_)->bind();
-            // EFFECT_PTR(texture_blit_effect_)->apply();
-
             // Render final effects
             GL_CHECK(glDisable(GL_BLEND));
-            GL_CHECK(glDisable(GL_STENCIL_TEST));
             GL_CHECK(glDisable(GL_DEPTH_TEST));
             GL_CHECK(glDisable(GL_CULL_FACE));
 
@@ -196,42 +138,18 @@ namespace opengl {
 
         debug_draw_renderer debug_renderer_;
 
-        void begin_effect(opengl::post_process_effect* effect)
-        {
-            auto tech = TECHNIQUE_PTR(techniques_, effect->data.technique_id);
-            tech->bind(textures_, cubemaps_, effect->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
-        }
+        void begin_effect(opengl::post_process_effect* effect);
 
-        void end_effect(opengl::post_process_effect* effect)
-        {
-            STATIC_MESH_PTR(static_meshes_, effect->data.mesh)->render_all();
-        }
+        void end_effect(opengl::post_process_effect* effect);
 
-        void setup_view_projection(const glm::vec2& viewport_size, float fovy, float z_near, float z_far, const glm::mat4& view_matrix, const glm::mat4& projection_matrix)
-        {
-            standard_.projection_matrix = projection_matrix;
-            standard_.inverse_projection_matrix = glm::inverse(projection_matrix);
-            standard_.view_matrix = view_matrix;
-            standard_.inverse_view_matrix = glm::inverse(view_matrix);
-            standard_.projection_view_matrix = projection_matrix * view_matrix;
-            standard_.inverse_projection_view_matrix = glm::inverse(standard_.projection_view_matrix);
-            standard_.view_port_size = viewport_size;
-            standard_.eye_position = standard_.inverse_view_matrix * glm::vec4(0, 0, 0, 1);
-            standard_.time = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::high_resolution_clock::now() - start_time_).count();
-            standard_.fovy = fovy;
-            standard_.z_near = z_near;
-            standard_.z_far = z_far;
-            standard_uniform_buffer_.set_data(standard_);
-        }
+        void setup_view_projection(const glm::vec2& viewport_size, float fovy, float z_near, float z_far, const glm::mat4& view_matrix, const glm::mat4& projection_matrix);
 
         template <class World>
         void geometry_pass(const graphics::view_port& viewport, World& world, bool transparent)
         {
-            GL_CHECK(glStencilMask(0xFF));
-            GL_CHECK(glStencilFunc(GL_ALWAYS, 1, 0xFF));
-            GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE));
-            GL_CHECK(glEnable(GL_STENCIL_TEST));
-            GL_CHECK(glClear(GL_STENCIL_BUFFER_BIT));
+            gbuffer_.bind_for_geometry_write();
+            GL_CHECK(glDepthMask(GL_TRUE));
+            GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
             GL_CHECK(glDisable(GL_BLEND));
 
@@ -268,7 +186,6 @@ namespace opengl {
             });
 
             GL_CHECK(glDepthMask(GL_FALSE));
-            GL_CHECK(glStencilMask(0x00));
         }
 
         template <class World>
@@ -282,7 +199,7 @@ namespace opengl {
             // screen pixel.
 
             // Render Image based lighting
-            image_based_light_pass(viewport, world);
+            image_based_light_pass(viewport);
 
             // Render directional lights
             directional_light_pass(viewport, world);
@@ -294,42 +211,9 @@ namespace opengl {
             spot_light_pass(viewport, world);
         }
 
-        template <class World>
-        void image_based_light_pass(const graphics::view_port& viewport, const World& world)
-        {
-            // TODO IBL breaks energy conservation of the environment map
-            // when transparancies are rendered.
+        void image_based_light_pass(const graphics::view_port& viewport);
 
-            setup_view_projection(size_,
-                viewport.view_frustum.fovy(),
-                viewport.view_frustum.z_near(),
-                viewport.view_frustum.z_far(),
-                viewport.view_frustum.view(),
-                viewport.view_frustum.projection());
-            gbuffer_.bind_for_geometry_read();
-
-            GL_CHECK(glDisable(GL_BLEND));
-            GL_CHECK(glDisable(GL_STENCIL_TEST));
-            GL_CHECK(glDisable(GL_DEPTH_TEST));
-            GL_CHECK(glDisable(GL_CULL_FACE));
-
-            auto image_based_light_effect = EFFECT_PTR(effects_, settings_.image_based_light_effect);
-            auto image_based_light_tech = TECHNIQUE_PTR(techniques_, image_based_light_effect->data.technique_id);
-            image_based_light_tech->bind(textures_, cubemaps_, image_based_light_effect->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
-            STATIC_MESH_PTR(static_meshes_, image_based_light_effect->data.mesh)->render_all();
-        }
-
-        void analytical_light_setup()
-        {
-            GL_CHECK(glStencilMask(0x00));
-            GL_CHECK(glStencilFunc(GL_EQUAL, 1, 0xFF));
-            GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP));
-            GL_CHECK(glEnable(GL_STENCIL_TEST));
-
-            GL_CHECK(glBlendEquation(GL_FUNC_ADD));
-            GL_CHECK(glBlendFunc(GL_ONE, GL_ONE));
-            GL_CHECK(glEnable(GL_BLEND));
-        }
+        void analytical_light_setup();
 
         template <class World>
         void directional_light_pass(const graphics::view_port& viewport, const World& world)
@@ -459,12 +343,6 @@ namespace opengl {
         void spot_light_pass(const graphics::view_port& viewport, const World& world)
         {
             // TODO:perf render cones for spot lights to limit there effects.
-            setup_view_projection(size_,
-                viewport.view_frustum.fovy(),
-                viewport.view_frustum.z_near(),
-                viewport.view_frustum.z_far(),
-                viewport.view_frustum.view(),
-                viewport.view_frustum.projection());
 
             world.template for_each<transform, graphics::spot_light>([&](entity e, const transform& txform, const graphics::spot_light& light) {
                 setup_view_projection(size_,
@@ -516,7 +394,6 @@ namespace opengl {
             GL_CHECK(glDepthMask(GL_TRUE));
             GL_CHECK(glDepthFunc(GL_LESS));
             GL_CHECK(glEnable(GL_DEPTH_TEST));
-            GL_CHECK(glDisable(GL_STENCIL_TEST));
 
             GL_CHECK(glCullFace(GL_BACK));
             GL_CHECK(glEnable(GL_CULL_FACE));
@@ -524,10 +401,10 @@ namespace opengl {
             GL_CHECK(glClearColor(1.0f, 1.0f, 0.0f, 0.0f));
             GL_CHECK(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
 
-            auto shadow_technique = TECHNIQUE_PTR(techniques_, settings_.shadow_technique);
-            shadow_technique->bind();
-
             if (cast_shadows) {
+                auto shadow_technique = TECHNIQUE_PTR(techniques_, settings_.shadow_technique);
+                shadow_technique->bind();
+
                 world.template for_each<transform, graphics::static_mesh_instance>([&](entity e, const transform& txform, const graphics::static_mesh_instance& mesh_instance) {
                     if (mesh_instance.cast_shadows) {
                         auto mesh = STATIC_MESH_PTR(static_meshes_, mesh_instance.mesh);
@@ -543,7 +420,6 @@ namespace opengl {
             }
 
             GL_CHECK(glDepthMask(GL_FALSE));
-            GL_CHECK(glStencilMask(0x00));
         }
 
         // void point_light_outside_stencil_optimization(glm::vec3 view_space_position, float radius);
