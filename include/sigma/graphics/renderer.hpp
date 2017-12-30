@@ -5,12 +5,18 @@
 #include <sigma/context.hpp>
 #include <sigma/frustum.hpp>
 #include <sigma/graphics/cubemap.hpp>
+#include <sigma/graphics/directional_light.hpp>
 #include <sigma/graphics/material.hpp>
+#include <sigma/graphics/point_light.hpp>
 #include <sigma/graphics/post_process_effect.hpp>
 #include <sigma/graphics/shader.hpp>
+#include <sigma/graphics/spot_light.hpp>
 #include <sigma/graphics/static_mesh.hpp>
+#include <sigma/graphics/static_mesh_instance.hpp>
 #include <sigma/graphics/technique.hpp>
 #include <sigma/graphics/texture.hpp>
+#include <sigma/transform.hpp>
+#include <sigma/world.hpp>
 
 #include <glm/vec2.hpp>
 
@@ -55,11 +61,20 @@ namespace graphics {
             sigma::graphics::static_mesh,
             sigma::graphics::post_process_effect>;
 
+        using world_view_type = world_view<
+            sigma::transform,
+            sigma::graphics::directional_light,
+            sigma::graphics::point_light,
+            sigma::graphics::spot_light,
+            sigma::graphics::static_mesh_instance>;
+
         renderer(glm::ivec2 size, context_view_type ctx);
 
         virtual ~renderer();
 
         virtual void resize(glm::uvec2 size) = 0;
+
+        virtual void render(const view_port& viewport, const world_view_type& world) = 0;
 
     protected:
         context_view_type context_;

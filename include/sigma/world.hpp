@@ -7,6 +7,7 @@
 
 #include <boost/serialization/split_member.hpp>
 
+#include <array>
 #include <cassert>
 #include <tuple>
 #include <vector>
@@ -217,32 +218,10 @@ struct world {
         }
     }
 
-    size_t size() const
+    size_t size() const noexcept
     {
         return count_;
     }
-
-    template <class Archive>
-    void save(Archive& ar, const unsigned int version) const
-    {
-        ar << entities;
-        ar << free_entities;
-        ar << entity_masks;
-        for (auto e : entities)
-            (int[]){ (save_entity_component<Components>(ar, e), 0)... };
-    }
-
-    template <class Archive>
-    void load(Archive& ar, const unsigned int version)
-    {
-        ar >> entities;
-        ar >> free_entities;
-        ar >> entity_masks;
-        for (auto e : entities)
-            (int[]){ (load_entity_component<Components>(ar, e), 0)... };
-    }
-
-    BOOST_SERIALIZATION_SPLIT_MEMBER();
 
 private:
     world(const world<Components...>&) = delete;
@@ -255,25 +234,90 @@ private:
         return data.add(e.index, std::forward<Arguments>(args)...);
     }
 
-    template <class Component, class Archive>
-    void save_entity_component(Archive& ar, entity e) const
-    {
-        if (has<Component>(e))
-            ar << get<Component>(e);
-    }
-
-    template <class Component, class Archive>
-    void load_entity_component(Archive& ar, entity e)
-    {
-        if (has<Component>(e))
-            ar >> create<Component>(e);
-    }
-
     std::size_t count_ = 0;
     std::vector<entity> entities;
     std::vector<std::uint32_t> free_entities;
     std::vector<component_mask_type> entity_masks;
     std::tuple<component_storage<Components>...> component_data;
+
+    template <class... SubComponents>
+    friend class world_view;
+};
+
+template <class... SubComponents>
+class world_view {
+public:
+    using component_subset_type = component_set<SubComponents...>;
+
+    template <class... Components>
+    world_view(const world<Components...>& world)
+        : count_{ world.count_ }
+        , entities{ world.entities }
+        , free_entities{ world.free_entities }
+        , entity_masks{ world.entity_masks }
+        , component_data{ std::get<index_of_type_v<SubComponents, component_set<Components...>>>(world.component_data)... }
+        , maskes{ { (component_mask_type(1) << index_of_type_v<SubComponents, component_set<Components...>>)... } }
+    {
+        static_assert(is_type_subset_v<component_subset_type, component_set<Components...>>, "world_view components must be a subset of world components.");
+    }
+
+    bool is_alive(entity e) const noexcept
+    {
+        return is_valid_handle(entities, free_entities, e);
+    }
+
+    template <class Component>
+    bool has(entity e) const
+    {
+        static_assert(contains_type_v<Component, component_subset_type>, "This world_view does not contain that component type.");
+
+        if (!is_alive(e))
+            return false;
+
+        auto comp_mask = maskes[index_of_type_v<Component, component_subset_type>];
+
+        return (entity_masks[e.index] & comp_mask) == comp_mask;
+    }
+
+    template <class Component>
+    const Component& get(entity e) const
+    {
+        static_assert(contains_type_v<Component, component_subset_type>, "This world_view does not contain that component type.");
+
+        assert(is_alive(e));
+        assert(has<Component>(e));
+        const auto& data = std::get<index_of_type_v<Component, component_subset_type>>(component_data);
+        return data.get(e.index);
+    }
+
+    template <class... ForeachComponents, class F>
+    void for_each(F f) const
+    {
+        static_assert(is_type_subset_v<type_set_t<ForeachComponents...>, component_subset_type>, "Can only iterate over a subset of components is this world_view.");
+
+        auto mask = (maskes[index_of_type_v<ForeachComponents, component_subset_type>] | ...);
+        auto count{ entities.size() };
+
+        for (std::size_t i = 0; i < count; ++i) {
+            const auto& e = entities[i];
+            if (is_alive(e) && ((entity_masks[e.index] & mask) == mask))
+                f(e, std::get<index_of_type_v<ForeachComponents, component_subset_type>>(component_data).get(e.index)...);
+        }
+    }
+
+    size_t size() const noexcept
+    {
+        return count_;
+    }
+
+private:
+    const std::size_t& count_;
+    const std::vector<entity>& entities;
+    const std::vector<std::uint32_t>& free_entities;
+    const std::vector<component_mask_type>& entity_masks;
+    std::tuple<const component_storage<SubComponents>&...> component_data;
+
+    const std::array<component_mask_type, sizeof...(SubComponents)> maskes;
 };
 }
 
