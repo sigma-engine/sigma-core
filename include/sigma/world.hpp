@@ -3,13 +3,10 @@
 
 #include <sigma/config.hpp>
 #include <sigma/handle.hpp>
-#include <sigma/util/variadic.hpp>
+#include <sigma/util/type_sequence.hpp>
 
-#include <boost/serialization/bitset.hpp>
 #include <boost/serialization/split_member.hpp>
 
-#include <array>
-#include <bitset>
 #include <cassert>
 #include <tuple>
 #include <vector>
@@ -18,24 +15,9 @@ namespace sigma {
 using entity = handle;
 
 template <class... Components>
-struct component_set {
-    using component_mask_type = std::bitset<sizeof...(Components)>;
+using component_set = type_set_t<Components...>;
 
-    template <class Component>
-    static constexpr size_t index_of()
-    {
-        return index<Component, Components...>::value;
-    }
-
-    template <class... SubComponents>
-    static component_mask_type mask_for()
-    {
-        component_mask_type m;
-        auto l = { m.set(index_of<SubComponents>())... };
-        (void)l;
-        return m;
-    }
-};
+using component_mask_type = std::uint64_t;
 
 template <class T>
 struct component_storage {
@@ -50,40 +32,40 @@ struct component_storage {
         }
     }
 
-    T* get(size_t index)
+    T& get(size_t index)
     {
         auto chunk_index = index / count_per_chunk;
         auto chunk_offset = index % count_per_chunk;
 
         assert(chunk_index < chunks.size());
 
-        return ((T*)chunks[chunk_index]) + chunk_offset;
+        return *(((T*)chunks[chunk_index]) + chunk_offset);
     }
 
-    const T* get(size_t index) const
+    const T& get(size_t index) const
     {
         auto chunk_index = index / count_per_chunk;
         auto chunk_offset = index % count_per_chunk;
 
         assert(chunk_index < chunks.size());
 
-        return ((const T*)chunks[chunk_index]) + chunk_offset;
+        return *(((const T*)chunks[chunk_index]) + chunk_offset);
     }
 
     template <class... Arguments>
-    T* add(size_t index, Arguments&&... args)
+    T& add(size_t index, Arguments&&... args)
     {
         auto chunk_index = index / count_per_chunk;
         if (chunk_index >= chunks.size())
             create_chunk(chunk_index);
 
-        return new (get(index)) T{ std::forward<Arguments>(args)... };
+        return *(new (&get(index)) T{ std::forward<Arguments>(args)... });
     }
 
     void remove(size_t index)
     {
         // TODO free chunk when last component is removed from it.
-        get(index)->~T();
+        (&get(index))->~T();
     }
 
     void create_chunk(size_t index)
@@ -99,7 +81,6 @@ struct component_storage {
 template <class... Components>
 struct world {
     using component_set_type = component_set<Components...>;
-    using component_mask_type = typename component_set<Components...>::component_mask_type;
 
     world() = default;
     world(world<Components...>&&) = default;
@@ -130,12 +111,14 @@ struct world {
     }
 
     template <class Component, class... Arguments>
-    Component* add(entity e, Arguments&&... args)
+    Component& add(entity e, Arguments&&... args)
     {
+        static_assert(contains_type_v<Component, component_set_type>, "This world does not contain that component type.");
+
         assert(is_alive(e));
         assert(!has<Component>(e));
 
-        entity_masks[e.index].set(component_set_type::template index_of<Component>());
+        entity_masks[e.index] |= type_mask_v<type_set_t<Component>, component_set_type>;
 
         return create<Component>(e, std::forward<Arguments>(args)...);
     }
@@ -143,37 +126,47 @@ struct world {
     template <class Component>
     bool has(entity e) const
     {
+        static_assert(contains_type_v<Component, component_set_type>, "This world does not contain that component type.");
+
         if (!is_alive(e))
             return false;
-        auto comp_mask = component_set_type::template mask_for<Component>();
+
+        auto comp_mask = type_mask_v<type_set_t<Component>, component_set_type>;
+
         return (entity_masks[e.index] & comp_mask) == comp_mask;
     }
 
     template <class Component>
-    Component* get(entity e)
+    Component& get(entity e)
     {
+        static_assert(contains_type_v<Component, component_set_type>, "This world does not contain that component type.");
+
         assert(is_alive(e));
         assert(has<Component>(e));
-        auto& data = std::get<component_set_type::template index_of<Component>()>(component_data);
+        auto& data = std::get<index_of_type_v<Component, component_set_type>>(component_data);
         return data.get(e.index);
     }
 
     template <class Component>
-    const Component* get(entity e) const
+    const Component& get(entity e) const
     {
+        static_assert(contains_type_v<Component, component_set_type>, "This world does not contain that component type.");
+
         assert(is_alive(e));
         assert(has<Component>(e));
-        const auto& data = std::get<component_set_type::template index_of<Component>()>(component_data);
+        const auto& data = std::get<index_of_type_v<Component, component_set_type>>(component_data);
         return data.get(e.index);
     }
 
     template <class Component>
     void remove(entity e)
     {
+        static_assert(contains_type_v<Component, component_set_type>, "This world does not contain that component type.");
+
         assert(is_alive(e));
         if (has<Component>(e)) {
-            entity_masks[e.index].set(component_set_type::template index_of<Component>(), false);
-            auto& data = std::get<component_set_type::template index_of<Component>()>(component_data);
+            entity_masks[e.index] &= ~type_mask_v<type_set_t<Component>, component_set_type>;
+            auto& data = std::get<index_of_type_v<Component, component_set_type>>(component_data);
             data.remove(e.index);
         }
     }
@@ -197,24 +190,30 @@ struct world {
     template <class... SubComponents, class F>
     void for_each(F f)
     {
-        auto mask = component_set_type::template mask_for<SubComponents...>();
-        auto count = entities.size();
+        static_assert(is_type_subset_v<type_set_t<SubComponents...>, component_set_type>, "Can only iterate over a subset of components is this world.");
+
+        auto mask{ type_mask_v<type_set_t<SubComponents...>, component_set_type> };
+        auto count{ entities.size() };
+
         for (std::size_t i = 0; i < count; ++i) {
-            auto e = entities[i];
+            const auto& e = entities[i];
             if (is_alive(e) && ((entity_masks[e.index] & mask) == mask))
-                f(e, *(SubComponents*)(std::get<component_set_type::template index_of<SubComponents>()>(component_data).get(e.index))...);
+                f(e, std::get<index_of_type_v<SubComponents, component_set_type>>(component_data).get(e.index)...);
         }
     }
 
     template <class... SubComponents, class F>
     void for_each(F f) const
     {
-        auto mask = component_set_type::template mask_for<SubComponents...>();
-        auto count = entities.size();
+        static_assert(is_type_subset_v<type_set_t<SubComponents...>, component_set_type>, "Can only iterate over a subset of components is this world.");
+
+        auto mask{ type_mask_v<type_set_t<SubComponents...>, component_set_type> };
+        auto count{ entities.size() };
+
         for (std::size_t i = 0; i < count; ++i) {
-            auto e = entities[i];
+            const auto& e = entities[i];
             if (is_alive(e) && ((entity_masks[e.index] & mask) == mask))
-                f(e, *(SubComponents*)(std::get<component_set_type::template index_of<SubComponents>()>(component_data).get(e.index))...);
+                f(e, std::get<index_of_type_v<SubComponents, component_set_type>>(component_data).get(e.index)...);
         }
     }
 
@@ -230,7 +229,6 @@ struct world {
         ar << free_entities;
         ar << entity_masks;
         for (auto e : entities)
-
             (int[]){ (save_entity_component<Components>(ar, e), 0)... };
     }
 
@@ -251,9 +249,9 @@ private:
     world<Components...>& operator=(const world<Components...>&) = delete;
 
     template <class Component, class... Arguments>
-    Component* create(entity e, Arguments&&... args)
+    Component& create(entity e, Arguments&&... args)
     {
-        auto& data = std::get<component_set_type::template index_of<Component>()>(component_data);
+        auto& data = std::get<index_of_type_v<Component, component_set_type>>(component_data);
         return data.add(e.index, std::forward<Arguments>(args)...);
     }
 
@@ -261,14 +259,14 @@ private:
     void save_entity_component(Archive& ar, entity e) const
     {
         if (has<Component>(e))
-            ar << *get<Component>(e);
+            ar << get<Component>(e);
     }
 
     template <class Component, class Archive>
     void load_entity_component(Archive& ar, entity e)
     {
         if (has<Component>(e))
-            ar >> *create<Component>(e);
+            ar >> create<Component>(e);
     }
 
     std::size_t count_ = 0;

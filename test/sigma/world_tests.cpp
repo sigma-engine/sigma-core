@@ -79,38 +79,25 @@ TEST(world_tests, add_component_was_created)
     test_world w;
     auto e = w.create();
 
-    auto c = w.add<construction_component>(e, 12, 894);
+    auto& c = w.add<construction_component>(e, 12, 894);
 
-    ASSERT_NE(nullptr, c);
-    EXPECT_EQ(12, c->x);
-    EXPECT_EQ(894, c->y);
-}
-
-TEST(world_tests, getting_component_should_return_the_same_value_returned_by_add)
-{
-    test_world w;
-    auto e = w.create();
-    auto cmp = w.add<construction_component>(e, 12, 894);
-
-    EXPECT_EQ(cmp, w.get<construction_component>(e));
+    EXPECT_EQ(12, c.x);
+    EXPECT_EQ(894, c.y);
 }
 
 TEST(world_tests, adding_component_should_not_invalidate_other_entities_components_of_the_same_type)
 {
     test_world w;
 
-    auto test_e = w.create();
-    auto test_cmp = w.add<construction_component>(test_e, 56, 232);
-
-    std::vector<std::pair<sigma::entity, construction_component*>> components;
     for (int i = 0; i < 128; ++i) {
         auto e = w.create();
-        auto c = w.add<construction_component>(e, 23, 423);
-        components.push_back(std::make_pair(e, c));
+        w.add<construction_component>(e, 23, 423);
     }
 
-    for (auto comp : components)
-        EXPECT_EQ(comp.second, w.get<construction_component>(comp.first));
+    w.for_each<construction_component>([](const auto& e, const auto &comp){
+        EXPECT_EQ(23, comp.x);
+        EXPECT_EQ(423, comp.y);
+    });
 }
 
 TEST(world_tests, remove_only_destruction_component_while_calling_destructor)
@@ -118,9 +105,9 @@ TEST(world_tests, remove_only_destruction_component_while_calling_destructor)
     test_world w;
     auto e = w.create();
     w.add<construction_component>(e, 12, 894);
-    auto c = w.add<destruction_component>(e, 12, 894);
+    auto& c = w.add<destruction_component>(e, 12, 894);
 
-    EXPECT_CALL(*c, destructor())
+    EXPECT_CALL(c, destructor())
         .Times(1);
 
     w.remove<destruction_component>(e);
@@ -134,9 +121,9 @@ TEST(world_tests, destroy_removes_all_components_and_calls_their_destructors)
     test_world w;
     auto e = w.create();
     w.add<construction_component>(e, 12, 894);
-    auto c = w.add<destruction_component>(e, 12, 894);
+    auto& c = w.add<destruction_component>(e, 12, 894);
 
-    EXPECT_CALL(*c, destructor())
+    EXPECT_CALL(c, destructor())
         .Times(1);
 
     w.destroy(e);

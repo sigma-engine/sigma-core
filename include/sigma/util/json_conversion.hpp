@@ -411,8 +411,8 @@ namespace json {
                     foreach_component([&](auto comp_tag) {
                         using component_type = typename decltype(comp_tag)::component_type;
                         if (src.isMember(component_name(component_type))) {
-                            component_type* cmp = output.template add<component_type>(e);
-                            if (!type_traits<component_type>::from(src[component_name(component_type)], *cmp))
+                            component_type& cmp = output.template add<component_type>(e);
+                            if (!type_traits<component_type>::from(src[component_name(component_type)], cmp))
                                 good = false;
                         }
                     });
