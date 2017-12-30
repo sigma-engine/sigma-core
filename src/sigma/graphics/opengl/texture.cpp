@@ -19,6 +19,7 @@ namespace opengl {
         case graphics::texture_format::RGB32F:
             return { GL_RGB, GL_FLOAT };
         }
+        return { GL_RGBA, GL_UNSIGNED_BYTE };
     }
 
     internal_format convert_internal(graphics::texture_format fmt)
@@ -31,6 +32,7 @@ namespace opengl {
         case graphics::texture_format::RGB32F:
             return internal_format::RGB32F;
         }
+        return internal_format::RGBA8;
     }
 
     texture::texture(internal_format format, glm::ivec2 size,

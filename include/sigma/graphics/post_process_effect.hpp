@@ -25,6 +25,6 @@ namespace graphics {
 }
 }
 
-REGISTER_RESOURCE(sigma::graphics::post_process_effect, post_process_effect, 1);
+REGISTER_RESOURCE(sigma::graphics::post_process_effect, post_process_effect, 1)
 
 #endif //SIGMA_ENGINE_GRAPHICS_POST_PROCESS_EFFECT_HPP

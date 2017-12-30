@@ -69,7 +69,7 @@ TEST(world_tests, add_component_is_added_to_entity)
     test_world w;
     auto e = w.create();
 
-    auto c = w.add<construction_component>(e, 12, 894);
+    w.add<construction_component>(e, 12, 894);
 
     EXPECT_TRUE(w.has<construction_component>(e));
 }
@@ -94,7 +94,7 @@ TEST(world_tests, adding_component_should_not_invalidate_other_entities_componen
         w.add<construction_component>(e, 23, 423);
     }
 
-    w.for_each<construction_component>([](const auto& e, const auto &comp){
+    w.for_each<construction_component>([](const auto& e, const auto& comp) {
         EXPECT_EQ(23, comp.x);
         EXPECT_EQ(423, comp.y);
     });

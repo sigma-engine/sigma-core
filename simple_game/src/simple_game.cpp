@@ -8,7 +8,6 @@
 #include <cmath>
 
 simple_game::simple_game(simple_context& ctx)
-    : context_(ctx)
 {
     load(ctx.get_cache_path() / "scene" / "0");
 
@@ -17,8 +16,8 @@ simple_game::simple_game(simple_context& ctx)
             for (int z = 0; z < grid.columns; ++z) {
                 if (x != 0 || z != 0) {
                     auto e = world_.create();
-                    auto trans = world_.add<sigma::transform>(e, txform.position + glm::vec3{ grid.row_spacing * x, 0, grid.column_spacing * z });
-                    auto minst = world_.add<sigma::graphics::static_mesh_instance>(e, mesh_instance.mesh);
+                    world_.add<sigma::transform>(e, txform.position + glm::vec3{ grid.row_spacing * x, 0, grid.column_spacing * z });
+                    world_.add<sigma::graphics::static_mesh_instance>(e, mesh_instance.mesh);
                 }
             }
         }
@@ -27,8 +26,8 @@ simple_game::simple_game(simple_context& ctx)
 
 void simple_game::update(std::chrono::duration<float> dt)
 {
-    static auto start = std::chrono::system_clock::now();
-    auto elapsed = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::system_clock::now() - start);
+    // static auto start = std::chrono::system_clock::now();
+    // auto elapsed = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::system_clock::now() - start);
     // world_.for_each<sigma::transform, sigma::graphics::point_light>([elapsed, dt](sigma::entity e, sigma::transform& txform, const sigma::graphics::point_light& light) {
     //     txform.position.y += std::cos(elapsed.count()) * dt.count();
     // });

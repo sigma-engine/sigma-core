@@ -101,8 +101,8 @@ namespace graphics {
 // };
 // }
 
-BOOST_CLASS_VERSION(sigma::graphics::technique_identifier, 1);
-BOOST_CLASS_VERSION(sigma::graphics::technique_uniform_data, 1);
-REGISTER_RESOURCE(sigma::graphics::technique, technique, 1);
+BOOST_CLASS_VERSION(sigma::graphics::technique_identifier, 1)
+BOOST_CLASS_VERSION(sigma::graphics::technique_uniform_data, 1)
+REGISTER_RESOURCE(sigma::graphics::technique, technique, 1)
 
 #endif // SIGMA_GRAPHICS_TECHNIQUE_HPP

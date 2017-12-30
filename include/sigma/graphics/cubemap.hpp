@@ -31,6 +31,6 @@ namespace graphics {
 }
 }
 
-REGISTER_RESOURCE(sigma::graphics::cubemap, cubemap, 1);
+REGISTER_RESOURCE(sigma::graphics::cubemap, cubemap, 1)
 
 #endif // SIGMA_GRAPHICS_CUBEMAP_HPP

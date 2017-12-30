@@ -96,6 +96,6 @@ target_link_libraries(sigma-opengl-graphics
 )
 
 add_subdirectory(test)
-#add_subdirectory(benchmark)
+add_subdirectory(benchmark)
 add_subdirectory(tools/pakcc)
 add_subdirectory(simple_game)

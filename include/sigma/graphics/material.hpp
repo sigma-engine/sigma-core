@@ -24,6 +24,6 @@ namespace graphics {
 }
 }
 
-REGISTER_RESOURCE(sigma::graphics::material, material, 1);
+REGISTER_RESOURCE(sigma::graphics::material, material, 1)
 
 #endif // SIGMA_GRAPHICS_MATERIAL_HPP

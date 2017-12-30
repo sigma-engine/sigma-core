@@ -58,6 +58,6 @@ namespace graphics {
 }
 }
 
-REGISTER_RESOURCE(sigma::graphics::texture, texture, 1);
+REGISTER_RESOURCE(sigma::graphics::texture, texture, 1)
 
 #endif // SIGMA_GRAPHICS_TEXTURE_HPP

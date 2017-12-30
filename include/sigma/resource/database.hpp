@@ -12,8 +12,8 @@
 #include <boost/functional/hash.hpp>
 
 #include <fstream>
-#include <string>
 #include <iostream>
+#include <string>
 
 namespace sigma {
 namespace resource {
@@ -43,7 +43,8 @@ namespace resource {
             return hash_code;
         }
 
-        bool contains(const std::vector<boost::filesystem::path>& cid) const {
+        bool contains(const std::vector<boost::filesystem::path>& cid) const
+        {
             std::size_t hash_code = hash_code_for(cid);
             auto hash_code_string = std::to_string(hash_code);
 
@@ -67,17 +68,15 @@ namespace resource {
             file >> json;
 
             if (json.isMember(hash_code_string)) {
-                auto& json_cid = json[hash_code_string]["cid"];
-                assert(std::equal(cid.begin(), cid.end(), json_cid.begin(), json_cid.end(), [](auto id, auto jid) {
+                assert(std::equal(cid.begin(), cid.end(), json[hash_code_string]["cid"].begin(), json[hash_code_string]["cid"].end(), [](auto id, auto jid) {
                     return id == jid.asString();
                 }) /*resource id hash collision.*/);
                 h.index = json[hash_code_string]["index"].asInt();
                 // TODO version
                 h.version = 0;
-            }
-            else {
+            } else {
                 std::cout << "missing :";
-                for(auto path: cid) {
+                for (auto path : cid) {
                     std::cout << path;
                 }
                 std::cout << std::endl;
@@ -105,8 +104,7 @@ namespace resource {
             }
 
             if (json.isMember(hash_code_string)) {
-                auto& json_cid = json[hash_code_string]["cid"];
-                assert(std::equal(cid.begin(), cid.end(), json_cid.begin(), json_cid.end(), [](auto id, auto jid) {
+                assert(std::equal(cid.begin(), cid.end(), json[hash_code_string]["cid"].begin(), json[hash_code_string]["cid"].end(), [](auto id, auto jid) {
                     return id == jid.asString();
                 }) /*resource id hash collision.*/);
                 h.index = json[hash_code_string]["index"].asInt();

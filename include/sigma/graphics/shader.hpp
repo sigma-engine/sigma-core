@@ -31,6 +31,6 @@ namespace graphics {
 }
 }
 
-REGISTER_RESOURCE(sigma::graphics::shader, shader, 1);
+REGISTER_RESOURCE(sigma::graphics::shader, shader, 1)
 
 #endif // SIGMA_GRAPHICS_SHADER_HPP

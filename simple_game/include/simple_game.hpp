@@ -7,9 +7,9 @@
 #include <sigma/game.hpp>
 #include <sigma/graphics/directional_light.hpp>
 #include <sigma/graphics/point_light.hpp>
+#include <sigma/graphics/post_process_effect.hpp>
 #include <sigma/graphics/spot_light.hpp>
 #include <sigma/graphics/static_mesh_instance.hpp>
-#include <sigma/graphics/post_process_effect.hpp>
 #include <sigma/transform.hpp>
 #include <sigma/world.hpp>
 
@@ -35,9 +35,6 @@ public:
     simple_game(simple_context& ctx);
 
     virtual void update(std::chrono::duration<float> dt) override;
-
-private:
-    simple_context& context_;
 };
 
 #endif // SIMPLE_GAME_HPP

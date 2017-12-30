@@ -58,6 +58,6 @@ namespace graphics {
 }
 }
 
-REGISTER_RESOURCE(sigma::graphics::static_mesh, static_mesh, 1);
+REGISTER_RESOURCE(sigma::graphics::static_mesh, static_mesh, 1)
 
 #endif // SIGMA_GRAPHICS_STATIC_MESH_HPP
