@@ -29,7 +29,6 @@ namespace opengl {
     class SIGMA_API renderer : public graphics::renderer {
     public:
         bool save_frustums = false;
-        std::vector<std::pair<glm::vec3, glm::mat4>> debug_frustums;
 
         renderer(glm::ivec2 size, graphics::renderer::context_view_type ctx);
 
@@ -66,6 +65,7 @@ namespace opengl {
         opengl::post_process_effect_manager effects_;
 
         debug_draw_renderer debug_renderer_;
+        std::vector<std::pair<glm::vec3, glm::mat4>> debug_frustums_;
 
         void begin_effect(opengl::post_process_effect* effect);
 

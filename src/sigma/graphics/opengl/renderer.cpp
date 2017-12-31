@@ -99,8 +99,22 @@ namespace opengl {
         GL_CHECK(glEnable(GL_CULL_FACE));
 
         debug_renderer_.mvpMatrix = viewport.view_frustum.projection_view();
-        for (const auto& f : debug_frustums)
+        for (const auto& f : debug_frustums_)
             dd::frustum(glm::value_ptr(f.second), glm::value_ptr(f.first));
+
+        glm::vec3 debug_color{ 0, 1, 1 };
+        world.for_each<transform, graphics::point_light>([&](const auto& e, const auto& txform, const auto& point) {
+            dd::sphere(glm::value_ptr(txform.position), glm::value_ptr(debug_color), txform.scale.x);
+        });
+
+        world.for_each<transform, graphics::spot_light>([&](const auto& e, const auto& txform, const auto& spot) {
+            float scale = 10;
+            glm::vec3 dir = -scale * spot.direction;
+            dd::cone(glm::value_ptr(txform.position),
+                glm::value_ptr(dir),
+                glm::value_ptr(debug_color), scale * std::tan(spot.cutoff), 0);
+        });
+
         dd::flush(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time_).count());
 
         // Render final effects
@@ -261,7 +275,7 @@ namespace opengl {
         world.for_each<transform, graphics::directional_light>([&](entity e, const transform& txform, const graphics::directional_light& light) {
             if (save_frustums) {
                 save_frustums = false;
-                debug_frustums.clear();
+                debug_frustums_.clear();
                 frustum scaled_frustum{
                     viewport.view_frustum.fovy(),
                     viewport.view_frustum.aspect(),
@@ -280,8 +294,8 @@ namespace opengl {
 
                 for (std::size_t i = 0; i < sbuffer_.count(); ++i) {
                     auto light_projection = cascade_frustums_[i].clip_light_projection(light_view, minZ, maxZ);
-                    debug_frustums.emplace_back(glm::vec3{ 1, 0, 0 }, glm::inverse(cascade_frustums_[i].projection_view()));
-                    debug_frustums.emplace_back(glm::vec3{ 1, 1, 0 }, glm::inverse(light_projection * light_view));
+                    debug_frustums_.emplace_back(glm::vec3{ 1, 0, 0 }, glm::inverse(cascade_frustums_[i].projection_view()));
+                    debug_frustums_.emplace_back(glm::vec3{ 1, 1, 0 }, glm::inverse(light_projection * light_view));
                 }
             }
 
