@@ -5,7 +5,17 @@
 #include <sigma/graphics/opengl/renderer.hpp>
 #include <sigma/graphics/renderer.hpp>
 #include <sigma/trackball_controller.hpp>
+#include <sigma/util/type_sequence.hpp>
 #include <sigma/window.hpp>
+
+#include <sigma/tools/cubemap_loader.hpp>
+#include <sigma/tools/material_loader.hpp>
+#include <sigma/tools/model_loader.hpp>
+#include <sigma/tools/packager.hpp>
+#include <sigma/tools/post_process_effect_loader.hpp>
+#include <sigma/tools/shader_loader.hpp>
+#include <sigma/tools/technique_loader.hpp>
+#include <sigma/tools/texture_loader.hpp>
 
 #include <SDL2/SDL.h>
 
@@ -18,6 +28,17 @@ int main(int argc, char* argv[])
         cache_path = boost::filesystem::current_path() / ".." / "data";
 
     simple_context context{ cache_path };
+
+    sigma::tools::packager<simple_context> packager{ context };
+    packager.add_loader<sigma::tools::texture_loader>();
+    packager.add_loader<sigma::tools::cubemap_loader>();
+    packager.add_loader<sigma::tools::shader_loader>();
+    packager.add_loader<sigma::tools::technique_loader>();
+    packager.add_loader<sigma::tools::material_loader>();
+    packager.add_loader<sigma::tools::model_loader<simple_blueprint>>();
+    packager.add_loader<sigma::tools::post_process_effect_loader>();
+    packager.scan();
+
     sigma::window window{ glm::ivec2{ 1920, 1080 } };
 
     auto game = std::make_unique<simple_game>(context);

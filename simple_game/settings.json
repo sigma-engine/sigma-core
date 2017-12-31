@@ -1,0 +1,9 @@
+{
+    "package": {
+        "build-directory": "${CMAKE_BINARY_DIR}",
+        "source-directories": [
+            "${CMAKE_SOURCE_DIR}/resources",
+            "${CMAKE_CURRENT_SOURCE_DIR}/resources"
+        ]
+    }
+}

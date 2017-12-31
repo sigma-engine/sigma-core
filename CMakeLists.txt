@@ -34,7 +34,6 @@ add_library(sigma-core STATIC
     src/sigma/frustum.cpp
     src/sigma/game.cpp
     src/sigma/graphics/renderer.cpp
-    src/sigma/handle.cpp
     src/sigma/trackball_controller.cpp
     src/sigma/util/filesystem.cpp
     src/sigma/window.cpp
@@ -91,11 +90,30 @@ target_compile_definitions(sigma-opengl-graphics
 target_link_libraries(sigma-opengl-graphics
     PUBLIC
     sigma-core
-    glad
     debug-draw
+    glad
+)
+
+add_library(sigma-tools INTERFACE)
+target_include_directories(sigma-tools INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+target_link_libraries(sigma-tools
+    INTERFACE
+    sigma-core
+
+    Boost::wave
+    PNG::PNG
+    TIFF::TIFF
+    jpeg
+    assimp
+
+    glslang
+    HLSL
+    OGLCompiler
+    OSDependent
+    SPIRV
+    SPVRemapper
 )
 
 add_subdirectory(test)
 add_subdirectory(benchmark)
-add_subdirectory(tools/pakcc)
 add_subdirectory(simple_game)

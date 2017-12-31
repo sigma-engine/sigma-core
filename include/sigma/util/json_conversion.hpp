@@ -261,9 +261,9 @@ namespace json {
             }
         };
 
-        template <>
-        struct type_traits<handle> {
-            static bool from(const Json::Value& source, handle& output)
+        template <class TagType>
+        struct type_traits<resource::handle<TagType>> {
+            static bool from(const Json::Value& source, resource::handle<TagType>& output)
             {
                 if (source.isConvertibleTo(Json::uintValue)) {
                     output.index = source.asUInt();
@@ -273,7 +273,7 @@ namespace json {
                 return false;
             }
 
-            static void to(handle source, Json::Value& output)
+            static void to(const resource::handle<TagType>& source, Json::Value& output)
             {
                 output = source.index; // TODO version
             }

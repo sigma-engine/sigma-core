@@ -13,7 +13,8 @@
 #include <vector>
 
 namespace sigma {
-using entity = handle;
+struct entity_tag;
+using entity = handle<entity_tag>;
 
 template <class... Components>
 using component_set = type_set_t<Components...>;

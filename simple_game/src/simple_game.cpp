@@ -9,7 +9,18 @@
 
 simple_game::simple_game(simple_context& ctx)
 {
-    load(ctx.get_cache_path() / "scene" / "0");
+    auto blueprint = ctx.get_cache<simple_blueprint>().acquire({ 0, 0 });
+
+    for (const auto& entity : blueprint->entities) {
+        auto e = world_.create();
+        for (const auto& component : entity) {
+            simple_component_set::for_each([&](auto type_tag) {
+                using component_type = typename decltype(type_tag)::type;
+                if (const component_type* cmp = boost::get<component_type>(&component))
+                    world_.add<component_type>(e, *cmp);
+            });
+        }
+    }
 
     world_.for_each<sigma::transform, sigma::graphics::static_mesh_instance, grid_component>([&](sigma::entity e, const sigma::transform& txform, sigma::graphics::static_mesh_instance& mesh_instance, const grid_component& grid) {
         for (int x = 0; x < grid.rows; ++x) {

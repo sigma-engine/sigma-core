@@ -7,6 +7,16 @@
 namespace sigma {
 template <class... TypesSet>
 struct type_set {
+    template <class TagType>
+    struct type_tag {
+        using type = TagType;
+    };
+
+    template <class Func>
+    static constexpr void for_each(Func f)
+    {
+        (f(type_tag<TypesSet>()), ...);
+    }
 };
 
 // Count number of occurrences of `T` in `Types`.

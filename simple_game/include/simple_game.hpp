@@ -3,6 +3,7 @@
 
 #include <grid_component.hpp>
 
+#include <sigma/blueprint.hpp>
 #include <sigma/context.hpp>
 #include <sigma/game.hpp>
 #include <sigma/graphics/directional_light.hpp>
@@ -15,13 +16,28 @@
 
 #include <glm/vec3.hpp>
 
+using simple_component_set = sigma::type_set_t<sigma::transform,
+    sigma::graphics::directional_light,
+    sigma::graphics::point_light,
+    sigma::graphics::spot_light,
+    sigma::graphics::static_mesh_instance,
+    grid_component>;
+
+using simple_blueprint = sigma::blueprint<sigma::transform,
+    sigma::graphics::directional_light,
+    sigma::graphics::point_light,
+    sigma::graphics::spot_light,
+    sigma::graphics::static_mesh_instance,
+    grid_component>;
+
 using simple_context = sigma::context<sigma::graphics::texture,
     sigma::graphics::cubemap,
     sigma::graphics::shader,
     sigma::graphics::technique,
     sigma::graphics::material,
     sigma::graphics::static_mesh,
-    sigma::graphics::post_process_effect>;
+    sigma::graphics::post_process_effect,
+    simple_blueprint>;
 
 using simple_world = sigma::world<sigma::transform,
     sigma::graphics::directional_light,

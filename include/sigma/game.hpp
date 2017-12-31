@@ -30,14 +30,6 @@ public:
         return world_;
     }
 
-    void load(boost::filesystem::path file_path)
-    {
-        std::ifstream file{ file_path.string(), std::ios::in };
-        Json::Value scene_data;
-        file >> scene_data;
-        json::from_json(scene_data, world_);
-    }
-
     virtual void update(std::chrono::duration<float> dt) = 0;
 
 protected:
