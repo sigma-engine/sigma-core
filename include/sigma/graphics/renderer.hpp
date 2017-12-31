@@ -61,12 +61,12 @@ namespace graphics {
             sigma::graphics::static_mesh,
             sigma::graphics::post_process_effect>;
 
-        using world_view_type = world_view<
-            sigma::transform,
+        using render_component_set = component_set<sigma::transform,
             sigma::graphics::directional_light,
             sigma::graphics::point_light,
             sigma::graphics::spot_light,
             sigma::graphics::static_mesh_instance>;
+        using world_view_type = world_view<render_component_set>;
 
         renderer(glm::ivec2 size, context_view_type ctx);
 

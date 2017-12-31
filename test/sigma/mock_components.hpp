@@ -39,4 +39,5 @@ struct destruction_component {
     int x, y;
 };
 
-using test_world = sigma::world<basic_component, construction_component, destruction_component>;
+using test_components = sigma::component_set<basic_component, construction_component, destruction_component>;
+using test_world = sigma::world<test_components>;

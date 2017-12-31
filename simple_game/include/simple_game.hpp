@@ -16,7 +16,7 @@
 
 #include <glm/vec3.hpp>
 
-using simple_component_set = sigma::type_set_t<sigma::transform,
+using simple_component_set = sigma::component_set<sigma::transform,
     sigma::graphics::directional_light,
     sigma::graphics::point_light,
     sigma::graphics::spot_light,
@@ -39,12 +39,7 @@ using simple_context = sigma::context<sigma::graphics::texture,
     sigma::graphics::post_process_effect,
     simple_blueprint>;
 
-using simple_world = sigma::world<sigma::transform,
-    sigma::graphics::directional_light,
-    sigma::graphics::point_light,
-    sigma::graphics::spot_light,
-    sigma::graphics::static_mesh_instance,
-    grid_component>;
+using simple_world = sigma::world<simple_component_set>;
 
 class simple_game : public sigma::game<simple_world> {
 public:

@@ -80,13 +80,16 @@ struct component_storage {
     }
 };
 
+template <class ComponentSet>
+struct world;
+
 template <class... Components>
-struct world {
+struct world<type_set<Components...>> {
     using component_set_type = component_set<Components...>;
 
     world() = default;
-    world(world<Components...>&&) = default;
-    world<Components...>& operator=(world<Components...>&&) = default;
+    world(world<component_set_type>&&) = default;
+    world<component_set_type>& operator=(world<component_set_type>&&) = default;
 
     entity create()
     {
@@ -225,8 +228,8 @@ struct world {
     }
 
 private:
-    world(const world<Components...>&) = delete;
-    world<Components...>& operator=(const world<Components...>&) = delete;
+    world(const world<component_set_type>&) = delete;
+    world<component_set_type>& operator=(const world<component_set_type>&) = delete;
 
     template <class Component, class... Arguments>
     Component& create(entity e, Arguments&&... args)
@@ -246,12 +249,15 @@ private:
 };
 
 template <class... SubComponents>
-class world_view {
+class world_view;
+
+template <class... SubComponents>
+class world_view<type_set<SubComponents...>> {
 public:
     using component_subset_type = component_set<SubComponents...>;
 
     template <class... Components>
-    world_view(const world<Components...>& world)
+    world_view(const world<type_set<Components...>>& world)
         : count_{ world.count_ }
         , entities{ world.entities }
         , free_entities{ world.free_entities }

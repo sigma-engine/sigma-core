@@ -24,11 +24,12 @@ struct direction {
     float x, y;
 };
 
-using my_world = world<position, direction>;
+using benchmark_components = component_set<position, direction>;
+using benchmark_world = world<benchmark_components>;
 
 struct movement_system1 {
 
-    void process(my_world& w, float dt)
+    void process(benchmark_world& w, float dt)
     {
         w.for_each<position, direction>([&](entity, auto& pos, const auto& dir) {
             this->inner_loop(pos, dir, dt);
@@ -42,17 +43,17 @@ struct movement_system1 {
     }
 };
 
-class world_benchmarks : public benchmark::Fixture {
+class entity_system : public benchmark::Fixture {
 public:
-    world_benchmarks()
+    entity_system()
     {
     }
 };
 
-BENCHMARK_DEFINE_F(world_benchmarks, movement_system)
+BENCHMARK_DEFINE_F(entity_system, for_each)
 (benchmark::State& st)
 {
-    my_world w;
+    benchmark_world w;
     movement_system1 sys1;
 
     for (int i = 0; i < st.range(0); ++i) {
@@ -65,8 +66,8 @@ BENCHMARK_DEFINE_F(world_benchmarks, movement_system)
     while (st.KeepRunning()) {
         benchmark::DoNotOptimize(&w);
         sys1.process(w, 1.0f / 60.0f);
-		// TODO there is a newer version of google benchmark that has 
-		// support ClobberMemory but it is not in conan yet.
+        // TODO there is a newer version of google benchmark that has
+        // support ClobberMemory but it is not in conan yet.
 #ifndef _MSC_VER
         benchmark::ClobberMemory();
 #endif
@@ -74,7 +75,7 @@ BENCHMARK_DEFINE_F(world_benchmarks, movement_system)
     st.SetComplexityN(st.range(0));
 }
 
-BENCHMARK_REGISTER_F(world_benchmarks, movement_system)
+BENCHMARK_REGISTER_F(entity_system, for_each)
     ->RangeMultiplier(2)
     ->Range(100, 1000000)
     ->Complexity();
