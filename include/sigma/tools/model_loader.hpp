@@ -159,7 +159,7 @@ namespace tools {
         {
             auto package_path = filesystem::make_relative(source_directory, source_file).replace_extension("");
             auto model_settings_path = source_file.parent_path() / (source_file.stem().string() + ".mdl");
-            auto scene_settings_path = source_file.parent_path() / (source_file.stem().string() + ".scn");
+            auto scene_settings_path = source_file.parent_path() / (source_file.stem().string() + ".bpt");
 
             if (boost::filesystem::exists(scene_settings_path)) {
                 load_as_blueprint(
