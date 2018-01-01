@@ -38,12 +38,6 @@ namespace json {
         return detial::type_traits<T>::from(source, output);
     }
 
-    template <class T>
-    void to_json(const T& source, Json::Value& output)
-    {
-        detial::type_traits<T>::to(source, output);
-    }
-
     namespace detial {
         template <>
         struct type_traits<bool> {
@@ -54,11 +48,6 @@ namespace json {
                     return true;
                 }
                 return false;
-            }
-
-            static void to(bool source, Json::Value& output)
-            {
-                output = source;
             }
         };
 
@@ -72,11 +61,6 @@ namespace json {
                 }
                 return false;
             }
-
-            static void to(int source, Json::Value& output)
-            {
-                output = source;
-            }
         };
         template <>
         struct type_traits<unsigned long int> {
@@ -87,11 +71,6 @@ namespace json {
                     return true;
                 }
                 return false;
-            }
-
-            static void to(unsigned long int source, Json::Value& output)
-            {
-                output = (Json::UInt64)source;
             }
         };
 
@@ -105,11 +84,6 @@ namespace json {
                 }
                 return false;
             }
-
-            static void to(float source, Json::Value& output)
-            {
-                output = source;
-            }
         };
 
         template <>
@@ -118,13 +92,6 @@ namespace json {
             {
                 // TODO support x,y
                 return source.isArray() && source.size() == 2 && from_json(source[0], output.x) && from_json(source[1], output.y);
-            }
-
-            static void to(const glm::vec2& source, Json::Value& output)
-            {
-                // TODO support x,y
-                output[0] = source.x;
-                output[1] = source.y;
             }
         };
 
@@ -135,14 +102,6 @@ namespace json {
                 // TODO support x,y,z
                 return source.isArray() && source.size() == 3 && from_json(source[0], output.x) && from_json(source[1], output.y) && from_json(source[2], output.z);
             }
-
-            static void to(const glm::vec3& source, Json::Value& output)
-            {
-                // TODO support x,y,z
-                output[0] = source.x;
-                output[1] = source.y;
-                output[2] = source.z;
-            }
         };
 
         template <>
@@ -151,15 +110,6 @@ namespace json {
             {
                 // TODO support w,x,y,z
                 return source.isArray() && source.size() == 4 && from_json(source[0], output.w) && from_json(source[1], output.x) && from_json(source[2], output.y) && from_json(source[3], output.z);
-            }
-
-            static void to(const glm::vec4& source, Json::Value& output)
-            {
-                // TODO support w,x,y,z
-                output[0] = source.w;
-                output[1] = source.x;
-                output[2] = source.y;
-                output[3] = source.z;
             }
         };
 
@@ -193,15 +143,6 @@ namespace json {
                 }
                 return false;
             }
-
-            static void to(const glm::quat& source, Json::Value& output)
-            {
-                // TODO support w,x,y,z
-                output[0] = source.w;
-                output[1] = source.x;
-                output[2] = source.y;
-                output[3] = source.z;
-            }
         };
 
         template <>
@@ -209,12 +150,6 @@ namespace json {
             static bool from(const Json::Value& source, glm::mat2& output)
             {
                 return source.isArray() && source.size() == 2 && from_json(source[0], output[0]) && from_json(source[1], output[1]);
-            }
-
-            static void to(const glm::mat2& source, Json::Value& output)
-            {
-                to_json(source[0], output[0]);
-                to_json(source[1], output[1]);
             }
         };
 
@@ -224,13 +159,6 @@ namespace json {
             {
                 return source.isArray() && source.size() == 3 && from_json(source[0], output[0]) && from_json(source[1], output[1]) && from_json(source[2], output[2]);
             }
-
-            static void to(const glm::mat3& source, Json::Value& output)
-            {
-                to_json(source[0], output[0]);
-                to_json(source[1], output[1]);
-                to_json(source[2], output[2]);
-            }
         };
 
         template <>
@@ -238,14 +166,6 @@ namespace json {
             static bool from(const Json::Value& source, glm::mat4& output)
             {
                 return source.isArray() && source.size() == 4 && from_json(source[0], output[0]) && from_json(source[1], output[1]) && from_json(source[2], output[2]) && from_json(source[3], output[3]);
-            }
-
-            static void to(const glm::mat4& source, Json::Value& output)
-            {
-                to_json(source[0], output[0]);
-                to_json(source[1], output[1]);
-                to_json(source[2], output[2]);
-                to_json(source[3], output[3]);
             }
         };
 
@@ -255,11 +175,6 @@ namespace json {
             {
                 output = source.asString();
                 return true;
-            }
-
-            static void to(const boost::filesystem::path& source, Json::Value& output)
-            {
-                output = source.string();
             }
         };
 
@@ -274,11 +189,6 @@ namespace json {
                 }
                 return false;
             }
-
-            static void to(const resource::handle<TagType>& source, Json::Value& output)
-            {
-                output = source.index; // TODO version
-            }
         };
 
         template <class T, long int N>
@@ -290,12 +200,6 @@ namespace json {
                         return false;
                 }
                 return true;
-            }
-
-            static void to(const T* source, Json::Value& output)
-            {
-                for (long int i = 0; i < N; ++i)
-                    to_json(source[i], output[(int)i]);
             }
         };
 
@@ -309,12 +213,6 @@ namespace json {
                         return false;
                 }
                 return true;
-            }
-
-            static void to(const std::vector<T>& source, Json::Value& output)
-            {
-                for (long int i = 0; i < source.size(); ++i)
-                    to_json(source[i], output[(int)i]);
             }
         };
 
@@ -334,21 +232,6 @@ namespace json {
 
                 return true;
             }
-
-            static void to(const sigma::graphics::texture_filter& source, Json::Value& output)
-            {
-                switch (source) {
-                case graphics::texture_filter::LINEAR:
-                    output = "LINEAR";
-                    break;
-                case graphics::texture_filter::NEAREST:
-                    output = "NEAREST";
-                    break;
-                case graphics::texture_filter::NONE:
-                    output = "NONE";
-                    break;
-                }
-            }
         };
 
         template <>
@@ -366,21 +249,6 @@ namespace json {
                     return false;
                 return true;
             }
-
-            static void to(const sigma::graphics::texture_format& source, Json::Value& output)
-            {
-                switch (source) {
-                case sigma::graphics::texture_format::RGB8:
-                    output = "RGB8";
-                    break;
-                case sigma::graphics::texture_format::RGBA8:
-                    output = "RGBA8";
-                    break;
-                case sigma::graphics::texture_format::RGB32F:
-                    output = "RGB32F";
-                    break;
-                }
-            }
         };
 
         template <class T>
@@ -397,15 +265,6 @@ namespace json {
                     }
                 });
                 return true;
-            }
-
-            static void to(const T& source, Json::Value& output)
-            {
-                boost::hana::for_each(boost::hana::keys(source), [&](auto key) {
-                    const auto& member = boost::hana::at_key(source, key);
-                    using member_type = std::remove_const_t<std::remove_reference_t<decltype(member)>>;
-                    type_traits<member_type>::to(member, output[key.c_str()]);
-                });
             }
         };
 
