@@ -2,6 +2,7 @@
 #define GRID_COMPONENT_HPP
 
 #include <sigma/component.hpp>
+#include <sigma/graphics/static_mesh.hpp>
 #include <sigma/reflect.hpp>
 
 struct R_EXPORT() grid_component {
@@ -10,7 +11,8 @@ struct R_EXPORT() grid_component {
         (int, rows),
         (int, columns),
         (float, row_spacing),
-        (float, column_spacing));
+        (float, column_spacing),
+        (sigma::handle<sigma::graphics::static_mesh>, mesh));
 
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version)
@@ -19,6 +21,7 @@ struct R_EXPORT() grid_component {
         ar& columns;
         ar& row_spacing;
         ar& column_spacing;
+        ar& mesh;
     }
 };
 

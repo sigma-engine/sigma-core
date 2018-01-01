@@ -3,9 +3,10 @@
 
 #include <sigma/component.hpp>
 #include <sigma/config.hpp>
+#include <sigma/graphics/technique.hpp>
 #include <sigma/graphics/texture.hpp>
-#include <sigma/handle.hpp>
-#include <sigma/world.hpp>
+#include <sigma/resource/resource.hpp>
+#include <sigma/tools/resource_hash.hpp>
 
 #include <json/json.h>
 
@@ -191,16 +192,39 @@ namespace json {
             }
         };
 
-        template <class TagType>
-        struct type_traits<resource::handle<TagType>> {
+        template <class Resource>
+        struct type_traits<resource::handle<Resource>> {
             template <class Context>
-            static bool from(Context& ctx, const Json::Value& source, resource::handle<TagType>& output)
+            static bool from(Context& ctx, const Json::Value& source, resource::handle<Resource>& output)
             {
-                if (source.isConvertibleTo(Json::uintValue)) {
-                    output.index = source.asUInt();
-                    output.version = 0; // TODO version
-                    return true;
-                }
+                output = ctx.template get_cache<Resource>().handle_for(tools::resource_id_for({ source.asString() }));
+                return false;
+            }
+        };
+
+        template <>
+        struct type_traits<resource::handle<graphics::technique>> {
+            template <class Context>
+            static bool from(Context& ctx, const Json::Value& source, resource::handle<graphics::technique>& output)
+            {
+                tools::complex_resource_id cid;
+
+                cid.push_back(source["vertex"].asString());
+
+                if (source.isMember("tessellation_control"))
+                    cid.push_back(source["tessellation_control"].asString());
+
+                if (source.isMember("tessellation_evaluation"))
+                    cid.push_back(source["tessellation_evaluation"].asString());
+
+                if (source.isMember("geometry"))
+                    cid.push_back(source["geometry"].asString());
+
+                // TODO other shaders?
+
+                cid.push_back(source["fragment"].asString());
+
+                output = ctx.template get_cache<graphics::technique>().handle_for(tools::resource_id_for(cid));
                 return false;
             }
         };

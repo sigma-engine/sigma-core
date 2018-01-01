@@ -19,6 +19,7 @@
 namespace sigma {
 namespace graphics {
     struct technique_identifier {
+        // TODO make this use paths instead
         resource::handle<shader> vertex;
         resource::handle<shader> tessellation_control;
         resource::handle<shader> tessellation_evaluation;
@@ -62,6 +63,7 @@ namespace graphics {
     };
 
     struct technique {
+        // TODO put the shaders in here directly.
         technique_identifier shaders;
         std::set<std::string> float_uniforms;
         std::set<std::string> vec2_uniforms;

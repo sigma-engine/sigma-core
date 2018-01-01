@@ -124,7 +124,7 @@ public:
 private:
     boost::filesystem::path& cache_path_;
     std::tuple<resource::cache<ViewResources>&...> caches_;
-    std::tuple<resource::cache<ViewSettings>&...> settings_;
+    std::tuple<ViewSettings&...> settings_;
 };
 }
 

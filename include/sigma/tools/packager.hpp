@@ -4,6 +4,7 @@
 #include <sigma/context.hpp>
 #include <sigma/graphics/renderer.hpp>
 #include <sigma/tools/json_conversion.hpp>
+#include <sigma/tools/resource_hash.hpp>
 #include <sigma/util/filesystem.hpp>
 
 #include <boost/algorithm/string/case_conv.hpp>
@@ -20,6 +21,8 @@ namespace sigma {
 namespace tools {
 
     struct package_settings {
+        static constexpr const char* GROUP = "package";
+
         BOOST_HANA_DEFINE_STRUCT(
             package_settings,
             (boost::filesystem::path, build_directory),
@@ -28,16 +31,6 @@ namespace tools {
 
     template <class PackageSettings, class ContextType>
     class packager;
-
-    using complex_resource_id = std::vector<boost::filesystem::path>;
-
-    std::size_t resource_id_for(const complex_resource_id& cid)
-    {
-        std::size_t hash_code = 0;
-        for (const auto& id : cid)
-            boost::hash_combine(hash_code, id);
-        return hash_code;
-    }
 
     template <class PackageSettings, class ContextType>
     class resource_loader {
@@ -70,7 +63,7 @@ namespace tools {
 
         void scan()
         {
-            load_package_settings();
+            load_settings();
 
             for (const auto& loader : loaders_) {
                 for (const auto& source_directory : settings_.source_directories) {
@@ -96,40 +89,47 @@ namespace tools {
                 }
             }
 
-            auto graphics_directory = context_.get_cache_path() / "graphics";
-            if (!boost::filesystem::exists(graphics_directory))
-                boost::filesystem::create_directories(graphics_directory);
-
-            auto& effect_cache = context_.template get_cache<graphics::post_process_effect>();
-            graphics::renderer::settings gsettings;
-            gsettings.image_based_light_effect = effect_cache.handle_for(resource_id_for({ "post_process_effect/pbr/deffered/lights/image_based" }));
-            gsettings.point_light_effect = effect_cache.handle_for(resource_id_for({ "post_process_effect/pbr/deffered/lights/point" }));
-            gsettings.directional_light_effect = effect_cache.handle_for(resource_id_for({ "post_process_effect/pbr/deffered/lights/directional" }));
-            gsettings.spot_light_effect = effect_cache.handle_for(resource_id_for({ "post_process_effect/pbr/deffered/lights/spot" }));
-            gsettings.texture_blit_effect = effect_cache.handle_for(resource_id_for({ "post_process_effect/pbr/deffered/texture_blit" }));
-            gsettings.vignette_effect = effect_cache.handle_for(resource_id_for({ "post_process_effect/vignette" }));
-            gsettings.gamma_conversion = effect_cache.handle_for(resource_id_for({ "post_process_effect/pbr/deffered/gamma_conversion" }));
-            gsettings.shadow_technique = context_.template get_cache<graphics::technique>().handle_for(resource_id_for({ "vertex/default", "fragment/shadow" }));
-            std::ofstream stream{ (graphics_directory / "settings").string(), std::ios::binary };
-            boost::archive::binary_oarchive oa(stream);
-            oa << gsettings;
+            // auto graphics_directory = context_.get_cache_path() / "graphics";
+            // if (!boost::filesystem::exists(graphics_directory))
+            //     boost::filesystem::create_directories(graphics_directory);
+            //
+            // auto& effect_cache = context_.template get_cache<graphics::post_process_effect>();
+            // graphics::renderer::settings gsettings;
+            // gsettings.image_based_light_effect = effect_cache.handle_for(resource_id_for({ "post_process_effect/pbr/deffered/lights/image_based" }));
+            // gsettings.point_light_effect = effect_cache.handle_for(resource_id_for({ "post_process_effect/pbr/deffered/lights/point" }));
+            // gsettings.directional_light_effect = effect_cache.handle_for(resource_id_for({ "post_process_effect/pbr/deffered/lights/directional" }));
+            // gsettings.spot_light_effect = effect_cache.handle_for(resource_id_for({ "post_process_effect/pbr/deffered/lights/spot" }));
+            // gsettings.texture_blit_effect = effect_cache.handle_for(resource_id_for({ "post_process_effect/pbr/deffered/texture_blit" }));
+            // gsettings.vignette_effect = effect_cache.handle_for(resource_id_for({ "post_process_effect/vignette" }));
+            // gsettings.gamma_conversion = effect_cache.handle_for(resource_id_for({ "post_process_effect/pbr/deffered/gamma_conversion" }));
+            // gsettings.shadow_technique = context_.template get_cache<graphics::technique>().handle_for(resource_id_for({ "vertex/default", "fragment/shadow" }));
+            // std::ofstream stream{ (graphics_directory / "settings").string(), std::ios::binary };
+            // boost::archive::binary_oarchive oa(stream);
+            // oa << gsettings;
 
             (context_.template get_cache<Resources>().save(), ...);
+
+            settings_set_type::for_each([&](auto tag) {
+                using settings_type = typename decltype(tag)::type;
+                if (json_settings_.isMember(settings_type::GROUP))
+                    json::from_json(context_, json_settings_[settings_type::GROUP], context_.template get_settings<settings_type>());
+            });
+            // TODO save the settings.
         }
 
     private:
         context_type& context_;
+        Json::Value json_settings_;
         package_settings_type settings_;
         std::vector<std::unique_ptr<resource_loader<package_settings_type, context_type>>> loaders_;
 
-        void load_package_settings()
+        void load_settings()
         {
-            Json::Value json_settings;
             auto settings_path = context_.get_cache_path() / "settings.json";
             std::ifstream file{ settings_path.c_str() };
-            file >> json_settings;
+            file >> json_settings_;
 
-            json::from_json(context_, json_settings["package"], settings_);
+            json::from_json(context_, json_settings_["package"], settings_);
         }
     };
 }

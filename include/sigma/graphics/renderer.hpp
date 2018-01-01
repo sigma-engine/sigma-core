@@ -30,14 +30,17 @@ namespace graphics {
     class SIGMA_API renderer {
     public:
         struct SIGMA_API settings {
-            resource::handle<graphics::post_process_effect> image_based_light_effect;
-            resource::handle<graphics::post_process_effect> point_light_effect;
-            resource::handle<graphics::post_process_effect> directional_light_effect;
-            resource::handle<graphics::post_process_effect> spot_light_effect;
-            resource::handle<graphics::post_process_effect> texture_blit_effect;
-            resource::handle<graphics::post_process_effect> gamma_conversion;
-            resource::handle<graphics::post_process_effect> vignette_effect;
-            resource::handle<graphics::technique> shadow_technique;
+            static constexpr const char* GROUP = "render";
+
+            BOOST_HANA_DEFINE_STRUCT(settings,
+                (resource::handle<graphics::post_process_effect>, image_based_light_effect),
+                (resource::handle<graphics::post_process_effect>, point_light_effect),
+                (resource::handle<graphics::post_process_effect>, directional_light_effect),
+                (resource::handle<graphics::post_process_effect>, spot_light_effect),
+                (resource::handle<graphics::post_process_effect>, texture_blit_effect),
+                (resource::handle<graphics::post_process_effect>, gamma_conversion),
+                (resource::handle<graphics::post_process_effect>, vignette_effect),
+                (resource::handle<graphics::technique>, shadow_technique));
 
             template <class Archive>
             void serialize(Archive& ar, const unsigned int version)
@@ -61,7 +64,7 @@ namespace graphics {
             sigma::graphics::static_mesh,
             sigma::graphics::post_process_effect>;
 
-        using render_settings_set = settings_set<>;
+        using render_settings_set = settings_set<settings>;
 
         using context_view_type = context_view<render_resource_set, render_settings_set>;
 
@@ -82,7 +85,7 @@ namespace graphics {
 
     protected:
         context_view_type context_;
-        settings settings_;
+        settings& settings_;
 
     private:
         renderer(const renderer&) = delete;

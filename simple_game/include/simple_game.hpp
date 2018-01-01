@@ -9,6 +9,7 @@
 #include <sigma/graphics/directional_light.hpp>
 #include <sigma/graphics/point_light.hpp>
 #include <sigma/graphics/post_process_effect.hpp>
+#include <sigma/graphics/renderer.hpp>
 #include <sigma/graphics/spot_light.hpp>
 #include <sigma/graphics/static_mesh_instance.hpp>
 #include <sigma/transform.hpp>
@@ -36,7 +37,7 @@ using simple_resource_set = sigma::resource_set<sigma::graphics::texture,
     sigma::graphics::post_process_effect,
     simple_blueprint>;
 
-using simple_settings = sigma::settings_set<>;
+using simple_settings = sigma::settings_set<sigma::graphics::renderer::settings>;
 using simple_context = sigma::context<simple_resource_set, simple_settings>;
 
 class simple_game : public sigma::game<simple_world> {

@@ -12,13 +12,13 @@ simple_game::simple_game(simple_context& ctx)
     auto blueprint = ctx.get_cache<simple_blueprint>().acquire({ 0, 0 });
     instantiate(blueprint);
 
-    world_.for_each<sigma::transform, sigma::graphics::static_mesh_instance, grid_component>([&](sigma::entity e, const sigma::transform& txform, sigma::graphics::static_mesh_instance& mesh_instance, const grid_component& grid) {
+    world_.for_each<sigma::transform, grid_component>([&](sigma::entity e, const sigma::transform& txform, const grid_component& grid) {
         for (int x = 0; x < grid.rows; ++x) {
             for (int z = 0; z < grid.columns; ++z) {
                 if (x != 0 || z != 0) {
                     auto e = world_.create();
-                    world_.add<sigma::transform>(e, txform.position + glm::vec3{ grid.row_spacing * x, 0, grid.column_spacing * z });
-                    world_.add<sigma::graphics::static_mesh_instance>(e, mesh_instance.mesh);
+                    world_.add<sigma::transform>(e, txform.position + glm::vec3{ grid.row_spacing * x, 0, grid.column_spacing * z }, txform.rotation, txform.scale);
+                    world_.add<sigma::graphics::static_mesh_instance>(e, grid.mesh);
                 }
             }
         }
