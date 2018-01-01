@@ -3,8 +3,8 @@
 
 #include <sigma/context.hpp>
 #include <sigma/graphics/renderer.hpp>
+#include <sigma/tools/json_conversion.hpp>
 #include <sigma/util/filesystem.hpp>
-#include <sigma/util/json_conversion.hpp>
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/filesystem/operations.hpp>

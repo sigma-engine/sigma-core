@@ -5,10 +5,10 @@
 #include <sigma/graphics/post_process_effect.hpp>
 #include <sigma/graphics/technique.hpp>
 #include <sigma/graphics/texture.hpp>
+#include <sigma/tools/json_conversion.hpp>
 #include <sigma/tools/packager.hpp>
 #include <sigma/tools/technique_loader.hpp>
 #include <sigma/util/filesystem.hpp>
-#include <sigma/util/json_conversion.hpp>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/join.hpp>

@@ -4,7 +4,6 @@
 #include <sigma/blueprint.hpp>
 #include <sigma/config.hpp>
 #include <sigma/graphics/static_mesh_instance.hpp>
-#include <sigma/util/json_conversion.hpp>
 #include <sigma/world.hpp>
 
 #include <json/json.h>

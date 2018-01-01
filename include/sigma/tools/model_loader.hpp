@@ -5,10 +5,10 @@
 #include <sigma/graphics/static_mesh.hpp>
 #include <sigma/graphics/static_mesh_instance.hpp>
 #include <sigma/graphics/technique.hpp>
+#include <sigma/tools/json_conversion.hpp>
 #include <sigma/tools/packager.hpp>
 #include <sigma/transform.hpp>
 #include <sigma/util/filesystem.hpp>
-#include <sigma/util/json_conversion.hpp>
 #include <sigma/util/type_sequence.hpp>
 
 #include <assimp/Importer.hpp>

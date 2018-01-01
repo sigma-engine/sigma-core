@@ -3,9 +3,8 @@
 
 #include <sigma/graphics/texture.hpp>
 #include <sigma/tools/hdr_io.hpp>
+#include <sigma/tools/json_conversion.hpp>
 #include <sigma/tools/packager.hpp>
-
-#include <sigma/util/json_conversion.hpp>
 
 #include <boost/gil/extension/io/jpeg_io.hpp>
 #include <boost/gil/extension/io/png_io.hpp>

@@ -4,9 +4,9 @@
 #include <sigma/graphics/shader.hpp>
 #include <sigma/graphics/technique.hpp>
 #include <sigma/reflect.hpp>
+#include <sigma/tools/json_conversion.hpp>
 #include <sigma/tools/packager.hpp>
 #include <sigma/util/filesystem.hpp>
-#include <sigma/util/json_conversion.hpp>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/join.hpp>
