@@ -18,5 +18,8 @@
             "vertex": "vertex/default",
             "fragment": "fragment/shadow"
         }
+    },
+    "level": {
+        "current_level_blueprint": "blueprint/proprietary/sponza/sponza"
     }
 }

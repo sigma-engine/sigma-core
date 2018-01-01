@@ -9,7 +9,7 @@
 
 simple_game::simple_game(simple_context& ctx)
 {
-    auto blueprint = ctx.get_cache<simple_blueprint>().acquire({ 0, 0 });
+    auto blueprint = ctx.get_cache<simple_blueprint>().acquire(ctx.get_settings<simple_level_settings>().current_level_blueprint);
     instantiate(blueprint);
 
     world_.for_each<sigma::transform, grid_component>([&](sigma::entity e, const sigma::transform& txform, const grid_component& grid) {
