@@ -163,8 +163,8 @@ namespace tools {
     typedef boost::wave::cpplexer::lex_iterator<token_type> lex_iterator_type;
     typedef boost::wave::context<std::string::iterator, lex_iterator_type, boost::wave::iteration_context_policies::load_file_to_string, glsl_preprocessing_hooks> wave_context_type;
 
-    template <class ContextType>
-    class shader_loader : public resource_loader<ContextType> {
+    template <class PackageSettings, class ContextType>
+    class shader_loader : public resource_loader<PackageSettings, ContextType> {
     public:
         shader_loader(ContextType& ctx)
             : context_{ ctx }
@@ -189,7 +189,7 @@ namespace tools {
             return supported_extensions.count(ext);
         }
 
-        virtual void load(const Json::Value& global_settings, const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) override
+        virtual void load(const PackageSettings& package_settings, const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) override
         {
             static const std::unordered_map<std::string, sigma::graphics::shader_type> source_types = {
                 { ".vert", sigma::graphics::shader_type::vertex },
@@ -275,8 +275,7 @@ namespace tools {
             }
             }
 
-            for (const auto& value : global_settings["package"]["source-directories"]) {
-                auto path = value.asString();
+            for (const auto& path : package_settings.source_directories) {
                 ctx.add_include_path(path.c_str());
                 ctx.add_sysinclude_path(path.c_str());
             }

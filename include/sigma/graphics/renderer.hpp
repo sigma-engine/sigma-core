@@ -61,7 +61,9 @@ namespace graphics {
             sigma::graphics::static_mesh,
             sigma::graphics::post_process_effect>;
 
-        using context_view_type = context_view<render_resource_set>;
+        using render_settings_set = settings_set<>;
+
+        using context_view_type = context_view<render_resource_set, render_settings_set>;
 
         using render_component_set = component_set<sigma::transform,
             sigma::graphics::directional_light,

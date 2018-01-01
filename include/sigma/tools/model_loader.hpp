@@ -127,13 +127,10 @@ namespace tools {
         const aiMesh* src_mesh,
         graphics::static_mesh& dest_mesh);
 
-    template <class ContextType, class ComponentSet>
-    class model_loader;
-
-    template <class ContextType, class... Components>
-    class model_loader<ContextType, type_set<Components...>> : public resource_loader<ContextType> {
+    template <class PackageSettings, class ContextType, class ComponentSet>
+    class model_loader : public resource_loader<PackageSettings, ContextType> {
     public:
-        using component_set_type = component_set<Components...>;
+        using component_set_type = ComponentSet;
         using blueprint_type = blueprint<component_set_type>;
 
         model_loader(ContextType& ctx)
@@ -155,7 +152,7 @@ namespace tools {
             return supported_extensions.count(ext) > 0;
         }
 
-        void load(const Json::Value& global_settings, const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file)
+        void load(const PackageSettings& package_settings, const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file)
         {
             auto package_path = filesystem::make_relative(source_directory, source_file).replace_extension("");
             auto model_settings_path = source_file.parent_path() / (source_file.stem().string() + ".mdl");

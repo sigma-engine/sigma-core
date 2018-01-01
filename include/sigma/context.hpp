@@ -7,20 +7,26 @@
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
+#include <boost/hana/define_struct.hpp>
 
 #include <tuple>
+#include <vector>
 
 namespace sigma {
 template <class... Resources>
 using resource_set = type_set_t<Resources...>;
 
-template <class ResourceSet>
+template <class... Settings>
+using settings_set = type_set_t<Settings...>;
+
+template <class ResourceSet, class SettingsSet>
 class context;
 
-template <class... Resources>
-class context<type_set<Resources...>> {
+template <class... Resources, class... Settings>
+class context<type_set<Resources...>, type_set<Settings...>> {
 public:
     using resource_set_type = resource_set<Resources...>;
+    using settings_set_type = settings_set<Settings...>;
 
     context(const boost::filesystem::path& cache_path)
         : cache_path_{ cache_path }
@@ -39,29 +45,50 @@ public:
         return std::get<index_of_type_v<U, resource_set_type>>(caches_);
     }
 
+    template <class U>
+    inline const resource::cache<U>& get_cache() const
+    {
+        return std::get<index_of_type_v<U, resource_set_type>>(caches_);
+    }
+
+    template <class U>
+    inline U& get_settings()
+    {
+        return std::get<index_of_type_v<U, settings_set_type>>(settings_);
+    }
+
+    template <class U>
+    inline const U& get_settings() const
+    {
+        return std::get<index_of_type_v<U, settings_set_type>>(settings_);
+    }
+
 private:
-    context(const context<resource_set_type>&) = delete;
-    context<resource_set_type>& operator=(const context<resource_set_type>&) = delete;
+    context(const context<resource_set_type, settings_set_type>&) = delete;
+    context<resource_set_type, settings_set_type>& operator=(const context<resource_set_type, settings_set_type>&) = delete;
 
     boost::filesystem::path cache_path_;
     std::tuple<resource::cache<Resources>...> caches_;
+    std::tuple<Settings...> settings_;
 
-    template <class ViewResourceSet>
+    template <class ViewResourceSet, class ViewSettingsSet>
     friend class context_view;
 };
 
-template<class ViewResourceSet>
+template <class ViewResourceSet, class ViewSettingsSet>
 class context_view;
 
-template <class... ViewResources>
-class context_view<type_set<ViewResources...>> {
+template <class... ViewResources, class... ViewSettings>
+class context_view<type_set<ViewResources...>, type_set<ViewSettings...>> {
 public:
     using resource_set_type = resource_set<ViewResources...>;
+    using settings_set_type = settings_set<ViewSettings...>;
 
-    template <class... Resources>
-    context_view(context<type_set<Resources...>>& ctx)
+    template <class... Resources, class... Settings>
+    context_view(context<type_set<Resources...>, type_set<Settings...>>& ctx)
         : cache_path_{ ctx.cache_path_ }
         , caches_{ ctx.template get_cache<ViewResources>()... }
+        , settings_{ ctx.template get_settings<ViewSettings>()... }
     {
     }
 
@@ -76,9 +103,28 @@ public:
         return std::get<index_of_type_v<U, resource_set_type>>(caches_);
     }
 
+    template <class U>
+    inline const resource::cache<U>& get_cache() const
+    {
+        return std::get<index_of_type_v<U, resource_set_type>>(caches_);
+    }
+
+    template <class U>
+    inline U& get_settings()
+    {
+        return std::get<index_of_type_v<U, settings_set_type>>(settings_);
+    }
+
+    template <class U>
+    inline const U& get_settings() const
+    {
+        return std::get<index_of_type_v<U, settings_set_type>>(settings_);
+    }
+
 private:
     boost::filesystem::path& cache_path_;
     std::tuple<resource::cache<ViewResources>&...> caches_;
+    std::tuple<resource::cache<ViewSettings>&...> settings_;
 };
 }
 

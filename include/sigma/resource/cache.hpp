@@ -90,13 +90,12 @@ namespace resource {
             return resources_[hnd.index].second.get();
         }
 
-        bool save() const
+        void save() const
         {
             auto database_path = cache_directory_ / "database";
             std::ofstream file{ database_path.string(), std::ios::binary | std::ios::out };
             boost::archive::binary_oarchive oa{ file };
             oa << database_;
-            return true;
         }
 
     private:

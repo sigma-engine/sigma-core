@@ -11,8 +11,8 @@
 namespace sigma {
 namespace tools {
 
-    template <class ContextType>
-    class cubemap_loader : public resource_loader<ContextType> {
+    template <class PackageSettings, class ContextType>
+    class cubemap_loader : public resource_loader<PackageSettings, ContextType> {
     public:
         cubemap_loader(ContextType& ctx)
             : context_{ ctx }
@@ -29,7 +29,7 @@ namespace tools {
             return supported_extensions.count(ext) > 0;
         }
 
-        virtual void load(const Json::Value& global_settings, const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) override
+        virtual void load(const PackageSettings& package_settings, const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) override
         {
             auto cid = resource_shortname(sigma::graphics::cubemap) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
             auto rid = resource_id_for({ cid });
@@ -68,6 +68,7 @@ namespace tools {
 
             cubemap_cache.insert(rid, cubemap, true);
         }
+
     private:
         ContextType& context_;
     };

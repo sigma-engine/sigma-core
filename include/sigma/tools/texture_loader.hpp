@@ -58,8 +58,8 @@ namespace tools {
         boost::gil::copy_pixels(view, boost::gil::interleaved_view(view.width(), view.height(), (pixel*)texture.data.data(), view.width() * sizeof(pixel)));
     }
 
-    template <class ContextType>
-    class texture_loader : public resource_loader<ContextType> {
+    template <class PackageSettings, class ContextType>
+    class texture_loader : public resource_loader<PackageSettings, ContextType> {
     public:
         texture_loader(ContextType& ctx)
             : context_{ ctx }
@@ -85,7 +85,7 @@ namespace tools {
             return supported_extensions.count(ext) > 0;
         }
 
-        virtual void load(const Json::Value& global_settings, const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) override
+        virtual void load(const PackageSettings& package_settings, const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) override
         {
             static const std::unordered_map<std::string, texture_source_type> type_map = {
                 { ".tiff", texture_source_type::tiff },

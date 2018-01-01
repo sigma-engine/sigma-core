@@ -20,8 +20,8 @@
 namespace sigma {
 namespace tools {
 
-    template <class ContextType>
-    class post_process_effect_loader : public resource_loader<ContextType> {
+    template <class PackageSettings, class ContextType>
+    class post_process_effect_loader : public resource_loader<PackageSettings, ContextType> {
     public:
         post_process_effect_loader(ContextType& ctx)
             : context_{ ctx }
@@ -38,7 +38,7 @@ namespace tools {
             return supported_extensions.count(ext) > 0;
         }
 
-        virtual void load(const Json::Value& global_settings, const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) override
+        virtual void load(const PackageSettings& package_settings, const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) override
         {
             auto& texture_cache = context_.template get_cache<graphics::texture>();
             auto& cubemap_cache = context_.template get_cache<graphics::cubemap>();
@@ -82,6 +82,7 @@ namespace tools {
 
             post_process_effect_cache.insert(rid, effect, true);
         }
+
     private:
         ContextType& context_;
     };

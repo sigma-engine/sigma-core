@@ -23,6 +23,8 @@
 #include <boost/hana/for_each.hpp>
 #include <boost/hana/keys.hpp>
 
+#include <vector>
+
 namespace sigma {
 namespace json {
     namespace detial {
@@ -293,6 +295,25 @@ namespace json {
             static void to(const T* source, Json::Value& output)
             {
                 for (long int i = 0; i < N; ++i)
+                    to_json(source[i], output[(int)i]);
+            }
+        };
+
+        template <class T>
+        struct type_traits<std::vector<T>> {
+            static bool from(const Json::Value& source, std::vector<T>& output)
+            {
+                output.resize(source.size());
+                for (std::size_t i = 0; i < output.size(); ++i) {
+                    if (!from_json(source[(int)i], output[i]))
+                        return false;
+                }
+                return true;
+            }
+
+            static void to(const std::vector<T>& source, Json::Value& output)
+            {
+                for (long int i = 0; i < source.size(); ++i)
                     to_json(source[i], output[(int)i]);
             }
         };

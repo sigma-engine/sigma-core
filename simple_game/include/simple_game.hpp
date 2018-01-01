@@ -36,7 +36,8 @@ using simple_resource_set = sigma::resource_set<sigma::graphics::texture,
     sigma::graphics::post_process_effect,
     simple_blueprint>;
 
-using simple_context = sigma::context<simple_resource_set>;
+using simple_settings = sigma::settings_set<>;
+using simple_context = sigma::context<simple_resource_set, simple_settings>;
 
 class simple_game : public sigma::game<simple_world> {
 public:
