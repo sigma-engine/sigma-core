@@ -178,7 +178,7 @@ namespace tools {
                 using component_type = typename decltype(component_tag)::type;
                 if (json_entity.isMember(component_name(component_type))) {
                     component_type cmp;
-                    json::from_json(json_entity[component_name(component_type)], cmp);
+                    json::from_json(context_, json_entity[component_name(component_type)], cmp);
                     blueprint_entity.push_back(cmp);
                 }
             });

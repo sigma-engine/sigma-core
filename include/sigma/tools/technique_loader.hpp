@@ -52,12 +52,13 @@ namespace tools {
         }
     };
 
-    void extract_unifrom_data(resource::cache<graphics::texture>& texture_cache,
-        resource::cache<graphics::cubemap>& cubemap_cache,
-        const Json::Value& settings, graphics::technique_uniform_data& data)
+    template <class Context>
+    void extract_unifrom_data(Context& ctx, const Json::Value& settings, graphics::technique_uniform_data& data)
     {
-        // TODO throw missing resource error if texture or cubemap were not found.
+        auto& texture_cache = ctx.template get_cache<graphics::texture>();
+        auto& cubemap_cache = ctx.template get_cache<graphics::cubemap>();
 
+        // TODO throw missing resource error if texture or cubemap were not found.
         for (auto it = settings.begin(); it != settings.end(); ++it) {
             const auto& value = *it;
             if (it.key() == "vertex" || it.key() == "tessellation_control" || it.key() == "tessellation_evaluation" || it.key() == "geometry" || it.key() == "fragment") {
@@ -79,13 +80,13 @@ namespace tools {
                 glm::vec2 v2;
                 glm::vec3 v3;
                 glm::vec4 v4;
-                if (json::from_json(value, v4))
+                if (json::from_json(ctx, value, v4))
                     data.vec4s[it.key().asString()] = v4;
-                else if (json::from_json(value, v3))
+                else if (json::from_json(ctx, value, v3))
                     data.vec3s[it.key().asString()] = v3;
-                else if (json::from_json(value, v2))
+                else if (json::from_json(ctx, value, v2))
                     data.vec2s[it.key().asString()] = v2;
-                else if (json::from_json(value, f))
+                else if (json::from_json(ctx, value, f))
                     data.floats[it.key().asString()] = f;
             }
         }
@@ -121,7 +122,7 @@ namespace tools {
             file >> settings;
 
             technique_shaders shaders;
-            json::from_json(settings, shaders);
+            json::from_json(context_, settings, shaders);
 
             auto rid = shaders.get_rid();
             if (technique_cache.contains(rid)) {

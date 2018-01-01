@@ -41,8 +41,6 @@ namespace tools {
 
         virtual void load(const PackageSettings& package_settings, const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) override
         {
-            auto& texture_cache = context_.template get_cache<graphics::texture>();
-            auto& cubemap_cache = context_.template get_cache<graphics::cubemap>();
             auto& technique_cache = context_.template get_cache<graphics::technique>();
             auto& material_cache = context_.template get_cache<graphics::material>();
 
@@ -66,12 +64,12 @@ namespace tools {
             file >> settings;
 
             technique_shaders shaders;
-            json::from_json(settings, shaders);
+            json::from_json(context_, settings, shaders);
 
             sigma::graphics::material material;
             material.technique_id = technique_cache.handle_for(shaders.get_rid());
 
-            extract_unifrom_data(texture_cache, cubemap_cache, settings, material);
+            extract_unifrom_data(context_, settings, material);
 
             material_cache.insert(rid, material, true);
         }

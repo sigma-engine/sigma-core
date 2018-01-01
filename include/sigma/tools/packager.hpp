@@ -129,7 +129,7 @@ namespace tools {
             std::ifstream file{ settings_path.c_str() };
             file >> json_settings;
 
-            json::from_json(json_settings["package"], settings_);
+            json::from_json(context_, json_settings["package"], settings_);
         }
     };
 }

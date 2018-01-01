@@ -134,10 +134,10 @@ namespace tools {
             }
 
             sigma::graphics::texture texture;
-            sigma::json::from_json(settings["filter"]["minification"], texture.minification_filter);
-            sigma::json::from_json(settings["filter"]["magnification"], texture.magnification_filter);
-            sigma::json::from_json(settings["filter"]["mipmap"], texture.mipmap_filter);
-            sigma::json::from_json(settings["format"], texture.format);
+            sigma::json::from_json(context_, settings["filter"]["minification"], texture.minification_filter);
+            sigma::json::from_json(context_, settings["filter"]["magnification"], texture.magnification_filter);
+            sigma::json::from_json(context_, settings["filter"]["mipmap"], texture.mipmap_filter);
+            sigma::json::from_json(context_, settings["format"], texture.format);
 
             switch (texture.format) {
             case sigma::graphics::texture_format::RGB8: {

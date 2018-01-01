@@ -40,8 +40,6 @@ namespace tools {
 
         virtual void load(const PackageSettings& package_settings, const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) override
         {
-            auto& texture_cache = context_.template get_cache<graphics::texture>();
-            auto& cubemap_cache = context_.template get_cache<graphics::cubemap>();
             auto& technique_cache = context_.template get_cache<graphics::technique>();
             auto& static_mesh_cache = context_.template get_cache<graphics::static_mesh>();
             auto& post_process_effect_cache = context_.template get_cache<graphics::post_process_effect>();
@@ -66,12 +64,12 @@ namespace tools {
             file >> settings;
 
             technique_shaders shaders;
-            json::from_json(settings, shaders);
+            json::from_json(context_, settings, shaders);
 
             sigma::graphics::post_process_effect effect;
             effect.technique_id = technique_cache.handle_for(shaders.get_rid());
 
-            extract_unifrom_data(texture_cache, cubemap_cache, settings, effect);
+            extract_unifrom_data(context_, settings, effect);
 
             auto mesh_prefix = resource_shortname(graphics::static_mesh);
             auto mesh_cid = boost::filesystem::path{ mesh_prefix } / "fullscreen_quad";
