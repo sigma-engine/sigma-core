@@ -91,11 +91,10 @@ namespace tools {
         }
     }
 
-    class technique_loader : public resource_loader {
+    template <class ContextType>
+    class technique_loader : public resource_loader<ContextType> {
     public:
-        using context_view_type = context_view<graphics::shader, graphics::technique>;
-
-        technique_loader(context_view_type ctx)
+        technique_loader(ContextType& ctx)
             : context_{ ctx }
         {
         }
@@ -114,8 +113,8 @@ namespace tools {
 
         virtual void load(const Json::Value& global_settings, const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) override
         {
-            auto& shader_cache = context_.get_cache<graphics::shader>();
-            auto& technique_cache = context_.get_cache<graphics::technique>();
+            auto& shader_cache = context_.template get_cache<graphics::shader>();
+            auto& technique_cache = context_.template get_cache<graphics::technique>();
 
             std::ifstream file(source_file.string());
             Json::Value settings;
@@ -154,7 +153,7 @@ namespace tools {
         }
 
     private:
-        context_view_type context_;
+        ContextType& context_;
     };
 }
 }

@@ -23,6 +23,9 @@ using simple_component_set = sigma::component_set<sigma::transform,
     sigma::graphics::static_mesh_instance,
     grid_component>;
 
+using simple_world = sigma::world<simple_component_set>;
+
+
 using simple_blueprint = sigma::blueprint<sigma::transform,
     sigma::graphics::directional_light,
     sigma::graphics::point_light,
@@ -30,7 +33,7 @@ using simple_blueprint = sigma::blueprint<sigma::transform,
     sigma::graphics::static_mesh_instance,
     grid_component>;
 
-using simple_context = sigma::context<sigma::graphics::texture,
+using simple_resource_set = sigma::resource_set<sigma::graphics::texture,
     sigma::graphics::cubemap,
     sigma::graphics::shader,
     sigma::graphics::technique,
@@ -39,7 +42,7 @@ using simple_context = sigma::context<sigma::graphics::texture,
     sigma::graphics::post_process_effect,
     simple_blueprint>;
 
-using simple_world = sigma::world<simple_component_set>;
+using simple_context = sigma::context<simple_resource_set>;
 
 class simple_game : public sigma::game<simple_world> {
 public:

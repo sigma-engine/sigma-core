@@ -20,11 +20,10 @@
 namespace sigma {
 namespace tools {
 
-    class post_process_effect_loader : public resource_loader {
+    template <class ContextType>
+    class post_process_effect_loader : public resource_loader<ContextType> {
     public:
-        using context_view_type = context_view<graphics::texture, graphics::cubemap, graphics::technique, graphics::static_mesh, graphics::post_process_effect>;
-
-        post_process_effect_loader(context_view_type ctx)
+        post_process_effect_loader(ContextType& ctx)
             : context_{ ctx }
         {
         }
@@ -41,11 +40,11 @@ namespace tools {
 
         virtual void load(const Json::Value& global_settings, const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) override
         {
-            auto& texture_cache = context_.get_cache<graphics::texture>();
-            auto& cubemap_cache = context_.get_cache<graphics::cubemap>();
-            auto& technique_cache = context_.get_cache<graphics::technique>();
-            auto& static_mesh_cache = context_.get_cache<graphics::static_mesh>();
-            auto& post_process_effect_cache = context_.get_cache<graphics::post_process_effect>();
+            auto& texture_cache = context_.template get_cache<graphics::texture>();
+            auto& cubemap_cache = context_.template get_cache<graphics::cubemap>();
+            auto& technique_cache = context_.template get_cache<graphics::technique>();
+            auto& static_mesh_cache = context_.template get_cache<graphics::static_mesh>();
+            auto& post_process_effect_cache = context_.template get_cache<graphics::post_process_effect>();
 
             auto cid = resource_shortname(sigma::graphics::post_process_effect) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
             auto rid = resource_id_for({ cid });
@@ -83,9 +82,8 @@ namespace tools {
 
             post_process_effect_cache.insert(rid, effect, true);
         }
-
     private:
-        context_view_type context_;
+        ContextType& context_;
     };
 }
 }

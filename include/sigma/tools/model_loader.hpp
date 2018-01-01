@@ -127,16 +127,15 @@ namespace tools {
         const aiMesh* src_mesh,
         graphics::static_mesh& dest_mesh);
 
-    template <class blueprint>
+    template <class ContextType, class ComponentSet>
     class model_loader;
 
-    template <class... Components>
-    class model_loader<blueprint<Components...>> : public resource_loader {
+    template <class ContextType, class... Components>
+    class model_loader<ContextType, type_set<Components...>> : public resource_loader<ContextType> {
     public:
         using blueprint_type = blueprint<Components...>;
-        using context_view_type = context_view<graphics::material, graphics::static_mesh, blueprint_type>;
 
-        model_loader(context_view_type ctx)
+        model_loader(ContextType& ctx)
             : context_{ ctx }
         {
         }
@@ -175,8 +174,6 @@ namespace tools {
         }
 
     private:
-        context_view_type context_;
-
         void convert_entity(const Json::Value& json_entity, typename blueprint_type::entity_type& blueprint_entity)
         {
             type_set_t<Components...>::for_each([&](auto component_tag) {
@@ -418,6 +415,8 @@ namespace tools {
 
             static_mesh_cache.insert(rid, dest_mesh, true);
         }
+    private:
+        ContextType& context_;
     };
 }
 }

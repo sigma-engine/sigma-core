@@ -58,11 +58,10 @@ namespace tools {
         boost::gil::copy_pixels(view, boost::gil::interleaved_view(view.width(), view.height(), (pixel*)texture.data.data(), view.width() * sizeof(pixel)));
     }
 
-    class texture_loader : public resource_loader {
+    template <class ContextType>
+    class texture_loader : public resource_loader<ContextType> {
     public:
-        using context_view_type = context_view<graphics::texture>;
-
-        texture_loader(context_view_type ctx)
+        texture_loader(ContextType& ctx)
             : context_{ ctx }
         {
         }
@@ -108,7 +107,7 @@ namespace tools {
             auto cid = resource_shortname(sigma::graphics::texture) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
             auto rid = resource_id_for({ cid });
 
-            auto& texture_cache = context_.get_cache<graphics::texture>();
+            auto& texture_cache = context_.template get_cache<graphics::texture>();
             if (texture_cache.contains(rid)) {
                 auto h = texture_cache.handle_for(rid);
 
@@ -160,9 +159,7 @@ namespace tools {
         }
 
     private:
-        static const std::unordered_map<std::string, texture_source_type> ext_to_type;
-
-        context_view_type context_;
+        ContextType& context_;
     };
 }
 }

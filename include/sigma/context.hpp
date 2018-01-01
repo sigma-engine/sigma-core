@@ -3,7 +3,7 @@
 
 #include <sigma/resource/cache.hpp>
 #include <sigma/resource/resource.hpp>
-#include <sigma/util/variadic.hpp>
+#include <sigma/util/type_sequence.hpp>
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
@@ -11,10 +11,17 @@
 #include <tuple>
 
 namespace sigma {
+template <class... Resources>
+using resource_set = type_set_t<Resources...>;
+
+template <class ResourceSet>
+class context;
 
 template <class... Resources>
-class context {
+class context<type_set<Resources...>> {
 public:
+    using resource_set_type = resource_set<Resources...>;
+
     context(const boost::filesystem::path& cache_path)
         : cache_path_{ cache_path }
         , caches_{ resource::cache<Resources>{ cache_path_ / resource_shortname(Resources) }... }
@@ -29,25 +36,30 @@ public:
     template <class U>
     inline resource::cache<U>& get_cache()
     {
-        return std::get<index<U, Resources...>::value>(caches_);
+        return std::get<index_of_type_v<U, resource_set_type>>(caches_);
     }
 
 private:
-    context(const context<Resources...>&) = delete;
-    context<Resources...>& operator=(const context<Resources...>&) = delete;
+    context(const context<resource_set_type>&) = delete;
+    context<resource_set_type>& operator=(const context<resource_set_type>&) = delete;
 
     boost::filesystem::path cache_path_;
     std::tuple<resource::cache<Resources>...> caches_;
 
-    template <class... ViewResources>
+    template <class ViewResourceSet>
     friend class context_view;
 };
 
+template<class ViewResourceSet>
+class context_view;
+
 template <class... ViewResources>
-class context_view {
+class context_view<type_set<ViewResources...>> {
 public:
+    using resource_set_type = resource_set<ViewResources...>;
+
     template <class... Resources>
-    context_view(context<Resources...>& ctx)
+    context_view(context<type_set<Resources...>>& ctx)
         : cache_path_{ ctx.cache_path_ }
         , caches_{ ctx.template get_cache<ViewResources>()... }
     {
@@ -61,7 +73,7 @@ public:
     template <class U>
     inline resource::cache<U>& get_cache()
     {
-        return std::get<index<U, ViewResources...>::value>(caches_);
+        return std::get<index_of_type_v<U, resource_set_type>>(caches_);
     }
 
 private:

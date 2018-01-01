@@ -161,13 +161,12 @@ namespace tools {
 
     typedef boost::wave::cpplexer::lex_token<> token_type;
     typedef boost::wave::cpplexer::lex_iterator<token_type> lex_iterator_type;
-    typedef boost::wave::context<std::string::iterator, lex_iterator_type, boost::wave::iteration_context_policies::load_file_to_string, glsl_preprocessing_hooks> context_type;
+    typedef boost::wave::context<std::string::iterator, lex_iterator_type, boost::wave::iteration_context_policies::load_file_to_string, glsl_preprocessing_hooks> wave_context_type;
 
-    class shader_loader : public resource_loader {
+    template <class ContextType>
+    class shader_loader : public resource_loader<ContextType> {
     public:
-        using context_view_type = context_view<graphics::shader>;
-
-        shader_loader(context_view_type ctx)
+        shader_loader(ContextType& ctx)
             : context_{ ctx }
         {
             glslang::InitializeProcess();
@@ -220,7 +219,7 @@ namespace tools {
             auto cid = type_name_map.at(source_type) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
             auto rid = resource_id_for({ cid });
 
-            auto& shader_database = context_.get_cache<graphics::shader>();
+            auto& shader_database = context_.template get_cache<graphics::shader>();
             if (shader_database.contains(rid)) {
                 auto h = shader_database.handle_for(rid);
 
@@ -242,7 +241,7 @@ namespace tools {
                 std::istreambuf_iterator<char>{}
             };
 
-            context_type ctx{
+            wave_context_type ctx{
                 source_code.begin(),
                 source_code.end(),
                 source_file.c_str()
@@ -320,7 +319,7 @@ namespace tools {
         }
 
     private:
-        context_view_type context_;
+        ContextType& context_;
     };
 }
 }

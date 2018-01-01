@@ -11,11 +11,10 @@
 namespace sigma {
 namespace tools {
 
-    class cubemap_loader : public resource_loader {
+    template <class ContextType>
+    class cubemap_loader : public resource_loader<ContextType> {
     public:
-        using context_view_type = context_view<graphics::texture, graphics::cubemap>;
-
-        cubemap_loader(context_view_type ctx)
+        cubemap_loader(ContextType& ctx)
             : context_{ ctx }
         {
         }
@@ -35,8 +34,8 @@ namespace tools {
             auto cid = resource_shortname(sigma::graphics::cubemap) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
             auto rid = resource_id_for({ cid });
 
-            auto& cubemap_cache = context_.get_cache<graphics::cubemap>();
-            auto& texture_cache = context_.get_cache<graphics::texture>();
+            auto& cubemap_cache = context_.template get_cache<graphics::cubemap>();
+            auto& texture_cache = context_.template get_cache<graphics::texture>();
             if (cubemap_cache.contains(rid)) {
                 auto h = cubemap_cache.handle_for(rid);
 
@@ -69,9 +68,8 @@ namespace tools {
 
             cubemap_cache.insert(rid, cubemap, true);
         }
-
     private:
-        context_view_type context_;
+        ContextType& context_;
     };
 }
 }

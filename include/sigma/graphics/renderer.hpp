@@ -53,13 +53,15 @@ namespace graphics {
             }
         };
 
-        using context_view_type = context_view<sigma::graphics::texture,
+        using render_resource_set = resource_set<sigma::graphics::texture,
             sigma::graphics::cubemap,
             sigma::graphics::shader,
             sigma::graphics::technique,
             sigma::graphics::material,
             sigma::graphics::static_mesh,
             sigma::graphics::post_process_effect>;
+
+        using context_view_type = context_view<render_resource_set>;
 
         using render_component_set = component_set<sigma::transform,
             sigma::graphics::directional_light,

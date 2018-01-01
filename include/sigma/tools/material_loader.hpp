@@ -21,11 +21,10 @@
 namespace sigma {
 namespace tools {
 
-    class material_loader : public resource_loader {
+    template <class ContextType>
+    class material_loader : public resource_loader<ContextType> {
     public:
-        using context_view_type = context_view<graphics::texture, graphics::cubemap, graphics::technique, graphics::material>;
-
-        material_loader(context_view_type ctx)
+        material_loader(ContextType& ctx)
             : context_{ ctx }
         {
         }
@@ -42,10 +41,10 @@ namespace tools {
 
         virtual void load(const Json::Value& global_settings, const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) override
         {
-            auto& texture_cache = context_.get_cache<graphics::texture>();
-            auto& cubemap_cache = context_.get_cache<graphics::cubemap>();
-            auto& technique_cache = context_.get_cache<graphics::technique>();
-            auto& material_cache = context_.get_cache<graphics::material>();
+            auto& texture_cache = context_.template get_cache<graphics::texture>();
+            auto& cubemap_cache = context_.template get_cache<graphics::cubemap>();
+            auto& technique_cache = context_.template get_cache<graphics::technique>();
+            auto& material_cache = context_.template get_cache<graphics::material>();
 
             auto cid = resource_shortname(sigma::graphics::material) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
             auto rid = resource_id_for({ cid });
@@ -76,9 +75,8 @@ namespace tools {
 
             material_cache.insert(rid, material, true);
         }
-
     private:
-        context_view_type context_;
+        ContextType& context_;
     };
 }
 }

@@ -32,17 +32,21 @@ namespace tools {
         return hash_code;
     }
 
+    template<class ContextType>
     class resource_loader {
     public:
         virtual ~resource_loader() = default;
+
         virtual bool supports_filetype(const std::string& ext) const = 0;
+
         virtual void load(const Json::Value& global_settings, const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) = 0;
     };
 
     template <class... Resources>
-    class packager<context<Resources...>> {
+    class packager<context<type_set<Resources...>>> {
     public:
-        using context_type = context<Resources...>;
+        using context_type = context<type_set<Resources...>>;
+
         packager(context_type& ctx)
             : context_(ctx)
         {
@@ -109,7 +113,7 @@ namespace tools {
         }
 
     private:
-        std::vector<std::unique_ptr<resource_loader>> loaders_;
+        std::vector<std::unique_ptr<resource_loader<context_type>>> loaders_;
         context_type& context_;
     };
 }
