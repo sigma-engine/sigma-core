@@ -13,8 +13,10 @@ namespace tools {
     std::size_t resource_id_for(const complex_resource_id& cid)
     {
         std::size_t hash_code = 0;
-        for (const auto& id : cid)
-            boost::hash_combine(hash_code, id);
+        for (const auto& id : cid) {
+            if (id.size() > 0)
+                boost::hash_combine(hash_code, id);
+        }
         return hash_code;
     }
 }

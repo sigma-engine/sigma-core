@@ -17,41 +17,6 @@
 
 namespace sigma {
 namespace tools {
-
-    struct technique_shaders {
-        BOOST_HANA_DEFINE_STRUCT(
-            technique_shaders,
-            (boost::filesystem::path, vertex),
-            (boost::filesystem::path, tessellation_control),
-            (boost::filesystem::path, tessellation_evaluation),
-            (boost::filesystem::path, geometry),
-            (boost::filesystem::path, fragment));
-
-        complex_resource_id get_cid() const
-        {
-            complex_resource_id cid;
-            cid.push_back("vertex" / vertex);
-            if (tessellation_control.size() > 0)
-                cid.push_back("tessellation_control" / tessellation_control);
-            if (tessellation_evaluation.size() > 0)
-                cid.push_back("tessellation_evaluation" / tessellation_evaluation);
-            if (geometry.size() > 0)
-                cid.push_back("geometry" / geometry);
-            cid.push_back("fragment" / fragment);
-            return cid;
-        }
-
-        std::size_t get_rid() const
-        {
-            return resource_id_for(get_cid());
-        }
-
-        std::string to_string() const
-        {
-            return "technique { " + boost::algorithm::join(get_cid() | boost::adaptors::transformed([](auto a) { return a.string(); }), ", ") + " }";
-        }
-    };
-
     template <class Context>
     void extract_unifrom_data(Context& ctx, const Json::Value& settings, graphics::technique_uniform_data& data)
     {
@@ -121,10 +86,19 @@ namespace tools {
             Json::Value settings;
             file >> settings;
 
-            technique_shaders shaders;
-            json::from_json(context_, settings, shaders);
+            graphics::technique_identifier tech_id;
+            json::from_json(context_, settings, tech_id);
 
-            auto rid = shaders.get_rid();
+            // TODO add any other other shaders here.
+            complex_resource_id cid{
+                tech_id.vertex,
+                tech_id.tessellation_control,
+                tech_id.tessellation_evaluation,
+                tech_id.geometry,
+                tech_id.fragment
+            };
+
+            auto rid = resource_id_for(cid);
             if (technique_cache.contains(rid)) {
                 auto h = technique_cache.handle_for(rid);
 
@@ -135,17 +109,18 @@ namespace tools {
                     return;
             }
 
-            std::cout << "packaging: " << shaders.to_string() << "\n";
+            std::cout << "packaging: technique { " << (boost::algorithm::join(cid | boost::adaptors::transformed([](auto a) { return a.string(); }), ", ")) << "}\n";
 
             graphics::technique technique;
-            technique.shaders.vertex = shader_cache.handle_for(resource_id_for({ "vertex" / shaders.vertex }));
-            if (shaders.tessellation_control.size() > 0)
-                technique.shaders.tessellation_control = shader_cache.handle_for(resource_id_for({ "tessellation_control" / shaders.tessellation_control }));
-            if (shaders.tessellation_evaluation.size() > 0)
-                technique.shaders.tessellation_evaluation = shader_cache.handle_for(resource_id_for({ "tessellation_evaluation" / shaders.tessellation_evaluation }));
-            if (shaders.geometry.size() > 0)
-                technique.shaders.geometry = shader_cache.handle_for(resource_id_for({ "geometry" / shaders.geometry }));
-            technique.shaders.fragment = shader_cache.handle_for(resource_id_for({ "fragment" / shaders.fragment }));
+
+            technique.vertex = shader_cache.handle_for(resource_id_for({ tech_id.vertex }));
+            if (tech_id.tessellation_control.size() > 0)
+                technique.tessellation_control = shader_cache.handle_for(resource_id_for({ tech_id.tessellation_control }));
+            if (tech_id.tessellation_evaluation.size() > 0)
+                technique.tessellation_evaluation = shader_cache.handle_for(resource_id_for({ tech_id.tessellation_evaluation }));
+            if (tech_id.geometry.size() > 0)
+                technique.geometry = shader_cache.handle_for(resource_id_for({ tech_id.geometry }));
+            technique.fragment = shader_cache.handle_for(resource_id_for({ tech_id.fragment }));
 
             // TODO: (NOW) check for link errors.
             // TODO: (NOW) extract reflection data.

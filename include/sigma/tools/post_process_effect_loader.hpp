@@ -63,11 +63,19 @@ namespace tools {
             Json::Value settings;
             file >> settings;
 
-            technique_shaders shaders;
-            json::from_json(context_, settings, shaders);
+            graphics::technique_identifier tech_id;
+            json::from_json(context_, settings, tech_id);
 
+            // TODO add any other other shaders here.
+            complex_resource_id tech_cid{
+                tech_id.vertex,
+                tech_id.tessellation_control,
+                tech_id.tessellation_evaluation,
+                tech_id.geometry,
+                tech_id.fragment
+            };
             sigma::graphics::post_process_effect effect;
-            effect.technique_id = technique_cache.handle_for(shaders.get_rid());
+            effect.technique_id = technique_cache.handle_for(resource_id_for(tech_cid));
 
             extract_unifrom_data(context_, settings, effect);
 

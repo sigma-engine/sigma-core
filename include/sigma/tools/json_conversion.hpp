@@ -19,6 +19,7 @@
 #include <glm/vec4.hpp>
 
 #include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/hana/at_key.hpp>
 #include <boost/hana/for_each.hpp>
@@ -203,29 +204,62 @@ namespace json {
         };
 
         template <>
+        struct type_traits<graphics::technique_identifier> {
+            template <class Context>
+            static bool from(Context& ctx, const Json::Value& source, graphics::technique_identifier& output)
+            {
+                // TODO add any other other shaders here.
+
+                // TODO warn/error about missing vertex shader.
+                output.vertex = source["vertex"].asString();
+                if (!boost::starts_with(output.vertex.string(), "vertex"))
+                    output.vertex = "vertex" / output.vertex;
+
+                if (source.isMember("tessellation_control")) {
+                    output.tessellation_control = source["tessellation_control"].asString();
+                    if (!boost::starts_with(output.tessellation_control.string(), "tessellation_control"))
+                        output.tessellation_control = "tessellation_control" / output.tessellation_control;
+                }
+                if (source.isMember("tessellation_evaluation")) {
+                    output.tessellation_evaluation = source["tessellation_evaluation"].asString();
+                    if (!boost::starts_with(output.tessellation_evaluation.string(), "tessellation_evaluation"))
+                        output.tessellation_evaluation = "tessellation_evaluation" / output.tessellation_evaluation;
+                }
+                if (source.isMember("geometry")) {
+                    output.geometry = source["geometry"].asString();
+                    if (!boost::starts_with(output.geometry.string(), "geometry"))
+                        output.geometry = "geometry" / output.geometry;
+                }
+
+                // TODO warn/error about missing fragment shader.
+                output.fragment = source["fragment"].asString();
+                if (!boost::starts_with(output.fragment.string(), "fragment"))
+                    output.fragment = "fragment" / output.fragment;
+
+                return true;
+            }
+        };
+
+        template <>
         struct type_traits<resource::handle<graphics::technique>> {
             template <class Context>
             static bool from(Context& ctx, const Json::Value& source, resource::handle<graphics::technique>& output)
             {
-                tools::complex_resource_id cid;
+                graphics::technique_identifier tech_id;
+                from_json(ctx, source, tech_id);
 
-                cid.push_back(source["vertex"].asString());
-
-                if (source.isMember("tessellation_control"))
-                    cid.push_back(source["tessellation_control"].asString());
-
-                if (source.isMember("tessellation_evaluation"))
-                    cid.push_back(source["tessellation_evaluation"].asString());
-
-                if (source.isMember("geometry"))
-                    cid.push_back(source["geometry"].asString());
-
-                // TODO other shaders?
-
-                cid.push_back(source["fragment"].asString());
+                // TODO add any other other shaders here.
+                tools::complex_resource_id cid{
+                    tech_id.vertex,
+                    tech_id.tessellation_control,
+                    tech_id.tessellation_evaluation,
+                    tech_id.geometry,
+                    tech_id.fragment
+                };
 
                 output = ctx.template get_cache<graphics::technique>().handle_for(tools::resource_id_for(cid));
-                return false;
+
+                return true;
             }
         };
 

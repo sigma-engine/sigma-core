@@ -16,21 +16,21 @@ namespace opengl {
     {
         GL_CHECK(object_ = glCreateProgram());
 
-        GL_CHECK(glAttachShader(object_, SHADER_PTR(shader_mgr, data.shaders.vertex)->get_object()));
+        GL_CHECK(glAttachShader(object_, SHADER_PTR(shader_mgr, data.vertex)->get_object()));
 
-        if (data.shaders.tessellation_control.is_valid()) {
-            GL_CHECK(glAttachShader(object_, SHADER_PTR(shader_mgr, data.shaders.tessellation_control)->get_object()));
+        if (data.tessellation_control.is_valid()) {
+            GL_CHECK(glAttachShader(object_, SHADER_PTR(shader_mgr, data.tessellation_control)->get_object()));
         }
 
-        if (data.shaders.tessellation_evaluation.is_valid()) {
-            GL_CHECK(glAttachShader(object_, SHADER_PTR(shader_mgr, data.shaders.tessellation_evaluation)->get_object()));
+        if (data.tessellation_evaluation.is_valid()) {
+            GL_CHECK(glAttachShader(object_, SHADER_PTR(shader_mgr, data.tessellation_evaluation)->get_object()));
         }
 
-        if (data.shaders.geometry.is_valid()) {
-            GL_CHECK(glAttachShader(object_, SHADER_PTR(shader_mgr, data.shaders.geometry)->get_object()));
+        if (data.geometry.is_valid()) {
+            GL_CHECK(glAttachShader(object_, SHADER_PTR(shader_mgr, data.geometry)->get_object()));
         }
 
-        GL_CHECK(glAttachShader(object_, SHADER_PTR(shader_mgr, data.shaders.fragment)->get_object()));
+        GL_CHECK(glAttachShader(object_, SHADER_PTR(shader_mgr, data.fragment)->get_object()));
 
         GL_CHECK(glLinkProgram(object_));
 

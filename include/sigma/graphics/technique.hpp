@@ -5,6 +5,7 @@
 #include <sigma/graphics/cubemap.hpp>
 #include <sigma/graphics/shader.hpp>
 #include <sigma/graphics/texture.hpp>
+#include <sigma/reflect.hpp>
 #include <sigma/resource/cache.hpp>
 #include <sigma/resource/resource.hpp>
 #include <sigma/util/glm_serialize.hpp>
@@ -19,12 +20,14 @@
 namespace sigma {
 namespace graphics {
     struct technique_identifier {
-        // TODO make this use paths instead
-        resource::handle<shader> vertex;
-        resource::handle<shader> tessellation_control;
-        resource::handle<shader> tessellation_evaluation;
-        resource::handle<shader> geometry;
-        resource::handle<shader> fragment;
+        // TODO this only place this is used is in the tools
+        BOOST_HANA_DEFINE_STRUCT(
+            technique_identifier,
+            (boost::filesystem::path, vertex),
+            (boost::filesystem::path, tessellation_control),
+            (boost::filesystem::path, tessellation_evaluation),
+            (boost::filesystem::path, geometry),
+            (boost::filesystem::path, fragment));
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
@@ -34,11 +37,6 @@ namespace graphics {
             ar& tessellation_evaluation;
             ar& geometry;
             ar& fragment;
-        }
-
-        bool operator==(const technique_identifier& rhs) const
-        {
-            return vertex == rhs.vertex && tessellation_control == rhs.tessellation_control && tessellation_evaluation == rhs.tessellation_evaluation && geometry == rhs.geometry && fragment == rhs.fragment;
         }
     };
 
@@ -64,7 +62,12 @@ namespace graphics {
 
     struct technique {
         // TODO put the shaders in here directly.
-        technique_identifier shaders;
+        resource::handle<shader> vertex;
+        resource::handle<shader> tessellation_control;
+        resource::handle<shader> tessellation_evaluation;
+        resource::handle<shader> geometry;
+        resource::handle<shader> fragment;
+
         std::set<std::string> float_uniforms;
         std::set<std::string> vec2_uniforms;
         std::set<std::string> vec3_uniforms;
@@ -75,7 +78,12 @@ namespace graphics {
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
         {
-            ar& shaders;
+            ar& vertex;
+            ar& tessellation_control;
+            ar& tessellation_evaluation;
+            ar& geometry;
+            ar& fragment;
+
             ar& float_uniforms;
             ar& vec2_uniforms;
             ar& vec3_uniforms;
@@ -86,22 +94,6 @@ namespace graphics {
     };
 }
 }
-
-// namespace std {
-// template <>
-// struct hash<sigma::graphics::technique_identifier> {
-//     size_t operator()(const sigma::graphics::technique_identifier& id) const
-//     {
-//         std::size_t seed = 0;
-//         boost::hash_combine(seed, id.vertex);
-//         boost::hash_combine(seed, id.tessellation_control);
-//         boost::hash_combine(seed, id.tessellation_evaluation);
-//         boost::hash_combine(seed, id.geometry);
-//         boost::hash_combine(seed, id.fragment);
-//         return seed;
-//     }
-// };
-// }
 
 BOOST_CLASS_VERSION(sigma::graphics::technique_identifier, 1)
 BOOST_CLASS_VERSION(sigma::graphics::technique_uniform_data, 1)
