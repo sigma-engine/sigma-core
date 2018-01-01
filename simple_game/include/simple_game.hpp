@@ -25,13 +25,7 @@ using simple_component_set = sigma::component_set<sigma::transform,
 
 using simple_world = sigma::world<simple_component_set>;
 
-
-using simple_blueprint = sigma::blueprint<sigma::transform,
-    sigma::graphics::directional_light,
-    sigma::graphics::point_light,
-    sigma::graphics::spot_light,
-    sigma::graphics::static_mesh_instance,
-    grid_component>;
+using simple_blueprint = sigma::blueprint<simple_component_set>;
 
 using simple_resource_set = sigma::resource_set<sigma::graphics::texture,
     sigma::graphics::cubemap,

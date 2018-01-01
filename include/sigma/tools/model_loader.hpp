@@ -133,7 +133,8 @@ namespace tools {
     template <class ContextType, class... Components>
     class model_loader<ContextType, type_set<Components...>> : public resource_loader<ContextType> {
     public:
-        using blueprint_type = blueprint<Components...>;
+        using component_set_type = component_set<Components...>;
+        using blueprint_type = blueprint<component_set_type>;
 
         model_loader(ContextType& ctx)
             : context_{ ctx }
@@ -176,7 +177,7 @@ namespace tools {
     private:
         void convert_entity(const Json::Value& json_entity, typename blueprint_type::entity_type& blueprint_entity)
         {
-            type_set_t<Components...>::for_each([&](auto component_tag) {
+            component_set_type::for_each([&](auto component_tag) {
                 using component_type = typename decltype(component_tag)::type;
                 if (json_entity.isMember(component_name(component_type))) {
                     component_type cmp;
@@ -415,6 +416,7 @@ namespace tools {
 
             static_mesh_cache.insert(rid, dest_mesh, true);
         }
+
     private:
         ContextType& context_;
     };

@@ -1,6 +1,7 @@
 #ifndef SIGMA_WORLD_HPP
 #define SIGMA_WORLD_HPP
 
+#include <sigma/component.hpp>
 #include <sigma/config.hpp>
 #include <sigma/handle.hpp>
 #include <sigma/util/type_sequence.hpp>
@@ -15,11 +16,6 @@
 namespace sigma {
 struct entity_tag;
 using entity = handle<entity_tag>;
-
-template <class... Components>
-using component_set = type_set_t<Components...>;
-
-using component_mask_type = std::uint64_t;
 
 template <class T>
 struct component_storage {
