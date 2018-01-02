@@ -83,6 +83,7 @@ namespace tools {
         for (unsigned int j = 0; j < src_mesh->mNumVertices; ++j) {
             auto pos = src_mesh->mVertices[j];
             submesh_vertices[j].position = convert_3d(pos);
+            dest_mesh.radius = std::max(dest_mesh.radius, glm::length(submesh_vertices[j].position));
 
             if (src_mesh->HasNormals()) {
                 submesh_vertices[j].normal = convert_3d(src_mesh->mNormals[j]);

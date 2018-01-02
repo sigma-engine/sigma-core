@@ -41,6 +41,7 @@ namespace graphics {
         };
         typedef std::array<unsigned int, 3> triangle;
 
+        float radius = 0;
         std::vector<vertex> vertices;
         std::vector<triangle> triangles;
         std::vector<resource::handle<material>> materials;
@@ -49,6 +50,7 @@ namespace graphics {
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
         {
+            ar& radius;
             ar& vertices;
             ar& triangles;
             ar& materials;
