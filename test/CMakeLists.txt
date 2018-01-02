@@ -3,6 +3,7 @@ enable_testing()
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_executable(sigma-core-tests
     sigma/main.cpp
+    sigma/AABB_tests.cpp
     sigma/world_tests.cpp
     sigma/frustum_tests.cpp
 )
