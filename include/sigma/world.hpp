@@ -84,8 +84,8 @@ struct world<type_set<Components...>> {
     using component_set_type = component_set<Components...>;
 
     world() = default;
-    world(world<component_set_type>&&) = default;
-    world<component_set_type>& operator=(world<component_set_type>&&) = default;
+    world(world<type_set<Components...>>&&) = default;
+    world<type_set<Components...>>& operator=(world<type_set<Components...>>&&) = default;
 
     entity create()
     {

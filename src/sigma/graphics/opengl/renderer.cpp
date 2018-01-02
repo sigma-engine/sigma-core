@@ -115,6 +115,11 @@ namespace opengl {
                 glm::value_ptr(debug_color), scale * std::tan(spot.cutoff), 0);
         });
 
+        // world.for_each<transform, graphics::static_mesh_instance>([&](entity e, const transform& txform, const graphics::static_mesh_instance& mesh_instance) {
+        //     auto mesh = static_meshes_.acquire(mesh_instance.mesh);
+        //     dd::sphere(glm::value_ptr(txform.position), glm::value_ptr(debug_color), mesh->data.radius);
+        // });
+
         dd::flush(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time_).count());
 
         // Render final effects
@@ -187,25 +192,27 @@ namespace opengl {
 
         world.for_each<transform, graphics::static_mesh_instance>([&](const entity& e, const transform& txform, const graphics::static_mesh_instance& mesh_instance) {
             auto mesh = STATIC_MESH_PTR(static_meshes_, mesh_instance.mesh);
-            instance_matrices matrices;
-            matrices.model_matrix = txform.matrix;
-            matrices.model_view_matrix = standard_.view_matrix * matrices.model_matrix;
-            matrices.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices.model_matrix))); //glm::transpose(glm::inverse(glm::mat3(matrices.model_view_matrix)));
+            if (viewport.view_frustum.contains_sphere(txform.position, mesh->data.radius)) {
+                instance_matrices matrices;
+                matrices.model_matrix = txform.matrix;
+                matrices.model_view_matrix = standard_.view_matrix * matrices.model_matrix;
+                matrices.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices.model_matrix))); //glm::transpose(glm::inverse(glm::mat3(matrices.model_view_matrix)));
 
-            for (unsigned int i = 0; i < mesh->data.materials.size(); ++i) {
-                auto mat = MATERIAL_PTR(materials_, mesh->data.materials[i]);
-                auto tech = TECHNIQUE_PTR(techniques_, mat->data.technique_id);
+                for (unsigned int i = 0; i < mesh->data.materials.size(); ++i) {
+                    auto mat = MATERIAL_PTR(materials_, mesh->data.materials[i]);
+                    auto tech = TECHNIQUE_PTR(techniques_, mat->data.technique_id);
 
-                // TODO allow overriding materials
-                // auto mit = mesh_instance.materials.find(i);
-                // if (mit != mesh_instance.materials.end()) {
-                //     mat = MATERIAL_PTR(materials_, mit->second);
-                // }
+                    // TODO allow overriding materials
+                    // auto mit = mesh_instance.materials.find(i);
+                    // if (mit != mesh_instance.materials.end()) {
+                    //     mat = MATERIAL_PTR(materials_, mit->second);
+                    // }
 
-                if (mat->data.transparent == transparent) {
-                    tech->bind(textures_, cubemaps_, mat->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
-                    tech->set_instance_matrices(&matrices);
-                    mesh->render(i);
+                    if (mat->data.transparent == transparent) {
+                        tech->bind(textures_, cubemaps_, mat->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
+                        tech->set_instance_matrices(&matrices);
+                        mesh->render(i);
+                    }
                 }
             }
         });
@@ -314,7 +321,7 @@ namespace opengl {
                 shadow_.light_frustum_far_plane[i] = cascade_frustums_[i].far_plane();
 
                 setup_view_projection(size_, 1.5708f, 0.0, 0.0, light_view, light_projection);
-                render_to_shadow_map(i, world, light.cast_shadows);
+                render_to_shadow_map(cascade_frustums_[i], i, world, light.cast_shadows);
             }
 
             setup_view_projection(size_,
@@ -394,7 +401,7 @@ namespace opengl {
                 light.shadow_frustum.view(),
                 light.shadow_frustum.projection());
 
-            render_to_shadow_map(0, world, light.cast_shadows);
+            render_to_shadow_map(light.shadow_frustum, 0, world, light.cast_shadows);
 
             setup_view_projection(size_,
                 viewport.view_frustum.fovy(),
@@ -426,7 +433,7 @@ namespace opengl {
         });
     }
 
-    void renderer::render_to_shadow_map(int index, const renderer::world_view_type& world, bool cast_shadows)
+    void renderer::render_to_shadow_map(const frustum& view_frustum, int index, const renderer::world_view_type& world, bool cast_shadows)
     {
         sbuffer_.bind_for_shadow_write(index);
 
@@ -449,13 +456,15 @@ namespace opengl {
             world.for_each<transform, graphics::static_mesh_instance>([&](entity e, const transform& txform, const graphics::static_mesh_instance& mesh_instance) {
                 if (mesh_instance.cast_shadows) {
                     auto mesh = STATIC_MESH_PTR(static_meshes_, mesh_instance.mesh);
-                    instance_matrices matrices;
-                    matrices.model_matrix = txform.matrix;
-                    matrices.model_view_matrix = standard_.view_matrix * matrices.model_matrix;
+                    if (view_frustum.contains_sphere(txform.position, mesh->data.radius)) {
+                        instance_matrices matrices;
+                        matrices.model_matrix = txform.matrix;
+                        matrices.model_view_matrix = standard_.view_matrix * matrices.model_matrix;
 
-                    shadow_technique->set_instance_matrices(&matrices);
+                        shadow_technique->set_instance_matrices(&matrices);
 
-                    mesh->render_all();
+                        mesh->render_all();
+                    }
                 }
             });
         }

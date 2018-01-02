@@ -87,7 +87,7 @@ namespace opengl {
 
         void spot_light_pass(const graphics::view_port& viewport, const world_view_type& world);
 
-        void render_to_shadow_map(int index, const world_view_type& world, bool cast_shadows = true);
+        void render_to_shadow_map(const frustum& view_frustum, int index, const renderer::world_view_type& world, bool cast_shadows);
 
         // void point_light_outside_stencil_optimization(glm::vec3 view_space_position, float radius);
     };
