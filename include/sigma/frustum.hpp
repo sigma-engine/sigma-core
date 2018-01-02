@@ -53,6 +53,8 @@ public:
 
     const std::array<glm::vec4, 8>& corners() const;
 
+    bool contains_sphere(const glm::vec3& center, float radius) const;
+
 private:
     float fovy_;
     float aspect_;
@@ -66,6 +68,7 @@ private:
     glm::mat4 projection_view_;
     glm::mat4 inverse_projection_view_;
     std::array<glm::vec4, 8> corners_;
+    std::array<glm::vec4, 6> planes_;
 
     glm::mat4 light_projection_(const glm::mat4& light_projection_view_matrix, float& minZ, float& maxZ, bool updateZ) const;
 

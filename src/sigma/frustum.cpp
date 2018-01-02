@@ -107,11 +107,7 @@ glm::mat4 frustum::inverse_projection() const
 
 glm::vec4 frustum::far_plane() const
 {
-    // http://www.txutxi.com/?p=444
-    // http://gamedevs.org/uploads/fast-extraction-viewing-frustum-planes-from-world-view-projection-matrix.pdf
-
-    // TODO pre compute this
-    return glm::row(projection_view_, 3) - glm::row(projection_view_, 2);
+    return planes_[5];
 }
 
 glm::mat4 frustum::full_light_projection(const glm::mat4& light_projection_view_matrix, float& minZ, float& maxZ) const
@@ -127,6 +123,19 @@ glm::mat4 frustum::clip_light_projection(const glm::mat4& light_projection_view_
 const std::array<glm::vec4, 8>& frustum::corners() const
 {
     return corners_;
+}
+
+bool frustum::contains_sphere(const glm::vec3& center, float radius) const
+{
+    for (const auto& plane : planes_) {
+        float distance = glm::dot(plane, glm::vec4{ center, 1 });
+        if (distance < -radius)
+            return false;
+
+        if (std::abs(distance) < radius)
+            return true;
+    }
+    return true;
 }
 
 glm::mat4 frustum::light_projection_(const glm::mat4& light_projection_view_matrix, float& minZ, float& maxZ, bool updateZ) const
@@ -161,16 +170,6 @@ void frustum::rebuild_()
     projection_view_ = projection_ * view_;
     inverse_projection_view_ = glm::inverse(projection_view_);
 
-    // corners_[0] = { -1, -1, -1, 1 };
-    // corners_[1] = { 1, -1, -1, 1 };
-    // corners_[2] = { 1, 1, -1, 1 };
-    // corners_[3] = { -1, 1, -1, 1 };
-    //
-    // corners_[4] = { -1, -1, 1, 1 };
-    // corners_[5] = { 1, -1, 1, 1 };
-    // corners_[6] = { 1, 1, 1, 1 };
-    // corners_[7] = { -1, 1, 1, 1 };
-
     corners_[0] = { -1, -1, -1, 1 };
     corners_[1] = { -1, 1, -1, 1 };
     corners_[2] = { 1, 1, -1, 1 };
@@ -194,5 +193,18 @@ void frustum::rebuild_()
         radius_ = std::max(radius_, glm::distance(glm::vec3{ c }, center_));
 
     diagonal_ = glm::length(glm::vec3(corners_[6] - corners_[0]));
+
+    // http://gamedevs.org/uploads/fast-extraction-viewing-frustum-planes-from-world-view-projection-matrix.pdf
+    planes_[0] = glm::row(projection_view_, 3) + glm::row(projection_view_, 0);
+    planes_[1] = glm::row(projection_view_, 3) - glm::row(projection_view_, 0);
+
+    planes_[2] = glm::row(projection_view_, 3) + glm::row(projection_view_, 1);
+    planes_[3] = glm::row(projection_view_, 3) - glm::row(projection_view_, 1);
+
+    planes_[4] = glm::row(projection_view_, 3) + glm::row(projection_view_, 2);
+    planes_[5] = glm::row(projection_view_, 3) - glm::row(projection_view_, 2);
+
+    for (auto& plane : planes_)
+        plane = plane / glm::length(glm::vec3(plane));
 }
 }
