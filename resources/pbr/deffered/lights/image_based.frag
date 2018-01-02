@@ -12,7 +12,7 @@ uniform sampler2D irradiance_map;
 
 // http://www.trentreed.net/blog/physically-based-shading-and-image-based-lighting/
 // http://blog.tobias-franke.eu/2014/03/30/notes_on_importance_sampling.html
-// http://http.developer.nvidia.com/GPUGems3/gpugems3_ch20.html
+// https://developer.nvidia.com/gpugems/GPUGems3/gpugems3_ch20.html
 // http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
 // https://placeholderart.wordpress.com/2015/07/28/implementation-notes-runtime-environment-map-filtering-for-image-based-lighting/
 
