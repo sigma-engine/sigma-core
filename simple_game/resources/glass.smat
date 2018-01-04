@@ -1,7 +1,0 @@
-{
-    "color": [0.33725, 0.83137, 0.90588, 0.0],
-    "roughness": 0.0,
-    "transparent": true,
-    "vertex" : "default",
-    "fragment" : "glass"
-}

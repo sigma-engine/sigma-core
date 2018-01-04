@@ -84,6 +84,7 @@ namespace tools {
             if (settings.isMember(mesh_prefix))
                 mesh_cid = boost::filesystem::path{ mesh_prefix } / settings[mesh_prefix].asString();
 
+            // TODO this needs to use json conversion otherwise it fails with a error that has no information.
             effect.mesh = static_mesh_cache.handle_for(resource_id_for({ mesh_cid }));
 
             post_process_effect_cache.insert(rid, effect, true);
