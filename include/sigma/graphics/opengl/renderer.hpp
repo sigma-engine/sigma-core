@@ -91,6 +91,14 @@ namespace opengl {
 
         // void point_light_outside_stencil_optimization(glm::vec3 view_space_position, float radius);
     };
+
+    void debug_callback(GLenum source,
+        GLenum type,
+        GLuint id,
+        GLenum severity,
+        GLsizei length,
+        const GLchar* message,
+        const void* userParam);
 }
 }
 

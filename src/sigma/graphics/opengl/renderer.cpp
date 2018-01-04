@@ -5,6 +5,7 @@
 
 #include <glad/glad.h>
 
+#include <iostream>
 #include <stdexcept>
 
 namespace sigma {
@@ -60,6 +61,14 @@ namespace opengl {
         debug_renderer_.windowWidth = size.x;
         debug_renderer_.windowHeight = size.y;
         dd::initialize(&debug_renderer_);
+
+        // TODO disable this in production.
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        glDebugMessageCallback(debug_callback, nullptr);
+        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_LOW, 0, nullptr, true);
+        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_MEDIUM, 0, nullptr, true);
+        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_HIGH, 0, nullptr, true);
+        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, false);
 
         standard_uniform_buffer_.set_binding_point(0);
     }
@@ -497,5 +506,80 @@ namespace opengl {
             GL_CHECK(glCullFace(GL_BACK));
         }
     }*/
+
+    void debug_callback(GLenum source,
+        GLenum type,
+        GLuint id,
+        GLenum severity,
+        GLsizei length,
+        const GLchar* message,
+        const void* userParam)
+    {
+        switch (severity) {
+        case GL_DEBUG_SEVERITY_LOW:
+            std::cout << "severity: LOW\n";
+            break;
+        case GL_DEBUG_SEVERITY_MEDIUM:
+            std::cout << "severity: MEDIUM\n";
+            break;
+        case GL_DEBUG_SEVERITY_HIGH:
+            std::cout << "severity: HIGH\n";
+            break;
+        default:
+            return;
+        }
+
+        switch (type) {
+        case GL_DEBUG_TYPE_ERROR:
+            std::cout << "type: ERROR\n";
+            break;
+        case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+            std::cout << "type: DEPRECATED_BEHAVIOR\n";
+            break;
+        case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+            std::cout << "type: UNDEFINED_BEHAVIOR\n";
+            break;
+        case GL_DEBUG_TYPE_PORTABILITY:
+            std::cout << "type: PORTABILITY\n";
+            break;
+        case GL_DEBUG_TYPE_PERFORMANCE:
+            std::cout << "type: PERFORMANCE\n";
+            break;
+        case GL_DEBUG_TYPE_MARKER:
+            std::cout << "type: MARKER\n";
+            break;
+        case GL_DEBUG_TYPE_PUSH_GROUP:
+            std::cout << "type: PUSH_GROUP\n";
+            break;
+        case GL_DEBUG_TYPE_POP_GROUP:
+            std::cout << "type: POP_GROUP\n";
+            break;
+        case GL_DEBUG_TYPE_OTHER:
+            std::cout << "OTHER\n";
+            break;
+        }
+        std::cout << "message: " << message << '\n';
+        std::cout << "id: " << id << '\n';
+        switch (source) {
+        case GL_DEBUG_SOURCE_API:
+            std::cout << "source: API\n";
+            break;
+        case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
+            std::cout << "source: WINDOW_SYSTEM\n";
+            break;
+        case GL_DEBUG_SOURCE_SHADER_COMPILER:
+            std::cout << "source: SHADER_COMPILER\n";
+            break;
+        case GL_DEBUG_SOURCE_THIRD_PARTY:
+            std::cout << "source: THIRD_PARTY\n";
+            break;
+        case GL_DEBUG_SOURCE_APPLICATION:
+            std::cout << "source: APPLICATION\n";
+            break;
+        case GL_DEBUG_SOURCE_OTHER:
+            std::cout << "source: OTHER\n";
+            break;
+        }
+    }
 }
 }

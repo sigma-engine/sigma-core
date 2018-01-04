@@ -35,7 +35,7 @@ namespace opengl {
     {
         attach(frame_buffer::attachment::COLOR0, shadow_maps_[index]);
         draw_buffers(frame_buffer::attachment::COLOR0);
-        GL_CHECK(glViewport(0, 0, size_.x, size_.y));
+        GL_CHECK(glViewport(0, 0, size().x, size().y));
     }
 
     void shadow_buffer::bind_for_shadow_read(texture_unit unit)
