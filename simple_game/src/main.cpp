@@ -110,6 +110,8 @@ int main(int argc, char* argv[])
                     window.close();
                 } else if (event.key.keysym.sym == SDLK_f) {
                     renderer->save_frustums = true;
+                } else if (event.key.keysym.sym == SDLK_p) {
+                    renderer->take_screenshoot = true;
                 }
                 if (!controller.isPanning())
                     controller.beginPan();

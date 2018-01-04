@@ -40,7 +40,8 @@ namespace graphics {
                 (resource::handle<graphics::post_process_effect>, texture_blit_effect),
                 (resource::handle<graphics::post_process_effect>, gamma_conversion),
                 (resource::handle<graphics::post_process_effect>, vignette_effect),
-                (resource::handle<graphics::technique>, shadow_technique));
+                (resource::handle<graphics::technique>, shadow_technique),
+                (resource::handle<graphics::post_process_effect>, prefilter_environment_map));
 
             template <class Archive>
             void serialize(Archive& ar, const unsigned int version)

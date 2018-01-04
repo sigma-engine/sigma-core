@@ -5,6 +5,8 @@
 
 #include <glad/glad.h>
 
+#include <glm/gtx/transform.hpp>
+
 #include <iostream>
 #include <stdexcept>
 
@@ -85,6 +87,9 @@ namespace opengl {
 
     void renderer::render(const graphics::view_port& viewport, const graphics::renderer::world_view_type& world)
     {
+        if (take_screenshoot)
+            save_screenshot();
+
         setup_view_projection(size_,
             viewport.view_frustum.fovy(),
             viewport.view_frustum.z_near(),
@@ -479,6 +484,52 @@ namespace opengl {
         }
 
         GL_CHECK(glDepthMask(GL_FALSE));
+    }
+
+    void renderer::save_screenshot()
+    {
+        take_screenshoot = false;
+
+        frame_buffer fb{ { 1024, 1024 } };
+        texture face(internal_format::RGB32F, { 1024, 1024 });
+        fb.attach(frame_buffer::attachment::COLOR0, face);
+
+        fb.bind(frame_buffer::target::DRAW);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
+
+        static std::unordered_map<std::string, std::pair<glm::vec3, glm::vec3>> faces{
+            { "posx", { { 1, 0, 0 }, { 0, 1, 0 } } },
+            { "negx", { { -1, 0, 0 }, { 0, 1, 0 } } },
+            { "posy", { { 0, 1, 0 }, { 0, 0, 1 } } },
+            { "negy", { { 0, -1, 0 }, { 0, 0, -1 } } },
+            { "posz", { { 0, 0, 1 }, { 0, 1, 0 } } },
+            { "negz", { { 0, 0, -1 }, { 0, 1, 0 } } },
+        };
+
+        glViewport(0, 0, 1024, 1024);
+        for (const auto& face : faces) {
+            glClearColor(0, 0, 0, 1);
+            instance_matrices m;
+            m.model_view_matrix = glm::perspective(1.57079632679f, 1.0f, 0.01f, 1000.0f) * glm::lookAt(glm::vec3{ 0, 0, 0 }, face.second.first, face.second.second);
+
+            // prefilter_environment_map
+            auto prefilter_environment_map_effect = EFFECT_PTR(effects_, settings_.prefilter_environment_map);
+            auto prefilter_environment_map_tech = TECHNIQUE_PTR(techniques_, prefilter_environment_map_effect->data.technique_id);
+            prefilter_environment_map_tech->bind(textures_, cubemaps_, prefilter_environment_map_effect->data, texture_unit::TEXTURE0);
+            prefilter_environment_map_tech->set_instance_matrices(&m);
+            STATIC_MESH_PTR(static_meshes_, prefilter_environment_map_effect->data.mesh)->render_all();
+
+            fb.read_buffer(frame_buffer::attachment::COLOR0);
+            std::vector<unsigned char> pixels(3 * fb.size().x * fb.size().y);
+            glReadPixels(0, 0, fb.size().x, fb.size().y, GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
+
+            std::ofstream file(face.first + ".ppm", std::ios::binary);
+            file << "P6\n"
+                 << fb.size().x << " " << fb.size().y << "\n255\n";
+            file.write((const char*)pixels.data(), pixels.size());
+        }
     }
 
     /*void renderer::point_light_outside_stencil_optimization(glm::vec3 view_space_position, float radius)

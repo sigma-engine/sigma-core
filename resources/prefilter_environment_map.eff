@@ -1,0 +1,8 @@
+{
+    "fragment" : "prefilter_environment_map",
+    "vertex": "prefilter_environment_map",
+    "static_mesh": "sigma/shapes/cube",
+    "textures": {
+        "environment_map": "proprietary/06-07_Day_H_4K"
+    }
+}

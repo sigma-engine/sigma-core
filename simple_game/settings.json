@@ -17,7 +17,8 @@
         "shadow_technique": {
             "vertex": "vertex/default",
             "fragment": "fragment/shadow"
-        }
+        },
+        "prefilter_environment_map": "post_process_effect/prefilter_environment_map"
     },
     "level": {
         "current_level_blueprint": "blueprint/proprietary/sponza/sponza"

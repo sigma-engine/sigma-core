@@ -29,6 +29,7 @@ namespace opengl {
     class SIGMA_API renderer : public graphics::renderer {
     public:
         bool save_frustums = false;
+        bool take_screenshoot = false;
 
         renderer(glm::ivec2 size, graphics::renderer::context_view_type ctx);
 
@@ -88,6 +89,8 @@ namespace opengl {
         void spot_light_pass(const graphics::view_port& viewport, const world_view_type& world);
 
         void render_to_shadow_map(const frustum& view_frustum, int index, const renderer::world_view_type& world, bool cast_shadows);
+
+        void save_screenshot();
 
         // void point_light_outside_stencil_optimization(glm::vec3 view_space_position, float radius);
     };
