@@ -5,6 +5,7 @@
 #include <sigma/tools/hdr_io.hpp>
 #include <sigma/tools/json_conversion.hpp>
 #include <sigma/tools/packager.hpp>
+#include <sigma/tools/texturing.hpp>
 
 #include <boost/gil/extension/io/jpeg_io.hpp>
 #include <boost/gil/extension/io/png_io.hpp>
@@ -122,6 +123,7 @@ namespace tools {
 
             std::cout << "packaging: " << cid << "\n";
 
+            // TODO use json conversion
             Json::Value settings(Json::objectValue);
             settings["format"] = "rgb8";
             settings["filter"]["minification"] = "linear";
@@ -155,7 +157,41 @@ namespace tools {
             case graphics::texture_format::RGB32F: {
                 boost::gil::rgb32f_image_t image;
                 load_texture(source_file, source_type, image);
+
+                // TODO do not convert and export texture if cubemap is generated?
                 convert_texture(image, texture);
+
+                if (settings.isMember("cubemap")) {
+                    // TODO load settings from json.
+                    auto source_view = boost::gil::const_view(image);
+                    graphics::cubemap cubemap;
+                    int SIZE = 1024;
+                    if (settings["cubemap"].isMember("size"))
+                        SIZE = settings["cubemap"]["size"].asUInt();
+                    for (auto face : { graphics::cubemap::face::POSITIVE_X,
+                             graphics::cubemap::face::NEGATIVE_X,
+                             graphics::cubemap::face::POSITIVE_Y,
+                             graphics::cubemap::face::NEGATIVE_Y,
+                             graphics::cubemap::face::POSITIVE_Z,
+                             graphics::cubemap::face::NEGATIVE_Z }) {
+                        graphics::texture txt;
+                        txt.size = glm::ivec2{ SIZE, SIZE };
+                        txt.format = texture.format;
+                        txt.minification_filter = texture.minification_filter;
+                        txt.magnification_filter = texture.magnification_filter;
+                        txt.mipmap_filter = texture.mipmap_filter;
+                        txt.data.resize(txt.size.x * txt.size.y * sizeof(boost::gil::rgb32f_pixel_t));
+
+                        auto face_view = boost::gil::interleaved_view(txt.size.x, txt.size.y, (boost::gil::rgb32f_pixel_t*)txt.data.data(), txt.size.x * sizeof(boost::gil::rgb32f_pixel_t));
+                        equirectangular_to_cubemap_face(face, source_view, face_view);
+
+                        auto face_number = static_cast<unsigned int>(static_cast<unsigned int>(face));
+                        cubemap.faces[face_number] = texture_cache.insert(resource_id_for({ cid / std::to_string(face_number) }), txt, true);
+                    }
+
+                    auto cubemap_cid = resource_shortname(graphics::cubemap) / filesystem::make_relative(source_directory, source_file).replace_extension("");
+                    context_.template get_cache<graphics::cubemap>().insert(resource_id_for({ cubemap_cid }), cubemap, true);
+                }
                 break;
             }
             }
