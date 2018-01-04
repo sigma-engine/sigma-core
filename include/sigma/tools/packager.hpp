@@ -81,7 +81,7 @@ namespace tools {
                         if (boost::filesystem::is_regular_file(path) && loader->supports_filetype(ext)) {
                             try {
                                 loader->load(settings_, source_directory, ext, path);
-                            } catch (const std::runtime_error& e) {
+                            } catch (const std::exception& e) {
                                 std::cerr << "error: " << e.what() << '\n';
                             }
                         }
@@ -89,30 +89,17 @@ namespace tools {
                 }
             }
 
-            // auto graphics_directory = context_.get_cache_path() / "graphics";
-            // if (!boost::filesystem::exists(graphics_directory))
-            //     boost::filesystem::create_directories(graphics_directory);
-            //
-            // auto& effect_cache = context_.template get_cache<graphics::post_process_effect>();
-            // graphics::renderer::settings gsettings;
-            // gsettings.image_based_light_effect = effect_cache.handle_for(resource_id_for({ "post_process_effect/pbr/deffered/lights/image_based" }));
-            // gsettings.point_light_effect = effect_cache.handle_for(resource_id_for({ "post_process_effect/pbr/deffered/lights/point" }));
-            // gsettings.directional_light_effect = effect_cache.handle_for(resource_id_for({ "post_process_effect/pbr/deffered/lights/directional" }));
-            // gsettings.spot_light_effect = effect_cache.handle_for(resource_id_for({ "post_process_effect/pbr/deffered/lights/spot" }));
-            // gsettings.texture_blit_effect = effect_cache.handle_for(resource_id_for({ "post_process_effect/pbr/deffered/texture_blit" }));
-            // gsettings.vignette_effect = effect_cache.handle_for(resource_id_for({ "post_process_effect/vignette" }));
-            // gsettings.gamma_conversion = effect_cache.handle_for(resource_id_for({ "post_process_effect/pbr/deffered/gamma_conversion" }));
-            // gsettings.shadow_technique = context_.template get_cache<graphics::technique>().handle_for(resource_id_for({ "vertex/default", "fragment/shadow" }));
-            // std::ofstream stream{ (graphics_directory / "settings").string(), std::ios::binary };
-            // boost::archive::binary_oarchive oa(stream);
-            // oa << gsettings;
-
             (context_.template get_cache<Resources>().save(), ...);
 
             settings_set_type::for_each([&](auto tag) {
                 using settings_type = typename decltype(tag)::type;
-                if (json_settings_.isMember(settings_type::GROUP))
-                    json::from_json(context_, json_settings_[settings_type::GROUP], context_.template get_settings<settings_type>());
+                if (json_settings_.isMember(settings_type::GROUP)) {
+                    try {
+                        json::from_json(context_, json_settings_[settings_type::GROUP], context_.template get_settings<settings_type>());
+                    } catch (const std::exception& e) {
+                        std::cerr << "error: " << e.what() << '\n';
+                    }
+                }
             });
             // TODO save the settings.
         }

@@ -38,11 +38,13 @@ namespace opengl {
         opengl::material* acquire(const resource::handle<graphics::material>& hndl)
         {
             // TODO not thread safe
+
+            auto data = material_cache_.acquire(hndl);
             if (hndl.index >= materials_.size())
                 materials_.resize(hndl.index + 1);
 
             if (materials_[hndl.index] == nullptr)
-                materials_[hndl.index] = std::make_unique<material>(techniques_, *material_cache_.acquire(hndl));
+                materials_[hndl.index] = std::make_unique<material>(techniques_, *data);
 
             return materials_.at(hndl.index).get();
         }

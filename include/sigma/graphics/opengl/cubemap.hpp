@@ -47,11 +47,13 @@ namespace opengl {
         opengl::cubemap* acquire(const resource::handle<graphics::cubemap>& hndl)
         {
             // TODO not thread safe
+
+            auto data = cubemap_cache_.acquire(hndl);
             if (hndl.index >= cubemaps_.size())
                 cubemaps_.resize(hndl.index + 1);
 
             if (cubemaps_[hndl.index] == nullptr)
-                cubemaps_[hndl.index] = std::make_unique<cubemap>(texture_cache_, *cubemap_cache_.acquire(hndl));
+                cubemaps_[hndl.index] = std::make_unique<cubemap>(texture_cache_, *data);
 
             return cubemaps_.at(hndl.index).get();
         }

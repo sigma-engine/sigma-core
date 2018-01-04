@@ -6,6 +6,7 @@
 #include <sigma/graphics/technique.hpp>
 #include <sigma/graphics/texture.hpp>
 #include <sigma/resource/resource.hpp>
+#include <sigma/tools/errors.hpp>
 #include <sigma/tools/resource_hash.hpp>
 
 #include <json/json.h>
@@ -198,7 +199,12 @@ namespace json {
             template <class Context>
             static bool from(Context& ctx, const Json::Value& source, resource::handle<Resource>& output)
             {
-                output = ctx.template get_cache<Resource>().handle_for(tools::resource_id_for({ source.asString() }));
+                tools::complex_resource_id cid = { source.asString() };
+                auto rid = tools::resource_id_for(cid);
+                auto& cache = ctx.template get_cache<Resource>();
+                if (!cache.contains(rid))
+                    throw tools::missing_resource(cid);
+                output = ctx.template get_cache<Resource>().handle_for(rid);
                 return false;
             }
         };
@@ -257,7 +263,12 @@ namespace json {
                     tech_id.fragment
                 };
 
-                output = ctx.template get_cache<graphics::technique>().handle_for(tools::resource_id_for(cid));
+                auto rid = tools::resource_id_for(cid);
+                auto& cache = ctx.template get_cache<graphics::technique>();
+                if (!cache.contains(rid))
+                    throw tools::missing_resource(cid);
+
+                output = ctx.template get_cache<graphics::technique>().handle_for(rid);
 
                 return true;
             }

@@ -57,11 +57,13 @@ namespace opengl {
         opengl::shader* acquire(const resource::handle<graphics::shader>& hndl)
         {
             // TODO not thread safe
+
+            auto data = shader_cache_.acquire(hndl);
             if (hndl.index >= shaders_.size())
                 shaders_.resize(hndl.index + 1);
 
             if (shaders_[hndl.index] == nullptr)
-                shaders_[hndl.index] = std::make_unique<shader>(*shader_cache_.acquire(hndl));
+                shaders_[hndl.index] = std::make_unique<shader>(*data);
 
             return shaders_.at(hndl.index).get();
         }

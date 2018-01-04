@@ -177,11 +177,13 @@ namespace opengl {
         opengl::texture* acquire(const resource::handle<graphics::texture>& hndl)
         {
             // TODO not thread safe
+
+            auto data = texture_cache_.acquire(hndl);
             if (hndl.index >= textures_.size())
                 textures_.resize(hndl.index + 1);
 
             if (textures_[hndl.index] == nullptr)
-                textures_[hndl.index] = std::make_unique<texture>(*texture_cache_.acquire(hndl));
+                textures_[hndl.index] = std::make_unique<texture>(*data);
 
             return textures_.at(hndl.index).get();
         }

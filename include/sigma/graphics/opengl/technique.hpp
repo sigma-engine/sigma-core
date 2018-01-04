@@ -79,11 +79,13 @@ namespace opengl {
         opengl::technique* acquire(const resource::handle<graphics::technique>& hndl)
         {
             // TODO not thread safe
+
+            auto data = technique_cache_.acquire(hndl);
             if (hndl.index >= techniques_.size())
                 techniques_.resize(hndl.index + 1);
 
             if (techniques_[hndl.index] == nullptr)
-                techniques_[hndl.index] = std::make_unique<technique>(shaders_, *technique_cache_.acquire(hndl));
+                techniques_[hndl.index] = std::make_unique<technique>(shaders_, *data);
 
             return techniques_.at(hndl.index).get();
         }

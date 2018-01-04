@@ -45,11 +45,13 @@ namespace opengl {
         opengl::post_process_effect* acquire(const resource::handle<graphics::post_process_effect>& hndl)
         {
             // TODO not thread safe
+
+            auto data = post_process_effect_cache_.acquire(hndl);
             if (hndl.index >= post_process_effects_.size())
                 post_process_effects_.resize(hndl.index + 1);
 
             if (post_process_effects_[hndl.index] == nullptr)
-                post_process_effects_[hndl.index] = std::make_unique<post_process_effect>(techniques_, static_meshes_, *post_process_effect_cache_.acquire(hndl));
+                post_process_effects_[hndl.index] = std::make_unique<post_process_effect>(techniques_, static_meshes_, *data);
 
             return post_process_effects_.at(hndl.index).get();
         }

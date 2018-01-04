@@ -8,10 +8,6 @@
 #include <sigma/tools/packager.hpp>
 #include <sigma/util/filesystem.hpp>
 
-#include <boost/algorithm/string.hpp>
-#include <boost/algorithm/string/join.hpp>
-#include <boost/range/adaptor/transformed.hpp>
-
 #include <set>
 #include <string>
 
@@ -109,7 +105,12 @@ namespace tools {
                     return;
             }
 
-            std::cout << "packaging: technique { " << (boost::algorithm::join(cid | boost::adaptors::transformed([](auto a) { return a.string(); }), ", ")) << "}\n";
+            std::cout << "packaging: technique { " << cid[0] << ", ";
+            for (int i = 1; i < cid.size() - 1; ++i) {
+                if (cid[i].size() > 0)
+                    std::cout << cid[i] << ", ";
+            }
+            std::cout << cid[cid.size() - 1] << "}\n";
 
             graphics::technique technique;
 

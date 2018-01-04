@@ -55,11 +55,13 @@ namespace opengl {
         opengl::static_mesh* acquire(const resource::handle<graphics::static_mesh>& hndl)
         {
             // TODO not thread safe
+
+            auto data = static_mesh_cache_.acquire(hndl);
             if (hndl.index >= static_meshes_.size())
                 static_meshes_.resize(hndl.index + 1);
 
             if (static_meshes_[hndl.index] == nullptr)
-                static_meshes_[hndl.index] = std::make_unique<static_mesh>(materials_, *static_mesh_cache_.acquire(hndl));
+                static_meshes_[hndl.index] = std::make_unique<static_mesh>(materials_, *data);
 
             return static_meshes_.at(hndl.index).get();
         }
