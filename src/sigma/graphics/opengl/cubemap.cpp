@@ -8,41 +8,47 @@
 
 namespace sigma {
 namespace opengl {
+    GLenum convert_gl(graphics::cubemap::face face)
+    {
+        switch (face) {
+        case graphics::cubemap::face::POSITIVE_X:
+            return GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+        case graphics::cubemap::face::NEGATIVE_X:
+            return GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
+        case graphics::cubemap::face::POSITIVE_Y:
+            return GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
+        case graphics::cubemap::face::NEGATIVE_Y:
+            return GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
+        case graphics::cubemap::face::POSITIVE_Z:
+            return GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
+        case graphics::cubemap::face::NEGATIVE_Z:
+            return GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
+        }
+        return GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+    }
+
     cubemap::cubemap(resource::cache<graphics::texture>& texture_cache, const graphics::cubemap& data)
     {
         GL_CHECK(glGenTextures(1, &object_));
         GL_CHECK(glBindTexture(GL_TEXTURE_CUBE_MAP, object_));
 
-        auto right_texture = texture_cache.acquire(data.right);
-        auto left_texture = texture_cache.acquire(data.left);
-        auto top_texture = texture_cache.acquire(data.top);
-        auto bottom_texture = texture_cache.acquire(data.bottom);
-        auto back_texture = texture_cache.acquire(data.back);
-        auto front_texture = texture_cache.acquire(data.front);
+        graphics::texture_format format;
+        glm::ivec2 size;
+        for (unsigned int i = 0; i < 6; ++i) {
+            auto texture = texture_cache.acquire(data.faces[i]);
+            if (i == 0) {
+                format = texture->format;
+                size = texture->size;
+                int mip_levels = calculate_mipmap_levels(texture->size.x, texture->size.y);
+                GL_CHECK(glTexStorage2D(GL_TEXTURE_CUBE_MAP, mip_levels, (GLenum)convert_internal(texture->format), texture->size.x, texture->size.y));
+            }
 
-        int mip_levels = calculate_mipmap_levels(right_texture->size.x, right_texture->size.y);
-        GL_CHECK(glTexStorage2D(GL_TEXTURE_CUBE_MAP, mip_levels, (GLenum)convert_internal(right_texture->format), right_texture->size.x, right_texture->size.y));
-
-        // X-axis
-        auto gl_format = convert_gl(right_texture->format);
-        GL_CHECK(glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, 0, 0, right_texture->size.x, right_texture->size.y, gl_format.first, gl_format.second, right_texture->data.data()));
-
-        gl_format = convert_gl(left_texture->format);
-        GL_CHECK(glTexSubImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, 0, 0, left_texture->size.x, left_texture->size.y, gl_format.first, gl_format.second, left_texture->data.data()));
-
-        // Y-axis
-        gl_format = convert_gl(top_texture->format);
-        GL_CHECK(glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, 0, 0, top_texture->size.x, top_texture->size.y, gl_format.first, gl_format.second, top_texture->data.data()));
-
-        gl_format = convert_gl(bottom_texture->format);
-        GL_CHECK(glTexSubImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, 0, 0, bottom_texture->size.x, bottom_texture->size.y, gl_format.first, gl_format.second, bottom_texture->data.data()));
-
-        // Z-axis
-        gl_format = convert_gl(back_texture->format);
-        GL_CHECK(glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, 0, 0, front_texture->size.x, front_texture->size.y, gl_format.first, gl_format.second, front_texture->data.data()));
-
-        gl_format = convert_gl(front_texture->format);
-        GL_CHECK(glTexSubImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, 0, 0, back_texture->size.x, back_texture->size.y, gl_format.first, gl_format.second, back_texture->data.data()));
+            // TODO clean this code up.
+            assert(format == texture->format);
+            assert(size == texture->size);
+            auto gl_format = convert_gl(format);
+            GL_CHECK(glTexSubImage2D(convert_gl(static_cast<graphics::cubemap::face>(i)), 0, 0, 0, size.x, size.y, gl_format.first, gl_format.second, texture->data.data()));
+        }
 
         GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
         GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));

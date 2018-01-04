@@ -59,12 +59,18 @@ namespace tools {
             // TODO: (NOW) use json conversion.
             boost::filesystem::path texture_prefix{ resource_shortname(sigma::graphics::texture) };
 
-            cubemap.right = texture_cache.handle_for(resource_id_for({ texture_prefix / settings["right"].asString() }));
-            cubemap.left = texture_cache.handle_for(resource_id_for({ texture_prefix / settings["left"].asString() }));
-            cubemap.top = texture_cache.handle_for(resource_id_for({ texture_prefix / settings["top"].asString() }));
-            cubemap.bottom = texture_cache.handle_for(resource_id_for({ texture_prefix / settings["bottom"].asString() }));
-            cubemap.back = texture_cache.handle_for(resource_id_for({ texture_prefix / settings["back"].asString() }));
-            cubemap.front = texture_cache.handle_for(resource_id_for({ texture_prefix / settings["front"].asString() }));
+            // TODO remove right, left, top, bottom, back, front and use
+            // {positive,negative}_{x,y,z}
+            static const std::pair<std::string, graphics::cubemap::face> face_names[] = {
+                { "right", graphics::cubemap::face::POSITIVE_X },
+                { "left", graphics::cubemap::face::NEGATIVE_X },
+                { "top", graphics::cubemap::face::POSITIVE_Y },
+                { "bottom", graphics::cubemap::face::NEGATIVE_Y },
+                { "front", graphics::cubemap::face::POSITIVE_Z },
+                { "back", graphics::cubemap::face::NEGATIVE_Z }
+            };
+            for (const auto& face_name : face_names)
+                cubemap.faces[static_cast<unsigned int>(face_name.second)] = texture_cache.handle_for(resource_id_for({ texture_prefix / settings[face_name.first].asString() }));
 
             cubemap_cache.insert(rid, cubemap, true);
         }

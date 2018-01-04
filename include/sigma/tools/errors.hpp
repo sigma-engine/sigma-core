@@ -17,7 +17,7 @@ namespace tools {
             ss << "missing resource ";
             if (cid.size() >= 2) {
                 ss << "{ " << cid[0];
-                for (int i = 1; i < cid.size() - 1; ++i) {
+                for (std::size_t i = 1; i < cid.size() - 1; ++i) {
                     if (cid[i].size() > 0)
                         ss << cid[i] << ", ";
                 }

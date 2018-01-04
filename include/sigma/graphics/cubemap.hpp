@@ -6,26 +6,28 @@
 #include <sigma/resource/cache.hpp>
 #include <sigma/resource/resource.hpp>
 
+#include <boost/serialization/array.hpp>
+
+#include <array>
+
 namespace sigma {
 namespace graphics {
-
     struct cubemap {
-        resource::handle<graphics::texture> right;
-        resource::handle<graphics::texture> left;
-        resource::handle<graphics::texture> top;
-        resource::handle<graphics::texture> bottom;
-        resource::handle<graphics::texture> back;
-        resource::handle<graphics::texture> front;
+        enum class face : unsigned int {
+            POSITIVE_X,
+            NEGATIVE_X,
+            POSITIVE_Y,
+            NEGATIVE_Y,
+            POSITIVE_Z,
+            NEGATIVE_Z
+        };
+
+        std::array<resource::handle<graphics::texture>, 6> faces;
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
         {
-            ar& right;
-            ar& left;
-            ar& top;
-            ar& bottom;
-            ar& back;
-            ar& front;
+            ar& faces;
         }
     };
 }
