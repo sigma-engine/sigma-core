@@ -22,19 +22,19 @@ vec2 hammersley(uint i, uint N)
     return vec2(float(i) / float(N), float(bitfieldReverse(i)) * 2.3283064365386963e-10);
 }
 
-vec2 sphere_map(vec3 N)
+vec2 equirectangular_mapping(vec3 N)
 {
     return vec2(0.5 - atan(N.x, N.z) / PI_2, acos(N.y) / PI);
 }
 
-vec4 textureSphere(sampler2D tex, vec3 N)
+vec4 textureEquirectangular(sampler2D tex, vec3 N)
 {
-    return texture(tex, sphere_map(N));
+    return texture(tex, equirectangular_mapping(N));
 }
 
-vec4 textureSphereLod(sampler2D tex, vec3 N, float lod)
+vec4 textureEquirectangularLod(sampler2D tex, vec3 N, float lod)
 {
-    return textureLod(tex, sphere_map(N), lod);
+    return textureLod(tex, equirectangular_mapping(N), lod);
 }
 
 #endif // SIGMA_MATH_GLSL

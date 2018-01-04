@@ -67,7 +67,7 @@ vec3 radiance(vec3 N, vec3 V, vec3 F0, float roughness)
 
         // Sample the environment map
         // vec3 environment_color = textureLod(environment_map, L, lod).rgb;
-        vec3 environment_color = textureSphereLod(environment_map, L, lod).rgb;
+        vec3 environment_color = textureEquirectangularLod(environment_map, L, lod).rgb;
 
         sum += environment_color * F_schlick(VdotH, F0) * G_schlick(NdotL, NdotV, roughness) * VdotH / (NdotH * NdotV + NO_DIV_BY_ZERO);
     }
@@ -84,12 +84,12 @@ void main()
 
     // out_image = texture(environment_map, -V, 0.0).rgb;
     if (s.depth == 1.0)
-        out_image = textureSphereLod(environment_map, -V, 0.0).rgb;
+        out_image = textureEquirectangularLod(environment_map, -V, 0.0).rgb;
     else {
         vec3 N = s.normal;
         vec3 F0 = mix(vec3(0.04f), s.diffuse, s.metalness);
 
-        vec3 irradiance = textureSphereLod(irradiance_map, N, 0.0).rgb * s.diffuse / PI;
+        vec3 irradiance = textureEquirectangularLod(irradiance_map, N, 0.0).rgb * s.diffuse / PI;
 
         out_image = irradiance * (1 - F0) +  radiance(N, V, F0, s.roughness);
     }
