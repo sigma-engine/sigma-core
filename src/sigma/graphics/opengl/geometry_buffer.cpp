@@ -14,7 +14,7 @@ namespace opengl {
 
     geometry_buffer::geometry_buffer(glm::ivec2 size)
         : frame_buffer(size)
-        , diffuse_texture_(internal_format::RGBA8, size) // TODO filp roughness and metalness
+        , diffuse_texture_(internal_format::RGBA8, size)  // TODO filp roughness and metalness
         , normal_texture_(internal_format::RGBA16F, size) // RGB10_A2
         , depth_stencil_texture_(internal_format::DEPTH32F_STENCIL8, size)
         , images_{ texture{ internal_format::RGB16F, size }, texture{ internal_format::RGB16F, size } }
@@ -30,7 +30,7 @@ namespace opengl {
 
     void geometry_buffer::bind_for_geometry_write()
     {
-        GL_CHECK(glViewport(0, 0, size_.x, size_.y));
+        GL_CHECK(glViewport(0, 0, size().x, size().y));
 
         draw_buffers(DIFFUSE_ROUGHNESS_ATTACHMENT, NORMAL_METALNESS_ATTACHMENT, IMAGE_ATTACHMENTS[output_image_]);
         GL_CHECK(glActiveTexture(GLenum(INPUT_IMAGE_TEXTURE_UINT)));
@@ -40,7 +40,7 @@ namespace opengl {
     void geometry_buffer::bind_for_geometry_read()
     {
         draw_buffers(IMAGE_ATTACHMENTS[output_image_]);
-        GL_CHECK(glViewport(0, 0, size_.x, size_.y));
+        GL_CHECK(glViewport(0, 0, size().x, size().y));
 
         GL_CHECK(glActiveTexture(GLenum(DIFFUSE_ROUGHNESS_TEXTURE_UINT)));
         diffuse_texture_.bind();

@@ -44,7 +44,7 @@ namespace opengl {
 
         int loader_status_;
         glm::vec2 size_;
-        default_frame_buffer default_fbo_;
+        frame_buffer default_fbo_;
         geometry_buffer gbuffer_;
         shadow_buffer sbuffer_;
         std::vector<frustum> cascade_frustums_;

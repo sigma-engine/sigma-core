@@ -8,38 +8,40 @@
 
 namespace sigma {
 namespace opengl {
-    default_frame_buffer::default_frame_buffer(glm::ivec2 size)
-        : size_(size)
-    {
-        GLint d;
-        GL_CHECK(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &d));
-        object_ = d;
-    }
-
-    glm::ivec2 default_frame_buffer::size()
-    {
-        return size_;
-    }
-
-    void default_frame_buffer::bind()
-    {
-        GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, object_));
-    }
-
-    void default_frame_buffer::bind(target tgt)
-    {
-        GL_CHECK(glBindFramebuffer(GLenum(tgt), object_));
-    }
 
     frame_buffer::frame_buffer(glm::ivec2 size)
-        : default_frame_buffer(size)
+        : size_(size)
+        , should_delete_(true)
     {
         GL_CHECK(glGenFramebuffers(1, &object_));
     }
 
+    frame_buffer::frame_buffer(GLuint fbo, const glm::ivec2& size, bool should_delete)
+        : size_(size)
+        , should_delete_(should_delete)
+        , object_(fbo)
+    {
+    }
+
     frame_buffer::~frame_buffer()
     {
-        glDeleteFramebuffers(1, &object_);
+        if (should_delete_)
+            glDeleteFramebuffers(1, &object_);
+    }
+
+    const glm::ivec2& frame_buffer::size() const noexcept
+    {
+        return size_;
+    }
+
+    void frame_buffer::bind()
+    {
+        GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, object_));
+    }
+
+    void frame_buffer::bind(target tgt)
+    {
+        GL_CHECK(glBindFramebuffer(GLenum(tgt), object_));
     }
 
     void frame_buffer::attach(attachment att, const texture& txt)
@@ -70,6 +72,15 @@ namespace opengl {
     {
         GL_CHECK(glBindFramebuffer(GL_READ_FRAMEBUFFER, object_));
         GL_CHECK(glReadBuffer(GLenum(att)));
+    }
+
+    frame_buffer frame_buffer::get_current()
+    {
+        GLint fbo;
+        GLint dims[4] = { 0 };
+        GL_CHECK(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &fbo));
+        GL_CHECK(glGetIntegerv(GL_VIEWPORT, dims));
+        return { (GLuint)fbo, { dims[2], dims[3] }, false };
     }
 }
 }

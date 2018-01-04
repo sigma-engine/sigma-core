@@ -41,7 +41,7 @@ namespace opengl {
         : graphics::renderer(size, ctx)
         , loader_status_(gladLoadGL())
         , size_(size.x, size.y)
-        , default_fbo_(size_)
+        , default_fbo_(frame_buffer::get_current())
         , gbuffer_(size_)
         , sbuffer_({ 1024, 1024 }, 3)
         , cascade_frustums_(sbuffer_.count())
