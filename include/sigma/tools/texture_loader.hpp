@@ -23,14 +23,10 @@ namespace tools {
     };
 
     template <class Image>
-    void convert_texture(
-        const boost::filesystem::path& source_file,
-        texture_source_type source_type,
-        sigma::graphics::texture& texture)
+    void load_texture(const boost::filesystem::path& source_file, texture_source_type source_type, Image& image)
     {
         auto file_path_string = source_file.string();
 
-        Image image;
         switch (source_type) {
         case texture_source_type::tiff: {
             boost::gil::tiff_read_and_convert_image(file_path_string, image);
@@ -49,7 +45,11 @@ namespace tools {
             break;
         }
         }
+    }
 
+    template <class Image>
+    void convert_texture(const Image& image, graphics::texture& texture)
+    {
         auto view = boost::gil::const_view(image);
         using pixel = typename decltype(view)::value_type;
         texture.data.resize(image.width() * image.height() * sizeof(pixel));
@@ -103,7 +103,7 @@ namespace tools {
 
             auto settings_path = source_file.parent_path() / (source_file.stem().string() + ".stex");
 
-            auto cid = resource_shortname(sigma::graphics::texture) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
+            auto cid = resource_shortname(graphics::texture) / filesystem::make_relative(source_directory, source_file).replace_extension("");
             auto rid = resource_id_for({ cid });
 
             auto& texture_cache = context_.template get_cache<graphics::texture>();
@@ -133,23 +133,29 @@ namespace tools {
                 file >> settings;
             }
 
-            sigma::graphics::texture texture;
-            sigma::json::from_json(context_, settings["filter"]["minification"], texture.minification_filter);
-            sigma::json::from_json(context_, settings["filter"]["magnification"], texture.magnification_filter);
-            sigma::json::from_json(context_, settings["filter"]["mipmap"], texture.mipmap_filter);
-            sigma::json::from_json(context_, settings["format"], texture.format);
+            graphics::texture texture;
+            json::from_json(context_, settings["filter"]["minification"], texture.minification_filter);
+            json::from_json(context_, settings["filter"]["magnification"], texture.magnification_filter);
+            json::from_json(context_, settings["filter"]["mipmap"], texture.mipmap_filter);
+            json::from_json(context_, settings["format"], texture.format);
 
             switch (texture.format) {
-            case sigma::graphics::texture_format::RGB8: {
-                convert_texture<boost::gil::rgb8_image_t>(source_file, source_type, texture);
+            case graphics::texture_format::RGB8: {
+                boost::gil::rgb8_image_t image;
+                load_texture(source_file, source_type, image);
+                convert_texture(image, texture);
                 break;
             }
-            case sigma::graphics::texture_format::RGBA8: {
-                convert_texture<boost::gil::rgba8_image_t>(source_file, source_type, texture);
+            case graphics::texture_format::RGBA8: {
+                boost::gil::rgba8_image_t image;
+                load_texture(source_file, source_type, image);
+                convert_texture(image, texture);
                 break;
             }
-            case sigma::graphics::texture_format::RGB32F: {
-                convert_texture<boost::gil::rgb32f_image_t>(source_file, source_type, texture);
+            case graphics::texture_format::RGB32F: {
+                boost::gil::rgb32f_image_t image;
+                load_texture(source_file, source_type, image);
+                convert_texture(image, texture);
                 break;
             }
             }
