@@ -39,10 +39,10 @@ namespace opengl {
 
         // Z-axis
         gl_format = convert_gl(back_texture->format);
-        GL_CHECK(glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, 0, 0, back_texture->size.x, back_texture->size.y, gl_format.first, gl_format.second, back_texture->data.data()));
+        GL_CHECK(glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, 0, 0, front_texture->size.x, front_texture->size.y, gl_format.first, gl_format.second, front_texture->data.data()));
 
         gl_format = convert_gl(front_texture->format);
-        GL_CHECK(glTexSubImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, 0, 0, front_texture->size.x, front_texture->size.y, gl_format.first, gl_format.second, front_texture->data.data()));
+        GL_CHECK(glTexSubImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, 0, 0, back_texture->size.x, back_texture->size.y, gl_format.first, gl_format.second, back_texture->data.data()));
 
         GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
         GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
