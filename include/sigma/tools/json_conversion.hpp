@@ -6,8 +6,6 @@
 #include <sigma/graphics/technique.hpp>
 #include <sigma/graphics/texture.hpp>
 #include <sigma/resource/resource.hpp>
-#include <sigma/tools/errors.hpp>
-#include <sigma/tools/resource_hash.hpp>
 
 #include <json/json.h>
 
@@ -199,12 +197,7 @@ namespace json {
             template <class Context>
             static bool from(Context& ctx, const Json::Value& source, resource::handle<Resource>& output)
             {
-                tools::complex_resource_id cid = { source.asString() };
-                auto rid = tools::resource_id_for(cid);
-                auto& cache = ctx.template get_cache<Resource>();
-                if (!cache.contains(rid))
-                    throw tools::missing_resource(cid);
-                output = ctx.template get_cache<Resource>().handle_for(rid);
+                output = ctx.template get_cache<Resource>().handle_for({ source.asString() });
                 return false;
             }
         };
@@ -255,18 +248,13 @@ namespace json {
                 from_json(ctx, source, tech_id);
 
                 // TODO add any other other shaders here.
-                tools::complex_resource_id cid{
+                resource::resource_id rid{
                     tech_id.vertex,
                     tech_id.tessellation_control,
                     tech_id.tessellation_evaluation,
                     tech_id.geometry,
                     tech_id.fragment
                 };
-
-                auto rid = tools::resource_id_for(cid);
-                auto& cache = ctx.template get_cache<graphics::technique>();
-                if (!cache.contains(rid))
-                    throw tools::missing_resource(cid);
 
                 output = ctx.template get_cache<graphics::technique>().handle_for(rid);
 

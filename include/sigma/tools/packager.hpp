@@ -4,7 +4,6 @@
 #include <sigma/context.hpp>
 #include <sigma/graphics/renderer.hpp>
 #include <sigma/tools/json_conversion.hpp>
-#include <sigma/tools/resource_hash.hpp>
 #include <sigma/util/filesystem.hpp>
 
 #include <boost/algorithm/string/case_conv.hpp>

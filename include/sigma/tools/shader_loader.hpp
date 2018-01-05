@@ -216,12 +216,11 @@ namespace tools {
 
             auto source_type = source_types.at(ext);
 
-            auto cid = type_name_map.at(source_type) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
-            auto rid = resource_id_for({ cid });
+            auto rid = type_name_map.at(source_type) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
 
             auto& shader_database = context_.template get_cache<graphics::shader>();
-            if (shader_database.contains(rid)) {
-                auto h = shader_database.handle_for(rid);
+            if (shader_database.contains({ rid })) {
+                auto h = shader_database.handle_for({ rid });
 
                 auto source_file_time = boost::filesystem::last_write_time(source_file);
                 auto resource_time = shader_database.last_modification_time(h);
@@ -230,7 +229,7 @@ namespace tools {
                     return;
             }
 
-            std::cout << "packaging: " << cid << "\n";
+            std::cout << "packaging: " << rid << "\n";
 
             sigma::graphics::shader shader;
             shader.type = source_type;
@@ -314,7 +313,7 @@ namespace tools {
                 }
             }
 
-            shader_database.insert(rid, shader, true);
+            shader_database.insert({ rid }, shader, true);
         }
 
     private:

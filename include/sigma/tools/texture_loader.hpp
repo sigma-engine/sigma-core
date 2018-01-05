@@ -104,12 +104,11 @@ namespace tools {
 
             auto settings_path = source_file.parent_path() / (source_file.stem().string() + ".stex");
 
-            auto cid = resource_shortname(graphics::texture) / filesystem::make_relative(source_directory, source_file).replace_extension("");
-            auto rid = resource_id_for({ cid });
+            auto rid = resource_shortname(graphics::texture) / filesystem::make_relative(source_directory, source_file).replace_extension("");
 
             auto& texture_cache = context_.template get_cache<graphics::texture>();
-            if (texture_cache.contains(rid)) {
-                auto h = texture_cache.handle_for(rid);
+            if (texture_cache.contains({ rid })) {
+                auto h = texture_cache.handle_for({ rid });
 
                 auto source_file_time = boost::filesystem::last_write_time(source_file);
                 auto settings_time = source_file_time;
@@ -121,7 +120,7 @@ namespace tools {
                     return;
             }
 
-            std::cout << "packaging: " << cid << "\n";
+            std::cout << "packaging: " << rid << "\n";
 
             // TODO use json conversion
             Json::Value settings(Json::objectValue);
@@ -162,7 +161,6 @@ namespace tools {
                 convert_texture(image, texture);
 
                 if (settings.isMember("cubemap")) {
-                    // TODO load settings from json.
                     auto source_view = boost::gil::const_view(image);
                     graphics::cubemap cubemap;
                     int SIZE = 1024;
@@ -186,17 +184,17 @@ namespace tools {
                         equirectangular_to_cubemap_face(face, source_view, face_view);
 
                         auto face_number = static_cast<unsigned int>(static_cast<unsigned int>(face));
-                        cubemap.faces[face_number] = texture_cache.insert(resource_id_for({ cid / std::to_string(face_number) }), txt, true);
+                        cubemap.faces[face_number] = texture_cache.insert({ rid / std::to_string(face_number) }, txt, true);
                     }
 
-                    auto cubemap_cid = resource_shortname(graphics::cubemap) / filesystem::make_relative(source_directory, source_file).replace_extension("");
-                    context_.template get_cache<graphics::cubemap>().insert(resource_id_for({ cubemap_cid }), cubemap, true);
+                    auto cubemap_rid = resource_shortname(graphics::cubemap) / filesystem::make_relative(source_directory, source_file).replace_extension("");
+                    context_.template get_cache<graphics::cubemap>().insert({ cubemap_rid }, cubemap, true);
                 }
                 break;
             }
             }
 
-            texture_cache.insert(rid, texture, true);
+            texture_cache.insert({ rid }, texture, true);
         }
 
     private:

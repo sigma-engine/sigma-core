@@ -108,10 +108,8 @@ namespace tools {
         std::string material_name = get_name(scene->mMaterials[src_mesh->mMaterialIndex], package_directory);
 
         // TODO warn if material slot has been used.
-        // TODO error if missing material.
         boost::filesystem::path material_prefix{ resource_shortname(graphics::material) };
-        auto rid = resource_id_for({ material_prefix / material_name });
-        dest_mesh.materials.push_back(material_cache.handle_for(rid));
+        dest_mesh.materials.push_back(material_cache.handle_for({ material_prefix / material_name }));
         dest_mesh.material_slots.push_back(std::make_pair(dest_mesh.triangles.size(), submesh_triangles.size()));
 
         dest_mesh.vertices.reserve(dest_mesh.vertices.size() + submesh_vertices.size());
@@ -208,10 +206,10 @@ namespace tools {
                     entity_name += std::to_string(j);
 
                 auto mesh = scene->mMeshes[root->mMeshes[j]];
-                auto cid = resource_shortname(graphics::static_mesh) / package_path / (get_name(mesh) + std::to_string(root->mMeshes[j]));
+                auto rid = resource_shortname(graphics::static_mesh) / package_path / (get_name(mesh) + std::to_string(root->mMeshes[j]));
 
                 graphics::static_mesh_instance mshinst{
-                    static_mesh_cache.handle_for(resource_id_for({ cid }))
+                    static_mesh_cache.handle_for({ rid })
                 };
 
                 transform txfrom{
@@ -245,11 +243,10 @@ namespace tools {
             auto& blueprint_cache = context_.template get_cache<blueprint_type>();
 
             auto package_directory = package_path.parent_path();
-            auto blueprint_cid = resource_shortname(blueprint_type) / package_path;
+            auto blueprint_rid = resource_shortname(blueprint_type) / package_path;
 
-            auto blueprint_rid = resource_id_for({ blueprint_cid });
-            if (blueprint_cache.contains(blueprint_rid)) {
-                auto h = blueprint_cache.handle_for(blueprint_rid);
+            if (blueprint_cache.contains({ blueprint_rid })) {
+                auto h = blueprint_cache.handle_for({ blueprint_rid });
 
                 auto source_file_time = boost::filesystem::last_write_time(source_file);
                 auto settings_time = source_file_time;
@@ -261,7 +258,7 @@ namespace tools {
                     return;
             }
 
-            std::cout << "packaging: " << blueprint_cid << "\n";
+            std::cout << "packaging: " << blueprint_rid << "\n";
 
             Json::Value settings(Json::objectValue);
             if (boost::filesystem::exists(settings_path)) {
@@ -309,15 +306,15 @@ namespace tools {
                 if (boost::ends_with(get_name(scene->mMeshes[i]), "_high"))
                     continue;
 
-                auto cid = resource_shortname(graphics::static_mesh) / package_path / (get_name(scene->mMeshes[i]) + std::to_string(i));
-                std::cout << "packaging: " << cid << "\n";
+                auto rid = resource_shortname(graphics::static_mesh) / package_path / (get_name(scene->mMeshes[i]) + std::to_string(i));
+                std::cout << "packaging: " << rid << "\n";
 
                 graphics::static_mesh dest_mesh;
                 convert_static_mesh(package_directory, material_cache, scene, scene->mMeshes[i], dest_mesh);
                 dest_mesh.vertices.shrink_to_fit();
                 dest_mesh.triangles.shrink_to_fit();
 
-                static_mesh_cache.insert(resource_id_for({ cid }), dest_mesh, true);
+                static_mesh_cache.insert({ rid }, dest_mesh, true);
             }
 
             blueprint_type blueprint;
@@ -329,7 +326,7 @@ namespace tools {
                 blueprint.entities.push_back(blueprint_entity);
             }
 
-            blueprint_cache.insert(blueprint_rid, blueprint, true);
+            blueprint_cache.insert({ blueprint_rid }, blueprint, true);
         }
 
         void load_as_static_mesh(
@@ -341,11 +338,10 @@ namespace tools {
             auto& static_mesh_cache = context_.template get_cache<graphics::static_mesh>();
 
             auto package_directory = package_path.parent_path();
-            auto cid = resource_shortname(graphics::static_mesh) / package_path;
+            auto rid = resource_shortname(graphics::static_mesh) / package_path;
 
-            auto rid = resource_id_for({ cid });
-            if (static_mesh_cache.contains(rid)) {
-                auto h = static_mesh_cache.handle_for(rid);
+            if (static_mesh_cache.contains({ rid })) {
+                auto h = static_mesh_cache.handle_for({ rid });
 
                 auto source_file_time = boost::filesystem::last_write_time(source_file);
                 auto settings_time = source_file_time;
@@ -357,7 +353,7 @@ namespace tools {
                     return;
             }
 
-            std::cout << "packaging: " << cid << "\n";
+            std::cout << "packaging: " << rid << "\n";
 
             Json::Value settings(Json::objectValue);
             if (boost::filesystem::exists(settings_path)) {
@@ -412,7 +408,7 @@ namespace tools {
             dest_mesh.vertices.shrink_to_fit();
             dest_mesh.triangles.shrink_to_fit();
 
-            static_mesh_cache.insert(rid, dest_mesh, true);
+            static_mesh_cache.insert({ rid }, dest_mesh, true);
         }
 
     private:

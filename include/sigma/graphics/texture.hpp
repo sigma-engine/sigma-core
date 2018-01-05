@@ -28,14 +28,12 @@ namespace graphics {
     };
 
     struct texture {
-        BOOST_HANA_DEFINE_STRUCT(
-            texture,
-            (glm::ivec2, size),
-            (texture_format, format),
-            (std::vector<char>, data),
-            (texture_filter, minification_filter),
-            (texture_filter, magnification_filter),
-            (texture_filter, mipmap_filter));
+        glm::ivec2 size;
+        texture_format format;
+        std::vector<char> data;
+        texture_filter minification_filter;
+        texture_filter magnification_filter;
+        texture_filter mipmap_filter;
 
         texture()
             : minification_filter{ texture_filter::LINEAR }

@@ -44,11 +44,10 @@ namespace tools {
             auto& static_mesh_cache = context_.template get_cache<graphics::static_mesh>();
             auto& post_process_effect_cache = context_.template get_cache<graphics::post_process_effect>();
 
-            auto cid = resource_shortname(sigma::graphics::post_process_effect) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
-            auto rid = resource_id_for({ cid });
+            auto rid = resource_shortname(sigma::graphics::post_process_effect) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
 
-            if (post_process_effect_cache.contains(rid)) {
-                auto h = post_process_effect_cache.handle_for(rid);
+            if (post_process_effect_cache.contains({ rid })) {
+                auto h = post_process_effect_cache.handle_for({ rid });
 
                 auto source_file_time = boost::filesystem::last_write_time(source_file);
                 auto resource_time = post_process_effect_cache.last_modification_time(h);
@@ -57,7 +56,7 @@ namespace tools {
                     return;
             }
 
-            std::cout << "packaging: " << cid << "\n";
+            std::cout << "packaging: " << rid << "\n";
 
             std::ifstream file(source_file.string());
             Json::Value settings;
@@ -67,7 +66,7 @@ namespace tools {
             json::from_json(context_, settings, tech_id);
 
             // TODO add any other other shaders here.
-            complex_resource_id tech_cid{
+            resource::resource_id tech_rid{
                 tech_id.vertex,
                 tech_id.tessellation_control,
                 tech_id.tessellation_evaluation,
@@ -75,19 +74,18 @@ namespace tools {
                 tech_id.fragment
             };
             sigma::graphics::post_process_effect effect;
-            effect.technique_id = technique_cache.handle_for(resource_id_for(tech_cid));
+            effect.technique_id = technique_cache.handle_for(tech_rid);
 
             extract_unifrom_data(context_, settings, effect);
 
             auto mesh_prefix = resource_shortname(graphics::static_mesh);
-            auto mesh_cid = boost::filesystem::path{ mesh_prefix } / "fullscreen_quad";
+            auto mesh_rid = boost::filesystem::path{ mesh_prefix } / "fullscreen_quad";
             if (settings.isMember(mesh_prefix))
-                mesh_cid = boost::filesystem::path{ mesh_prefix } / settings[mesh_prefix].asString();
+                mesh_rid = boost::filesystem::path{ mesh_prefix } / settings[mesh_prefix].asString();
 
-            // TODO this needs to use json conversion otherwise it fails with a error that has no information.
-            effect.mesh = static_mesh_cache.handle_for(resource_id_for({ mesh_cid }));
+            effect.mesh = static_mesh_cache.handle_for({ mesh_rid });
 
-            post_process_effect_cache.insert(rid, effect, true);
+            post_process_effect_cache.insert({ rid }, effect, true);
         }
 
     private:

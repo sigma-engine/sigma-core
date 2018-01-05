@@ -44,11 +44,10 @@ namespace tools {
             auto& technique_cache = context_.template get_cache<graphics::technique>();
             auto& material_cache = context_.template get_cache<graphics::material>();
 
-            auto cid = resource_shortname(sigma::graphics::material) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
-            auto rid = resource_id_for({ cid });
+            auto rid = resource_shortname(sigma::graphics::material) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
 
-            if (material_cache.contains(rid)) {
-                auto h = material_cache.handle_for(rid);
+            if (material_cache.contains({ rid })) {
+                auto h = material_cache.handle_for({ rid });
 
                 auto source_file_time = boost::filesystem::last_write_time(source_file);
                 auto resource_time = material_cache.last_modification_time(h);
@@ -57,7 +56,7 @@ namespace tools {
                     return;
             }
 
-            std::cout << "packaging: " << cid << "\n";
+            std::cout << "packaging: " << rid << "\n";
 
             std::ifstream file(source_file.string());
             Json::Value settings;
@@ -67,7 +66,7 @@ namespace tools {
             json::from_json(context_, settings, tech_id);
 
             // TODO add any other other shaders here.
-            complex_resource_id tech_cid{
+            resource::resource_id tech_rid{
                 tech_id.vertex,
                 tech_id.tessellation_control,
                 tech_id.tessellation_evaluation,
@@ -75,11 +74,11 @@ namespace tools {
                 tech_id.fragment
             };
             sigma::graphics::material material;
-            material.technique_id = technique_cache.handle_for(resource_id_for(tech_cid));
+            material.technique_id = technique_cache.handle_for({ tech_rid });
 
             extract_unifrom_data(context_, settings, material);
 
-            material_cache.insert(rid, material, true);
+            material_cache.insert({ rid }, material, true);
         }
 
     private:

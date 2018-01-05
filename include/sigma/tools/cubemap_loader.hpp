@@ -31,13 +31,12 @@ namespace tools {
 
         virtual void load(const PackageSettings& package_settings, const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) override
         {
-            auto cid = resource_shortname(sigma::graphics::cubemap) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
-            auto rid = resource_id_for({ cid });
+            auto rid = resource_shortname(sigma::graphics::cubemap) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
 
             auto& cubemap_cache = context_.template get_cache<graphics::cubemap>();
             auto& texture_cache = context_.template get_cache<graphics::texture>();
-            if (cubemap_cache.contains(rid)) {
-                auto h = cubemap_cache.handle_for(rid);
+            if (cubemap_cache.contains({ rid })) {
+                auto h = cubemap_cache.handle_for({ rid });
 
                 auto source_file_time = boost::filesystem::last_write_time(source_file);
                 auto resource_time = cubemap_cache.last_modification_time(h);
@@ -46,18 +45,13 @@ namespace tools {
                     return;
             }
 
-            std::cout << "packaging: " << cid << "\n";
+            std::cout << "packaging: " << rid << "\n";
 
             Json::Value settings;
-
             std::ifstream file(source_file.string());
             file >> settings;
 
             sigma::graphics::cubemap cubemap;
-            // TODO: (NOW) error if can not find textures.
-            // TODO: (NOW) throw if missing a face.
-            // TODO: (NOW) use json conversion.
-            boost::filesystem::path texture_prefix{ resource_shortname(sigma::graphics::texture) };
 
             // TODO remove right, left, top, bottom, back, front and use
             // {positive,negative}_{x,y,z}
@@ -70,9 +64,10 @@ namespace tools {
                 { "back", graphics::cubemap::face::NEGATIVE_Z }
             };
             for (const auto& face_name : face_names)
-                cubemap.faces[static_cast<unsigned int>(face_name.second)] = texture_cache.handle_for(resource_id_for({ texture_prefix / settings[face_name.first].asString() }));
+                json::from_json(context_, settings[face_name.first].asString(), cubemap.faces[static_cast<unsigned int>(face_name.second)]);
 
-            cubemap_cache.insert(rid, cubemap, true);
+            // TODO: throw better error message if missing a face.
+            cubemap_cache.insert({ rid }, cubemap, true);
         }
 
     private:

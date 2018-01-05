@@ -8,14 +8,49 @@
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
+#include <boost/functional/hash.hpp>
 
+#include <exception>
 #include <fstream>
 #include <memory>
+#include <sstream>
 #include <unordered_map>
 #include <vector>
 
 namespace sigma {
 namespace resource {
+    using resource_id = std::vector<boost::filesystem::path>;
+
+    class missing_resource : public std::exception {
+    public:
+        missing_resource(const resource::resource_id& cid)
+        {
+            std::stringstream ss;
+
+            ss << "missing resource ";
+            if (cid.size() >= 2) {
+                ss << "{ " << cid[0];
+                for (std::size_t i = 1; i < cid.size() - 1; ++i) {
+                    if (cid[i].size() > 0)
+                        ss << cid[i] << ", ";
+                }
+                ss << cid[cid.size() - 1] << "}";
+            } else if (cid.size() == 1) {
+                ss << cid[0];
+            } else {
+                ss << "<UNKNOWN>";
+            }
+            message_ = ss.str();
+        }
+
+        virtual const char* what() const noexcept override
+        {
+            return message_.c_str();
+        }
+
+    private:
+        std::string message_;
+    };
 
     template <class Resource>
     class cache {
@@ -39,14 +74,17 @@ namespace resource {
 
         ~cache() = default;
 
-        bool contains(std::size_t resource_id) const
+        bool contains(const resource_id& rid) const
         {
-            return database_.count(resource_id) > 0;
+            return database_.count(rid) > 0;
         }
 
-        handle<Resource> handle_for(std::size_t resource_id) const
+        handle<Resource> handle_for(const resource_id& rid) const
         {
-            return database_.at(resource_id);
+            if (!contains(rid))
+                throw missing_resource(rid);
+
+            return database_.at(rid);
         }
 
         std::time_t last_modification_time(const handle<Resource>& hnd) const
@@ -57,14 +95,14 @@ namespace resource {
             return 0;
         }
 
-        handle<Resource> insert(std::size_t resource_id, Resource resource, bool write_to_disk)
+        handle<Resource> insert(const resource_id& rid, Resource resource, bool write_to_disk)
         {
             handle<Resource> hnd;
-            if (contains(resource_id)) {
-                hnd = database_.at(resource_id);
+            if (contains(rid)) {
+                hnd = database_.at(rid);
             } else {
                 hnd = next_free_handle();
-                database_[resource_id] = hnd;
+                database_[rid] = hnd;
             }
 
             assert(hnd.is_valid());
@@ -133,9 +171,24 @@ namespace resource {
 
         boost::filesystem::path cache_directory_;
         std::vector<std::pair<handle<Resource>, std::unique_ptr<Resource>>> resources_;
-        std::unordered_map<std::size_t, handle<Resource>> database_;
+        std::unordered_map<resource_id, handle<Resource>> database_;
     };
 }
+}
+
+namespace std {
+template <>
+struct hash<sigma::resource::resource_id> {
+    size_t operator()(const sigma::resource::resource_id& rid) const
+    {
+        size_t hash_code = 0;
+        for (const auto& id : rid) {
+            if (id.size() > 0)
+                boost::hash_combine(hash_code, id);
+        }
+        return hash_code;
+    }
+};
 }
 
 #endif // SIGMA_ENGINE_RESOURCE_MANAGER_HPP

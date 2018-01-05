@@ -19,7 +19,6 @@ namespace tools {
         auto& texture_cache = ctx.template get_cache<graphics::texture>();
         auto& cubemap_cache = ctx.template get_cache<graphics::cubemap>();
 
-        // TODO throw missing resource error if texture or cubemap were not found.
         for (auto it = settings.begin(); it != settings.end(); ++it) {
             const auto& value = *it;
             if (it.key() == "vertex" || it.key() == "tessellation_control" || it.key() == "tessellation_evaluation" || it.key() == "geometry" || it.key() == "fragment") {
@@ -27,14 +26,12 @@ namespace tools {
             } else if (it.key() == "textures") {
                 const auto& texture_object = *it;
                 for (auto it2 = texture_object.begin(); it2 != texture_object.end(); ++it2) {
-                    auto rid = resource_id_for({ boost::filesystem::path{ "texture" } / (*it2).asString() });
-                    data.textures[it2.key().asString()] = texture_cache.handle_for(rid); // TODO warn if tring to set texture more than once
+                    data.textures[it2.key().asString()] = texture_cache.handle_for({ boost::filesystem::path{ "texture" } / (*it2).asString() }); // TODO warn if tring to set texture more than once
                 }
             } else if (it.key() == "cubemaps") {
                 const auto& cubemap_object = *it;
                 for (auto it2 = cubemap_object.begin(); it2 != cubemap_object.end(); ++it2) {
-                    auto rid = resource_id_for({ boost::filesystem::path{ "cubemap" } / (*it2).asString() });
-                    data.cubemaps[it2.key().asString()] = cubemap_cache.handle_for(rid); // TODO warn if tring to set cubemap more than once
+                    data.cubemaps[it2.key().asString()] = cubemap_cache.handle_for({ boost::filesystem::path{ "cubemap" } / (*it2).asString() }); // TODO warn if tring to set cubemap more than once
                 }
             } else {
                 float f;
@@ -86,7 +83,7 @@ namespace tools {
             json::from_json(context_, settings, tech_id);
 
             // TODO add any other other shaders here.
-            complex_resource_id cid{
+            resource::resource_id rid{
                 tech_id.vertex,
                 tech_id.tessellation_control,
                 tech_id.tessellation_evaluation,
@@ -94,7 +91,6 @@ namespace tools {
                 tech_id.fragment
             };
 
-            auto rid = resource_id_for(cid);
             if (technique_cache.contains(rid)) {
                 auto h = technique_cache.handle_for(rid);
 
@@ -105,23 +101,23 @@ namespace tools {
                     return;
             }
 
-            std::cout << "packaging: technique { " << cid[0] << ", ";
-            for (int i = 1; i < cid.size() - 1; ++i) {
-                if (cid[i].size() > 0)
-                    std::cout << cid[i] << ", ";
+            std::cout << "packaging: technique { " << rid[0] << ", ";
+            for (int i = 1; i < rid.size() - 1; ++i) {
+                if (rid[i].size() > 0)
+                    std::cout << rid[i] << ", ";
             }
-            std::cout << cid[cid.size() - 1] << "}\n";
+            std::cout << rid[rid.size() - 1] << "}\n";
 
             graphics::technique technique;
 
-            technique.vertex = shader_cache.handle_for(resource_id_for({ tech_id.vertex }));
+            technique.vertex = shader_cache.handle_for({ tech_id.vertex });
             if (tech_id.tessellation_control.size() > 0)
-                technique.tessellation_control = shader_cache.handle_for(resource_id_for({ tech_id.tessellation_control }));
+                technique.tessellation_control = shader_cache.handle_for({ tech_id.tessellation_control });
             if (tech_id.tessellation_evaluation.size() > 0)
-                technique.tessellation_evaluation = shader_cache.handle_for(resource_id_for({ tech_id.tessellation_evaluation }));
+                technique.tessellation_evaluation = shader_cache.handle_for({ tech_id.tessellation_evaluation });
             if (tech_id.geometry.size() > 0)
-                technique.geometry = shader_cache.handle_for(resource_id_for({ tech_id.geometry }));
-            technique.fragment = shader_cache.handle_for(resource_id_for({ tech_id.fragment }));
+                technique.geometry = shader_cache.handle_for({ tech_id.geometry });
+            technique.fragment = shader_cache.handle_for({ tech_id.fragment });
 
             // TODO: (NOW) check for link errors.
             // TODO: (NOW) extract reflection data.

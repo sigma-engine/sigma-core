@@ -61,7 +61,6 @@ namespace graphics {
     };
 
     struct technique {
-        // TODO put the shaders in here directly.
         resource::handle<shader> vertex;
         resource::handle<shader> tessellation_control;
         resource::handle<shader> tessellation_evaluation;
