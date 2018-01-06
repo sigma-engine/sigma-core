@@ -65,17 +65,17 @@ namespace opengl {
         graphics::texture_filter magnification_filter,
         graphics::texture_filter mipmap_filter,
         graphics::texture_format data_format,
-        const std::vector<char>& data)
+        const char* data)
         : texture(format, size, minification_filter, magnification_filter, mipmap_filter)
     {
         auto gl_format = convert_gl(data_format);
-        GL_CHECK(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, size.x, size.y, gl_format.first, gl_format.second, data.data()));
+        GL_CHECK(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, size.x, size.y, gl_format.first, gl_format.second, data));
         if (mipmap_filter != graphics::texture_filter::NONE)
             GL_CHECK(glGenerateMipmap(GL_TEXTURE_2D));
     }
 
     texture::texture(const graphics::texture& data)
-        : texture(convert_internal(data.format), data.size, data.minification_filter, data.magnification_filter, data.mipmap_filter, data.format, data.data)
+        : texture(convert_internal(data.format()), data.size(), data.minification_filter(), data.magnification_filter(), data.mipmap_filter(), data.format(), data.data())
     {
     }
 

@@ -102,7 +102,7 @@ namespace tools {
             }
 
             std::cout << "packaging: technique { " << rid[0] << ", ";
-            for (int i = 1; i < rid.size() - 1; ++i) {
+            for (std::size_t i = 1; i < rid.size() - 1; ++i) {
                 if (rid[i].size() > 0)
                     std::cout << rid[i] << ", ";
             }

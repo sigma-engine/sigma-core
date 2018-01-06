@@ -37,17 +37,17 @@ namespace opengl {
         for (unsigned int i = 0; i < 6; ++i) {
             auto texture = texture_cache.acquire(data.faces[i]);
             if (i == 0) {
-                format = texture->format;
-                size = texture->size;
-                int mip_levels = calculate_mipmap_levels(texture->size.x, texture->size.y);
-                GL_CHECK(glTexStorage2D(GL_TEXTURE_CUBE_MAP, mip_levels, (GLenum)convert_internal(texture->format), texture->size.x, texture->size.y));
+                format = texture->format();
+                size = texture->size();
+                int mip_levels = calculate_mipmap_levels(size.x, size.y);
+                GL_CHECK(glTexStorage2D(GL_TEXTURE_CUBE_MAP, mip_levels, (GLenum)convert_internal(format), size.x, size.y));
             }
 
             // TODO clean this code up.
-            assert(format == texture->format);
-            assert(size == texture->size);
+            assert(format == texture->format());
+            assert(size == texture->size());
             auto gl_format = convert_gl(format);
-            GL_CHECK(glTexSubImage2D(convert_gl(static_cast<graphics::cubemap::face>(i)), 0, 0, 0, size.x, size.y, gl_format.first, gl_format.second, texture->data.data()));
+            GL_CHECK(glTexSubImage2D(convert_gl(static_cast<graphics::cubemap::face>(i)), 0, 0, 0, size.x, size.y, gl_format.first, gl_format.second, texture->data()));
         }
 
         GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR));

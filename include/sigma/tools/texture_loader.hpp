@@ -48,16 +48,6 @@ namespace tools {
         }
     }
 
-    template <class Image>
-    void convert_texture(const Image& image, graphics::texture& texture)
-    {
-        auto view = boost::gil::const_view(image);
-        using pixel = typename decltype(view)::value_type;
-        texture.data.resize(image.width() * image.height() * sizeof(pixel));
-        texture.size = glm::ivec2{ image.width(), image.height() };
-        boost::gil::copy_pixels(view, boost::gil::interleaved_view(view.width(), view.height(), (pixel*)texture.data.data(), view.width() * sizeof(pixel)));
-    }
-
     template <class PackageSettings, class ContextType>
     class texture_loader : public resource_loader<PackageSettings, ContextType> {
     public:
@@ -134,67 +124,70 @@ namespace tools {
                 file >> settings;
             }
 
-            graphics::texture texture;
-            json::from_json(context_, settings["filter"]["minification"], texture.minification_filter);
-            json::from_json(context_, settings["filter"]["magnification"], texture.magnification_filter);
-            json::from_json(context_, settings["filter"]["mipmap"], texture.mipmap_filter);
-            json::from_json(context_, settings["format"], texture.format);
+            graphics::texture_filter minification_filter = graphics::texture_filter::LINEAR;
+            graphics::texture_filter magnification_filter = graphics::texture_filter::LINEAR;
+            graphics::texture_filter mipmap_filter = graphics::texture_filter::LINEAR;
+            graphics::texture_format format = graphics::texture_format::RGB8;
+            json::from_json(context_, settings["filter"]["minification"], minification_filter);
+            json::from_json(context_, settings["filter"]["magnification"], magnification_filter);
+            json::from_json(context_, settings["filter"]["mipmap"], mipmap_filter);
+            json::from_json(context_, settings["format"], format);
 
-            switch (texture.format) {
+            switch (format) {
             case graphics::texture_format::RGB8: {
                 boost::gil::rgb8_image_t image;
                 load_texture(source_file, source_type, image);
-                convert_texture(image, texture);
+
+                graphics::texture texture(boost::gil::const_view(image), minification_filter, magnification_filter, mipmap_filter);
+                texture_cache.insert({ rid }, texture, true);
                 break;
             }
             case graphics::texture_format::RGBA8: {
                 boost::gil::rgba8_image_t image;
                 load_texture(source_file, source_type, image);
-                convert_texture(image, texture);
+
+                graphics::texture texture(boost::gil::const_view(image), minification_filter, magnification_filter, mipmap_filter);
+                texture_cache.insert({ rid }, texture, true);
                 break;
             }
             case graphics::texture_format::RGB32F: {
                 boost::gil::rgb32f_image_t image;
                 load_texture(source_file, source_type, image);
 
-                // TODO do not convert and export texture if cubemap is generated?
-                convert_texture(image, texture);
-
                 if (settings.isMember("cubemap")) {
                     auto source_view = boost::gil::const_view(image);
                     graphics::cubemap cubemap;
+
                     int SIZE = 1024;
                     if (settings["cubemap"].isMember("size"))
                         SIZE = settings["cubemap"]["size"].asUInt();
+
+                    boost::gil::rgb32f_image_t face_image{ SIZE, SIZE };
+                    auto face_view = boost::gil::view(face_image);
                     for (auto face : { graphics::cubemap::face::POSITIVE_X,
                              graphics::cubemap::face::NEGATIVE_X,
                              graphics::cubemap::face::POSITIVE_Y,
                              graphics::cubemap::face::NEGATIVE_Y,
                              graphics::cubemap::face::POSITIVE_Z,
                              graphics::cubemap::face::NEGATIVE_Z }) {
-                        graphics::texture txt;
-                        txt.size = glm::ivec2{ SIZE, SIZE };
-                        txt.format = texture.format;
-                        txt.minification_filter = texture.minification_filter;
-                        txt.magnification_filter = texture.magnification_filter;
-                        txt.mipmap_filter = texture.mipmap_filter;
-                        txt.data.resize(txt.size.x * txt.size.y * sizeof(boost::gil::rgb32f_pixel_t));
-
-                        auto face_view = boost::gil::interleaved_view(txt.size.x, txt.size.y, (boost::gil::rgb32f_pixel_t*)txt.data.data(), txt.size.x * sizeof(boost::gil::rgb32f_pixel_t));
                         equirectangular_to_cubemap_face(face, source_view, face_view);
 
-                        auto face_number = static_cast<unsigned int>(static_cast<unsigned int>(face));
-                        cubemap.faces[face_number] = texture_cache.insert({ rid / std::to_string(face_number) }, txt, true);
+                        // TODO this doubles the memory usage and requires a copy that is not needed.
+                        graphics::texture face_texture(boost::gil::const_view(face_image), minification_filter, magnification_filter, mipmap_filter);
+                        auto face_number = static_cast<unsigned int>(face);
+                        cubemap.faces[face_number] = texture_cache.insert({ rid / std::to_string(face_number) }, face_texture, true);
                     }
 
                     auto cubemap_rid = resource_shortname(graphics::cubemap) / filesystem::make_relative(source_directory, source_file).replace_extension("");
                     context_.template get_cache<graphics::cubemap>().insert({ cubemap_rid }, cubemap, true);
                 }
+
+                // TODO do not convert and export texture if cubemap is generated?
+                graphics::texture texture(boost::gil::const_view(image), minification_filter, magnification_filter, mipmap_filter);
+                texture_cache.insert({ rid }, texture, true);
                 break;
             }
             }
-
-            texture_cache.insert({ rid }, texture, true);
         }
 
     private:

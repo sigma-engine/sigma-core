@@ -142,7 +142,7 @@ namespace opengl {
             graphics::texture_filter magnification_filter,
             graphics::texture_filter mipmap_filter,
             graphics::texture_format data_format,
-            const std::vector<char>& data);
+            const char* data);
 
         texture(const graphics::texture& data);
 

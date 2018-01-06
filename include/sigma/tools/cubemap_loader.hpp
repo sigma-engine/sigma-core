@@ -34,7 +34,6 @@ namespace tools {
             auto rid = resource_shortname(sigma::graphics::cubemap) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
 
             auto& cubemap_cache = context_.template get_cache<graphics::cubemap>();
-            auto& texture_cache = context_.template get_cache<graphics::texture>();
             if (cubemap_cache.contains({ rid })) {
                 auto h = cubemap_cache.handle_for({ rid });
 
