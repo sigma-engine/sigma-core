@@ -29,34 +29,37 @@ namespace opengl {
 
     cubemap::cubemap(resource::cache<graphics::texture>& texture_cache, const graphics::cubemap& data)
     {
+        graphics::texture* textures[6];
+        for (unsigned int i = 0; i < 6; ++i)
+            textures[i] = texture_cache.acquire(data.faces[i]);
+
+        // TODO don't generate mipmaps if mipmaps are disabled for this cubemap.
         GL_CHECK(glGenTextures(1, &object_));
         GL_CHECK(glBindTexture(GL_TEXTURE_CUBE_MAP, object_));
+        GL_CHECK(glTexStorage2D(GL_TEXTURE_CUBE_MAP, textures[0]->total_mipmap_count(), (GLenum)convert_internal(textures[0]->format()), textures[0]->size().x, textures[0]->size().y));
 
-        graphics::texture_format format;
-        glm::ivec2 size;
         for (unsigned int i = 0; i < 6; ++i) {
-            auto texture = texture_cache.acquire(data.faces[i]);
-            if (i == 0) {
-                format = texture->format();
-                size = texture->size();
-                int mip_levels = calculate_mipmap_levels(size.x, size.y);
-                GL_CHECK(glTexStorage2D(GL_TEXTURE_CUBE_MAP, mip_levels, (GLenum)convert_internal(format), size.x, size.y));
+            auto txt = textures[i];
+            assert(txt->size() == textures[0]->size());
+            assert(txt->format() == textures[0]->format());
+            assert(txt->stored_mipmap_count() == textures[0]->stored_mipmap_count());
+            auto gl_face = convert_gl(static_cast<graphics::cubemap::face>(i));
+            auto gl_format = convert_gl(txt->format());
+            for (std::size_t j = 0; j < txt->stored_mipmap_count(); ++j) {
+                GL_CHECK(glTexSubImage2D(gl_face, j, 0, 0, txt->size().x >> j, txt->size().y >> j, gl_format.first, gl_format.second, txt->data(j)));
             }
-
-            // TODO clean this code up.
-            assert(format == texture->format());
-            assert(size == texture->size());
-            auto gl_format = convert_gl(format);
-            GL_CHECK(glTexSubImage2D(convert_gl(static_cast<graphics::cubemap::face>(i)), 0, 0, 0, size.x, size.y, gl_format.first, gl_format.second, texture->data()));
         }
 
+        // TODO get texture parameters from the cubemap.
         GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
         GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
         GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
         GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
         GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE));
 
-        GL_CHECK(glGenerateMipmap(GL_TEXTURE_CUBE_MAP));
+        if (textures[0]->stored_mipmap_count() != textures[0]->total_mipmap_count()) {
+            GL_CHECK(glGenerateMipmap(GL_TEXTURE_CUBE_MAP));
+        }
     }
 
     cubemap::~cubemap()

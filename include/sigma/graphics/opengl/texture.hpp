@@ -132,17 +132,11 @@ namespace opengl {
 
     class texture {
     public:
-        texture(internal_format format, glm::ivec2 size,
+        texture(internal_format format,
+            glm::ivec2 size,
             graphics::texture_filter minification_filter = graphics::texture_filter::NEAREST,
             graphics::texture_filter magnification_filter = graphics::texture_filter::NEAREST,
             graphics::texture_filter mipmap_filter = graphics::texture_filter::NONE);
-
-        texture(internal_format format, glm::ivec2 size,
-            graphics::texture_filter minification_filter,
-            graphics::texture_filter magnification_filter,
-            graphics::texture_filter mipmap_filter,
-            graphics::texture_format data_format,
-            const char* data);
 
         texture(const graphics::texture& data);
 
