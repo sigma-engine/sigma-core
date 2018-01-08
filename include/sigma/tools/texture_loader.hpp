@@ -162,18 +162,17 @@ namespace tools {
                     if (settings["cubemap"].isMember("size"))
                         SIZE = settings["cubemap"]["size"].asUInt();
 
-                    boost::gil::rgb32f_image_t face_image{ SIZE, SIZE };
-                    auto face_view = boost::gil::view(face_image);
                     for (auto face : { graphics::cubemap::face::POSITIVE_X,
                              graphics::cubemap::face::NEGATIVE_X,
                              graphics::cubemap::face::POSITIVE_Y,
                              graphics::cubemap::face::NEGATIVE_Y,
                              graphics::cubemap::face::POSITIVE_Z,
                              graphics::cubemap::face::NEGATIVE_Z }) {
+
+                        graphics::texture face_texture({ SIZE, SIZE }, format, minification_filter, magnification_filter, mipmap_filter);
+                        auto face_view = face_texture.as_view<boost::gil::rgb32f_pixel_t>(0);
                         equirectangular_to_cubemap_face(face, source_view, face_view);
 
-                        // TODO this doubles the memory usage and requires a copy that is not needed.
-                        graphics::texture face_texture(boost::gil::const_view(face_image), minification_filter, magnification_filter, mipmap_filter);
                         auto face_number = static_cast<unsigned int>(face);
                         cubemap.faces[face_number] = texture_cache.insert({ rid / std::to_string(face_number) }, face_texture, true);
                     }

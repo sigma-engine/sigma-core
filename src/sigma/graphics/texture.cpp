@@ -144,13 +144,13 @@ namespace graphics {
 
     char* texture::data(std::size_t level)
     {
-        assert(level < mipmap_offsets_.size());
+        assert(level < stored_mipmap_count());
         return data_.data() + mipmap_offsets_[level];
     }
 
     const char* texture::data(std::size_t level) const
     {
-        assert(level < mipmap_offsets_.size());
+        assert(level < stored_mipmap_count());
         return data_.data() + mipmap_offsets_[level];
     }
 }

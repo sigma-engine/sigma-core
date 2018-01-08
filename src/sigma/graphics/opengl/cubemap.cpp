@@ -46,7 +46,9 @@ namespace opengl {
             auto gl_face = convert_gl(static_cast<graphics::cubemap::face>(i));
             auto gl_format = convert_gl(txt->format());
             for (std::size_t j = 0; j < txt->stored_mipmap_count(); ++j) {
-                GL_CHECK(glTexSubImage2D(gl_face, j, 0, 0, txt->size().x >> j, txt->size().y >> j, gl_format.first, gl_format.second, txt->data(j)));
+                std::size_t size_x = std::max(1, txt->size().x >> j);
+                std::size_t size_y = std::max(1, txt->size().y >> j);
+                GL_CHECK(glTexSubImage2D(gl_face, j, 0, 0, size_x, size_y, gl_format.first, gl_format.second, txt->data(j)));
             }
         }
 

@@ -71,7 +71,9 @@ namespace opengl {
     {
         auto gl_format = convert_gl(data.format());
         for (std::size_t i = 0; i < data.stored_mipmap_count(); ++i) {
-            GL_CHECK(glTexSubImage2D(GL_TEXTURE_2D, i, 0, 0, data.size().x >> i, data.size().y >> i, gl_format.first, gl_format.second, data.data(i)));
+            std::size_t size_x = std::max(1, data.size().x >> i);
+            std::size_t size_y = std::max(1, data.size().y >> i);
+            GL_CHECK(glTexSubImage2D(GL_TEXTURE_2D, i, 0, 0, size_x, size_y, gl_format.first, gl_format.second, data.data(i)));
         }
 
         if (data.mipmap_filter() != graphics::texture_filter::NONE && data.stored_mipmap_count() != data.total_mipmap_count()) {
