@@ -14,7 +14,6 @@
 namespace sigma {
 namespace opengl {
     class texture;
-    class render_buffer;
 
     // TODO hold on to bound textures???
     class frame_buffer {
@@ -61,11 +60,7 @@ namespace opengl {
 
         void attach(attachment att, const texture& txt);
 
-        void attach(attachment att, const render_buffer& buf);
-
         void dettach(attachment att, const texture& txt);
-
-        void dettach(attachment att, const render_buffer& txt);
 
         void read_buffer(attachment att);
 

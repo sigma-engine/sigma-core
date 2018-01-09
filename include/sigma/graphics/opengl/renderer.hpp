@@ -9,7 +9,6 @@
 #include <sigma/graphics/opengl/material.hpp>
 #include <sigma/graphics/opengl/post_process_effect.hpp>
 #include <sigma/graphics/opengl/shader.hpp>
-#include <sigma/graphics/opengl/shadow_buffer.hpp>
 #include <sigma/graphics/opengl/static_mesh.hpp>
 #include <sigma/graphics/opengl/technique.hpp>
 #include <sigma/graphics/opengl/texture.hpp>
@@ -44,9 +43,14 @@ namespace opengl {
 
         int loader_status_;
         glm::vec2 size_;
-        frame_buffer default_fbo_;
+        GLint default_fbo_;
         geometry_buffer gbuffer_;
-        shadow_buffer sbuffer_;
+
+        // shadow_buffer sbuffer_;
+        glm::ivec2 shadow_map_size_;
+        GLuint shadow_fbo_;
+        GLuint shadow_depth_buffer_;
+        std::vector<GLuint> shadow_textures_;
         std::vector<frustum> cascade_frustums_;
 
         std::chrono::high_resolution_clock::time_point start_time_;
@@ -66,6 +70,12 @@ namespace opengl {
 
         debug_draw_renderer debug_renderer_;
         std::vector<std::pair<glm::vec3, glm::mat4>> debug_frustums_;
+
+        void create_shadow_maps(const glm::ivec2& size);
+
+        void bind_for_shadow_read();
+
+        void bind_for_shadow_write(unsigned int index);
 
         void begin_effect(opengl::post_process_effect* effect);
 

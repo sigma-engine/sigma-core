@@ -42,10 +42,9 @@ namespace opengl {
         : graphics::renderer(size, ctx)
         , loader_status_(gladLoadGL())
         , size_(size.x, size.y)
-        , default_fbo_(frame_buffer::get_current())
+        , default_fbo_(0)
         , gbuffer_(size_)
-        , sbuffer_({ 1024, 1024 }, 3)
-        , cascade_frustums_(sbuffer_.count())
+        , cascade_frustums_(3)
         , start_time_(std::chrono::high_resolution_clock::now())
         , textures_(ctx.get_cache<graphics::texture>())
         , cubemaps_(ctx.get_cache<graphics::texture>(), ctx.get_cache<graphics::cubemap>())
@@ -71,6 +70,8 @@ namespace opengl {
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, false);
 
         standard_uniform_buffer_.set_binding_point(0);
+
+        create_shadow_maps({ 1024, 1024 });
     }
 
     renderer::~renderer()
@@ -146,7 +147,7 @@ namespace opengl {
         gbuffer_.swap_input_image();
         gbuffer_.bind_for_geometry_read();
 
-        default_fbo_.bind(frame_buffer::target::DRAW);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, default_fbo_);
         glClearColor(0, 0, 0, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -154,6 +155,60 @@ namespace opengl {
         auto gamma_conversion_tech = TECHNIQUE_PTR(techniques_, gamma_conversion_effect->data.technique_id);
         gamma_conversion_tech->bind(textures_, cubemaps_, gamma_conversion_effect->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
         STATIC_MESH_PTR(static_meshes_, gamma_conversion_effect->data.mesh)->render_all();
+    }
+
+    void renderer::create_shadow_maps(const glm::ivec2& size)
+    {
+        shadow_map_size_ = size;
+
+        // TODO make this a paramater
+        auto shadow_map_levels = 1 + std::floor(std::log2(std::max(size.x, size.y)));
+
+        // Generate the textures for the shadow maps.
+        shadow_textures_.resize(3, -1);
+        glGenTextures(shadow_textures_.size(), shadow_textures_.data());
+
+        // Allocate storage for the shadow maps.
+        for(auto texture: shadow_textures_) {
+            glBindTexture(GL_TEXTURE_2D, texture);            
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+            glTexStorage2D(GL_TEXTURE_2D, shadow_map_levels, GL_RG32F, size.x, size.y);
+        }
+
+        // Generate and allocate the depth buffer for the framebuffer.
+        glGenRenderbuffers(1, &shadow_depth_buffer_);
+        glBindRenderbuffer(GL_RENDERBUFFER, shadow_depth_buffer_);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, size.x, size.y);
+
+        // Generate the framebuffer and attach the depth buffer.
+        glGenFramebuffers(1, &shadow_fbo_);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, shadow_fbo_);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, shadow_depth_buffer_);
+
+    }
+
+    void renderer::bind_for_shadow_read() {
+        for (std::size_t i = 0; i < shadow_textures_.size(); ++i) {
+            glActiveTexture(static_cast<GLenum>(geometry_buffer::SHADOW_MAP0_TEXTURE_UINT) + i);
+            glBindTexture(GL_TEXTURE_2D, shadow_textures_[i]);
+            glGenerateMipmap(GL_TEXTURE_2D);
+        }
+    }
+
+    void renderer::bind_for_shadow_write(unsigned int index)
+    {
+        static GLenum attachments[] = {GL_COLOR_ATTACHMENT0};
+
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, shadow_fbo_);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, shadow_textures_[index], 0);
+        glDrawBuffers(1, attachments);
+        glViewport(0, 0, shadow_map_size_.x, shadow_map_size_.y);
     }
 
     void renderer::begin_effect(opengl::post_process_effect* effect)
@@ -308,7 +363,7 @@ namespace opengl {
                 float minZ, maxZ;
                 viewport.view_frustum.full_light_projection(light_view, minZ, maxZ);
 
-                for (std::size_t i = 0; i < sbuffer_.count(); ++i) {
+                for (std::size_t i = 0; i < shadow_textures_.size(); ++i) {
                     auto light_projection = cascade_frustums_[i].clip_light_projection(light_view, minZ, maxZ);
                     debug_frustums_.emplace_back(glm::vec3{ 1, 0, 0 }, glm::inverse(cascade_frustums_[i].projection_view()));
                     debug_frustums_.emplace_back(glm::vec3{ 1, 1, 0 }, glm::inverse(light_projection * light_view));
@@ -324,7 +379,7 @@ namespace opengl {
             float minZ, maxZ;
             viewport.view_frustum.full_light_projection(light_view, minZ, maxZ);
 
-            for (std::size_t i = 0; i < sbuffer_.count(); ++i) {
+            for (std::size_t i = 0; i < shadow_textures_.size(); ++i) {
                 auto light_projection = cascade_frustums_[i].clip_light_projection(light_view, minZ, maxZ);
                 shadow_.light_projection_view_matrix[i] = light_projection * light_view;
                 shadow_.light_frustum_far_plane[i] = cascade_frustums_[i].far_plane();
@@ -344,7 +399,7 @@ namespace opengl {
             shadow_uniform_buffer_.set_binding_point(1);
 
             gbuffer_.bind_for_geometry_read();
-            sbuffer_.bind_for_shadow_read(geometry_buffer::SHADOW_MAP0_TEXTURE_UINT);
+            bind_for_shadow_read();
 
             analytical_light_setup();
 
@@ -424,7 +479,7 @@ namespace opengl {
             shadow_uniform_buffer_.set_binding_point(1);
 
             gbuffer_.bind_for_geometry_read();
-            sbuffer_.bind_for_shadow_read(geometry_buffer::SHADOW_MAP0_TEXTURE_UINT);
+            bind_for_shadow_read();
 
             analytical_light_setup();
 
@@ -444,7 +499,7 @@ namespace opengl {
 
     void renderer::render_to_shadow_map(const frustum& view_frustum, int index, const renderer::world_view_type& world, bool cast_shadows)
     {
-        sbuffer_.bind_for_shadow_write(index);
+        bind_for_shadow_write(index);
 
         glDisable(GL_BLEND);
 
@@ -555,7 +610,7 @@ namespace opengl {
             std::cout << "type: POP_GROUP\n";
             break;
         case GL_DEBUG_TYPE_OTHER:
-            std::cout << "OTHER\n";
+            std::cout << "type: OTHER\n";
             break;
         }
         std::cout << "message: " << message << '\n';
