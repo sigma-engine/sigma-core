@@ -44,7 +44,7 @@ namespace opengl {
 
         void bind(const sigma::graphics::technique_uniform_data& data);
 
-        void bind(texture_manager& texture_mgr, cubemap_manager& cubemap_mgr, const sigma::graphics::technique_uniform_data& data, texture_unit first_texture_unit);
+        void bind(texture_manager& texture_mgr, cubemap_manager& cubemap_mgr, const sigma::graphics::technique_uniform_data& data, GLenum first_texture_unit);
 
     protected:
         GLuint object_;

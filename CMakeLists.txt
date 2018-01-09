@@ -37,6 +37,7 @@ add_library(sigma-core STATIC
     src/sigma/trackball_controller.cpp
     src/sigma/util/filesystem.cpp
     src/sigma/window.cpp
+    src/sigma/graphics/texture.cpp
 )
 
 target_include_directories(sigma-core
@@ -64,14 +65,11 @@ target_link_libraries(sigma-core
 add_library(sigma-opengl-graphics STATIC
     src/sigma/graphics/opengl/debug_draw_renderer.cpp
     src/sigma/graphics/opengl/cubemap.cpp
-    src/sigma/graphics/opengl/frame_buffer.cpp
     src/sigma/graphics/opengl/geometry_buffer.cpp
     src/sigma/graphics/opengl/material.cpp
     src/sigma/graphics/opengl/post_process_effect.cpp
-    src/sigma/graphics/opengl/render_buffer.cpp
     src/sigma/graphics/opengl/renderer.cpp
     src/sigma/graphics/opengl/shader.cpp
-    src/sigma/graphics/opengl/shadow_buffer.cpp
     src/sigma/graphics/opengl/static_mesh.cpp
     src/sigma/graphics/opengl/technique.cpp
     src/sigma/graphics/opengl/texture.cpp

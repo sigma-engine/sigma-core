@@ -4,7 +4,6 @@
 #include <sigma/config.hpp>
 #include <sigma/graphics/opengl/cubemap.hpp>
 #include <sigma/graphics/opengl/debug_draw_renderer.hpp>
-#include <sigma/graphics/opengl/frame_buffer.hpp>
 #include <sigma/graphics/opengl/geometry_buffer.hpp>
 #include <sigma/graphics/opengl/material.hpp>
 #include <sigma/graphics/opengl/post_process_effect.hpp>
@@ -44,9 +43,15 @@ namespace opengl {
         int loader_status_;
         glm::vec2 size_;
         GLint default_fbo_;
-        geometry_buffer gbuffer_;
 
-        // shadow_buffer sbuffer_;
+        GLuint gbuffer_fbo_;
+        GLuint gbuffer_diffuse_texture_;
+        GLuint gbuffer_normal_texture_;
+        GLuint gbuffer_depth_stencil_texture_;
+        GLuint gbuffer_input_image_;
+        GLuint gbuffer_output_image_;
+        std::vector<GLuint> gbuffer_accumulation_textures_;
+
         glm::ivec2 shadow_map_size_;
         GLuint shadow_fbo_;
         GLuint shadow_depth_buffer_;
@@ -78,6 +83,16 @@ namespace opengl {
         void bind_for_shadow_write(unsigned int index);
 
         void destroy_shadow_maps();
+
+        void create_geometry_buffer(const glm::ivec2& size);
+
+        void geometry_swap_input_image();
+
+        void bind_for_geometry_read();
+
+        void bind_for_geometry_write();
+
+        void destroy_geometry_buffer();
 
         void begin_effect(opengl::post_process_effect* effect);
 

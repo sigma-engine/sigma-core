@@ -43,7 +43,6 @@ namespace opengl {
         , loader_status_(gladLoadGL())
         , size_(size.x, size.y)
         , default_fbo_(0)
-        , gbuffer_(size_)
         , cascade_frustums_(3)
         , start_time_(std::chrono::high_resolution_clock::now())
         , textures_(ctx.get_cache<graphics::texture>())
@@ -65,6 +64,7 @@ namespace opengl {
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_HIGH, 0, nullptr, true);
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, false);
 
+        create_geometry_buffer(size_);
         create_shadow_maps({ 1024, 1024 });
 
         debug_renderer_.windowWidth = size.x;
@@ -76,9 +76,9 @@ namespace opengl {
 
     renderer::~renderer()
     {
-        destroy_shadow_maps();
-
         dd::shutdown();
+        destroy_shadow_maps();
+        destroy_geometry_buffer();
     }
 
     void renderer::resize(glm::uvec2 size)
@@ -146,8 +146,8 @@ namespace opengl {
         // vignette_effect_tech->bind(textures_, cubemaps_, vignette_effect->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
         // STATIC_MESH_PTR(static_meshes_, vignette_effect->data.mesh)->render_all();
 
-        gbuffer_.swap_input_image();
-        gbuffer_.bind_for_geometry_read();
+        geometry_swap_input_image();
+        bind_for_geometry_read();
 
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, default_fbo_);
         glClearColor(0, 0, 0, 1);
@@ -159,6 +159,100 @@ namespace opengl {
         STATIC_MESH_PTR(static_meshes_, gamma_conversion_effect->data.mesh)->render_all();
     }
 
+    void renderer::create_geometry_buffer(const glm::ivec2& size)
+    {
+        size_ = size;
+
+        // TODO filp roughness and metalnes.
+        // Generate diffuse and roughness texture.
+        glGenTextures(1, &gbuffer_diffuse_texture_);
+        glBindTexture(GL_TEXTURE_2D, gbuffer_diffuse_texture_);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, size_.x, size_.y);
+
+        // Generate normal and metalness texture.
+        glGenTextures(1, &gbuffer_normal_texture_);
+        glBindTexture(GL_TEXTURE_2D, gbuffer_normal_texture_);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA16F, size_.x, size_.y);
+
+        // Generate depth and stencil texture.
+        glGenTextures(1, &gbuffer_depth_stencil_texture_);
+        glBindTexture(GL_TEXTURE_2D, gbuffer_depth_stencil_texture_);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH32F_STENCIL8, size_.x, size_.y);
+
+        // Generate accumulation textures.
+        gbuffer_accumulation_textures_.resize(2, 0);
+        glGenTextures(gbuffer_accumulation_textures_.size(), gbuffer_accumulation_textures_.data());
+        for (auto accumulation_texture : gbuffer_accumulation_textures_) {
+            glBindTexture(GL_TEXTURE_2D, accumulation_texture);
+            glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB16F, size_.x, size_.y);
+        }
+
+        // Generate the framebuffer.
+        glGenFramebuffers(1, &gbuffer_fbo_);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, gbuffer_fbo_);
+
+        // Attach the images to the framebuffer.
+        glFramebufferTexture2D(GL_FRAMEBUFFER, geometry_buffer::DIFFUSE_ROUGHNESS_ATTACHMENT, GL_TEXTURE_2D, gbuffer_diffuse_texture_, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, geometry_buffer::NORMAL_METALNESS_ATTACHMENT, GL_TEXTURE_2D, gbuffer_normal_texture_, 0);
+        for (std::size_t i = 0; i < gbuffer_accumulation_textures_.size(); ++i) {
+            glFramebufferTexture2D(GL_FRAMEBUFFER, geometry_buffer::IMAGE_ATTACHMENTS[i], GL_TEXTURE_2D, gbuffer_accumulation_textures_[i], 0);
+        }
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, gbuffer_depth_stencil_texture_, 0);
+
+        gbuffer_input_image_ = 0;
+        gbuffer_output_image_ = 1;
+    }
+
+    void renderer::geometry_swap_input_image()
+    {
+        gbuffer_output_image_++;
+        gbuffer_output_image_ %= 2;
+        gbuffer_input_image_++;
+        gbuffer_input_image_ %= 2;
+    }
+
+    void renderer::bind_for_geometry_read()
+    {
+        glActiveTexture(geometry_buffer::DIFFUSE_ROUGHNESS_TEXTURE_UINT);
+        glBindTexture(GL_TEXTURE_2D, gbuffer_diffuse_texture_);
+
+        glActiveTexture(geometry_buffer::NORMAL_METALNESS_TEXTURE_UINT);
+        glBindTexture(GL_TEXTURE_2D, gbuffer_normal_texture_);
+
+        glActiveTexture(geometry_buffer::DEPTH_STENCIL_TEXTURE_UINT);
+        glBindTexture(GL_TEXTURE_2D, gbuffer_depth_stencil_texture_);
+
+        glActiveTexture(geometry_buffer::INPUT_IMAGE_TEXTURE_UINT);
+        glBindTexture(GL_TEXTURE_2D, gbuffer_accumulation_textures_[gbuffer_input_image_]);
+
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, gbuffer_fbo_);
+        GLenum attachments[] = { geometry_buffer::IMAGE_ATTACHMENTS[gbuffer_output_image_]};
+        glDrawBuffers(1, attachments);
+        glViewport(0, 0, size_.x, size_.y);
+    }
+
+    void renderer::bind_for_geometry_write()
+    {
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, gbuffer_fbo_);
+        GLenum attachments[] = {geometry_buffer::DIFFUSE_ROUGHNESS_ATTACHMENT,
+                                geometry_buffer::NORMAL_METALNESS_ATTACHMENT,
+                                geometry_buffer::IMAGE_ATTACHMENTS[gbuffer_output_image_]};
+        glDrawBuffers(3, attachments);
+        glViewport(0, 0, size_.x, size_.y);
+
+        glActiveTexture(geometry_buffer::INPUT_IMAGE_TEXTURE_UINT);
+        glBindTexture(GL_TEXTURE_2D, gbuffer_accumulation_textures_[gbuffer_input_image_]);
+    }
+
+    void renderer::destroy_geometry_buffer()
+    {
+        glDeleteFramebuffers(1, &gbuffer_fbo_);
+        glDeleteTextures(gbuffer_accumulation_textures_.size(), gbuffer_accumulation_textures_.data());
+        glDeleteTextures(1, &gbuffer_depth_stencil_texture_);
+        glDeleteTextures(1, &gbuffer_normal_texture_);
+        glDeleteTextures(1, &gbuffer_diffuse_texture_);
+    }
+
     void renderer::create_shadow_maps(const glm::ivec2& size)
     {
         shadow_map_size_ = size;
@@ -167,12 +261,12 @@ namespace opengl {
         auto shadow_map_levels = 1 + std::floor(std::log2(std::max(size.x, size.y)));
 
         // Generate the textures for the shadow maps.
-        shadow_textures_.resize(3, -1);
+        shadow_textures_.resize(3, 0);
         glGenTextures(shadow_textures_.size(), shadow_textures_.data());
 
         // Allocate storage for the shadow maps.
-        for(auto texture: shadow_textures_) {
-            glBindTexture(GL_TEXTURE_2D, texture);            
+        for (auto texture : shadow_textures_) {
+            glBindTexture(GL_TEXTURE_2D, texture);
 
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -192,12 +286,12 @@ namespace opengl {
         glGenFramebuffers(1, &shadow_fbo_);
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, shadow_fbo_);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, shadow_depth_buffer_);
-
     }
 
-    void renderer::bind_for_shadow_read() {
+    void renderer::bind_for_shadow_read()
+    {
         for (std::size_t i = 0; i < shadow_textures_.size(); ++i) {
-            glActiveTexture(static_cast<GLenum>(geometry_buffer::SHADOW_MAP0_TEXTURE_UINT) + i);
+            glActiveTexture(geometry_buffer::SHADOW_MAP0_TEXTURE_UINT + i);
             glBindTexture(GL_TEXTURE_2D, shadow_textures_[i]);
             glGenerateMipmap(GL_TEXTURE_2D);
         }
@@ -205,7 +299,7 @@ namespace opengl {
 
     void renderer::bind_for_shadow_write(unsigned int index)
     {
-        static GLenum attachments[] = {GL_COLOR_ATTACHMENT0};
+        static GLenum attachments[] = { GL_COLOR_ATTACHMENT0 };
 
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, shadow_fbo_);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, shadow_textures_[index], 0);
@@ -213,7 +307,8 @@ namespace opengl {
         glViewport(0, 0, shadow_map_size_.x, shadow_map_size_.y);
     }
 
-    void renderer::destroy_shadow_maps() {
+    void renderer::destroy_shadow_maps()
+    {
         glDeleteFramebuffers(1, &shadow_fbo_);
         glDeleteRenderbuffers(1, &shadow_depth_buffer_);
         glDeleteTextures(shadow_textures_.size(), shadow_textures_.data());
@@ -249,7 +344,7 @@ namespace opengl {
 
     void renderer::geometry_pass(const graphics::view_port& viewport, const renderer::world_view_type& world, bool transparent)
     {
-        gbuffer_.bind_for_geometry_write();
+        bind_for_geometry_write();
         glDepthMask(GL_TRUE);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -322,7 +417,7 @@ namespace opengl {
             viewport.view_frustum.z_far(),
             viewport.view_frustum.view(),
             viewport.view_frustum.projection());
-        gbuffer_.bind_for_geometry_read();
+        bind_for_geometry_read();
 
         glDisable(GL_BLEND);
         glDisable(GL_DEPTH_TEST);
@@ -406,7 +501,7 @@ namespace opengl {
             shadow_uniform_buffer_.set_data(shadow_);
             shadow_uniform_buffer_.set_binding_point(1);
 
-            gbuffer_.bind_for_geometry_read();
+            bind_for_geometry_read();
             bind_for_shadow_read();
 
             analytical_light_setup();
@@ -440,7 +535,7 @@ namespace opengl {
             viewport.view_frustum.view(),
             viewport.view_frustum.projection());
 
-        gbuffer_.bind_for_geometry_read();
+        bind_for_geometry_read();
 
         analytical_light_setup();
 
@@ -486,7 +581,7 @@ namespace opengl {
             shadow_uniform_buffer_.set_data(shadow_);
             shadow_uniform_buffer_.set_binding_point(1);
 
-            gbuffer_.bind_for_geometry_read();
+            bind_for_geometry_read();
             bind_for_shadow_read();
 
             analytical_light_setup();

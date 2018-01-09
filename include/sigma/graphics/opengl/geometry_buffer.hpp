@@ -1,31 +1,24 @@
 #ifndef SIGMA_GRAPHICS_OPENGL_GEOMETRY_BUFFER_HPP
 #define SIGMA_GRAPHICS_OPENGL_GEOMETRY_BUFFER_HPP
 
-#include <sigma/graphics/opengl/frame_buffer.hpp>
-
-#include <sigma/config.hpp>
-#include <sigma/graphics/opengl/texture.hpp>
-
 #include <glad/glad.h>
-
-#include <glm/vec2.hpp>
 
 namespace sigma {
 namespace opengl {
-    class geometry_buffer : public frame_buffer {
+    class geometry_buffer {
     public:
-        static constexpr const attachment DIFFUSE_ROUGHNESS_ATTACHMENT = attachment::COLOR0;
-        static constexpr const attachment NORMAL_METALNESS_ATTACHMENT = attachment::COLOR1;
-        static constexpr const attachment IMAGE_ATTACHMENTS[] = { attachment::COLOR2, attachment::COLOR3 };
+        static constexpr const GLenum DIFFUSE_ROUGHNESS_ATTACHMENT = GL_COLOR_ATTACHMENT0;
+        static constexpr const GLenum NORMAL_METALNESS_ATTACHMENT = GL_COLOR_ATTACHMENT1;
+        static constexpr const GLenum IMAGE_ATTACHMENTS[] = { GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
 
-        static constexpr const texture_unit DIFFUSE_ROUGHNESS_TEXTURE_UINT = texture_unit::TEXTURE0;
-        static constexpr const texture_unit NORMAL_METALNESS_TEXTURE_UINT = texture_unit::TEXTURE1;
-        static constexpr const texture_unit DEPTH_STENCIL_TEXTURE_UINT = texture_unit::TEXTURE2;
-        static constexpr const texture_unit INPUT_IMAGE_TEXTURE_UINT = texture_unit::TEXTURE3;
-        static constexpr const texture_unit SHADOW_MAP0_TEXTURE_UINT = texture_unit::TEXTURE4;
-        static constexpr const texture_unit SHADOW_MAP1_TEXTURE_UINT = texture_unit::TEXTURE5;
-        static constexpr const texture_unit SHADOW_MAP2_TEXTURE_UINT = texture_unit::TEXTURE6;
-        static constexpr const texture_unit NEXT_FREE_TEXTURE_UINT = texture_unit::TEXTURE7;
+        static constexpr const GLenum DIFFUSE_ROUGHNESS_TEXTURE_UINT = GL_TEXTURE0;
+        static constexpr const GLenum NORMAL_METALNESS_TEXTURE_UINT = GL_TEXTURE1;
+        static constexpr const GLenum DEPTH_STENCIL_TEXTURE_UINT = GL_TEXTURE2;
+        static constexpr const GLenum INPUT_IMAGE_TEXTURE_UINT = GL_TEXTURE3;
+        static constexpr const GLenum SHADOW_MAP0_TEXTURE_UINT = GL_TEXTURE4;
+        static constexpr const GLenum SHADOW_MAP1_TEXTURE_UINT = GL_TEXTURE5;
+        static constexpr const GLenum SHADOW_MAP2_TEXTURE_UINT = GL_TEXTURE6;
+        static constexpr const GLenum NEXT_FREE_TEXTURE_UINT = GL_TEXTURE7;
 
         static constexpr const char* DIFFUSE_ROUGHNESS_OUTPUT_NAME = "out_diffuse_roughness";
         static constexpr const char* NORMAL_METALNESS_OUTPUT_NAME = "out_normal_metalness";
@@ -45,26 +38,6 @@ namespace opengl {
         static constexpr const char* SHADOW_MAP0_INPUT_NAME = "in_shadow_maps[0]";
         static constexpr const char* SHADOW_MAP1_INPUT_NAME = "in_shadow_maps[1]";
         static constexpr const char* SHADOW_MAP2_INPUT_NAME = "in_shadow_maps[2]";
-
-        geometry_buffer(glm::ivec2 size);
-
-        void bind_for_geometry_write();
-
-        void bind_for_geometry_read();
-
-        void swap_input_image();
-
-    private:
-        geometry_buffer(const geometry_buffer&) = delete;
-        geometry_buffer& operator=(const geometry_buffer&) = delete;
-
-    private:
-        texture diffuse_texture_;
-        texture normal_texture_;
-        texture depth_stencil_texture_;
-        texture images_[2];
-        int input_image_;
-        int output_image_;
     };
 }
 }
