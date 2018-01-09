@@ -13,7 +13,7 @@ namespace opengl {
         : size_(size)
         , should_delete_(true)
     {
-        GL_CHECK(glGenFramebuffers(1, &object_));
+        glGenFramebuffers(1, &object_);
     }
 
     frame_buffer::frame_buffer(GLuint fbo, const glm::ivec2& size, bool should_delete)
@@ -36,50 +36,50 @@ namespace opengl {
 
     void frame_buffer::bind()
     {
-        GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, object_));
+        glBindFramebuffer(GL_FRAMEBUFFER, object_);
     }
 
     void frame_buffer::bind(target tgt)
     {
-        GL_CHECK(glBindFramebuffer(GLenum(tgt), object_));
+        glBindFramebuffer(GLenum(tgt), object_);
     }
 
     void frame_buffer::attach(attachment att, const texture& txt)
     {
-        GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, object_));
-        GL_CHECK(glFramebufferTexture2D(GL_FRAMEBUFFER, GLenum(att), GL_TEXTURE_2D, txt.get_object(), 0));
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, object_);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GLenum(att), GL_TEXTURE_2D, txt.get_object(), 0);
     }
 
     void frame_buffer::attach(attachment att, const render_buffer& buf)
     {
-        GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, object_));
-        GL_CHECK(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GLenum(att), GL_RENDERBUFFER, buf.get_object()));
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, object_);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GLenum(att), GL_RENDERBUFFER, buf.get_object());
     }
 
     void frame_buffer::dettach(attachment att, const texture& txt)
     {
-        GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, object_));
-        GL_CHECK(glFramebufferTexture2D(GL_FRAMEBUFFER, GLenum(att), GL_TEXTURE_2D, 0, 0));
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, object_);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GLenum(att), GL_TEXTURE_2D, 0, 0);
     }
 
     void frame_buffer::dettach(attachment att, const render_buffer& txt)
     {
-        GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, object_));
-        GL_CHECK(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GLenum(att), GL_RENDERBUFFER, 0));
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, object_);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GLenum(att), GL_RENDERBUFFER, 0);
     }
 
     void frame_buffer::read_buffer(attachment att)
     {
-        GL_CHECK(glBindFramebuffer(GL_READ_FRAMEBUFFER, object_));
-        GL_CHECK(glReadBuffer(GLenum(att)));
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, object_);
+        glReadBuffer(GLenum(att));
     }
 
     frame_buffer frame_buffer::get_current()
     {
         GLint fbo;
         GLint dims[4] = { 0 };
-        GL_CHECK(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &fbo));
-        GL_CHECK(glGetIntegerv(GL_VIEWPORT, dims));
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING, &fbo);
+        glGetIntegerv(GL_VIEWPORT, dims);
         return { (GLuint)fbo, { dims[2], dims[3] }, false };
     }
 }

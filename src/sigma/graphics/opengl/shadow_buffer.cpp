@@ -18,9 +18,9 @@ namespace opengl {
 
             // TODO move this into texture
             shadow_maps_[i].bind();
-            GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-            GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-            GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE));
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
         }
 
         attach(frame_buffer::attachment::DEPTH, depth_buffer_);
@@ -35,13 +35,13 @@ namespace opengl {
     {
         attach(frame_buffer::attachment::COLOR0, shadow_maps_[index]);
         draw_buffers(frame_buffer::attachment::COLOR0);
-        GL_CHECK(glViewport(0, 0, size().x, size().y));
+        glViewport(0, 0, size().x, size().y);
     }
 
     void shadow_buffer::bind_for_shadow_read(texture_unit unit)
     {
         for (std::size_t i = 0; i < shadow_maps_.size(); ++i) {
-            GL_CHECK(glActiveTexture(GLenum(unit) + i));
+            glActiveTexture(GLenum(unit) + i);
             shadow_maps_[i].bind();
             shadow_maps_[i].generate_mipmaps();
         }

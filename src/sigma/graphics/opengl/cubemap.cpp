@@ -34,9 +34,9 @@ namespace opengl {
             textures[i] = texture_cache.acquire(data.faces[i]);
 
         // TODO don't generate mipmaps if mipmaps are disabled for this cubemap.
-        GL_CHECK(glGenTextures(1, &object_));
-        GL_CHECK(glBindTexture(GL_TEXTURE_CUBE_MAP, object_));
-        GL_CHECK(glTexStorage2D(GL_TEXTURE_CUBE_MAP, textures[0]->total_mipmap_count(), (GLenum)convert_internal(textures[0]->format()), textures[0]->size().x, textures[0]->size().y));
+        glGenTextures(1, &object_);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, object_);
+        glTexStorage2D(GL_TEXTURE_CUBE_MAP, textures[0]->total_mipmap_count(), (GLenum)convert_internal(textures[0]->format()), textures[0]->size().x, textures[0]->size().y);
 
         for (unsigned int i = 0; i < 6; ++i) {
             auto txt = textures[i];
@@ -48,19 +48,19 @@ namespace opengl {
             for (std::size_t j = 0; j < txt->stored_mipmap_count(); ++j) {
                 std::size_t size_x = std::max(1, txt->size().x >> j);
                 std::size_t size_y = std::max(1, txt->size().y >> j);
-                GL_CHECK(glTexSubImage2D(gl_face, j, 0, 0, size_x, size_y, gl_format.first, gl_format.second, txt->data(j)));
+                glTexSubImage2D(gl_face, j, 0, 0, size_x, size_y, gl_format.first, gl_format.second, txt->data(j));
             }
         }
 
         // TODO get texture parameters from the cubemap.
-        GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-        GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
-        GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-        GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-        GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE));
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
         if (textures[0]->stored_mipmap_count() != textures[0]->total_mipmap_count()) {
-            GL_CHECK(glGenerateMipmap(GL_TEXTURE_CUBE_MAP));
+            glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
         }
     }
 
@@ -76,7 +76,7 @@ namespace opengl {
 
     void cubemap::bind() const
     {
-        GL_CHECK(glBindTexture(GL_TEXTURE_CUBE_MAP, object_));
+        glBindTexture(GL_TEXTURE_CUBE_MAP, object_);
     }
 }
 }

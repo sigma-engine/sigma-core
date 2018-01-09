@@ -41,9 +41,9 @@ namespace opengl {
         graphics::texture_filter magnification_filter,
         graphics::texture_filter mipmap_filter)
     {
-        GL_CHECK(glGenTextures(1, &object_));
-        GL_CHECK(glBindTexture(GL_TEXTURE_2D, object_));
-        GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (magnification_filter == graphics::texture_filter::LINEAR) ? GL_LINEAR : GL_NEAREST));
+        glGenTextures(1, &object_);
+        glBindTexture(GL_TEXTURE_2D, object_);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (magnification_filter == graphics::texture_filter::LINEAR) ? GL_LINEAR : GL_NEAREST);
 
         int mip_levels = 1;
         if (mipmap_filter != graphics::texture_filter::NONE) {
@@ -51,15 +51,15 @@ namespace opengl {
             mip_levels = 1 + std::floor(std::log2(std::max(size.x, size.y)));
 
             if (minification_filter == graphics::texture_filter::LINEAR) {
-                GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (mipmap_filter == graphics::texture_filter::LINEAR) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR_MIPMAP_NEAREST));
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (mipmap_filter == graphics::texture_filter::LINEAR) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR_MIPMAP_NEAREST);
             } else {
-                GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (mipmap_filter == graphics::texture_filter::LINEAR) ? GL_NEAREST_MIPMAP_LINEAR : GL_NEAREST_MIPMAP_NEAREST));
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (mipmap_filter == graphics::texture_filter::LINEAR) ? GL_NEAREST_MIPMAP_LINEAR : GL_NEAREST_MIPMAP_NEAREST);
             }
         } else {
-            GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (minification_filter == graphics::texture_filter::LINEAR) ? GL_LINEAR : GL_NEAREST));
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (minification_filter == graphics::texture_filter::LINEAR) ? GL_LINEAR : GL_NEAREST);
         }
 
-        GL_CHECK(glTexStorage2D(GL_TEXTURE_2D, mip_levels, GLenum(format), size.x, size.y));
+        glTexStorage2D(GL_TEXTURE_2D, mip_levels, GLenum(format), size.x, size.y);
     }
 
     texture::texture(const graphics::texture& data)
@@ -73,13 +73,13 @@ namespace opengl {
         for (std::size_t i = 0; i < data.stored_mipmap_count(); ++i) {
             std::size_t size_x = std::max(1, data.size().x >> i);
             std::size_t size_y = std::max(1, data.size().y >> i);
-            GL_CHECK(glTexSubImage2D(GL_TEXTURE_2D, i, 0, 0, size_x, size_y, gl_format.first, gl_format.second, data.data(i)));
+            glTexSubImage2D(GL_TEXTURE_2D, i, 0, 0, size_x, size_y, gl_format.first, gl_format.second, data.data(i));
         }
 
         if (data.mipmap_filter() != graphics::texture_filter::NONE && data.stored_mipmap_count() != data.total_mipmap_count()) {
             // TODO this generates from level 0 to N
             // make it start at the last level loaded
-            GL_CHECK(glGenerateMipmap(GL_TEXTURE_2D));
+            glGenerateMipmap(GL_TEXTURE_2D);
         }
     }
 
@@ -108,12 +108,12 @@ namespace opengl {
 
     void texture::bind() const
     {
-        GL_CHECK(glBindTexture(GL_TEXTURE_2D, object_));
+        glBindTexture(GL_TEXTURE_2D, object_);
     }
 
     void texture::generate_mipmaps()
     {
-        GL_CHECK(glGenerateMipmap(GL_TEXTURE_2D));
+        glGenerateMipmap(GL_TEXTURE_2D);
     }
 }
 }

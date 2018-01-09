@@ -80,7 +80,7 @@ namespace opengl {
 
     void renderer::resize(glm::uvec2 size)
     {
-        GL_CHECK(glViewport(0, 0, size.x, size.y));
+        glViewport(0, 0, size.x, size.y);
     }
 
     void renderer::render(const graphics::view_port& viewport, const graphics::renderer::world_view_type& world)
@@ -98,14 +98,14 @@ namespace opengl {
 
         // TODO Transparent objects
 
-        GL_CHECK(glDisable(GL_BLEND));
+        glDisable(GL_BLEND);
 
-        GL_CHECK(glDepthMask(GL_TRUE));
-        GL_CHECK(glDepthFunc(GL_LESS));
-        GL_CHECK(glEnable(GL_DEPTH_TEST));
+        glDepthMask(GL_TRUE);
+        glDepthFunc(GL_LESS);
+        glEnable(GL_DEPTH_TEST);
 
-        GL_CHECK(glCullFace(GL_BACK));
-        GL_CHECK(glEnable(GL_CULL_FACE));
+        glCullFace(GL_BACK);
+        glEnable(GL_CULL_FACE);
 
         debug_renderer_.mvpMatrix = viewport.view_frustum.projection_view();
         for (const auto& f : debug_frustums_)
@@ -132,9 +132,9 @@ namespace opengl {
         dd::flush(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time_).count());
 
         // Render final effects
-        GL_CHECK(glDisable(GL_BLEND));
-        GL_CHECK(glDisable(GL_DEPTH_TEST));
-        GL_CHECK(glDisable(GL_CULL_FACE));
+        glDisable(GL_BLEND);
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
 
         // gbuffer_.swap_input_image();
         // gbuffer_.bind_for_geometry_read();
@@ -147,8 +147,8 @@ namespace opengl {
         gbuffer_.bind_for_geometry_read();
 
         default_fbo_.bind(frame_buffer::target::DRAW);
-        GL_CHECK(glClearColor(0, 0, 0, 1));
-        GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
+        glClearColor(0, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
 
         auto gamma_conversion_effect = EFFECT_PTR(effects_, settings_.gamma_conversion);
         auto gamma_conversion_tech = TECHNIQUE_PTR(techniques_, gamma_conversion_effect->data.technique_id);
@@ -187,17 +187,17 @@ namespace opengl {
     void renderer::geometry_pass(const graphics::view_port& viewport, const renderer::world_view_type& world, bool transparent)
     {
         gbuffer_.bind_for_geometry_write();
-        GL_CHECK(glDepthMask(GL_TRUE));
-        GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+        glDepthMask(GL_TRUE);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        GL_CHECK(glDisable(GL_BLEND));
+        glDisable(GL_BLEND);
 
-        GL_CHECK(glDepthMask(GL_TRUE));
-        GL_CHECK(glDepthFunc(GL_LESS));
-        GL_CHECK(glEnable(GL_DEPTH_TEST));
+        glDepthMask(GL_TRUE);
+        glDepthFunc(GL_LESS);
+        glEnable(GL_DEPTH_TEST);
 
-        GL_CHECK(glCullFace(GL_BACK));
-        GL_CHECK(glEnable(GL_CULL_FACE));
+        glCullFace(GL_BACK);
+        glEnable(GL_CULL_FACE);
 
         world.for_each<transform, graphics::static_mesh_instance>([&](const entity& e, const transform& txform, const graphics::static_mesh_instance& mesh_instance) {
             auto mesh = STATIC_MESH_PTR(static_meshes_, mesh_instance.mesh);
@@ -226,12 +226,12 @@ namespace opengl {
             }
         });
 
-        GL_CHECK(glDepthMask(GL_FALSE));
+        glDepthMask(GL_FALSE);
     }
 
     void renderer::light_pass(const graphics::view_port& viewport, const renderer::world_view_type& world)
     {
-        // GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
+        // glClear(GL_COLOR_BUFFER_BIT);
 
         // TODO:perf look into passing all analytical lights(directional,point,spot) into one shader
         // instead of rendering the geometry for each. This not only would reduce the number of polygons
@@ -261,9 +261,9 @@ namespace opengl {
             viewport.view_frustum.projection());
         gbuffer_.bind_for_geometry_read();
 
-        GL_CHECK(glDisable(GL_BLEND));
-        GL_CHECK(glDisable(GL_DEPTH_TEST));
-        GL_CHECK(glDisable(GL_CULL_FACE));
+        glDisable(GL_BLEND);
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
 
         auto image_based_light_effect = EFFECT_PTR(effects_, settings_.image_based_light_effect);
         auto image_based_light_tech = TECHNIQUE_PTR(techniques_, image_based_light_effect->data.technique_id);
@@ -273,9 +273,9 @@ namespace opengl {
 
     void renderer::analytical_light_setup()
     {
-        GL_CHECK(glBlendEquation(GL_FUNC_ADD));
-        GL_CHECK(glBlendFunc(GL_ONE, GL_ONE));
-        GL_CHECK(glEnable(GL_BLEND));
+        glBlendEquation(GL_FUNC_ADD);
+        glBlendFunc(GL_ONE, GL_ONE);
+        glEnable(GL_BLEND);
     }
 
     void renderer::directional_light_pass(const graphics::view_port& viewport, const renderer::world_view_type& world)
@@ -348,8 +348,8 @@ namespace opengl {
 
             analytical_light_setup();
 
-            GL_CHECK(glDisable(GL_DEPTH_TEST));
-            GL_CHECK(glDisable(GL_CULL_FACE));
+            glDisable(GL_DEPTH_TEST);
+            glDisable(GL_CULL_FACE);
 
             auto directional_light_effect = EFFECT_PTR(effects_, settings_.directional_light_effect);
             auto directional_light_tech = TECHNIQUE_PTR(techniques_, directional_light_effect->data.technique_id);
@@ -381,11 +381,11 @@ namespace opengl {
 
         analytical_light_setup();
 
-        GL_CHECK(glDepthFunc(GL_GREATER));
-        GL_CHECK(glEnable(GL_DEPTH_TEST));
+        glDepthFunc(GL_GREATER);
+        glEnable(GL_DEPTH_TEST);
 
-        GL_CHECK(glCullFace(GL_FRONT));
-        GL_CHECK(glEnable(GL_CULL_FACE));
+        glCullFace(GL_FRONT);
+        glEnable(GL_CULL_FACE);
 
         auto point_light_effect = EFFECT_PTR(effects_, settings_.point_light_effect);
         auto point_light_tech = TECHNIQUE_PTR(techniques_, point_light_effect->data.technique_id);
@@ -428,8 +428,8 @@ namespace opengl {
 
             analytical_light_setup();
 
-            GL_CHECK(glDisable(GL_DEPTH_TEST));
-            GL_CHECK(glDisable(GL_CULL_FACE));
+            glDisable(GL_DEPTH_TEST);
+            glDisable(GL_CULL_FACE);
 
             auto spot_light_effect = EFFECT_PTR(effects_, settings_.spot_light_effect);
             auto spot_light_tech = TECHNIQUE_PTR(techniques_, spot_light_effect->data.technique_id);
@@ -446,17 +446,17 @@ namespace opengl {
     {
         sbuffer_.bind_for_shadow_write(index);
 
-        GL_CHECK(glDisable(GL_BLEND));
+        glDisable(GL_BLEND);
 
-        GL_CHECK(glDepthMask(GL_TRUE));
-        GL_CHECK(glDepthFunc(GL_LESS));
-        GL_CHECK(glEnable(GL_DEPTH_TEST));
+        glDepthMask(GL_TRUE);
+        glDepthFunc(GL_LESS);
+        glEnable(GL_DEPTH_TEST);
 
-        GL_CHECK(glCullFace(GL_BACK));
-        GL_CHECK(glEnable(GL_CULL_FACE));
+        glCullFace(GL_BACK);
+        glEnable(GL_CULL_FACE);
 
-        GL_CHECK(glClearColor(1.0f, 1.0f, 0.0f, 0.0f));
-        GL_CHECK(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
+        glClearColor(1.0f, 1.0f, 0.0f, 0.0f);
+        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         if (cast_shadows) {
             auto shadow_technique = TECHNIQUE_PTR(techniques_, settings_.shadow_technique);
@@ -478,7 +478,7 @@ namespace opengl {
             });
         }
 
-        GL_CHECK(glDepthMask(GL_FALSE));
+        glDepthMask(GL_FALSE);
     }
 
     /*void renderer::point_light_outside_stencil_optimization(glm::vec3 view_space_position, float radius)
@@ -487,23 +487,23 @@ namespace opengl {
         if (glm::length(view_space_position) > 1.1 * radius) {
             gbuffer_.bind_for_stencil_pass();
 
-            GL_CHECK(glEnable(GL_STENCIL_TEST));
-            GL_CHECK(glClearStencil(4));
-            GL_CHECK(glClear(GL_STENCIL_BUFFER_BIT));
+            glEnable(GL_STENCIL_TEST);
+            glClearStencil(4);
+            glClear(GL_STENCIL_BUFFER_BIT);
 
-            GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE));
-            GL_CHECK(glStencilFunc(GL_GEQUAL, 6, 0xFF));
+            glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+            glStencilFunc(GL_GEQUAL, 6, 0xFF);
 
-            GL_CHECK(glDepthFunc(GL_GEQUAL));
-            GL_CHECK(glCullFace(GL_FRONT));
+            glDepthFunc(GL_GEQUAL);
+            glCullFace(GL_FRONT);
 
             EFFECT_PTR(point_light_stencil_effect_)->apply(&matrices_);
 
-            GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP));
-            GL_CHECK(glStencilFunc(GL_LEQUAL, 5, 0xFF));
+            glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+            glStencilFunc(GL_LEQUAL, 5, 0xFF);
 
-            GL_CHECK(glDepthFunc(GL_LEQUAL));
-            GL_CHECK(glCullFace(GL_BACK));
+            glDepthFunc(GL_LEQUAL);
+            glCullFace(GL_BACK);
         }
     }*/
 

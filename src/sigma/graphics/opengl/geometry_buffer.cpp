@@ -30,28 +30,28 @@ namespace opengl {
 
     void geometry_buffer::bind_for_geometry_write()
     {
-        GL_CHECK(glViewport(0, 0, size().x, size().y));
+        glViewport(0, 0, size().x, size().y);
 
         draw_buffers(DIFFUSE_ROUGHNESS_ATTACHMENT, NORMAL_METALNESS_ATTACHMENT, IMAGE_ATTACHMENTS[output_image_]);
-        GL_CHECK(glActiveTexture(GLenum(INPUT_IMAGE_TEXTURE_UINT)));
+        glActiveTexture(GLenum(INPUT_IMAGE_TEXTURE_UINT));
         images_[input_image_].bind();
     }
 
     void geometry_buffer::bind_for_geometry_read()
     {
         draw_buffers(IMAGE_ATTACHMENTS[output_image_]);
-        GL_CHECK(glViewport(0, 0, size().x, size().y));
+        glViewport(0, 0, size().x, size().y);
 
-        GL_CHECK(glActiveTexture(GLenum(DIFFUSE_ROUGHNESS_TEXTURE_UINT)));
+        glActiveTexture(GLenum(DIFFUSE_ROUGHNESS_TEXTURE_UINT));
         diffuse_texture_.bind();
 
-        GL_CHECK(glActiveTexture(GLenum(NORMAL_METALNESS_TEXTURE_UINT)));
+        glActiveTexture(GLenum(NORMAL_METALNESS_TEXTURE_UINT));
         normal_texture_.bind();
 
-        GL_CHECK(glActiveTexture(GLenum(DEPTH_STENCIL_TEXTURE_UINT)));
+        glActiveTexture(GLenum(DEPTH_STENCIL_TEXTURE_UINT));
         depth_stencil_texture_.bind();
 
-        GL_CHECK(glActiveTexture(GLenum(INPUT_IMAGE_TEXTURE_UINT)));
+        glActiveTexture(GLenum(INPUT_IMAGE_TEXTURE_UINT));
         images_[input_image_].bind();
     }
 

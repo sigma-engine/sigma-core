@@ -18,9 +18,9 @@ namespace opengl {
     public:
         uniform_buffer()
         {
-            GL_CHECK(glGenBuffers(1, &object_));
-            GL_CHECK(glBindBuffer(GL_UNIFORM_BUFFER, object_));
-            GL_CHECK(glBufferData(GL_UNIFORM_BUFFER, std140_sizeof(UnifomBufferType), nullptr, GL_DYNAMIC_DRAW));
+            glGenBuffers(1, &object_);
+            glBindBuffer(GL_UNIFORM_BUFFER, object_);
+            glBufferData(GL_UNIFORM_BUFFER, std140_sizeof(UnifomBufferType), nullptr, GL_DYNAMIC_DRAW);
         }
 
         uniform_buffer(uniform_buffer&&) = default;
@@ -37,13 +37,13 @@ namespace opengl {
             // TODO do not create this memory all of the time.
             std::vector<std::uint8_t> buffer(std140_sizeof(UnifomBufferType));
             std140::to_std140(data, buffer.data());
-            GL_CHECK(glBindBuffer(GL_UNIFORM_BUFFER, object_));
-            GL_CHECK(glBufferSubData(GL_UNIFORM_BUFFER, 0, std140_sizeof(UnifomBufferType), buffer.data()));
+            glBindBuffer(GL_UNIFORM_BUFFER, object_);
+            glBufferSubData(GL_UNIFORM_BUFFER, 0, std140_sizeof(UnifomBufferType), buffer.data());
         }
 
         void set_binding_point(unsigned int index)
         {
-            GL_CHECK(glBindBufferBase(GL_UNIFORM_BUFFER, index, object_));
+            glBindBufferBase(GL_UNIFORM_BUFFER, index, object_);
         }
 
     private:

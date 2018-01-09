@@ -33,9 +33,9 @@ namespace opengl {
     {
         const char* src = source.c_str();
 
-        GL_CHECK(object_ = glCreateShader(GLenum(type)));
-        GL_CHECK(glShaderSource(object_, 1, &src, nullptr));
-        GL_CHECK(glCompileShader(object_));
+        object_ = glCreateShader(GLenum(type));
+        glShaderSource(object_, 1, &src, nullptr);
+        glCompileShader(object_);
 
         GLint compiled;
         glGetShaderiv(object_, GL_COMPILE_STATUS, &compiled);

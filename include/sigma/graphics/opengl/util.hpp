@@ -5,24 +5,6 @@
 
 #include <glad/glad.h>
 
-// #define USE_GL_CHECK
-#ifdef USE_GL_CHECK
-#include <sstream>
-#include <string>
-
-#define GL_CHECK(x)                                                                            \
-    x;                                                                                         \
-    {                                                                                          \
-        auto gl_error_code_check = glGetError();                                               \
-        if (gl_error_code_check != GL_NO_ERROR) {                                              \
-            std::stringstream stream;                                                          \
-            stream << __FILE__ << ":" << __LINE__ << " 0x" << std::hex << gl_error_code_check; \
-            throw std::runtime_error(stream.str());                                            \
-        }                                                                                      \
-    }
-#else
-#define GL_CHECK(x) x
-#endif // USE_GL_CHECK
 namespace sigma {
 namespace opengl {
     enum data_types {

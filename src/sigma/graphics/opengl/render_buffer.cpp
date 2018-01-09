@@ -10,9 +10,9 @@ namespace opengl {
     render_buffer::render_buffer(internal_format format, glm::ivec2 size)
         : size_(size)
     {
-        GL_CHECK(glGenRenderbuffers(1, &object_));
+        glGenRenderbuffers(1, &object_);
         bind();
-        GL_CHECK(glRenderbufferStorage(GL_RENDERBUFFER, GLenum(format), size_.x, size_.y));
+        glRenderbufferStorage(GL_RENDERBUFFER, GLenum(format), size_.x, size_.y);
     }
 
     render_buffer::~render_buffer()
@@ -22,7 +22,7 @@ namespace opengl {
 
     void render_buffer::bind() const
     {
-        GL_CHECK(glBindRenderbuffer(GL_RENDERBUFFER, object_));
+        glBindRenderbuffer(GL_RENDERBUFFER, object_);
     }
 
     glm::ivec2 render_buffer::size() const

@@ -73,8 +73,8 @@ namespace opengl {
         void draw_buffers(Args... atts)
         {
             std::array<attachment, sizeof...(Args)> real = { { atts... } };
-            GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, object_));
-            GL_CHECK(glDrawBuffers(sizeof...(Args), (GLenum*)real.data()));
+            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, object_);
+            glDrawBuffers(sizeof...(Args), (GLenum*)real.data());
         }
 
         static frame_buffer get_current();
