@@ -57,10 +57,6 @@ namespace opengl {
         if (!loader_status_)
             throw std::runtime_error("error: could not load OpenGL");
 
-        debug_renderer_.windowWidth = size.x;
-        debug_renderer_.windowHeight = size.y;
-        dd::initialize(&debug_renderer_);
-
         // TODO disable this in production.
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
         glDebugMessageCallback(debug_callback, nullptr);
@@ -69,13 +65,19 @@ namespace opengl {
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_HIGH, 0, nullptr, true);
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, false);
 
-        standard_uniform_buffer_.set_binding_point(0);
-
         create_shadow_maps({ 1024, 1024 });
+
+        debug_renderer_.windowWidth = size.x;
+        debug_renderer_.windowHeight = size.y;
+        dd::initialize(&debug_renderer_);
+
+        standard_uniform_buffer_.set_binding_point(0);
     }
 
     renderer::~renderer()
     {
+        destroy_shadow_maps();
+
         dd::shutdown();
     }
 
@@ -209,6 +211,12 @@ namespace opengl {
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, shadow_textures_[index], 0);
         glDrawBuffers(1, attachments);
         glViewport(0, 0, shadow_map_size_.x, shadow_map_size_.y);
+    }
+
+    void renderer::destroy_shadow_maps() {
+        glDeleteFramebuffers(1, &shadow_fbo_);
+        glDeleteRenderbuffers(1, &shadow_depth_buffer_);
+        glDeleteTextures(shadow_textures_.size(), shadow_textures_.data());
     }
 
     void renderer::begin_effect(opengl::post_process_effect* effect)

@@ -77,6 +77,8 @@ namespace opengl {
 
         void bind_for_shadow_write(unsigned int index);
 
+        void destroy_shadow_maps();
+
         void begin_effect(opengl::post_process_effect* effect);
 
         void end_effect(opengl::post_process_effect* effect);
