@@ -12,7 +12,7 @@
 
 namespace sigma {
 namespace opengl {
-    std::tuple<GLenum, GLenum, GLenum> convert_internal(graphics::texture_format fmt);
+    std::tuple<GLenum, GLenum, GLenum> convert(graphics::texture_format fmt);
 
     class texture_manager {
     public:

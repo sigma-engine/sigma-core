@@ -2,7 +2,7 @@
 #define SIGMA_GRAPHICS_OPENGL_CONTEXT_HPP
 
 #include <sigma/config.hpp>
-#include <sigma/graphics/opengl/cubemap.hpp>
+#include <sigma/graphics/opengl/cubemap_manager.hpp>
 #include <sigma/graphics/opengl/debug_draw_renderer.hpp>
 #include <sigma/graphics/opengl/geometry_buffer.hpp>
 #include <sigma/graphics/opengl/material.hpp>

@@ -1,6 +1,6 @@
 #include <sigma/graphics/opengl/technique.hpp>
 
-#include <sigma/graphics/opengl/cubemap.hpp>
+#include <sigma/graphics/opengl/cubemap_manager.hpp>
 #include <sigma/graphics/opengl/geometry_buffer.hpp>
 #include <sigma/graphics/opengl/render_uniforms.hpp>
 #include <sigma/graphics/opengl/shader.hpp>
@@ -197,8 +197,7 @@ namespace opengl {
             auto it = uniform_locations_.find(uniform.first);
             if (it != uniform_locations_.end()) {
                 glActiveTexture(texture_unit);
-                // TODO this is terrible
-                CUBEMAP_PTR(cubemap_mgr, uniform.second)->bind();
+                glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap_mgr.acquire(uniform.second));
                 glUniform1i(it->second, unit_number);
                 unit_number++;
                 texture_unit++;

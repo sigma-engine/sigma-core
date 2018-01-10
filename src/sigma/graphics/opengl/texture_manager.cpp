@@ -11,7 +11,7 @@
 
 namespace sigma {
 namespace opengl {
-    std::tuple<GLenum, GLenum, GLenum> convert_internal(graphics::texture_format fmt)
+    std::tuple<GLenum, GLenum, GLenum> convert(graphics::texture_format fmt)
     {
         switch (fmt) {
         case graphics::texture_format::RGB8:
@@ -43,7 +43,7 @@ namespace opengl {
         if (textures_[hndl.index] == 0) {
             auto data = texture_cache_.acquire(hndl);
             auto size = data->size();
-            auto format = convert_internal(data->format());
+            auto format = convert(data->format());
 
             glGenTextures(1, &textures_[hndl.index]);
             glBindTexture(GL_TEXTURE_2D, textures_[hndl.index]);
