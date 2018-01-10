@@ -7,7 +7,7 @@
 #include <sigma/graphics/opengl/geometry_buffer.hpp>
 #include <sigma/graphics/opengl/material.hpp>
 #include <sigma/graphics/opengl/post_process_effect.hpp>
-#include <sigma/graphics/opengl/shader.hpp>
+#include <sigma/graphics/opengl/shader_manager.hpp>
 #include <sigma/graphics/opengl/static_mesh.hpp>
 #include <sigma/graphics/opengl/technique.hpp>
 #include <sigma/graphics/opengl/texture_manager.hpp>
@@ -20,7 +20,6 @@
 #include <glm/vec3.hpp>
 
 namespace sigma {
-
 namespace opengl {
     void calculate_cascade_frustums(const frustum& view_frustum, std::vector<frustum>& cascade_frustums);
 

@@ -3,7 +3,7 @@
 #include <sigma/graphics/opengl/cubemap_manager.hpp>
 #include <sigma/graphics/opengl/geometry_buffer.hpp>
 #include <sigma/graphics/opengl/render_uniforms.hpp>
-#include <sigma/graphics/opengl/shader.hpp>
+#include <sigma/graphics/opengl/shader_manager.hpp>
 #include <sigma/graphics/standard_block.hpp>
 
 #include <glm/gtc/type_ptr.hpp>
@@ -16,21 +16,18 @@ namespace opengl {
     {
         object_ = glCreateProgram();
 
-        glAttachShader(object_, SHADER_PTR(shader_mgr, data.vertex)->get_object());
+        glAttachShader(object_, shader_mgr.acquire(data.vertex));
 
-        if (data.tessellation_control.is_valid()) {
-            glAttachShader(object_, SHADER_PTR(shader_mgr, data.tessellation_control)->get_object());
-        }
+        if (data.tessellation_control.is_valid())
+            glAttachShader(object_, shader_mgr.acquire(data.tessellation_control));
 
-        if (data.tessellation_evaluation.is_valid()) {
-            glAttachShader(object_, SHADER_PTR(shader_mgr, data.tessellation_evaluation)->get_object());
-        }
+        if (data.tessellation_evaluation.is_valid())
+            glAttachShader(object_, shader_mgr.acquire(data.tessellation_evaluation));
 
-        if (data.geometry.is_valid()) {
-            glAttachShader(object_, SHADER_PTR(shader_mgr, data.geometry)->get_object());
-        }
+        if (data.geometry.is_valid())
+            glAttachShader(object_, shader_mgr.acquire(data.geometry));
 
-        glAttachShader(object_, SHADER_PTR(shader_mgr, data.fragment)->get_object());
+        glAttachShader(object_, shader_mgr.acquire(data.fragment));
 
         glLinkProgram(object_);
 
