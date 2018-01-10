@@ -226,7 +226,7 @@ namespace opengl {
         glBindTexture(GL_TEXTURE_2D, gbuffer_accumulation_textures_[gbuffer_input_image_]);
 
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, gbuffer_fbo_);
-        GLenum attachments[] = { geometry_buffer::IMAGE_ATTACHMENTS[gbuffer_output_image_]};
+        GLenum attachments[] = { geometry_buffer::IMAGE_ATTACHMENTS[gbuffer_output_image_] };
         glDrawBuffers(1, attachments);
         glViewport(0, 0, size_.x, size_.y);
     }
@@ -234,9 +234,9 @@ namespace opengl {
     void renderer::bind_for_geometry_write()
     {
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, gbuffer_fbo_);
-        GLenum attachments[] = {geometry_buffer::DIFFUSE_ROUGHNESS_ATTACHMENT,
-                                geometry_buffer::NORMAL_METALNESS_ATTACHMENT,
-                                geometry_buffer::IMAGE_ATTACHMENTS[gbuffer_output_image_]};
+        GLenum attachments[] = { geometry_buffer::DIFFUSE_ROUGHNESS_ATTACHMENT,
+            geometry_buffer::NORMAL_METALNESS_ATTACHMENT,
+            geometry_buffer::IMAGE_ATTACHMENTS[gbuffer_output_image_] };
         glDrawBuffers(3, attachments);
         glViewport(0, 0, size_.x, size_.y);
 

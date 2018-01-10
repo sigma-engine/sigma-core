@@ -10,7 +10,7 @@
 #include <sigma/graphics/opengl/shader.hpp>
 #include <sigma/graphics/opengl/static_mesh.hpp>
 #include <sigma/graphics/opengl/technique.hpp>
-#include <sigma/graphics/opengl/texture.hpp>
+#include <sigma/graphics/opengl/texture_manager.hpp>
 #include <sigma/graphics/opengl/uniform_buffer.hpp>
 #include <sigma/graphics/renderer.hpp>
 #include <sigma/graphics/shadow_block.hpp>

@@ -1,8 +1,7 @@
 #include <sigma/graphics/opengl/cubemap.hpp>
 
 #include <sigma/graphics/cubemap.hpp>
-#include <sigma/graphics/opengl/texture.hpp>
-#include <sigma/graphics/opengl/util.hpp>
+#include <sigma/graphics/opengl/texture_manager.hpp>
 
 #include <glad/glad.h>
 
@@ -33,10 +32,12 @@ namespace opengl {
         for (unsigned int i = 0; i < 6; ++i)
             textures[i] = texture_cache.acquire(data.faces[i]);
 
+        auto format = convert_internal(textures[0]->format());
+
         // TODO don't generate mipmaps if mipmaps are disabled for this cubemap.
         glGenTextures(1, &object_);
         glBindTexture(GL_TEXTURE_CUBE_MAP, object_);
-        glTexStorage2D(GL_TEXTURE_CUBE_MAP, textures[0]->total_mipmap_count(), (GLenum)convert_internal(textures[0]->format()), textures[0]->size().x, textures[0]->size().y);
+        glTexStorage2D(GL_TEXTURE_CUBE_MAP, textures[0]->total_mipmap_count(), std::get<0>(format), textures[0]->size().x, textures[0]->size().y);
 
         for (unsigned int i = 0; i < 6; ++i) {
             auto txt = textures[i];
@@ -44,11 +45,10 @@ namespace opengl {
             assert(txt->format() == textures[0]->format());
             assert(txt->stored_mipmap_count() == textures[0]->stored_mipmap_count());
             auto gl_face = convert_gl(static_cast<graphics::cubemap::face>(i));
-            auto gl_format = convert_gl(txt->format());
             for (std::size_t j = 0; j < txt->stored_mipmap_count(); ++j) {
                 std::size_t size_x = std::max(1, txt->size().x >> j);
                 std::size_t size_y = std::max(1, txt->size().y >> j);
-                glTexSubImage2D(gl_face, j, 0, 0, size_x, size_y, gl_format.first, gl_format.second, txt->data(j));
+                glTexSubImage2D(gl_face, j, 0, 0, size_x, size_y, std::get<1>(format), std::get<2>(format), txt->data(j));
             }
         }
 

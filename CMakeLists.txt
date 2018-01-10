@@ -72,7 +72,7 @@ add_library(sigma-opengl-graphics STATIC
     src/sigma/graphics/opengl/shader.cpp
     src/sigma/graphics/opengl/static_mesh.cpp
     src/sigma/graphics/opengl/technique.cpp
-    src/sigma/graphics/opengl/texture.cpp
+    src/sigma/graphics/opengl/texture_manager.cpp
 )
 
 target_include_directories(sigma-opengl-graphics

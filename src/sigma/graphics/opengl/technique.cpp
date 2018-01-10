@@ -184,8 +184,7 @@ namespace opengl {
             auto it = uniform_locations_.find(uniform.first);
             if (it != uniform_locations_.end()) {
                 glActiveTexture(texture_unit);
-                // TODO this is terrible
-                TEXTURE_PTR(texture_mgr, uniform.second)->bind();
+                glBindTexture(GL_TEXTURE_2D, texture_mgr.acquire(uniform.second));
                 glUniform1i(it->second, unit_number);
                 unit_number++;
                 texture_unit++;

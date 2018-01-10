@@ -4,7 +4,7 @@
 #include <sigma/graphics/technique.hpp>
 
 #include <sigma/config.hpp>
-#include <sigma/graphics/opengl/texture.hpp>
+#include <sigma/graphics/opengl/texture_manager.hpp>
 
 #define TECHNIQUE_PTR(technique_mgr, x) technique_mgr.acquire(x)
 
