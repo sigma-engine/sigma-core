@@ -1,6 +1,5 @@
 #include <sigma/graphics/opengl/renderer.hpp>
 
-#include <sigma/graphics/opengl/render_uniforms.hpp>
 #include <sigma/graphics/opengl/util.hpp>
 
 #include <glad/glad.h>
@@ -314,17 +313,6 @@ namespace opengl {
         glDeleteTextures(shadow_textures_.size(), shadow_textures_.data());
     }
 
-    void renderer::begin_effect(opengl::post_process_effect* effect)
-    {
-        auto tech = TECHNIQUE_PTR(techniques_, effect->data.technique_id);
-        tech->bind(textures_, cubemaps_, effect->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
-    }
-
-    void renderer::end_effect(opengl::post_process_effect* effect)
-    {
-        STATIC_MESH_PTR(static_meshes_, effect->data.mesh)->render_all();
-    }
-
     void renderer::setup_view_projection(const glm::vec2& viewport_size, float fovy, float z_near, float z_far, const glm::mat4& view_matrix, const glm::mat4& projection_matrix)
     {
         standard_.projection_matrix = projection_matrix;
@@ -357,32 +345,19 @@ namespace opengl {
         glCullFace(GL_BACK);
         glEnable(GL_CULL_FACE);
 
-        world.for_each<transform, graphics::static_mesh_instance>([&](const entity& e, const transform& txform, const graphics::static_mesh_instance& mesh_instance) {
-            auto mesh = STATIC_MESH_PTR(static_meshes_, mesh_instance.mesh);
-            if (viewport.view_frustum.contains_sphere(txform.position, mesh->data.radius)) {
-                instance_matrices matrices;
-                matrices.model_matrix = txform.matrix;
-                matrices.model_view_matrix = standard_.view_matrix * matrices.model_matrix;
-                matrices.normal_matrix = glm::transpose(glm::inverse(glm::mat3(matrices.model_matrix))); //glm::transpose(glm::inverse(glm::mat3(matrices.model_view_matrix)));
+        fill_render_token_stream(viewport.view_frustum, world, geometry_pass_token_stream_);
 
-                for (unsigned int i = 0; i < mesh->data.materials.size(); ++i) {
-                    auto mat = MATERIAL_PTR(materials_, mesh->data.materials[i]);
-                    auto tech = TECHNIQUE_PTR(techniques_, mat->data.technique_id);
-
-                    // TODO allow overriding materials
-                    // auto mit = mesh_instance.materials.find(i);
-                    // if (mit != mesh_instance.materials.end()) {
-                    //     mat = MATERIAL_PTR(materials_, mit->second);
-                    // }
-
-                    if (mat->data.transparent == transparent) {
-                        tech->bind(textures_, cubemaps_, mat->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
-                        tech->set_instance_matrices(&matrices);
-                        mesh->render(i);
-                    }
-                }
-            }
+        std::sort(geometry_pass_token_stream_.begin(), geometry_pass_token_stream_.end(), [](const render_token& a, const render_token& b) {
+            return a.technique < b.technique;
         });
+
+        for (auto& token : geometry_pass_token_stream_) {
+            token.technique->bind(textures_, cubemaps_, token.material->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
+            token.technique->set_instance_matrices(&token.matrices);
+            token.mesh->render(token.submesh);
+        }
+
+        geometry_pass_token_stream_.clear();
 
         glDepthMask(GL_FALSE);
     }
@@ -617,26 +592,42 @@ namespace opengl {
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         if (cast_shadows) {
+            fill_render_token_stream(view_frustum, world, shadow_map_token_stream_);
+
             auto shadow_technique = TECHNIQUE_PTR(techniques_, settings_.shadow_technique);
             shadow_technique->bind();
+            for (auto& token : shadow_map_token_stream_) {
+                shadow_technique->set_instance_matrices(&token.matrices);
+                token.mesh->render(token.submesh);
+            }
 
-            world.for_each<transform, graphics::static_mesh_instance>([&](entity e, const transform& txform, const graphics::static_mesh_instance& mesh_instance) {
-                if (mesh_instance.cast_shadows) {
-                    auto mesh = STATIC_MESH_PTR(static_meshes_, mesh_instance.mesh);
-                    if (view_frustum.contains_sphere(txform.position, mesh->data.radius)) {
-                        instance_matrices matrices;
-                        matrices.model_matrix = txform.matrix;
-                        matrices.model_view_matrix = standard_.view_matrix * matrices.model_matrix;
-
-                        shadow_technique->set_instance_matrices(&matrices);
-
-                        mesh->render_all();
-                    }
-                }
-            });
+            shadow_map_token_stream_.clear();
         }
 
         glDepthMask(GL_FALSE);
+    }
+
+    void renderer::fill_render_token_stream(const frustum& view, const world_view_type& world, std::vector<render_token>& tokens)
+    {
+        auto view_matrix = view.view();
+        world.for_each<transform, graphics::static_mesh_instance>([&](const entity& e, const transform& txform, const graphics::static_mesh_instance& mesh_instance) {
+            auto mesh = static_meshes_.acquire(mesh_instance.mesh);
+            if (view.contains_sphere(txform.position, mesh->data.radius)) {
+                auto model_view_matrix = view_matrix * txform.matrix;
+                auto normal_matrix = glm::transpose(glm::inverse(glm::mat3(txform.matrix)));
+                for (unsigned int i = 0; i < mesh->data.materials.size(); ++i) {
+                    render_token tok;
+                    tok.matrices.model_matrix = txform.matrix;
+                    tok.matrices.model_view_matrix = model_view_matrix;
+                    tok.matrices.normal_matrix = normal_matrix;
+                    tok.mesh = mesh;
+                    tok.material = MATERIAL_PTR(materials_, mesh->data.materials[i]);
+                    tok.technique = TECHNIQUE_PTR(techniques_, tok.material->data.technique_id);
+                    tok.submesh = i;
+                    tokens.push_back(std::move(tok));
+                }
+            }
+        });
     }
 
     /*void renderer::point_light_outside_stencil_optimization(glm::vec3 view_space_position, float radius)

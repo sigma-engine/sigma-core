@@ -7,6 +7,7 @@
 #include <sigma/graphics/opengl/geometry_buffer.hpp>
 #include <sigma/graphics/opengl/material.hpp>
 #include <sigma/graphics/opengl/post_process_effect.hpp>
+#include <sigma/graphics/opengl/render_uniforms.hpp>
 #include <sigma/graphics/opengl/shader_manager.hpp>
 #include <sigma/graphics/opengl/static_mesh.hpp>
 #include <sigma/graphics/opengl/technique.hpp>
@@ -21,6 +22,14 @@
 
 namespace sigma {
 namespace opengl {
+    struct render_token {
+        instance_matrices matrices;
+        opengl::static_mesh* mesh;
+        opengl::material* material;
+        opengl::technique* technique;
+        std::size_t submesh;
+    };
+
     void calculate_cascade_frustums(const frustum& view_frustum, std::vector<frustum>& cascade_frustums);
 
     class SIGMA_API renderer : public graphics::renderer {
@@ -75,6 +84,9 @@ namespace opengl {
         debug_draw_renderer debug_renderer_;
         std::vector<std::pair<glm::vec3, glm::mat4>> debug_frustums_;
 
+        std::vector<render_token> geometry_pass_token_stream_;
+        std::vector<render_token> shadow_map_token_stream_;
+
         void create_shadow_maps(const glm::ivec2& size);
 
         void bind_for_shadow_read();
@@ -93,10 +105,6 @@ namespace opengl {
 
         void destroy_geometry_buffer();
 
-        void begin_effect(opengl::post_process_effect* effect);
-
-        void end_effect(opengl::post_process_effect* effect);
-
         void setup_view_projection(const glm::vec2& viewport_size, float fovy, float z_near, float z_far, const glm::mat4& view_matrix, const glm::mat4& projection_matrix);
 
         void geometry_pass(const graphics::view_port& viewport, const world_view_type& world, bool transparent);
@@ -114,6 +122,8 @@ namespace opengl {
         void spot_light_pass(const graphics::view_port& viewport, const world_view_type& world);
 
         void render_to_shadow_map(const frustum& view_frustum, int index, const renderer::world_view_type& world, bool cast_shadows);
+
+        void fill_render_token_stream(const frustum& view, const world_view_type& world, std::vector<render_token>& tokens);
 
         // void point_light_outside_stencil_optimization(glm::vec3 view_space_position, float radius);
     };
