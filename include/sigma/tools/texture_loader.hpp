@@ -7,6 +7,10 @@
 #include <sigma/tools/packager.hpp>
 #include <sigma/tools/texturing.hpp>
 
+#define png_infopp_NULL (png_infopp)NULL
+#define int_p_NULL (int*)NULL
+#define png_bytep_NULL (png_bytep)NULL
+
 #include <boost/gil/extension/io/jpeg_io.hpp>
 #include <boost/gil/extension/io/png_io.hpp>
 #include <boost/gil/extension/io/tiff_io.hpp>
