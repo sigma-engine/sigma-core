@@ -33,6 +33,7 @@ find_package(TIFF REQUIRED)
 add_library(sigma-core STATIC
     src/sigma/frustum.cpp
     src/sigma/game.cpp
+    src/sigma/buddy_array_allocator.cpp
     src/sigma/graphics/renderer.cpp
     src/sigma/trackball_controller.cpp
     src/sigma/util/filesystem.cpp
