@@ -23,11 +23,16 @@ public:
 
     std::size_t allocate(std::size_t blocks);
 
+    bool deallocate(std::size_t index);
+
 private:
     buddy_array_allocator(const buddy_array_allocator&) = delete;
+
     buddy_array_allocator& operator=(const buddy_array_allocator&) = delete;
 
     std::size_t allocate_(std::size_t blocks, std::size_t node, std::size_t left, std::size_t size);
+
+    bool deallocate_(std::size_t index, std::size_t node, std::size_t left, std::size_t size);
 };
 }
 

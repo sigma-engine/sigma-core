@@ -111,3 +111,124 @@ TEST(buddy_array_allocator, allocate_1_8_block_2_4_blocks_and_1_4_block_should_r
     EXPECT_EQ(12, allocator.allocate(4));
     EXPECT_EQ(-1, allocator.allocate(4));
 }
+
+TEST(buddy_array_allocator, deallocate_before_allocate_return_false)
+{
+    sigma::buddy_array_allocator allocator(16);
+    EXPECT_FALSE(allocator.deallocate(0));
+}
+
+TEST(buddy_array_allocator, deallocate_after_allocate_return_true)
+{
+    sigma::buddy_array_allocator allocator(16);
+    std::size_t x1 = allocator.allocate(8);
+    EXPECT_TRUE(allocator.deallocate(x1));
+}
+
+TEST(buddy_array_allocator, deallocate_reuses_block_after_free)
+{
+    sigma::buddy_array_allocator allocator(16);
+    std::size_t x1 = allocator.allocate(8);
+    std::size_t x2 = allocator.allocate(8);
+
+    EXPECT_TRUE(allocator.deallocate(x2));
+    EXPECT_EQ(x2, allocator.allocate(8));
+}
+
+TEST(buddy_array_allocator, deallocate_after_16_1_blocks_true)
+{
+    sigma::buddy_array_allocator allocator(16);
+    for (std::size_t i = 0; i < 16; i++)
+        allocator.allocate(1);
+
+    for (std::size_t i = 0; i < 16; i++)
+        EXPECT_TRUE(allocator.deallocate(i));
+}
+
+TEST(buddy_array_allocator, deallocate_after_8_2_blocks_true)
+{
+    sigma::buddy_array_allocator allocator(16);
+    for (std::size_t i = 0; i < 8; i++)
+        allocator.allocate(2);
+
+    for (std::size_t i = 0; i < 8; i++)
+        EXPECT_TRUE(allocator.deallocate(2 * i));
+}
+
+TEST(buddy_array_allocator, deallocate_after_4_4_blocks_true)
+{
+    sigma::buddy_array_allocator allocator(16);
+    for (std::size_t i = 0; i < 4; i++)
+        allocator.allocate(4);
+
+    for (std::size_t i = 0; i < 4; i++)
+        EXPECT_TRUE(allocator.deallocate(4 * i));
+}
+
+TEST(buddy_array_allocator, deallocate_after_2_8_blocks_true)
+{
+    sigma::buddy_array_allocator allocator(16);
+    for (std::size_t i = 0; i < 2; i++)
+        allocator.allocate(8);
+
+    for (std::size_t i = 0; i < 2; i++)
+        EXPECT_TRUE(allocator.deallocate(8 * i));
+}
+
+TEST(buddy_array_allocator, deallocate_reuses_one_level_of_merged_blocks_after_free)
+{
+    sigma::buddy_array_allocator allocator(16);
+    std::size_t x1 = allocator.allocate(4);
+    std::size_t x2 = allocator.allocate(4);
+    std::size_t x3 = allocator.allocate(4);
+    std::size_t x4 = allocator.allocate(4);
+
+    EXPECT_TRUE(allocator.deallocate(x3));
+    EXPECT_TRUE(allocator.deallocate(x4));
+    EXPECT_EQ(x3, allocator.allocate(8));
+}
+
+TEST(buddy_array_allocator, deallocate_reuses_two_level_of_merged_blocks_after_free)
+{
+    sigma::buddy_array_allocator allocator(16);
+    std::size_t x1 = allocator.allocate(2);
+    std::size_t x2 = allocator.allocate(2);
+    std::size_t x3 = allocator.allocate(2);
+    std::size_t x4 = allocator.allocate(2);
+
+    std::size_t x5 = allocator.allocate(2);
+    std::size_t x6 = allocator.allocate(2);
+    std::size_t x7 = allocator.allocate(2);
+    std::size_t x8 = allocator.allocate(2);
+
+    EXPECT_TRUE(allocator.deallocate(x5));
+    EXPECT_TRUE(allocator.deallocate(x6));
+    EXPECT_TRUE(allocator.deallocate(x7));
+    EXPECT_TRUE(allocator.deallocate(x8));
+    EXPECT_EQ(x5, allocator.allocate(8));
+}
+
+TEST(buddy_array_allocator, deallocate_reuses_three_level_of_merged_blocks_after_free)
+{
+    sigma::buddy_array_allocator allocator(16);
+    std::size_t x1 = allocator.allocate(2);
+    std::size_t x2 = allocator.allocate(2);
+    std::size_t x3 = allocator.allocate(2);
+    std::size_t x4 = allocator.allocate(2);
+
+    std::size_t x5 = allocator.allocate(2);
+    std::size_t x6 = allocator.allocate(2);
+    std::size_t x7 = allocator.allocate(2);
+    std::size_t x8 = allocator.allocate(2);
+
+    EXPECT_TRUE(allocator.deallocate(x1));
+    EXPECT_TRUE(allocator.deallocate(x2));
+    EXPECT_TRUE(allocator.deallocate(x3));
+    EXPECT_TRUE(allocator.deallocate(x4));
+
+    EXPECT_TRUE(allocator.deallocate(x5));
+    EXPECT_TRUE(allocator.deallocate(x6));
+    EXPECT_TRUE(allocator.deallocate(x7));
+    EXPECT_TRUE(allocator.deallocate(x8));
+    EXPECT_EQ(x1, allocator.allocate(16));
+}
