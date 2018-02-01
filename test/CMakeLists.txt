@@ -6,6 +6,7 @@ add_executable(sigma-core-tests
     sigma/AABB_tests.cpp
     sigma/world_tests.cpp
     sigma/frustum_tests.cpp
+    sigma/buddy_array_allocator_tests.cpp
 )
 target_link_libraries(sigma-core-tests
     PRIVATE
