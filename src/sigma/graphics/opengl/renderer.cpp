@@ -49,8 +49,8 @@ namespace opengl {
         , shaders_(ctx.get_cache<graphics::shader>())
         , techniques_(shaders_, ctx.get_cache<graphics::technique>())
         , materials_(techniques_, ctx.get_cache<graphics::material>())
-        , static_meshes_(materials_, ctx.get_cache<graphics::static_mesh>())
-        , effects_(techniques_, static_meshes_, ctx.get_cache<graphics::post_process_effect>())
+        , static_meshes_(ctx.get_cache<graphics::static_mesh>())
+        , effects_(techniques_, ctx.get_cache<graphics::post_process_effect>())
     {
         if (!loader_status_)
             throw std::runtime_error("error: could not load OpenGL");
@@ -155,7 +155,11 @@ namespace opengl {
         auto gamma_conversion_effect = EFFECT_PTR(effects_, settings_.gamma_conversion);
         auto gamma_conversion_tech = TECHNIQUE_PTR(techniques_, gamma_conversion_effect->data.technique_id);
         gamma_conversion_tech->bind(textures_, cubemaps_, gamma_conversion_effect->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
-        STATIC_MESH_PTR(static_meshes_, gamma_conversion_effect->data.mesh)->render_all();
+
+        auto buffer = static_meshes_.acquire(gamma_conversion_effect->data.mesh);
+        glBindVertexArray(buffer.vertex_array);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer.index_buffer);
+        glDrawElements(GL_TRIANGLES, buffer.index_count, GL_UNSIGNED_INT, 0);
     }
 
     void renderer::create_geometry_buffer(const glm::ivec2& size)
@@ -346,15 +350,15 @@ namespace opengl {
         glEnable(GL_CULL_FACE);
 
         fill_render_token_stream(viewport.view_frustum, world, geometry_pass_token_stream_);
-
-        std::sort(geometry_pass_token_stream_.begin(), geometry_pass_token_stream_.end(), [](const render_token& a, const render_token& b) {
-            return a.technique < b.technique;
-        });
+        sort_render_token_stream(geometry_pass_token_stream_);
 
         for (auto& token : geometry_pass_token_stream_) {
             token.technique->bind(textures_, cubemaps_, token.material->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
             token.technique->set_instance_matrices(&token.matrices);
-            token.mesh->render(token.submesh);
+
+            glBindVertexArray(token.buffer.vertex_array);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, token.buffer.index_buffer);
+            glDrawElements(GL_TRIANGLES, token.count, GL_UNSIGNED_INT, reinterpret_cast<const void*>(token.offset));
         }
 
         geometry_pass_token_stream_.clear();
@@ -401,7 +405,11 @@ namespace opengl {
         auto image_based_light_effect = EFFECT_PTR(effects_, settings_.image_based_light_effect);
         auto image_based_light_tech = TECHNIQUE_PTR(techniques_, image_based_light_effect->data.technique_id);
         image_based_light_tech->bind(textures_, cubemaps_, image_based_light_effect->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
-        STATIC_MESH_PTR(static_meshes_, image_based_light_effect->data.mesh)->render_all();
+
+        auto buffer = static_meshes_.acquire(image_based_light_effect->data.mesh);
+        glBindVertexArray(buffer.vertex_array);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer.index_buffer);
+        glDrawElements(GL_TRIANGLES, buffer.index_count, GL_UNSIGNED_INT, 0);
     }
 
     void renderer::analytical_light_setup()
@@ -489,7 +497,11 @@ namespace opengl {
             directional_light_tech->bind(textures_, cubemaps_, directional_light_effect->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
             directional_light_tech->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
             directional_light_tech->set_uniform("direction", light.direction);
-            STATIC_MESH_PTR(static_meshes_, directional_light_effect->data.mesh)->render_all();
+
+            auto buffer = static_meshes_.acquire(directional_light_effect->data.mesh);
+            glBindVertexArray(buffer.vertex_array);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer.index_buffer);
+            glDrawElements(GL_TRIANGLES, buffer.index_count, GL_UNSIGNED_INT, 0);
         });
     }
 
@@ -527,7 +539,11 @@ namespace opengl {
         world.for_each<transform, graphics::point_light>([&](entity e, const transform& txform, const graphics::point_light& light) {
             point_light_tech->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
             point_light_tech->set_uniform("position_radius", glm::vec4(txform.position, txform.scale.x));
-            STATIC_MESH_PTR(static_meshes_, point_light_effect->data.mesh)->render_all();
+
+            auto buffer = static_meshes_.acquire(point_light_effect->data.mesh);
+            glBindVertexArray(buffer.vertex_array);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer.index_buffer);
+            glDrawElements(GL_TRIANGLES, buffer.index_count, GL_UNSIGNED_INT, 0);
         });
     }
 
@@ -571,7 +587,11 @@ namespace opengl {
             spot_light_tech->set_uniform("position", txform.position);
             spot_light_tech->set_uniform("direction", light.direction);
             spot_light_tech->set_uniform("cutoff", std::cos(light.cutoff));
-            STATIC_MESH_PTR(static_meshes_, spot_light_effect->data.mesh)->render_all();
+
+            auto buffer = static_meshes_.acquire(spot_light_effect->data.mesh);
+            glBindVertexArray(buffer.vertex_array);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer.index_buffer);
+            glDrawElements(GL_TRIANGLES, buffer.index_count, GL_UNSIGNED_INT, 0);
         });
     }
 
@@ -592,13 +612,18 @@ namespace opengl {
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         if (cast_shadows) {
-            fill_render_token_stream(view_frustum, world, shadow_map_token_stream_);
-
             auto shadow_technique = TECHNIQUE_PTR(techniques_, settings_.shadow_technique);
             shadow_technique->bind();
+
+            fill_render_token_stream(view_frustum, world, shadow_map_token_stream_, shadow_technique);
+            // sort_render_token_stream(shadow_map_token_stream_); // TODO no need to sort at this point
+
             for (auto& token : shadow_map_token_stream_) {
                 shadow_technique->set_instance_matrices(&token.matrices);
-                token.mesh->render(token.submesh);
+
+                glBindVertexArray(token.buffer.vertex_array);
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, token.buffer.index_buffer);
+                glDrawElements(GL_TRIANGLES, token.count, GL_UNSIGNED_INT, reinterpret_cast<const void*>(token.offset));
             }
 
             shadow_map_token_stream_.clear();
@@ -607,26 +632,51 @@ namespace opengl {
         glDepthMask(GL_FALSE);
     }
 
-    void renderer::fill_render_token_stream(const frustum& view, const world_view_type& world, std::vector<render_token>& tokens)
+    void renderer::fill_render_token_stream(const frustum& view, const world_view_type& world, std::vector<render_token>& tokens, opengl::technique* global_technique)
     {
         auto view_matrix = view.view();
         world.for_each<transform, graphics::static_mesh_instance>([&](const entity& e, const transform& txform, const graphics::static_mesh_instance& mesh_instance) {
-            auto mesh = static_meshes_.acquire(mesh_instance.mesh);
-            if (view.contains_sphere(txform.position, mesh->data.radius)) {
+            // auto mesh = static_meshes_.acquire(mesh_instance.mesh);
+            auto mesh = context_.get_cache<graphics::static_mesh>().acquire(mesh_instance.mesh);
+            auto buffer = static_meshes_.acquire(mesh_instance.mesh);
+            if (view.contains_sphere(txform.position, mesh->radius)) {
                 auto model_view_matrix = view_matrix * txform.matrix;
                 auto normal_matrix = glm::transpose(glm::inverse(glm::mat3(txform.matrix)));
-                for (unsigned int i = 0; i < mesh->data.materials.size(); ++i) {
+                if (global_technique) {
                     render_token tok;
+                    tok.buffer = buffer;
+                    tok.offset = 0;
+                    tok.count = 3 * mesh->triangles.size();
                     tok.matrices.model_matrix = txform.matrix;
                     tok.matrices.model_view_matrix = model_view_matrix;
                     tok.matrices.normal_matrix = normal_matrix;
-                    tok.mesh = mesh;
-                    tok.material = MATERIAL_PTR(materials_, mesh->data.materials[i]);
-                    tok.technique = TECHNIQUE_PTR(techniques_, tok.material->data.technique_id);
-                    tok.submesh = i;
+                    tok.technique = global_technique;
                     tokens.push_back(std::move(tok));
+                } else {
+                    for (unsigned int i = 0; i < mesh->material_slots.size(); ++i) {
+                        render_token tok;
+                        tok.buffer = buffer;
+                        tok.offset = 3 * mesh->material_slots[i].first;
+                        tok.count = 3 * mesh->material_slots[i].second;
+                        tok.matrices.model_matrix = txform.matrix;
+                        tok.matrices.model_view_matrix = model_view_matrix;
+                        tok.matrices.normal_matrix = normal_matrix;
+                        tok.material = MATERIAL_PTR(materials_, mesh->materials[i]);
+                        tok.technique = TECHNIQUE_PTR(techniques_, tok.material->data.technique_id);
+                        tokens.push_back(std::move(tok));
+                    }
                 }
             }
+        });
+    }
+
+    void renderer::sort_render_token_stream(std::vector<render_token>& tokens)
+    {
+        std::sort(tokens.begin(), tokens.end(), [](const render_token& a, const render_token& b) {
+            if (a.technique == b.technique)
+                return a.buffer.vertex_array < b.buffer.vertex_array;
+
+            return a.technique < b.technique;
         });
     }
 

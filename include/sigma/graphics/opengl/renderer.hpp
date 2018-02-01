@@ -9,7 +9,7 @@
 #include <sigma/graphics/opengl/post_process_effect.hpp>
 #include <sigma/graphics/opengl/render_uniforms.hpp>
 #include <sigma/graphics/opengl/shader_manager.hpp>
-#include <sigma/graphics/opengl/static_mesh.hpp>
+#include <sigma/graphics/opengl/static_mesh_manager.hpp>
 #include <sigma/graphics/opengl/technique.hpp>
 #include <sigma/graphics/opengl/texture_manager.hpp>
 #include <sigma/graphics/opengl/uniform_buffer.hpp>
@@ -24,10 +24,11 @@ namespace sigma {
 namespace opengl {
     struct render_token {
         instance_matrices matrices;
-        opengl::static_mesh* mesh;
+        static_mesh_manager::mesh_buffer buffer;
+        std::size_t offset;
+        std::size_t count;
         opengl::material* material;
         opengl::technique* technique;
-        std::size_t submesh;
     };
 
     void calculate_cascade_frustums(const frustum& view_frustum, std::vector<frustum>& cascade_frustums);
@@ -123,7 +124,9 @@ namespace opengl {
 
         void render_to_shadow_map(const frustum& view_frustum, int index, const renderer::world_view_type& world, bool cast_shadows);
 
-        void fill_render_token_stream(const frustum& view, const world_view_type& world, std::vector<render_token>& tokens);
+        void fill_render_token_stream(const frustum& view, const world_view_type& world, std::vector<render_token>& tokens, opengl::technique* global_technique = nullptr);
+
+        void sort_render_token_stream(std::vector<render_token>& tokens);
 
         // void point_light_outside_stencil_optimization(glm::vec3 view_space_position, float radius);
     };

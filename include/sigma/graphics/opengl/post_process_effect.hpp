@@ -5,7 +5,6 @@
 
 #include <sigma/config.hpp>
 #include <sigma/graphics/opengl/technique.hpp>
-#include <sigma/graphics/static_mesh.hpp>
 
 #define EFFECT_PTR(effect_mgr, x) effect_mgr.acquire(x)
 
@@ -18,7 +17,7 @@ namespace opengl {
 
     class post_process_effect {
     public:
-        post_process_effect(technique_manager& technique_mgr, static_mesh_manager& static_meshes, const graphics::post_process_effect& data);
+        post_process_effect(technique_manager& technique_mgr, const graphics::post_process_effect& data);
 
         post_process_effect(post_process_effect&&) = default;
 
@@ -35,9 +34,8 @@ namespace opengl {
     public:
         // TODO remove the use of unique_ptr
 
-        post_process_effect_manager(technique_manager& techniques, static_mesh_manager& static_meshes, resource::cache<graphics::post_process_effect>& post_process_effect_cache)
+        post_process_effect_manager(technique_manager& techniques, resource::cache<graphics::post_process_effect>& post_process_effect_cache)
             : techniques_(techniques)
-            , static_meshes_(static_meshes)
             , post_process_effect_cache_(post_process_effect_cache)
         {
         }
@@ -51,14 +49,13 @@ namespace opengl {
                 post_process_effects_.resize(hndl.index + 1);
 
             if (post_process_effects_[hndl.index] == nullptr)
-                post_process_effects_[hndl.index] = std::make_unique<post_process_effect>(techniques_, static_meshes_, *data);
+                post_process_effects_[hndl.index] = std::make_unique<post_process_effect>(techniques_, *data);
 
             return post_process_effects_.at(hndl.index).get();
         }
 
     private:
         technique_manager& techniques_;
-        static_mesh_manager& static_meshes_;
         resource::cache<graphics::post_process_effect>& post_process_effect_cache_;
         std::vector<std::unique_ptr<post_process_effect>> post_process_effects_;
     };
