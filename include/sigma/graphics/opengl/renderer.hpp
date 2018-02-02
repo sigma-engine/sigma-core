@@ -128,6 +128,8 @@ namespace opengl {
 
         void sort_render_token_stream(std::vector<render_token>& tokens);
 
+        void draw_effect_mesh(opengl::post_process_effect* effect);
+
         // void point_light_outside_stencil_optimization(glm::vec3 view_space_position, float radius);
     };
 

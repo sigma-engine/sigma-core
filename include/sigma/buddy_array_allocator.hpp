@@ -13,11 +13,11 @@ class buddy_array_allocator {
 public:
     buddy_array_allocator(std::size_t block_count);
 
-    buddy_array_allocator(buddy_array_allocator&&) = delete;
+    buddy_array_allocator(buddy_array_allocator&&) = default;
 
     ~buddy_array_allocator() = default;
 
-    buddy_array_allocator& operator=(buddy_array_allocator&&) = delete;
+    buddy_array_allocator& operator=(buddy_array_allocator&&) = default;
 
     std::size_t order(std::size_t blocks) const noexcept;
 

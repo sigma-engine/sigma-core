@@ -7,6 +7,8 @@
         ]
     },
     "render": {
+        "enable_image_based_lighting": true,
+        "enable_debug_rendering": false,
         "image_based_light_effect": "post_process_effect/pbr/deffered/lights/image_based",
         "point_light_effect": "post_process_effect/pbr/deffered/lights/point",
         "directional_light_effect": "post_process_effect/pbr/deffered/lights/directional",

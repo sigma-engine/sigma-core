@@ -33,6 +33,8 @@ namespace graphics {
             static constexpr const char* GROUP = "render";
 
             BOOST_HANA_DEFINE_STRUCT(settings,
+                (bool, enable_image_based_lighting),
+                (bool, enable_debug_rendering),
                 (resource::handle<graphics::post_process_effect>, image_based_light_effect),
                 (resource::handle<graphics::post_process_effect>, point_light_effect),
                 (resource::handle<graphics::post_process_effect>, directional_light_effect),
@@ -45,6 +47,8 @@ namespace graphics {
             template <class Archive>
             void serialize(Archive& ar, const unsigned int version)
             {
+                ar& enable_image_based_lighting;
+                ar& enable_debug_rendering;
                 ar& image_based_light_effect;
                 ar& point_light_effect;
                 ar& directional_light_effect;

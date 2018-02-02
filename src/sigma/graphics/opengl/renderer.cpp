@@ -109,29 +109,31 @@ namespace opengl {
         glCullFace(GL_BACK);
         glEnable(GL_CULL_FACE);
 
-        debug_renderer_.mvpMatrix = viewport.view_frustum.projection_view();
-        for (const auto& f : debug_frustums_)
-            dd::frustum(glm::value_ptr(f.second), glm::value_ptr(f.first));
+        if (settings_.enable_debug_rendering) {
+            debug_renderer_.mvpMatrix = viewport.view_frustum.projection_view();
+            for (const auto& f : debug_frustums_)
+                dd::frustum(glm::value_ptr(f.second), glm::value_ptr(f.first));
 
-        glm::vec3 debug_color{ 0, 1, 1 };
-        world.for_each<transform, graphics::point_light>([&](const auto& e, const auto& txform, const auto& point) {
-            dd::sphere(glm::value_ptr(txform.position), glm::value_ptr(debug_color), txform.scale.x);
-        });
+            glm::vec3 debug_color{ 0, 1, 1 };
+            world.for_each<transform, graphics::point_light>([&](const auto& e, const auto& txform, const auto& point) {
+                dd::sphere(glm::value_ptr(txform.position), glm::value_ptr(debug_color), txform.scale.x);
+            });
 
-        world.for_each<transform, graphics::spot_light>([&](const auto& e, const auto& txform, const auto& spot) {
-            float scale = 10;
-            glm::vec3 dir = -scale * spot.direction;
-            dd::cone(glm::value_ptr(txform.position),
-                glm::value_ptr(dir),
-                glm::value_ptr(debug_color), scale * std::tan(spot.cutoff), 0);
-        });
+            world.for_each<transform, graphics::spot_light>([&](const auto& e, const auto& txform, const auto& spot) {
+                float scale = 10;
+                glm::vec3 dir = -scale * spot.direction;
+                dd::cone(glm::value_ptr(txform.position),
+                    glm::value_ptr(dir),
+                    glm::value_ptr(debug_color), scale * std::tan(spot.cutoff), 0);
+            });
 
-        // world.for_each<transform, graphics::static_mesh_instance>([&](entity e, const transform& txform, const graphics::static_mesh_instance& mesh_instance) {
-        //     auto mesh = static_meshes_.acquire(mesh_instance.mesh);
-        //     dd::sphere(glm::value_ptr(txform.position), glm::value_ptr(debug_color), mesh->data.radius);
-        // });
+            // world.for_each<transform, graphics::static_mesh_instance>([&](entity e, const transform& txform, const graphics::static_mesh_instance& mesh_instance) {
+            //     auto mesh = context_.get_cache<graphics::static_mesh>().acquire(mesh_instance.mesh);
+            //     dd::sphere(glm::value_ptr(txform.position), glm::value_ptr(debug_color), mesh->radius);
+            // });
 
-        dd::flush(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time_).count());
+            dd::flush(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time_).count());
+        }
 
         // Render final effects
         glDisable(GL_BLEND);
@@ -155,11 +157,7 @@ namespace opengl {
         auto gamma_conversion_effect = EFFECT_PTR(effects_, settings_.gamma_conversion);
         auto gamma_conversion_tech = TECHNIQUE_PTR(techniques_, gamma_conversion_effect->data.technique_id);
         gamma_conversion_tech->bind(textures_, cubemaps_, gamma_conversion_effect->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
-
-        auto buffer = static_meshes_.acquire(gamma_conversion_effect->data.mesh);
-        glBindVertexArray(buffer.vertex_array);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer.index_buffer);
-        glDrawElements(GL_TRIANGLES, buffer.index_count, GL_UNSIGNED_INT, 0);
+        draw_effect_mesh(gamma_conversion_effect);
     }
 
     void renderer::create_geometry_buffer(const glm::ivec2& size)
@@ -352,13 +350,19 @@ namespace opengl {
         fill_render_token_stream(viewport.view_frustum, world, geometry_pass_token_stream_);
         sort_render_token_stream(geometry_pass_token_stream_);
 
+        std::size_t last_batch = -1;
         for (auto& token : geometry_pass_token_stream_) {
             token.technique->bind(textures_, cubemaps_, token.material->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
             token.technique->set_instance_matrices(&token.matrices);
 
-            glBindVertexArray(token.buffer.vertex_array);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, token.buffer.index_buffer);
-            glDrawElements(GL_TRIANGLES, token.count, GL_UNSIGNED_INT, reinterpret_cast<const void*>(token.offset));
+            if (token.buffer.batch_index != last_batch)
+                static_meshes_.bind_batch(token.buffer.batch_index);
+
+            glDrawElementsBaseVertex(GL_TRIANGLES,
+                token.count,
+                GL_UNSIGNED_INT,
+                (const void*)(sizeof(unsigned int) * (token.buffer.base_index + token.offset)),
+                token.buffer.base_vertex);
         }
 
         geometry_pass_token_stream_.clear();
@@ -375,8 +379,10 @@ namespace opengl {
         // drawn but more inportantly would mean that the gbuffer would only have to be sampled once per
         // screen pixel.
 
-        // Render Image based lighting
-        image_based_light_pass(viewport);
+        if (settings_.enable_image_based_lighting) {
+            // Render Image based lighting
+            image_based_light_pass(viewport);
+        }
 
         // Render directional lights
         directional_light_pass(viewport, world);
@@ -405,11 +411,7 @@ namespace opengl {
         auto image_based_light_effect = EFFECT_PTR(effects_, settings_.image_based_light_effect);
         auto image_based_light_tech = TECHNIQUE_PTR(techniques_, image_based_light_effect->data.technique_id);
         image_based_light_tech->bind(textures_, cubemaps_, image_based_light_effect->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
-
-        auto buffer = static_meshes_.acquire(image_based_light_effect->data.mesh);
-        glBindVertexArray(buffer.vertex_array);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer.index_buffer);
-        glDrawElements(GL_TRIANGLES, buffer.index_count, GL_UNSIGNED_INT, 0);
+        draw_effect_mesh(image_based_light_effect);
     }
 
     void renderer::analytical_light_setup()
@@ -497,11 +499,7 @@ namespace opengl {
             directional_light_tech->bind(textures_, cubemaps_, directional_light_effect->data, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
             directional_light_tech->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
             directional_light_tech->set_uniform("direction", light.direction);
-
-            auto buffer = static_meshes_.acquire(directional_light_effect->data.mesh);
-            glBindVertexArray(buffer.vertex_array);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer.index_buffer);
-            glDrawElements(GL_TRIANGLES, buffer.index_count, GL_UNSIGNED_INT, 0);
+            draw_effect_mesh(directional_light_effect);
         });
     }
 
@@ -539,11 +537,7 @@ namespace opengl {
         world.for_each<transform, graphics::point_light>([&](entity e, const transform& txform, const graphics::point_light& light) {
             point_light_tech->set_uniform("color_intensity", glm::vec4(light.color, light.intensity));
             point_light_tech->set_uniform("position_radius", glm::vec4(txform.position, txform.scale.x));
-
-            auto buffer = static_meshes_.acquire(point_light_effect->data.mesh);
-            glBindVertexArray(buffer.vertex_array);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer.index_buffer);
-            glDrawElements(GL_TRIANGLES, buffer.index_count, GL_UNSIGNED_INT, 0);
+            draw_effect_mesh(point_light_effect);
         });
     }
 
@@ -587,11 +581,7 @@ namespace opengl {
             spot_light_tech->set_uniform("position", txform.position);
             spot_light_tech->set_uniform("direction", light.direction);
             spot_light_tech->set_uniform("cutoff", std::cos(light.cutoff));
-
-            auto buffer = static_meshes_.acquire(spot_light_effect->data.mesh);
-            glBindVertexArray(buffer.vertex_array);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer.index_buffer);
-            glDrawElements(GL_TRIANGLES, buffer.index_count, GL_UNSIGNED_INT, 0);
+            draw_effect_mesh(spot_light_effect);
         });
     }
 
@@ -616,14 +606,20 @@ namespace opengl {
             shadow_technique->bind();
 
             fill_render_token_stream(view_frustum, world, shadow_map_token_stream_, shadow_technique);
-            // sort_render_token_stream(shadow_map_token_stream_); // TODO no need to sort at this point
+            sort_render_token_stream(shadow_map_token_stream_);
 
+            std::size_t last_batch = -1;
             for (auto& token : shadow_map_token_stream_) {
                 shadow_technique->set_instance_matrices(&token.matrices);
 
-                glBindVertexArray(token.buffer.vertex_array);
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, token.buffer.index_buffer);
-                glDrawElements(GL_TRIANGLES, token.count, GL_UNSIGNED_INT, reinterpret_cast<const void*>(token.offset));
+                if (token.buffer.batch_index != last_batch)
+                    static_meshes_.bind_batch(token.buffer.batch_index);
+
+                glDrawElementsBaseVertex(GL_TRIANGLES,
+                    token.count,
+                    GL_UNSIGNED_INT,
+                    (const void*)(sizeof(unsigned int) * (token.buffer.base_index + token.offset)),
+                    token.buffer.base_vertex);
             }
 
             shadow_map_token_stream_.clear();
@@ -636,7 +632,6 @@ namespace opengl {
     {
         auto view_matrix = view.view();
         world.for_each<transform, graphics::static_mesh_instance>([&](const entity& e, const transform& txform, const graphics::static_mesh_instance& mesh_instance) {
-            // auto mesh = static_meshes_.acquire(mesh_instance.mesh);
             auto mesh = context_.get_cache<graphics::static_mesh>().acquire(mesh_instance.mesh);
             auto buffer = static_meshes_.acquire(mesh_instance.mesh);
             if (view.contains_sphere(txform.position, mesh->radius)) {
@@ -673,11 +668,29 @@ namespace opengl {
     void renderer::sort_render_token_stream(std::vector<render_token>& tokens)
     {
         std::sort(tokens.begin(), tokens.end(), [](const render_token& a, const render_token& b) {
-            if (a.technique == b.technique)
-                return a.buffer.vertex_array < b.buffer.vertex_array;
+            if (a.technique == b.technique) {
+                // TODO this sort order seams weird but it seams to run faster
+                if (a.buffer.batch_index == b.buffer.batch_index)
+                    return a.material < b.material;
+
+                return a.buffer.batch_index < b.buffer.batch_index;
+            }
 
             return a.technique < b.technique;
         });
+    }
+
+    void renderer::draw_effect_mesh(opengl::post_process_effect* effect)
+    {
+        auto mesh = context_.get_cache<graphics::static_mesh>().acquire(effect->data.mesh);
+        auto buffer = static_meshes_.acquire(effect->data.mesh);
+
+        static_meshes_.bind_batch(buffer.batch_index);
+        glDrawElementsBaseVertex(GL_TRIANGLES,
+            3 * mesh->triangles.size(),
+            GL_UNSIGNED_INT,
+            (const void*)(sizeof(unsigned int) * buffer.base_index),
+            buffer.base_vertex);
     }
 
     /*void renderer::point_light_outside_stencil_optimization(glm::vec3 view_space_position, float radius)
