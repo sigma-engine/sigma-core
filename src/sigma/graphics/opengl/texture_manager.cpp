@@ -34,14 +34,15 @@ namespace opengl {
         glDeleteTextures(textures_.size(), textures_.data());
     }
 
-    GLuint texture_manager::acquire(const resource::handle<graphics::texture>& hndl)
+    std::pair<graphics::texture*, GLuint> texture_manager::acquire(const resource::handle<graphics::texture>& hndl)
     {
         assert(hndl.is_valid());
         if (hndl.index >= textures_.size())
             textures_.resize(hndl.index + 1, 0);
 
+        auto data = texture_cache_.acquire(hndl);
+
         if (textures_[hndl.index] == 0) {
-            auto data = texture_cache_.acquire(hndl);
             auto size = data->size();
             auto format = convert(data->format());
 
@@ -77,7 +78,7 @@ namespace opengl {
             }
         }
 
-        return textures_[hndl.index];
+        return { data, textures_[hndl.index] };
     }
 }
 }

@@ -20,7 +20,7 @@ namespace opengl {
 
         ~cubemap_manager();
 
-        GLuint acquire(const resource::handle<graphics::cubemap>& hndl);
+        std::pair<graphics::cubemap*, GLuint> acquire(const resource::handle<graphics::cubemap>& hndl);
 
     private:
         cubemap_manager(const cubemap_manager&) = delete;

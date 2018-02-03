@@ -40,14 +40,14 @@ namespace opengl {
             glDeleteShader(shader);
     }
 
-    GLuint shader_manager::acquire(const resource::handle<graphics::shader>& hndl)
+    std::pair<graphics::shader*, GLuint> shader_manager::acquire(const resource::handle<graphics::shader>& hndl)
     {
         assert(hndl.is_valid());
         if (hndl.index >= shaders_.size())
             shaders_.resize(hndl.index + 1, 0);
 
+        auto data = shader_cache_.acquire(hndl);
         if (shaders_[hndl.index] == 0) {
-            auto data = shader_cache_.acquire(hndl);
             const char* src = data->source.c_str();
 
             shaders_[hndl.index] = glCreateShader(convert(data->type));
@@ -72,7 +72,7 @@ namespace opengl {
             }
         }
 
-        return shaders_[hndl.index];
+        return { data, shaders_[hndl.index] };
     }
 }
 }

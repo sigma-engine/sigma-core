@@ -5,12 +5,10 @@
 #include <sigma/graphics/opengl/cubemap_manager.hpp>
 #include <sigma/graphics/opengl/debug_draw_renderer.hpp>
 #include <sigma/graphics/opengl/geometry_buffer.hpp>
-#include <sigma/graphics/opengl/material.hpp>
-#include <sigma/graphics/opengl/post_process_effect.hpp>
 #include <sigma/graphics/opengl/render_uniforms.hpp>
 #include <sigma/graphics/opengl/shader_manager.hpp>
 #include <sigma/graphics/opengl/static_mesh_manager.hpp>
-#include <sigma/graphics/opengl/technique.hpp>
+#include <sigma/graphics/opengl/technique_manager.hpp>
 #include <sigma/graphics/opengl/texture_manager.hpp>
 #include <sigma/graphics/opengl/uniform_buffer.hpp>
 #include <sigma/graphics/renderer.hpp>
@@ -23,12 +21,12 @@
 namespace sigma {
 namespace opengl {
     struct render_token {
-        instance_matrices matrices;
+        std::size_t program;
         static_mesh_manager::mesh_buffer buffer;
         std::size_t offset;
         std::size_t count;
-        opengl::material* material;
-        opengl::technique* technique;
+        graphics::material* material;
+        instance_matrices matrices;
     };
 
     void calculate_cascade_frustums(const frustum& view_frustum, std::vector<frustum>& cascade_frustums);
@@ -78,9 +76,9 @@ namespace opengl {
         opengl::cubemap_manager cubemaps_;
         opengl::shader_manager shaders_;
         opengl::technique_manager techniques_;
-        opengl::material_manager materials_;
         opengl::static_mesh_manager static_meshes_;
-        opengl::post_process_effect_manager effects_;
+        resource::cache<graphics::material>& materials_;
+        resource::cache<graphics::post_process_effect>& effects_;
 
         debug_draw_renderer debug_renderer_;
         std::vector<std::pair<glm::vec3, glm::mat4>> debug_frustums_;
@@ -124,11 +122,16 @@ namespace opengl {
 
         void render_to_shadow_map(const frustum& view_frustum, int index, const renderer::world_view_type& world, bool cast_shadows);
 
-        void fill_render_token_stream(const frustum& view, const world_view_type& world, std::vector<render_token>& tokens, opengl::technique* global_technique = nullptr);
+        void fill_render_token_stream(const frustum& view, const world_view_type& world, std::vector<render_token>& tokens, GLuint global_program = 0);
 
         void sort_render_token_stream(std::vector<render_token>& tokens);
 
-        void draw_effect_mesh(opengl::post_process_effect* effect);
+        std::pair<graphics::technique*, GLuint> bind_technique(
+            const resource::handle<graphics::technique>& technique,
+            const graphics::technique_uniform_data* data,
+            GLenum first_texture_unit);
+
+        void draw_effect_mesh(graphics::post_process_effect* effect);
 
         // void point_light_outside_stencil_optimization(glm::vec3 view_space_position, float radius);
     };

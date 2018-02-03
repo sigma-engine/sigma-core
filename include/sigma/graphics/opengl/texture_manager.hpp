@@ -24,7 +24,7 @@ namespace opengl {
 
         ~texture_manager();
 
-        GLuint acquire(const resource::handle<graphics::texture>& hndl);
+        std::pair<graphics::texture*, GLuint> acquire(const resource::handle<graphics::texture>& hndl);
 
     private:
         texture_manager(const texture_manager&) = delete;

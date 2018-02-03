@@ -37,15 +37,14 @@ namespace opengl {
         glDeleteTextures(cubemaps_.size(), cubemaps_.data());
     }
 
-    GLuint cubemap_manager::acquire(const resource::handle<graphics::cubemap>& hndl)
+    std::pair<graphics::cubemap*, GLuint> cubemap_manager::acquire(const resource::handle<graphics::cubemap>& hndl)
     {
         assert(hndl.is_valid());
         if (hndl.index >= cubemaps_.size())
             cubemaps_.resize(hndl.index + 1, 0);
 
+        auto data = cubemap_cache_.acquire(hndl);
         if (cubemaps_[hndl.index] == 0) {
-            auto data = cubemap_cache_.acquire(hndl);
-
             graphics::texture* textures[6];
             for (unsigned int i = 0; i < 6; ++i)
                 textures[i] = texture_cache_.acquire(data->faces[i]);
@@ -85,7 +84,7 @@ namespace opengl {
             }
         }
 
-        return cubemaps_[hndl.index];
+        return { data, cubemaps_[hndl.index] };
     }
 }
 }

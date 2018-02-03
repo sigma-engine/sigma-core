@@ -39,7 +39,7 @@ namespace opengl {
 
         void bind_batch(std::size_t batch);
 
-        mesh_buffer acquire(const resource::handle<graphics::static_mesh>& hndl);
+        std::pair<graphics::static_mesh*, mesh_buffer> acquire(const resource::handle<graphics::static_mesh>& hndl);
 
     private:
         static_mesh_manager(const static_mesh_manager&) = delete;

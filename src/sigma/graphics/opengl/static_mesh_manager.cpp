@@ -27,15 +27,14 @@ namespace opengl {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, batches_[batch].index_buffer);
     }
 
-    static_mesh_manager::mesh_buffer static_mesh_manager::acquire(const resource::handle<graphics::static_mesh>& hndl)
+    std::pair<graphics::static_mesh*, static_mesh_manager::mesh_buffer> static_mesh_manager::acquire(const resource::handle<graphics::static_mesh>& hndl)
     {
         assert(hndl.is_valid());
         if (hndl.index >= static_meshes_.size())
             static_meshes_.resize(hndl.index + 1, { std::size_t(-1), 0, 0 });
 
+        auto data = static_mesh_cache_.acquire(hndl);
         if (static_meshes_[hndl.index].batch_index == -1) {
-            auto data = static_mesh_cache_.acquire(hndl);
-
             auto vertex_blocks = 1 + ((data->vertices.size() - 1) / VERTEX_BLOCK_SIZE);
 
             auto index_count = 3 * data->triangles.size();
@@ -121,7 +120,7 @@ namespace opengl {
             static_meshes_[hndl.index].base_index = INDEX_BLOCK_SIZE * index_offset;
         }
 
-        return static_meshes_[hndl.index];
+        return { data, static_meshes_[hndl.index] };
     }
 }
 }

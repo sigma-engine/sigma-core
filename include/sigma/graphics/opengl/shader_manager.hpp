@@ -24,7 +24,7 @@ namespace opengl {
 
         ~shader_manager();
 
-        GLuint acquire(const resource::handle<graphics::shader>& hndl);
+        std::pair<graphics::shader*, GLuint> acquire(const resource::handle<graphics::shader>& hndl);
 
     private:
         shader_manager(const shader_manager&) = delete;
