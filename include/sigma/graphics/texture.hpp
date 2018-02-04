@@ -109,8 +109,8 @@ namespace graphics {
             assert(texture_type_for_pixel<PixelType>::value == format_);
             assert(level < stored_mipmap_count());
 
-            std::size_t size_x = std::max(1, size_.x >> level);
-            std::size_t size_y = std::max(1, size_.y >> level);
+            long int size_x = std::max(1, size_.x >> level);
+            long int size_y = std::max(1, size_.y >> level);
 
             using view_type = typename boost::gil::type_from_x_iterator<PixelType*>::view_t;
             return view_type({ size_x, size_y }, typename view_type::locator((PixelType*)data(level), size_x * sizeof(PixelType)));
