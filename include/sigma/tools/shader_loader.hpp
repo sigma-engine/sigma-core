@@ -5,13 +5,9 @@
 #include <sigma/tools/packager.hpp>
 #include <sigma/util/filesystem.hpp>
 
-#include <glslang/MachineIndependent/reflection.h>
-#include <glslang/Public/ShaderLang.h>
+#include <shaderc/shaderc.hpp>
 
 #include <boost/algorithm/string.hpp>
-#include <boost/wave.hpp>
-#include <boost/wave/cpplexer/cpp_lex_iterator.hpp>
-#include <boost/wave/cpplexer/cpp_lex_token.hpp>
 
 #include <regex>
 #include <sstream>
@@ -20,161 +16,94 @@
 
 namespace sigma {
 namespace tools {
-    class glsl_preprocessing_hooks : public boost::wave::context_policies::default_preprocessing_hooks {
+    class file_includer : public shaderc::CompileOptions::IncluderInterface {
     public:
-        std::vector<boost::filesystem::path> source_files;
-
-        template <typename ContextT, typename ContainerT>
-        bool found_unknown_directive(ContextT const& ctx, ContainerT const& line, ContainerT& pending)
+        file_includer(build_settings& settings)
+            : settings_(settings)
         {
-            auto it = line.begin();
-            auto id = boost::wave::util::impl::skip_whitespace(it, line.end());
+        }
 
-            if (id != boost::wave::T_IDENTIFIER)
-                return false;
+        virtual shaderc_include_result* GetInclude(const char* requested_source,
+            shaderc_include_type type,
+            const char* requesting_source,
+            size_t include_depth) override
+        {
+            boost::filesystem::path requested_path{ requested_source };
+            boost::filesystem::path requesting_path{ requesting_source };
 
-            if (it->get_value() == "version" || it->get_value() == "extension") {
-                std::copy(line.begin(), line.end(), std::back_inserter(pending));
-                return true;
+            boost::filesystem::path full_path = requesting_path.parent_path() / requested_path;
+            if (!boost::filesystem::exists(full_path)) {
+                for (const auto& base_path : settings_.source_directories) {
+                    auto path = base_path / requested_path;
+                    if (boost::filesystem::exists(path)) {
+                        full_path = path;
+                        break;
+                    }
+                }
+                if (!boost::filesystem::exists(full_path))
+                    return make_result("Include file does not exist.");
             }
 
-            return false;
-        }
-
-        template <typename ContextT, typename ContainerT>
-        bool emit_line_directive(ContextT const& ctx, ContainerT& pending, typename ContextT::token_type const& act_token)
-        {
-            auto position = act_token.get_position();
-            std::string file_name{ position.get_file().c_str() };
-
-            auto it = std::find(source_files.begin(), source_files.end(), file_name);
-            std::size_t file_index = it - source_files.begin();
-            std::size_t size = source_files.size();
-            if (file_index >= size) {
-                file_index = size;
-                source_files.push_back(position.get_file().c_str());
+            try {
+                std::ifstream source{ full_path.string() };
+                std::string source_code{
+                    std::istreambuf_iterator<char>{ source.rdbuf() },
+                    std::istreambuf_iterator<char>{}
+                };
+                return make_result(full_path.string(), source_code);
+            } catch (...) {
+                return make_result("Could not read include file.");
             }
-
-            auto line = "#line " + std::to_string(position.get_line()) + " " + std::to_string(file_index) + "\n";
-            pending.push_back(boost::wave::cpplexer::lex_token<>(boost::wave::T_PP_LINE, line.c_str(), position));
-
-            return true;
+            return nullptr;
         }
-    };
 
-    const TBuiltInResource DefaultTBuiltInResource = {
-        /* .MaxLights = */ 32,
-        /* .MaxClipPlanes = */ 6,
-        /* .MaxTextureUnits = */ 32,
-        /* .MaxTextureCoords = */ 32,
-        /* .MaxVertexAttribs = */ 64,
-        /* .MaxVertexUniformComponents = */ 4096,
-        /* .MaxVaryingFloats = */ 64,
-        /* .MaxVertexTextureImageUnits = */ 32,
-        /* .MaxCombinedTextureImageUnits = */ 80,
-        /* .MaxTextureImageUnits = */ 32,
-        /* .MaxFragmentUniformComponents = */ 4096,
-        /* .MaxDrawBuffers = */ 32,
-        /* .MaxVertexUniformVectors = */ 128,
-        /* .MaxVaryingVectors = */ 8,
-        /* .MaxFragmentUniformVectors = */ 16,
-        /* .MaxVertexOutputVectors = */ 16,
-        /* .MaxFragmentInputVectors = */ 15,
-        /* .MinProgramTexelOffset = */ -8,
-        /* .MaxProgramTexelOffset = */ 7,
-        /* .MaxClipDistances = */ 8,
-        /* .MaxComputeWorkGroupCountX = */ 65535,
-        /* .MaxComputeWorkGroupCountY = */ 65535,
-        /* .MaxComputeWorkGroupCountZ = */ 65535,
-        /* .MaxComputeWorkGroupSizeX = */ 1024,
-        /* .MaxComputeWorkGroupSizeY = */ 1024,
-        /* .MaxComputeWorkGroupSizeZ = */ 64,
-        /* .MaxComputeUniformComponents = */ 1024,
-        /* .MaxComputeTextureImageUnits = */ 16,
-        /* .MaxComputeImageUniforms = */ 8,
-        /* .MaxComputeAtomicCounters = */ 8,
-        /* .MaxComputeAtomicCounterBuffers = */ 1,
-        /* .MaxVaryingComponents = */ 60,
-        /* .MaxVertexOutputComponents = */ 64,
-        /* .MaxGeometryInputComponents = */ 64,
-        /* .MaxGeometryOutputComponents = */ 128,
-        /* .MaxFragmentInputComponents = */ 128,
-        /* .MaxImageUnits = */ 8,
-        /* .MaxCombinedImageUnitsAndFragmentOutputs = */ 8,
-        /* .MaxCombinedShaderOutputResources = */ 8,
-        /* .MaxImageSamples = */ 0,
-        /* .MaxVertexImageUniforms = */ 0,
-        /* .MaxTessControlImageUniforms = */ 0,
-        /* .MaxTessEvaluationImageUniforms = */ 0,
-        /* .MaxGeometryImageUniforms = */ 0,
-        /* .MaxFragmentImageUniforms = */ 8,
-        /* .MaxCombinedImageUniforms = */ 8,
-        /* .MaxGeometryTextureImageUnits = */ 16,
-        /* .MaxGeometryOutputVertices = */ 256,
-        /* .MaxGeometryTotalOutputComponents = */ 1024,
-        /* .MaxGeometryUniformComponents = */ 1024,
-        /* .MaxGeometryVaryingComponents = */ 64,
-        /* .MaxTessControlInputComponents = */ 128,
-        /* .MaxTessControlOutputComponents = */ 128,
-        /* .MaxTessControlTextureImageUnits = */ 16,
-        /* .MaxTessControlUniformComponents = */ 1024,
-        /* .MaxTessControlTotalOutputComponents = */ 4096,
-        /* .MaxTessEvaluationInputComponents = */ 128,
-        /* .MaxTessEvaluationOutputComponents = */ 128,
-        /* .MaxTessEvaluationTextureImageUnits = */ 16,
-        /* .MaxTessEvaluationUniformComponents = */ 1024,
-        /* .MaxTessPatchComponents = */ 120,
-        /* .MaxPatchVertices = */ 32,
-        /* .MaxTessGenLevel = */ 64,
-        /* .MaxViewports = */ 16,
-        /* .MaxVertexAtomicCounters = */ 0,
-        /* .MaxTessControlAtomicCounters = */ 0,
-        /* .MaxTessEvaluationAtomicCounters = */ 0,
-        /* .MaxGeometryAtomicCounters = */ 0,
-        /* .MaxFragmentAtomicCounters = */ 8,
-        /* .MaxCombinedAtomicCounters = */ 8,
-        /* .MaxAtomicCounterBindings = */ 1,
-        /* .MaxVertexAtomicCounterBuffers = */ 0,
-        /* .MaxTessControlAtomicCounterBuffers = */ 0,
-        /* .MaxTessEvaluationAtomicCounterBuffers = */ 0,
-        /* .MaxGeometryAtomicCounterBuffers = */ 0,
-        /* .MaxFragmentAtomicCounterBuffers = */ 1,
-        /* .MaxCombinedAtomicCounterBuffers = */ 1,
-        /* .MaxAtomicCounterBufferSize = */ 16384,
-        /* .MaxTransformFeedbackBuffers = */ 4,
-        /* .MaxTransformFeedbackInterleavedComponents = */ 64,
-        /* .MaxCullDistances = */ 8,
-        /* .MaxCombinedClipAndCullDistances = */ 8,
-        /* .MaxSamples = */ 4,
-        /* .limits = */ {
-            /* .nonInductiveForLoops = */ 1,
-            /* .whileLoops = */ 1,
-            /* .doWhileLoops = */ 1,
-            /* .generalUniformIndexing = */ 1,
-            /* .generalAttributeMatrixVectorIndexing = */ 1,
-            /* .generalVaryingIndexing = */ 1,
-            /* .generalSamplerIndexing = */ 1,
-            /* .generalVariableIndexing = */ 1,
-            /* .generalConstantMatrixVectorIndexing = */ 1,
-        }
-    };
-
-    typedef boost::wave::cpplexer::lex_token<> token_type;
-    typedef boost::wave::cpplexer::lex_iterator<token_type> lex_iterator_type;
-    typedef boost::wave::context<std::string::iterator, lex_iterator_type, boost::wave::iteration_context_policies::load_file_to_string, glsl_preprocessing_hooks> wave_context_type;
-
-    template <class PackageSettings, class ContextType>
-    class shader_loader : public resource_loader<PackageSettings, ContextType> {
-    public:
-        shader_loader(ContextType& ctx)
-            : context_{ ctx }
+        virtual void ReleaseInclude(shaderc_include_result* result) override
         {
-            glslang::InitializeProcess();
+            auto data = static_cast<user_data*>(result->user_data);
+            delete data;
+            delete result;
+        }
+
+    private:
+        build_settings& settings_;
+
+        shaderc_include_result* make_result(const char* message)
+        {
+            return new shaderc_include_result{
+                "", 0,
+                message, strlen(message),
+                nullptr
+            };
+        }
+
+        shaderc_include_result* make_result(std::string filepath, std::string content)
+        {
+            auto data = new user_data{ filepath, content };
+            return new shaderc_include_result{
+                data->filepath.c_str(), data->filepath.size(),
+                data->content.c_str(), data->content.size(),
+                data
+            };
+        }
+
+        struct user_data {
+            std::string filepath;
+            std::string content;
+        };
+    };
+
+    template <class ContextType>
+    class shader_loader : public resource_loader<ContextType> {
+    public:
+        shader_loader(build_settings& settings, ContextType& ctx)
+            : resource_loader<ContextType>(settings, ctx)
+            , settings_(settings)
+            , context_(ctx)
+        {
         }
 
         virtual ~shader_loader()
         {
-            glslang::FinalizeProcess();
         }
 
         virtual bool supports_filetype(const std::string& ext) const override
@@ -189,32 +118,26 @@ namespace tools {
             return supported_extensions.count(ext);
         }
 
-        virtual void load(const PackageSettings& package_settings, const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) override
+        virtual void load(const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) override
         {
-            static const std::unordered_map<std::string, sigma::graphics::shader_type> source_types = {
-                { ".vert", sigma::graphics::shader_type::vertex },
-                { ".tesc", sigma::graphics::shader_type::geometry },
-                { ".tese", sigma::graphics::shader_type::geometry },
-                { ".geom", sigma::graphics::shader_type::geometry },
-                { ".frag", sigma::graphics::shader_type::fragment }
+            static const std::unordered_map<std::string, std::pair<sigma::graphics::shader_type, shaderc_shader_kind>> source_types = {
+                { ".vert", { sigma::graphics::shader_type::vertex, shaderc_glsl_vertex_shader } },
+                { ".tesc", { sigma::graphics::shader_type::tessellation_control, shaderc_glsl_tess_control_shader } },
+                { ".tese", { sigma::graphics::shader_type::tessellation_evaluation, shaderc_glsl_tess_evaluation_shader } },
+                { ".geom", { sigma::graphics::shader_type::geometry, shaderc_glsl_geometry_shader } },
+                { ".frag", { sigma::graphics::shader_type::fragment, shaderc_glsl_fragment_shader } }
             };
+
             static const std::unordered_map<sigma::graphics::shader_type, std::string> type_name_map{
                 { sigma::graphics::shader_type::vertex, "vertex" },
-                { sigma::graphics::shader_type::geometry, "tessellation_control" },
-                { sigma::graphics::shader_type::geometry, "tessellation_evaluation" },
+                { sigma::graphics::shader_type::tessellation_control, "tessellation_control" },
+                { sigma::graphics::shader_type::tessellation_evaluation, "tessellation_evaluation" },
                 { sigma::graphics::shader_type::geometry, "geometry" },
                 { sigma::graphics::shader_type::fragment, "fragment" },
                 { sigma::graphics::shader_type::header, "header" }
             };
-            static const std::unordered_map<sigma::graphics::shader_type, EShLanguage> shader_types_map{
-                { sigma::graphics::shader_type::vertex, EShLangVertex },
-                { sigma::graphics::shader_type::tessellation_control, EShLangTessControl },
-                { sigma::graphics::shader_type::tessellation_evaluation, EShLangTessEvaluation },
-                { sigma::graphics::shader_type::geometry, EShLangGeometry },
-                { sigma::graphics::shader_type::fragment, EShLangFragment }
-            };
 
-            auto source_type = source_types.at(ext);
+            auto[source_type, shaderc_type] = source_types.at(ext);
 
             auto rid = type_name_map.at(source_type) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
 
@@ -240,33 +163,30 @@ namespace tools {
                 std::istreambuf_iterator<char>{}
             };
 
-            wave_context_type ctx{
-                source_code.begin(),
-                source_code.end(),
-                source_file.c_str()
-            };
-            ctx.get_hooks().source_files.push_back(source_file);
+            shaderc::Compiler compiler;
+            shaderc::CompileOptions options;
 
-            ctx.add_macro_definition("SIGMA_ENGINE_SHADER");
+            options.SetIncluder(std::make_unique<file_includer>(settings_));
+
             switch (shader.type) {
             case sigma::graphics::shader_type::vertex: {
-                ctx.add_macro_definition("SIGMA_ENGINE_VERTEX_SHADER");
+                options.AddMacroDefinition("SIGMA_ENGINE_VERTEX_SHADER");
                 break;
             }
             case sigma::graphics::shader_type::tessellation_control: {
-                ctx.add_macro_definition("SIGMA_ENGINE_TESSELLATION_CONTROL_SHADER");
+                options.AddMacroDefinition("SIGMA_ENGINE_TESSELLATION_CONTROL_SHADER", "1");
                 break;
             }
             case sigma::graphics::shader_type::tessellation_evaluation: {
-                ctx.add_macro_definition("SIGMA_ENGINE_TESSELLATION_EVALUATION_SHADER");
+                options.AddMacroDefinition("SIGMA_ENGINE_TESSELLATION_EVALUATION_SHADER", "1");
                 break;
             }
             case sigma::graphics::shader_type::geometry: {
-                ctx.add_macro_definition("SIGMA_ENGINE_GEOMETRY_SHADER");
+                options.AddMacroDefinition("SIGMA_ENGINE_GEOMETRY_SHADER", "1");
                 break;
             }
             case sigma::graphics::shader_type::fragment: {
-                ctx.add_macro_definition("SIGMA_ENGINE_FRAGMENT_SHADER");
+                options.AddMacroDefinition("SIGMA_ENGINE_FRAGMENT_SHADER", "1");
                 break;
             }
             case sigma::graphics::shader_type::header: {
@@ -274,49 +194,18 @@ namespace tools {
             }
             }
 
-            for (const auto& path : package_settings.source_directories) {
-                ctx.add_include_path(path.c_str());
-                ctx.add_sysinclude_path(path.c_str());
-            }
+            shaderc::PreprocessedSourceCompilationResult result = compiler.PreprocessGlsl(source_code, shaderc_type, source_file.c_str(), options);
 
-            auto first = ctx.begin();
-            auto last = ctx.end();
+            if (result.GetCompilationStatus() != shaderc_compilation_status_success)
+                throw std::runtime_error(result.GetErrorMessage());
 
-            while (first != last) {
-                shader.source += (*first).get_value().c_str();
-                ++first;
-            }
-
-            // Copy all source files that where included while preprocessing to the dependencies list.
-            // std::copy(ctx.get_hooks().source_files.begin() + 1, ctx.get_hooks().source_files.end(), std::back_inserter(dependencies));
-
-            glslang::TShader glsl_shader{ shader_types_map.at(shader.type) };
-            const char* src = shader.source.c_str();
-            glsl_shader.setStrings(&src, 1);
-
-            if (!glsl_shader.parse(&DefaultTBuiltInResource, 450, true, EShMsgDefault)) {
-                std::string log_message = glsl_shader.getInfoLog();
-
-                std::regex error_regex("error\\s*:\\s*(\\d+):(\\d+):(.*)", std::regex_constants::icase);
-                std::smatch res;
-
-                const auto begin_iterator = std::sregex_iterator(log_message.cbegin(), log_message.cend(), error_regex);
-                const auto end_iterator = std::sregex_iterator();
-
-                for (auto it = begin_iterator; it != end_iterator; ++it) {
-                    auto match = *it;
-                    std::ostringstream ss;
-                    // TODO gather more than just one error before throwing
-                    // TODO create a compile error exception class
-                    ss << ctx.get_hooks().source_files[std::stoi(match[1])].string() << "(" << match[2] << "): error : " << match[3] << '\n'; // TODO remove MSVC output
-                    throw std::runtime_error{ ss.str() };
-                }
-            }
+            shader.source = std::string{ result.cbegin(), result.cend() };
 
             shader_database.insert({ rid }, shader, true);
         }
 
     private:
+        build_settings& settings_;
         ContextType& context_;
     };
 }

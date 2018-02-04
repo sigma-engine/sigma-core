@@ -19,32 +19,33 @@
 namespace sigma {
 namespace tools {
 
-    struct package_settings {
+    struct build_settings {
         static constexpr const char* GROUP = "package";
 
         BOOST_HANA_DEFINE_STRUCT(
-            package_settings,
+            build_settings,
             (boost::filesystem::path, build_directory),
             (std::vector<boost::filesystem::path>, source_directories));
     };
 
-    template <class PackageSettings, class ContextType>
+    template <class ContextType>
     class packager;
 
-    template <class PackageSettings, class ContextType>
+    template <class ContextType>
     class resource_loader {
     public:
+        resource_loader(build_settings& settings, ContextType& ctx) {}
+
         virtual ~resource_loader() = default;
 
         virtual bool supports_filetype(const std::string& ext) const = 0;
 
-        virtual void load(const PackageSettings& package_settings, const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) = 0;
+        virtual void load(const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) = 0;
     };
 
-    template <class PackageSettings, class... Resources, class... Settings>
-    class packager<PackageSettings, context<type_set<Resources...>, type_set<Settings...>>> {
+    template <class... Resources, class... Settings>
+    class packager<context<type_set<Resources...>, type_set<Settings...>>> {
     public:
-        using package_settings_type = PackageSettings;
         using resource_set_type = resource_set<Resources...>;
         using settings_set_type = settings_set<Settings...>;
         using context_type = context<resource_set_type, settings_set_type>;
@@ -57,12 +58,12 @@ namespace tools {
         template <class Loader>
         void add_loader()
         {
-            this->loaders_.push_back(std::move(std::make_unique<Loader>(context_)));
+            this->loaders_.push_back(std::move(std::make_unique<Loader>(settings_, context_)));
         }
 
         void scan()
         {
-            load_settings();
+            load_build_settings();
 
             for (const auto& loader : loaders_) {
                 for (const auto& source_directory : settings_.source_directories) {
@@ -79,7 +80,7 @@ namespace tools {
                         auto ext = boost::algorithm::to_lower_copy(path.extension().string());
                         if (boost::filesystem::is_regular_file(path) && loader->supports_filetype(ext)) {
                             try {
-                                loader->load(settings_, source_directory, ext, path);
+                                loader->load(source_directory, ext, path);
                             } catch (const std::exception& e) {
                                 std::cerr << "error: " << e.what() << '\n';
                             }
@@ -106,16 +107,16 @@ namespace tools {
     private:
         context_type& context_;
         Json::Value json_settings_;
-        package_settings_type settings_;
-        std::vector<std::unique_ptr<resource_loader<package_settings_type, context_type>>> loaders_;
+        build_settings settings_;
+        std::vector<std::unique_ptr<resource_loader<context_type>>> loaders_;
 
-        void load_settings()
+        void load_build_settings()
         {
             auto settings_path = context_.get_cache_path() / "settings.json";
             std::ifstream file{ settings_path.c_str() };
             file >> json_settings_;
 
-            json::from_json(context_, json_settings_["package"], settings_);
+            json::from_json(context_, json_settings_["build"], settings_);
         }
     };
 }

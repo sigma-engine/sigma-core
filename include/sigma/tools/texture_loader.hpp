@@ -7,9 +7,9 @@
 #include <sigma/tools/packager.hpp>
 #include <sigma/tools/texturing.hpp>
 
-#define png_infopp_NULL (png_infopp)NULL
+#define png_infopp_NULL (png_infopp) NULL
 #define int_p_NULL (int*)NULL
-#define png_bytep_NULL (png_bytep)NULL
+#define png_bytep_NULL (png_bytep) NULL
 
 #include <boost/gil/extension/io/jpeg_io.hpp>
 #include <boost/gil/extension/io/png_io.hpp>
@@ -52,11 +52,12 @@ namespace tools {
         }
     }
 
-    template <class PackageSettings, class ContextType>
-    class texture_loader : public resource_loader<PackageSettings, ContextType> {
+    template <class ContextType>
+    class texture_loader : public resource_loader<ContextType> {
     public:
-        texture_loader(ContextType& ctx)
-            : context_{ ctx }
+        texture_loader(build_settings& settings, ContextType& ctx)
+            : resource_loader<ContextType>(settings, ctx)
+            , context_(ctx)
         {
         }
 
@@ -79,7 +80,7 @@ namespace tools {
             return supported_extensions.count(ext) > 0;
         }
 
-        virtual void load(const PackageSettings& package_settings, const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) override
+        virtual void load(const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) override
         {
             static const std::unordered_map<std::string, texture_source_type> type_map = {
                 { ".tiff", texture_source_type::tiff },

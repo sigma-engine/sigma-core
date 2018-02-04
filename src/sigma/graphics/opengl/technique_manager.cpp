@@ -52,9 +52,17 @@ namespace opengl {
             GLint linkded = GL_FALSE;
             glGetProgramiv(programs_[hndl.index], GL_LINK_STATUS, &linkded);
             if (linkded == GL_FALSE) {
-                std::cerr << "shader program: link faild\n";
-                // TODO get the link message.
-                std::abort();
+                GLint length = 0;
+                glGetProgramiv(programs_[hndl.index], GL_INFO_LOG_LENGTH, &length);
+
+                // The length includes the NULL character
+                std::vector<GLchar> error_buffer(length);
+                glGetProgramInfoLog(programs_[hndl.index], length, &length, error_buffer.data());
+
+                std::string error_string(error_buffer.begin(), error_buffer.end());
+                std::cerr << error_string << '\n';
+
+                std::abort(); // TODO be more subtle???
             }
 
             glUseProgram(programs_[hndl.index]);

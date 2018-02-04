@@ -50,11 +50,12 @@ namespace tools {
         }
     }
 
-    template <class PackageSettings, class ContextType>
-    class technique_loader : public resource_loader<PackageSettings, ContextType> {
+    template <class ContextType>
+    class technique_loader : public resource_loader<ContextType> {
     public:
-        technique_loader(ContextType& ctx)
-            : context_{ ctx }
+        technique_loader(build_settings& settings, ContextType& ctx)
+            : resource_loader<ContextType>(settings, ctx)
+            , context_(ctx)
         {
         }
 
@@ -70,7 +71,7 @@ namespace tools {
             return supported_extensions.count(ext) > 0;
         }
 
-        virtual void load(const PackageSettings& package_settings, const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) override
+        virtual void load(const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) override
         {
             auto& shader_cache = context_.template get_cache<graphics::shader>();
             auto& technique_cache = context_.template get_cache<graphics::technique>();
