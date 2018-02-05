@@ -48,11 +48,10 @@ namespace opengl {
 
         auto data = shader_cache_.acquire(hndl);
         if (shaders_[hndl.index] == 0) {
-            const char* src = data->source.c_str();
-
             shaders_[hndl.index] = glCreateShader(convert(data->type));
-            glShaderSource(shaders_[hndl.index], 1, &src, nullptr);
-            glCompileShader(shaders_[hndl.index]);
+
+            glShaderBinary(1, &shaders_[hndl.index], GL_SHADER_BINARY_FORMAT_SPIR_V, data->spirv.data(), data->spirv.size());
+            glSpecializeShader(shaders_[hndl.index], "main", 0, nullptr, nullptr);
 
             GLint compiled;
             glGetShaderiv(shaders_[hndl.index], GL_COMPILE_STATUS, &compiled);

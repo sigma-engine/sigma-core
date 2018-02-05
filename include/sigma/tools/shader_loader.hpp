@@ -137,7 +137,7 @@ namespace tools {
                 { sigma::graphics::shader_type::header, "header" }
             };
 
-            auto[source_type, shaderc_type] = source_types.at(ext);
+            auto [source_type, shaderc_type] = source_types.at(ext);
 
             auto rid = type_name_map.at(source_type) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
 
@@ -166,6 +166,7 @@ namespace tools {
             shaderc::Compiler compiler;
             shaderc::CompileOptions options;
 
+            options.SetTargetEnvironment(shaderc_target_env_opengl, 0);
             options.SetIncluder(std::make_unique<file_includer>(settings_));
 
             switch (shader.type) {
@@ -194,12 +195,10 @@ namespace tools {
             }
             }
 
-            shaderc::PreprocessedSourceCompilationResult result = compiler.PreprocessGlsl(source_code, shaderc_type, source_file.c_str(), options);
-
+            auto result = compiler.CompileGlslToSpv(source_code, shaderc_type, source_file.c_str(), options);
             if (result.GetCompilationStatus() != shaderc_compilation_status_success)
                 throw std::runtime_error(result.GetErrorMessage());
-
-            shader.source = std::string{ result.cbegin(), result.cend() };
+            shader.spirv = std::vector<std::uint32_t>{ result.cbegin(), result.cend() };
 
             shader_database.insert({ rid }, shader, true);
         }
