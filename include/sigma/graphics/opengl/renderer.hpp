@@ -75,6 +75,15 @@ namespace opengl {
         instance_matrices matrices_;
         uniform_buffer<instance_matrices> matrices_buffer_;
 
+        directional_light_block directional_light_;
+        uniform_buffer<directional_light_block> directional_light_buffer_;
+
+        point_light_block point_light_;
+        uniform_buffer<point_light_block> point_light_buffer_;
+
+        spot_light_block spot_light_;
+        uniform_buffer<spot_light_block> spot_light_buffer_;
+
         opengl::texture_manager textures_;
         opengl::cubemap_manager cubemaps_;
         opengl::shader_manager shaders_;

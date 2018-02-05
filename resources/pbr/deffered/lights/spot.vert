@@ -7,10 +7,11 @@
 // layout(location = 4) in vec4 color_intensity;
 // layout(location = 5) in vec4 position_radius;
 
-uniform vec4 color_intensity;
-uniform vec3 position;
-uniform vec3 direction;
-uniform float cutoff;
+layout(std140, binding = 3) uniform spot_light_block {
+    vec4 color_intensity;
+    vec4 position_cutoff;
+    vec3 direction;
+};
 
 layout(location = 5) out spot_light
 {
@@ -26,9 +27,9 @@ void main()
 {
     out_light.color = color_intensity.rgb;
     out_light.intensity = color_intensity.a;
-    out_light.position = position;
-    out_light.direction = normalize(direction);
-    out_light.cutoff = cutoff;
+    out_light.position = position_cutoff.xyz;
+    out_light.direction = direction;
+    out_light.cutoff = position_cutoff.w;
 
     out_vertex.position = vec4(in_position, 1);
     out_vertex.normal = normalize(in_normal);

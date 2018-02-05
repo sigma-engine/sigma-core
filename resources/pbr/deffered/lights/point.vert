@@ -7,8 +7,10 @@
 // layout(location = 4) in vec4 color_intensity;
 // layout(location = 5) in vec4 position_radius;
 
-uniform vec4 color_intensity;
-uniform vec4 position_radius;
+layout(std140, binding = 3) uniform point_light_block {
+    vec4 color_intensity;
+    vec4 position_radius;
+};
 
 layout(location = 5) out point_light
 {

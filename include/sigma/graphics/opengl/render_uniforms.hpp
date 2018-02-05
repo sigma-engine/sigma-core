@@ -15,6 +15,28 @@ namespace opengl {
             (glm::mat4, model_view_matrix),
             (glm::mat3, normal_matrix));
     };
+
+    struct directional_light_block {
+        BOOST_HANA_DEFINE_STRUCT(
+            directional_light_block,
+            (glm::vec4, color_intensity),
+            (glm::vec3, direction));
+    };
+
+    struct point_light_block {
+        BOOST_HANA_DEFINE_STRUCT(
+            point_light_block,
+            (glm::vec4, color_intensity),
+            (glm::vec4, position_radius));
+    };
+
+    struct spot_light_block {
+        BOOST_HANA_DEFINE_STRUCT(
+            spot_light_block,
+            (glm::vec4, color_intensity),
+            (glm::vec4, position_cutoff),
+            (glm::vec3, direction));
+    };
 }
 }
 

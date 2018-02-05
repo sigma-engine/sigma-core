@@ -7,10 +7,6 @@
 #include <iostream>
 #include <stdexcept>
 
-#define MODEL_MATRIX_NAME "model_matrix"
-#define MODEL_VIEW_MATRIX_NAME "model_view_matrix"
-#define NORMAL_MATRIX_NAME "normal_matrix"
-
 namespace sigma {
 namespace opengl {
     void calculate_cascade_frustums(const frustum& view_frustum, std::vector<frustum>& cascade_frustums)
@@ -437,6 +433,8 @@ namespace opengl {
 
     void renderer::directional_light_pass(const graphics::view_port& viewport, const renderer::world_view_type& world)
     {
+        directional_light_buffer_.set_binding_point(3);
+
         // TODO:perf we can use one fullscreen quad to render all of the directional lights and save on gbuffer lookups.
         setup_view_projection(size_,
             viewport.view_frustum.fovy(),
@@ -487,15 +485,9 @@ namespace opengl {
                 directional_light_effect,
                 geometry_buffer::NEXT_FREE_TEXTURE_UINT);
 
-            // TODO store these or use unifrom buffer object
-            glm::vec4 color_intensity = glm::vec4(light.color, light.intensity);
-            GLint color_loc = glGetUniformLocation(gpu_directional_program, "color_intensity");
-            if (color_loc != -1)
-                glUniform4fv(color_loc, 1, glm::value_ptr(color_intensity));
-
-            GLint dir_loc = glGetUniformLocation(gpu_directional_program, "direction");
-            if (dir_loc != -1)
-                glUniform3fv(dir_loc, 1, glm::value_ptr(light.direction));
+            directional_light_.color_intensity = glm::vec4(light.color, light.intensity);
+            directional_light_.direction = glm::normalize(light.direction);
+            directional_light_buffer_.set_data(directional_light_);
 
             draw_effect_mesh(directional_light_effect);
         });
@@ -503,6 +495,8 @@ namespace opengl {
 
     void renderer::point_light_pass(const graphics::view_port& viewport, const renderer::world_view_type& world)
     {
+        point_light_buffer_.set_binding_point(3);
+
         // TODO:perf re-incorporate the stencil test that limits the pixels being light see
         // http://forum.devmaster.net/t/deferred-lighting-rendering-light-volumes/14998/5
         // TODO:perf make sure that using instanceing is a win here, if it is not go back to
@@ -534,19 +528,10 @@ namespace opengl {
             point_light_effect,
             geometry_buffer::NEXT_FREE_TEXTURE_UINT);
 
-        // TODO remove these or use uniform buffers
-        GLint color_loc = glGetUniformLocation(gpu_point_program, "color_intensity");
-        GLint pos_loc = glGetUniformLocation(gpu_point_program, "position_radius");
-
         world.for_each<transform, graphics::point_light>([&](entity e, const transform& txform, const graphics::point_light& light) {
-            glm::vec4 color_intensity(light.color, light.intensity);
-            glm::vec4 position_radius(txform.position, txform.scale.x);
-
-            if (color_loc != -1)
-                glUniform4fv(color_loc, 1, glm::value_ptr(color_intensity));
-            if (pos_loc != -1)
-                glUniform4fv(pos_loc, 1, glm::value_ptr(position_radius));
-
+            point_light_.color_intensity = glm::vec4(light.color, light.intensity);
+            point_light_.position_radius = glm::vec4(txform.position, txform.scale.x);
+            point_light_buffer_.set_data(point_light_);
             draw_effect_mesh(point_light_effect);
         });
     }
@@ -554,6 +539,7 @@ namespace opengl {
     void renderer::spot_light_pass(const graphics::view_port& viewport, const renderer::world_view_type& world)
     {
         // TODO:perf render cones for spot lights to limit there effects.
+        spot_light_buffer_.set_binding_point(3);
 
         world.for_each<transform, graphics::spot_light>([&](entity e, const transform& txform, const graphics::spot_light& light) {
             setup_view_projection(size_,
@@ -589,23 +575,10 @@ namespace opengl {
                 spot_light_effect,
                 geometry_buffer::NEXT_FREE_TEXTURE_UINT);
 
-            // TODO store these or use unifrom buffer object
-            glm::vec4 color_intensity = glm::vec4(light.color, light.intensity);
-            GLint color_loc = glGetUniformLocation(gpu_spot_program, "color_intensity");
-            if (color_loc != -1)
-                glUniform4fv(color_loc, 1, glm::value_ptr(color_intensity));
-
-            GLint pos_loc = glGetUniformLocation(gpu_spot_program, "position");
-            if (pos_loc != -1)
-                glUniform3fv(pos_loc, 1, glm::value_ptr(txform.position));
-
-            GLint dir_loc = glGetUniformLocation(gpu_spot_program, "direction");
-            if (dir_loc != -1)
-                glUniform3fv(dir_loc, 1, glm::value_ptr(light.direction));
-
-            GLint cutoff_loc = glGetUniformLocation(gpu_spot_program, "cutoff");
-            if (cutoff_loc != -1)
-                glUniform1f(cutoff_loc, std::cos(light.cutoff));
+            spot_light_.color_intensity = glm::vec4(light.color, light.intensity);
+            spot_light_.position_cutoff = glm::vec4(txform.position, std::cos(light.cutoff));
+            spot_light_.direction = light.direction;
+            spot_light_buffer_.set_data(spot_light_);
 
             draw_effect_mesh(spot_light_effect);
         });
