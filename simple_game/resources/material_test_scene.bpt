@@ -1,0 +1,31 @@
+{
+
+    "Sun": {
+        "sigma::transform": {
+            "rotation": [-25,0,-25]
+        },
+        "sigma::graphics::directional_light": {
+            "intensity" : 2
+        }
+    },
+    /* "Spot": {
+        "sigma::transform": {
+            "position": [0,2,0],
+            "rotation": [35,0,0]
+        },
+        "sigma::graphics::spot_light": {
+            "intensity" : 100
+        }
+    },*/
+    "material_ball_grid" : {
+        "sigma::transform" : {
+        },
+        "grid_component": {
+            "rows": 50,
+            "columns" : 50,
+            "row_spacing": 1.5,
+            "column_spacing" : 1.5,
+            "mesh": "static_mesh/material_ball"
+        }
+    }
+}
