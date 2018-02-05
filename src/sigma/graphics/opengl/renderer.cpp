@@ -157,7 +157,7 @@ namespace opengl {
         glClear(GL_COLOR_BUFFER_BIT);
 
         auto gamma_conversion_effect = effects_.acquire(settings_.gamma_conversion);
-        auto[cpu_gamma_conversion_effect, gpu_gamma_conversion_program] = bind_technique(
+        auto [cpu_gamma_conversion_effect, gpu_gamma_conversion_program] = bind_technique(
             gamma_conversion_effect->technique_id,
             gamma_conversion_effect,
             geometry_buffer::NEXT_FREE_TEXTURE_UINT);
@@ -354,24 +354,7 @@ namespace opengl {
         fill_render_token_stream(viewport.view_frustum, world, geometry_pass_token_stream_);
         sort_render_token_stream(geometry_pass_token_stream_);
 
-        std::size_t last_batch = -1;
-        for (auto& token : geometry_pass_token_stream_) {
-            auto[cpu_technique, gpu_program] = bind_technique(
-                token.material->technique_id,
-                token.material,
-                geometry_buffer::NEXT_FREE_TEXTURE_UINT);
-
-            matrices_buffer_.set_data(token.matrices);
-
-            if (token.buffer.batch_index != last_batch)
-                static_meshes_.bind_batch(token.buffer.batch_index);
-
-            glDrawElementsBaseVertex(GL_TRIANGLES,
-                token.count,
-                GL_UNSIGNED_INT,
-                (const void*)(sizeof(unsigned int) * (token.buffer.base_index + token.offset)),
-                token.buffer.base_vertex);
-        }
+        render_token_stream(geometry_pass_token_stream_);
 
         geometry_pass_token_stream_.clear();
 
@@ -417,7 +400,7 @@ namespace opengl {
         glDisable(GL_CULL_FACE);
 
         auto image_based_light_effect = effects_.acquire(settings_.image_based_light_effect);
-        auto[cpu_image_based_light_effect, gpu_image_based_program] = bind_technique(
+        auto [cpu_image_based_light_effect, gpu_image_based_program] = bind_technique(
             image_based_light_effect->technique_id,
             image_based_light_effect,
             geometry_buffer::NEXT_FREE_TEXTURE_UINT);
@@ -480,7 +463,7 @@ namespace opengl {
             glDisable(GL_CULL_FACE);
 
             auto directional_light_effect = effects_.acquire(settings_.directional_light_effect);
-            auto[cpu_directional_light_effect, gpu_directional_program] = bind_technique(
+            auto [cpu_directional_light_effect, gpu_directional_program] = bind_technique(
                 directional_light_effect->technique_id,
                 directional_light_effect,
                 geometry_buffer::NEXT_FREE_TEXTURE_UINT);
@@ -523,7 +506,7 @@ namespace opengl {
         glEnable(GL_CULL_FACE);
 
         auto point_light_effect = effects_.acquire(settings_.point_light_effect);
-        auto[cpu_point_tech, gpu_point_program] = bind_technique(
+        auto [cpu_point_tech, gpu_point_program] = bind_technique(
             point_light_effect->technique_id,
             point_light_effect,
             geometry_buffer::NEXT_FREE_TEXTURE_UINT);
@@ -570,7 +553,7 @@ namespace opengl {
             glDisable(GL_CULL_FACE);
 
             auto spot_light_effect = effects_.acquire(settings_.spot_light_effect);
-            auto[cpu_spot_effect, gpu_spot_program] = bind_technique(
+            auto [cpu_spot_effect, gpu_spot_program] = bind_technique(
                 spot_light_effect->technique_id,
                 spot_light_effect,
                 geometry_buffer::NEXT_FREE_TEXTURE_UINT);
@@ -601,25 +584,13 @@ namespace opengl {
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         if (cast_shadows) {
-            auto[cpu_technique, gpu_program] = techniques_.acquire(settings_.shadow_technique);
+            auto [cpu_technique, gpu_program] = techniques_.acquire(settings_.shadow_technique);
             glUseProgram(gpu_program);
 
             fill_render_token_stream(view_frustum, world, shadow_map_token_stream_, gpu_program);
             sort_render_token_stream(shadow_map_token_stream_);
 
-            std::size_t last_batch = -1;
-            for (auto& token : shadow_map_token_stream_) {
-                matrices_buffer_.set_data(token.matrices);
-
-                if (token.buffer.batch_index != last_batch)
-                    static_meshes_.bind_batch(token.buffer.batch_index);
-
-                glDrawElementsBaseVertex(GL_TRIANGLES,
-                    token.count,
-                    GL_UNSIGNED_INT,
-                    (const void*)(sizeof(unsigned int) * (token.buffer.base_index + token.offset)),
-                    token.buffer.base_vertex);
-            }
+            render_token_stream(shadow_map_token_stream_);
 
             shadow_map_token_stream_.clear();
         }
@@ -631,7 +602,7 @@ namespace opengl {
     {
         auto view_matrix = view.view();
         world.for_each<transform, graphics::static_mesh_instance>([&](const entity& e, const transform& txform, const graphics::static_mesh_instance& mesh_instance) {
-            auto[cpu_mesh, gpu_mesh] = static_meshes_.acquire(mesh_instance.mesh);
+            auto [cpu_mesh, gpu_mesh] = static_meshes_.acquire(mesh_instance.mesh);
             if (view.contains_sphere(txform.position, cpu_mesh->radius)) {
                 auto model_view_matrix = view_matrix * txform.matrix;
                 auto normal_matrix = glm::transpose(glm::inverse(glm::mat3(txform.matrix)));
@@ -644,12 +615,13 @@ namespace opengl {
                     tok.matrices.model_matrix = txform.matrix;
                     tok.matrices.model_view_matrix = model_view_matrix;
                     tok.matrices.normal_matrix = normal_matrix;
+                    tok.material = nullptr;
 
                     tokens.push_back(std::move(tok));
                 } else {
                     for (unsigned int i = 0; i < cpu_mesh->material_slots.size(); ++i) {
                         auto material = materials_.acquire(cpu_mesh->materials[i]);
-                        auto[cpu_technique, gpu_program] = techniques_.acquire(material->technique_id);
+                        auto [cpu_technique, gpu_program] = techniques_.acquire(material->technique_id);
 
                         render_token tok;
                         tok.program = gpu_program;
@@ -683,36 +655,70 @@ namespace opengl {
         });
     }
 
+    void renderer::render_token_stream(const std::vector<render_token>& tokens)
+    {
+        std::size_t i = 0;
+        std::size_t batch = 0;
+        std::size_t object_end = tokens.size();
+
+        while (i < object_end) {
+            if (tokens[batch].material) {
+                bind_technique(tokens[batch].material->technique_id,
+                    tokens[batch].material,
+                    geometry_buffer::NEXT_FREE_TEXTURE_UINT);
+            } else {
+                glUseProgram(tokens[batch].program);
+            }
+            static_meshes_.bind_batch(tokens[batch].buffer.batch_index);
+
+            std::size_t count = 0;
+            while (i < object_end
+                && tokens[i].program == tokens[batch].program
+                && tokens[i].buffer.batch_index == tokens[batch].buffer.batch_index
+                && tokens[i].material == tokens[batch].material) {
+                matrices_buffer_.set_data(tokens[i].matrices);
+                glDrawElementsBaseVertex(GL_TRIANGLES,
+                    tokens[i].count,
+                    GL_UNSIGNED_INT,
+                    (const void*)(sizeof(unsigned int) * (tokens[i].buffer.base_index + tokens[i].offset)),
+                    tokens[i].buffer.base_vertex);
+                i++;
+                count++;
+            }
+            batch = i;
+        }
+    }
+
     std::pair<graphics::technique*, GLuint> renderer::bind_technique(
         const resource::handle<graphics::technique>& technique,
         const graphics::technique_uniform_data* data,
         GLenum first_texture_unit)
     {
-        auto[cpu_technique, gpu_program] = techniques_.acquire(technique);
+        auto [cpu_technique, gpu_program] = techniques_.acquire(technique);
         glUseProgram(gpu_program);
 
-        for (const auto & [ name, value ] : data->floats) {
+        for (const auto& [name, value] : data->floats) {
             // TODO store these or use uniform buffers
             GLint loc = glGetUniformLocation(gpu_program, name.c_str());
             if (loc != -1)
                 glUniform1f(loc, value);
         }
 
-        for (const auto & [ name, value ] : data->vec2s) {
+        for (const auto& [name, value] : data->vec2s) {
             // TODO store these or use uniform buffers
             GLint loc = glGetUniformLocation(gpu_program, name.c_str());
             if (loc != -1)
                 glUniform2fv(loc, 1, glm::value_ptr(value));
         }
 
-        for (const auto & [ name, value ] : data->vec3s) {
+        for (const auto& [name, value] : data->vec3s) {
             // TODO store these or use uniform buffers
             GLint loc = glGetUniformLocation(gpu_program, name.c_str());
             if (loc != -1)
                 glUniform3fv(loc, 1, glm::value_ptr(value));
         }
 
-        for (const auto & [ name, value ] : data->vec4s) {
+        for (const auto& [name, value] : data->vec4s) {
             // TODO store these or use uniform buffers
             GLint loc = glGetUniformLocation(gpu_program, name.c_str());
             if (loc != -1)
@@ -722,7 +728,7 @@ namespace opengl {
         auto texture_unit = first_texture_unit;
         auto unit_number = GLenum(first_texture_unit) - GL_TEXTURE0;
 
-        for (const auto & [ name, value ] : data->textures) {
+        for (const auto& [name, value] : data->textures) {
             // TODO store these or use uniform buffers
             GLint loc = glGetUniformLocation(gpu_program, name.c_str());
             if (loc != -1) {
@@ -734,7 +740,7 @@ namespace opengl {
             }
         }
 
-        for (const auto & [ name, value ] : data->cubemaps) {
+        for (const auto& [name, value] : data->cubemaps) {
             // TODO store these or use uniform buffers
             GLint loc = glGetUniformLocation(gpu_program, name.c_str());
             if (loc != -1) {
@@ -751,7 +757,7 @@ namespace opengl {
 
     void renderer::draw_effect_mesh(graphics::post_process_effect* effect)
     {
-        auto[cpu_mesh, gpu_mesh] = static_meshes_.acquire(effect->mesh);
+        auto [cpu_mesh, gpu_mesh] = static_meshes_.acquire(effect->mesh);
 
         static_meshes_.bind_batch(gpu_mesh.batch_index);
         glDrawElementsBaseVertex(GL_TRIANGLES,

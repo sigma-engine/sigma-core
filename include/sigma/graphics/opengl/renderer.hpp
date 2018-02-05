@@ -138,6 +138,8 @@ namespace opengl {
 
         void sort_render_token_stream(std::vector<render_token>& tokens);
 
+        void render_token_stream(const std::vector<render_token>& tokens);
+
         std::pair<graphics::technique*, GLuint> bind_technique(
             const resource::handle<graphics::technique>& technique,
             const graphics::technique_uniform_data* data,
