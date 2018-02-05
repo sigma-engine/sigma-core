@@ -73,6 +73,30 @@ namespace opengl {
         standard_uniform_buffer_.set_binding_point(0);
         shadow_uniform_buffer_.set_binding_point(1);
         matrices_buffer_.set_binding_point(2);
+
+        GLbitfield map_flags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
+        GLbitfield create_flags = map_flags | GL_DYNAMIC_STORAGE_BIT;
+
+        command_fence_ = 0;
+        command_head_ = 0;
+        command_count_ = 4096 * 2;
+        command_size_ = 3 * command_count_ * sizeof(draw_elements_indirect_command);
+
+        glGenBuffers(1, &command_buffer_);
+        glBindBuffer(GL_DRAW_INDIRECT_BUFFER, command_buffer_);
+        glBufferStorage(GL_DRAW_INDIRECT_BUFFER, command_size_, nullptr, create_flags);
+        commands_ = (draw_elements_indirect_command*)glMapBufferRange(GL_DRAW_INDIRECT_BUFFER, 0, command_size_, map_flags);
+
+        object_fence_ = 0;
+        object_head_ = 0;
+        object_count_ = 4096 * 2;
+        object_size_ = 3 * object_count_ * sizeof(instance_matrices);
+
+        glGenBuffers(1, &object_buffer_);
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, object_buffer_);
+        glBufferStorage(GL_SHADER_STORAGE_BUFFER, object_size_, nullptr, create_flags);
+        objects_ = (std::uint8_t*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, object_size_, map_flags);
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, object_buffer_);
     }
 
     renderer::~renderer()
@@ -644,6 +668,10 @@ namespace opengl {
     {
         std::sort(tokens.begin(), tokens.end(), [](const render_token& a, const render_token& b) {
             if (a.program == b.program) {
+                // if (a.material == b.material)
+                //     return a.buffer.base_index < b.buffer.base_index;
+                // return a.material < b.material;
+
                 // TODO this sort order seams weird but it seams to run faster
                 if (a.buffer.batch_index == b.buffer.batch_index)
                     return a.material < b.material;
@@ -657,10 +685,12 @@ namespace opengl {
 
     void renderer::render_token_stream(const std::vector<render_token>& tokens)
     {
+        assert(tokens.size() < command_count_);
         std::size_t i = 0;
         std::size_t batch = 0;
         std::size_t object_end = tokens.size();
 
+        command_locker_.wait_for_range(command_head_, command_head_ + command_count_ - 1);
         while (i < object_end) {
             if (tokens[batch].material) {
                 bind_technique(tokens[batch].material->technique_id,
@@ -672,21 +702,33 @@ namespace opengl {
             static_meshes_.bind_batch(tokens[batch].buffer.batch_index);
 
             std::size_t count = 0;
+            std::size_t batch_head = i;
             while (i < object_end
                 && tokens[i].program == tokens[batch].program
                 && tokens[i].buffer.batch_index == tokens[batch].buffer.batch_index
                 && tokens[i].material == tokens[batch].material) {
-                matrices_buffer_.set_data(tokens[i].matrices);
-                glDrawElementsBaseVertex(GL_TRIANGLES,
-                    tokens[i].count,
-                    GL_UNSIGNED_INT,
-                    (const void*)(sizeof(unsigned int) * (tokens[i].buffer.base_index + tokens[i].offset)),
-                    tokens[i].buffer.base_vertex);
+                std::size_t ind = command_head_ + i;
+                commands_[ind].count = tokens[i].count;
+                commands_[ind].instanceCount = 1;
+                commands_[ind].firstIndex = tokens[i].buffer.base_index + tokens[i].offset;
+                commands_[ind].baseVertex = tokens[i].buffer.base_vertex;
+                commands_[ind].baseInstance = 0;
+                std140::to_std140(tokens[i].matrices, objects_ + (ind * std140_sizeof(instance_matrices)));
                 i++;
                 count++;
             }
+
+            glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 2, object_buffer_,
+                batch_head * std140_sizeof(instance_matrices),
+                count * std140_sizeof(instance_matrices));
+
+            glMultiDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT,
+                (const void*)(batch_head * sizeof(draw_elements_indirect_command)),
+                count, 0);
             batch = i;
         }
+        command_locker_.lock_range(command_head_, command_head_ + command_count_ - 1);
+        command_head_ = (command_head_ + command_count_) % (3 * command_count_);
     }
 
     std::pair<graphics::technique*, GLuint> renderer::bind_technique(

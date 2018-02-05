@@ -18,6 +18,8 @@
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
 
+#include <list>
+
 namespace sigma {
 namespace opengl {
     struct render_token {
@@ -27,6 +29,36 @@ namespace opengl {
         std::size_t count;
         graphics::material* material;
         instance_matrices matrices;
+    };
+
+    struct draw_elements_indirect_command {
+        GLuint count;
+        GLuint instanceCount;
+        GLuint firstIndex;
+        GLuint baseVertex;
+        GLuint baseInstance;
+    };
+
+    struct range_locker {
+        std::list<std::tuple<std::size_t, std::size_t, GLsync>> locks_;
+
+        void wait_for_range(std::size_t x1, std::size_t x2)
+        {
+            auto it = std::find_if(locks_.begin(), locks_.end(), [=](const auto& lock_range) {
+                auto [y1, y2, lock] = lock_range;
+                return (x1 <= y2 && y1 <= x2);
+            });
+            if (it != locks_.end()) {
+                auto [x1, x2, lock] = *it;
+                locks_.erase(it);
+                glClientWaitSync(lock, GL_SYNC_FLUSH_COMMANDS_BIT, GL_TIMEOUT_IGNORED);
+            }
+        }
+
+        void lock_range(std::size_t x1, std::size_t x2)
+        {
+            locks_.push_back({ x1, x2, glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0) });
+        }
     };
 
     void calculate_cascade_frustums(const frustum& view_frustum, std::vector<frustum>& cascade_frustums);
@@ -58,6 +90,22 @@ namespace opengl {
         GLuint gbuffer_input_image_;
         GLuint gbuffer_output_image_;
         std::vector<GLuint> gbuffer_accumulation_textures_;
+
+        range_locker command_locker_;
+        GLsync command_fence_;
+        GLuint command_buffer_;
+        GLsizei command_head_;
+        GLsizei command_count_;
+        GLsizei command_size_;
+        draw_elements_indirect_command* commands_;
+
+        range_locker object_locker_;
+        GLsync object_fence_;
+        GLuint object_buffer_;
+        GLsizei object_head_;
+        GLsizei object_count_;
+        GLsizei object_size_;
+        std::uint8_t* objects_;
 
         glm::ivec2 shadow_map_size_;
         GLuint shadow_fbo_;

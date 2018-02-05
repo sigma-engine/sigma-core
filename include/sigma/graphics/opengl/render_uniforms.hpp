@@ -13,7 +13,7 @@ namespace opengl {
             instance_matrices,
             (glm::mat4, model_matrix),
             (glm::mat4, model_view_matrix),
-            (glm::mat3, normal_matrix));
+            (glm::mat4, normal_matrix));
     };
 
     struct directional_light_block {
