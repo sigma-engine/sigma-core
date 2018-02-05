@@ -72,6 +72,9 @@ namespace opengl {
         graphics::shadow_block shadow_;
         uniform_buffer<graphics::shadow_block> shadow_uniform_buffer_;
 
+        instance_matrices matrices_;
+        uniform_buffer<instance_matrices> matrices_buffer_;
+
         opengl::texture_manager textures_;
         opengl::cubemap_manager cubemaps_;
         opengl::shader_manager shaders_;

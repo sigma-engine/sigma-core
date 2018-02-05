@@ -75,6 +75,8 @@ namespace opengl {
         dd::initialize(&debug_renderer_);
 
         standard_uniform_buffer_.set_binding_point(0);
+        shadow_uniform_buffer_.set_binding_point(1);
+        matrices_buffer_.set_binding_point(2);
     }
 
     renderer::~renderer()
@@ -159,7 +161,7 @@ namespace opengl {
         glClear(GL_COLOR_BUFFER_BIT);
 
         auto gamma_conversion_effect = effects_.acquire(settings_.gamma_conversion);
-        auto [cpu_gamma_conversion_effect, gpu_gamma_conversion_program] = bind_technique(
+        auto[cpu_gamma_conversion_effect, gpu_gamma_conversion_program] = bind_technique(
             gamma_conversion_effect->technique_id,
             gamma_conversion_effect,
             geometry_buffer::NEXT_FREE_TEXTURE_UINT);
@@ -358,17 +360,12 @@ namespace opengl {
 
         std::size_t last_batch = -1;
         for (auto& token : geometry_pass_token_stream_) {
-            auto [cpu_technique, gpu_program] = bind_technique(
+            auto[cpu_technique, gpu_program] = bind_technique(
                 token.material->technique_id,
                 token.material,
                 geometry_buffer::NEXT_FREE_TEXTURE_UINT);
 
-            GLint model_loc = glGetUniformLocation(token.program, MODEL_MATRIX_NAME);
-            GLint model_view_loc = glGetUniformLocation(token.program, MODEL_VIEW_MATRIX_NAME);
-            GLint normal_loc = glGetUniformLocation(token.program, NORMAL_MATRIX_NAME);
-            glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(token.matrices.model_matrix));
-            glUniformMatrix4fv(model_view_loc, 1, GL_FALSE, glm::value_ptr(token.matrices.model_view_matrix));
-            glUniformMatrix3fv(normal_loc, 1, GL_FALSE, glm::value_ptr(token.matrices.normal_matrix));
+            matrices_buffer_.set_data(token.matrices);
 
             if (token.buffer.batch_index != last_batch)
                 static_meshes_.bind_batch(token.buffer.batch_index);
@@ -424,7 +421,7 @@ namespace opengl {
         glDisable(GL_CULL_FACE);
 
         auto image_based_light_effect = effects_.acquire(settings_.image_based_light_effect);
-        auto [cpu_image_based_light_effect, gpu_image_based_program] = bind_technique(
+        auto[cpu_image_based_light_effect, gpu_image_based_program] = bind_technique(
             image_based_light_effect->technique_id,
             image_based_light_effect,
             geometry_buffer::NEXT_FREE_TEXTURE_UINT);
@@ -449,32 +446,6 @@ namespace opengl {
             viewport.view_frustum.projection());
 
         world.for_each<transform, graphics::directional_light>([&](entity e, const transform& txform, const graphics::directional_light& light) {
-            if (save_frustums) {
-                save_frustums = false;
-                debug_frustums_.clear();
-                frustum scaled_frustum{
-                    viewport.view_frustum.fovy(),
-                    viewport.view_frustum.aspect(),
-                    viewport.view_frustum.z_near(),
-                    0.1f * viewport.view_frustum.z_far(),
-                    viewport.view_frustum.view()
-                };
-                calculate_cascade_frustums(scaled_frustum, cascade_frustums_);
-
-                auto full_position = viewport.view_frustum.center();
-                auto full_target = full_position + light.direction;
-                auto light_view = glm::lookAt(full_target, full_position, glm::vec3{ 0, 1, 0 });
-
-                float minZ, maxZ;
-                viewport.view_frustum.full_light_projection(light_view, minZ, maxZ);
-
-                for (std::size_t i = 0; i < shadow_textures_.size(); ++i) {
-                    auto light_projection = cascade_frustums_[i].clip_light_projection(light_view, minZ, maxZ);
-                    debug_frustums_.emplace_back(glm::vec3{ 1, 0, 0 }, glm::inverse(cascade_frustums_[i].projection_view()));
-                    debug_frustums_.emplace_back(glm::vec3{ 1, 1, 0 }, glm::inverse(light_projection * light_view));
-                }
-            }
-
             calculate_cascade_frustums(viewport.view_frustum, cascade_frustums_);
 
             auto full_position = viewport.view_frustum.center();
@@ -501,7 +472,6 @@ namespace opengl {
                 viewport.view_frustum.projection());
 
             shadow_uniform_buffer_.set_data(shadow_);
-            shadow_uniform_buffer_.set_binding_point(1);
 
             bind_for_geometry_read();
             bind_for_shadow_read();
@@ -512,7 +482,7 @@ namespace opengl {
             glDisable(GL_CULL_FACE);
 
             auto directional_light_effect = effects_.acquire(settings_.directional_light_effect);
-            auto [cpu_directional_light_effect, gpu_directional_program] = bind_technique(
+            auto[cpu_directional_light_effect, gpu_directional_program] = bind_technique(
                 directional_light_effect->technique_id,
                 directional_light_effect,
                 geometry_buffer::NEXT_FREE_TEXTURE_UINT);
@@ -559,7 +529,7 @@ namespace opengl {
         glEnable(GL_CULL_FACE);
 
         auto point_light_effect = effects_.acquire(settings_.point_light_effect);
-        auto [cpu_point_tech, gpu_point_program] = bind_technique(
+        auto[cpu_point_tech, gpu_point_program] = bind_technique(
             point_light_effect->technique_id,
             point_light_effect,
             geometry_buffer::NEXT_FREE_TEXTURE_UINT);
@@ -604,7 +574,6 @@ namespace opengl {
 
             shadow_.light_projection_view_matrix[0] = light.shadow_frustum.projection_view();
             shadow_uniform_buffer_.set_data(shadow_);
-            shadow_uniform_buffer_.set_binding_point(1);
 
             bind_for_geometry_read();
             bind_for_shadow_read();
@@ -615,7 +584,7 @@ namespace opengl {
             glDisable(GL_CULL_FACE);
 
             auto spot_light_effect = effects_.acquire(settings_.spot_light_effect);
-            auto [cpu_spot_effect, gpu_spot_program] = bind_technique(
+            auto[cpu_spot_effect, gpu_spot_program] = bind_technique(
                 spot_light_effect->technique_id,
                 spot_light_effect,
                 geometry_buffer::NEXT_FREE_TEXTURE_UINT);
@@ -659,22 +628,15 @@ namespace opengl {
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         if (cast_shadows) {
-            auto [cpu_technique, gpu_program] = techniques_.acquire(settings_.shadow_technique);
+            auto[cpu_technique, gpu_program] = techniques_.acquire(settings_.shadow_technique);
             glUseProgram(gpu_program);
-
-            // TODO store theses or use uniform buffers
-            GLint model_loc = glGetUniformLocation(gpu_program, MODEL_MATRIX_NAME);
-            GLint model_view_loc = glGetUniformLocation(gpu_program, MODEL_VIEW_MATRIX_NAME);
-            GLint normal_loc = glGetUniformLocation(gpu_program, NORMAL_MATRIX_NAME);
 
             fill_render_token_stream(view_frustum, world, shadow_map_token_stream_, gpu_program);
             sort_render_token_stream(shadow_map_token_stream_);
 
             std::size_t last_batch = -1;
             for (auto& token : shadow_map_token_stream_) {
-                glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(token.matrices.model_matrix));
-                glUniformMatrix4fv(model_view_loc, 1, GL_FALSE, glm::value_ptr(token.matrices.model_view_matrix));
-                glUniformMatrix3fv(normal_loc, 1, GL_FALSE, glm::value_ptr(token.matrices.normal_matrix));
+                matrices_buffer_.set_data(token.matrices);
 
                 if (token.buffer.batch_index != last_batch)
                     static_meshes_.bind_batch(token.buffer.batch_index);
@@ -696,7 +658,7 @@ namespace opengl {
     {
         auto view_matrix = view.view();
         world.for_each<transform, graphics::static_mesh_instance>([&](const entity& e, const transform& txform, const graphics::static_mesh_instance& mesh_instance) {
-            auto [cpu_mesh, gpu_mesh] = static_meshes_.acquire(mesh_instance.mesh);
+            auto[cpu_mesh, gpu_mesh] = static_meshes_.acquire(mesh_instance.mesh);
             if (view.contains_sphere(txform.position, cpu_mesh->radius)) {
                 auto model_view_matrix = view_matrix * txform.matrix;
                 auto normal_matrix = glm::transpose(glm::inverse(glm::mat3(txform.matrix)));
@@ -714,7 +676,7 @@ namespace opengl {
                 } else {
                     for (unsigned int i = 0; i < cpu_mesh->material_slots.size(); ++i) {
                         auto material = materials_.acquire(cpu_mesh->materials[i]);
-                        auto [cpu_technique, gpu_program] = techniques_.acquire(material->technique_id);
+                        auto[cpu_technique, gpu_program] = techniques_.acquire(material->technique_id);
 
                         render_token tok;
                         tok.program = gpu_program;
@@ -753,31 +715,31 @@ namespace opengl {
         const graphics::technique_uniform_data* data,
         GLenum first_texture_unit)
     {
-        auto [cpu_technique, gpu_program] = techniques_.acquire(technique);
+        auto[cpu_technique, gpu_program] = techniques_.acquire(technique);
         glUseProgram(gpu_program);
 
-        for (const auto& [name, value] : data->floats) {
+        for (const auto & [ name, value ] : data->floats) {
             // TODO store these or use uniform buffers
             GLint loc = glGetUniformLocation(gpu_program, name.c_str());
             if (loc != -1)
                 glUniform1f(loc, value);
         }
 
-        for (const auto& [name, value] : data->vec2s) {
+        for (const auto & [ name, value ] : data->vec2s) {
             // TODO store these or use uniform buffers
             GLint loc = glGetUniformLocation(gpu_program, name.c_str());
             if (loc != -1)
                 glUniform2fv(loc, 1, glm::value_ptr(value));
         }
 
-        for (const auto& [name, value] : data->vec3s) {
+        for (const auto & [ name, value ] : data->vec3s) {
             // TODO store these or use uniform buffers
             GLint loc = glGetUniformLocation(gpu_program, name.c_str());
             if (loc != -1)
                 glUniform3fv(loc, 1, glm::value_ptr(value));
         }
 
-        for (const auto& [name, value] : data->vec4s) {
+        for (const auto & [ name, value ] : data->vec4s) {
             // TODO store these or use uniform buffers
             GLint loc = glGetUniformLocation(gpu_program, name.c_str());
             if (loc != -1)
@@ -787,7 +749,7 @@ namespace opengl {
         auto texture_unit = first_texture_unit;
         auto unit_number = GLenum(first_texture_unit) - GL_TEXTURE0;
 
-        for (const auto& [name, value] : data->textures) {
+        for (const auto & [ name, value ] : data->textures) {
             // TODO store these or use uniform buffers
             GLint loc = glGetUniformLocation(gpu_program, name.c_str());
             if (loc != -1) {
@@ -799,7 +761,7 @@ namespace opengl {
             }
         }
 
-        for (const auto& [name, value] : data->cubemaps) {
+        for (const auto & [ name, value ] : data->cubemaps) {
             // TODO store these or use uniform buffers
             GLint loc = glGetUniformLocation(gpu_program, name.c_str());
             if (loc != -1) {
@@ -816,7 +778,7 @@ namespace opengl {
 
     void renderer::draw_effect_mesh(graphics::post_process_effect* effect)
     {
-        auto [cpu_mesh, gpu_mesh] = static_meshes_.acquire(effect->mesh);
+        auto[cpu_mesh, gpu_mesh] = static_meshes_.acquire(effect->mesh);
 
         static_meshes_.bind_batch(gpu_mesh.batch_index);
         glDrawElementsBaseVertex(GL_TRIANGLES,

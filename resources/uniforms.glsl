@@ -3,9 +3,11 @@
 
 #include <sigma/graphics/standard_block.glsl>
 
-uniform mat4 model_matrix;
-uniform mat4 model_view_matrix;
-uniform mat3 normal_matrix;
+layout (std140, binding = 2) uniform instance_matrices {
+    mat4 model_matrix;
+    mat4 model_view_matrix;
+    mat3 normal_matrix;
+};
 
 // #ifdef SIGMA_ENGINE_VERTEX_SHADER
 // // per-instance attributes.

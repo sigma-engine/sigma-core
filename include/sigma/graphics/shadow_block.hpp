@@ -14,7 +14,7 @@
 
 namespace sigma {
 namespace graphics {
-    struct R_EXPORT(std140, binding = 1) shadow_block {
+    struct shadow_block {
         BOOST_HANA_DEFINE_STRUCT(
             shadow_block,
             (std::array<glm::mat4, 3>, light_projection_view_matrix),
