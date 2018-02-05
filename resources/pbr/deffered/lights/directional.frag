@@ -7,7 +7,7 @@
 #include <sigma/graphics/shadow_block.glsl>
 // clang-format on
 
-in directional_light
+layout(location = 5) in directional_light
 {
     vec3 color;
     float intensity;

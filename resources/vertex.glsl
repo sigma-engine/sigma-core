@@ -8,7 +8,7 @@ layout(location = 2) in vec3 in_bitangent;
 layout(location = 3) in vec3 in_tangent;
 layout(location = 4) in vec2 in_texcoord;
 
-out vertex_data
+layout(location = 0) out vertex_data
 {
     vec4 position;
     vec3 normal;
@@ -18,7 +18,7 @@ out vertex_data
 }
 out_vertex;
 #elif defined(SIGMA_ENGINE_FRAGMENT_SHADER)
-in vertex_data
+layout(location = 0) in vertex_data
 {
     vec4 position;
     vec3 normal;
@@ -28,7 +28,7 @@ in vertex_data
 }
 in_vertex;
 #elif defined(SIGMA_ENGINE_GEOMETRY_SHADER)
-in vertex_data
+layout(location = 0) in vertex_data
 {
     vec4 position;
     vec3 normal;
@@ -38,7 +38,7 @@ in vertex_data
 }
 in_vertex[];
 
-out vertex_data
+layout(location = 0) out vertex_data
 {
     vec4 position;
     vec3 normal;

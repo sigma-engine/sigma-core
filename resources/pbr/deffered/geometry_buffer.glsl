@@ -23,7 +23,7 @@ uniform sampler2D in_depth_stencil;
 uniform sampler2D in_image;
 uniform sampler2D in_shadow_maps[3];
 
-out vec3 out_image;
+layout(location = 0) out vec3 out_image;
 
 surface read_geometry_buffer()
 {
@@ -53,8 +53,8 @@ surface read_geometry_buffer()
 uniform sampler2D in_image;
 #endif
 
-out vec4 out_diffuse_roughness;
-out vec4 out_normal_metalness;
+layout(location = 0) out vec4 out_diffuse_roughness;
+layout(location = 1) out vec4 out_normal_metalness;
 
 void write_geometry_buffer(surface s)
 {

@@ -7,7 +7,7 @@
 #include <sigma/graphics/shadow_block.glsl>
 // clang-format on
 
-in spot_light
+layout(location = 5) in spot_light
 {
     vec3 color;
     float intensity;

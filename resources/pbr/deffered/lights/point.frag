@@ -5,7 +5,7 @@
 #include <pbr/brdf.glsl>
 // clang-format on
 
-in point_light
+layout(location = 5) in point_light
 {
     vec3 position;
     float radius;

@@ -11,7 +11,7 @@ uniform vec3 center;
 // layout(location = 4) in vec4 color_intensity;
 // layout(location = 5) in vec3 direction;
 
-out directional_light
+layout(location = 5) out directional_light
 {
     vec3 color;
     float intensity;

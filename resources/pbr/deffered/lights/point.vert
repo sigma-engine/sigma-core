@@ -10,7 +10,7 @@
 uniform vec4 color_intensity;
 uniform vec4 position_radius;
 
-out point_light
+layout(location = 5) out point_light
 {
     vec3 position;
     float radius;

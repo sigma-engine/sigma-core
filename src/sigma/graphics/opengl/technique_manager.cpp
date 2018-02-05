@@ -82,8 +82,9 @@ namespace opengl {
             glUniform1i(in_shadow_map0_loc, geometry_buffer::SHADOW_MAP0_LOCATION);
             glUniform1i(in_shadow_map1_loc, geometry_buffer::SHADOW_MAP1_LOCATION);
             glUniform1i(in_shadow_map2_loc, geometry_buffer::SHADOW_MAP2_LOCATION);
-            glBindFragDataLocation(programs_[hndl.index], geometry_buffer::DIFFUSE_ROUGHNESS_OUTPUT_LOCATION, geometry_buffer::DIFFUSE_ROUGHNESS_OUTPUT_NAME);
-            glBindFragDataLocation(programs_[hndl.index], geometry_buffer::NORMAL_METALNESS_LOCATION, geometry_buffer::NORMAL_METALNESS_OUTPUT_NAME);
+
+            // glBindFragDataLocation(programs_[hndl.index], geometry_buffer::DIFFUSE_ROUGHNESS_OUTPUT_LOCATION, geometry_buffer::DIFFUSE_ROUGHNESS_OUTPUT_NAME);
+            // glBindFragDataLocation(programs_[hndl.index], geometry_buffer::NORMAL_METALNESS_LOCATION, geometry_buffer::NORMAL_METALNESS_OUTPUT_NAME);
         }
 
         return { data, programs_[hndl.index] };

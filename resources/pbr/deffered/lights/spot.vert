@@ -12,7 +12,7 @@ uniform vec3 position;
 uniform vec3 direction;
 uniform float cutoff;
 
-out spot_light
+layout(location = 5) out spot_light
 {
     vec3 color;
     float intensity;
@@ -37,11 +37,4 @@ void main()
     out_vertex.texcoord = in_texcoord;
 
     gl_Position = out_vertex.position;
-    // out_vertex.position = vec4(position_radius.xyz + position_radius.w * in_position, 1);
-    // out_vertex.normal = normalize(in_normal);
-    // out_vertex.tangent = normalize(in_tangent);
-    // out_vertex.bitangent = normalize(in_bitangent);
-    // out_vertex.texcoord = in_texcoord;
-
-    // gl_Position = projection_view_matrix * out_vertex.position;
 }
