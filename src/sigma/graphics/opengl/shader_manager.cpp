@@ -64,7 +64,6 @@ namespace opengl {
                 std::vector<GLchar> error_buffer(length);
                 glGetShaderInfoLog(shaders_[hndl.index], length, &length, error_buffer.data());
 
-                std::cerr << src << '\n';
                 std::string error_string(error_buffer.begin(), error_buffer.end());
                 std::cerr << error_string << '\n';
 

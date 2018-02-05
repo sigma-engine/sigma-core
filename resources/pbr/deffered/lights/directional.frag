@@ -1,4 +1,4 @@
-#version 420
+#version 460
 
 // clang-format off
 #include <pbr/deffered/post_process_effect.glsl>
