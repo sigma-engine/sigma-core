@@ -18,17 +18,21 @@ SET(Boost_USE_STATIC_LIBS ON)
 #find_package(GMock REQUIRED)
 find_package(Assimp 4.0.0 REQUIRED)
 find_package(benchmark REQUIRED)
-find_package(Boost 1.65.0 COMPONENTS filesystem program_options serialization wave log REQUIRED)
+find_package(Boost 1.65.0 COMPONENTS filesystem program_options serialization log REQUIRED)
 find_package(glm 0.9.8 REQUIRED)
 find_package(GTest 1.8.0 REQUIRED)
 find_package(GTest REQUIRED)
 find_package(JPEG REQUIRED)
-find_package(jsoncpp REQUIRED)
 find_package(PNG REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(Threads REQUIRED)
 find_package(TIFF REQUIRED)
 
+set(SHADERC_THIRD_PARTY_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty" CACHE STRING "")
+add_subdirectory(thirdparty/shaderc EXCLUDE_FROM_ALL)
+add_subdirectory(thirdparty/debug-draw EXCLUDE_FROM_ALL)
+add_subdirectory(thirdparty/glad EXCLUDE_FROM_ALL)
+add_subdirectory(thirdparty/jsoncpp EXCLUDE_FROM_ALL)
 
 add_library(sigma-core STATIC
     src/sigma/frustum.cpp
@@ -97,18 +101,12 @@ target_link_libraries(sigma-tools
     INTERFACE
     sigma-core
 
-    Boost::wave
     PNG::PNG
     TIFF::TIFF
     jpeg
     assimp
 
-    glslang
-    HLSL
-    OGLCompiler
-    OSDependent
-    SPIRV
-    SPVRemapper
+    shaderc
 )
 
 add_subdirectory(test)
