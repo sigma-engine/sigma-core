@@ -64,7 +64,7 @@ namespace opengl {
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, false);
 
         create_geometry_buffer(size_);
-        create_shadow_maps({ 1024, 1024 });
+        create_shadow_maps(3, { 1024, 1024 });
 
         debug_renderer_.windowWidth = size.x;
         debug_renderer_.windowHeight = size.y;
@@ -258,39 +258,34 @@ namespace opengl {
         glDeleteTextures(1, &gbuffer_diffuse_texture_);
     }
 
-    void renderer::create_shadow_maps(const glm::ivec2& size)
+    void renderer::create_shadow_maps(std::size_t count, const glm::ivec2& size)
     {
         shadow_map_size_ = size;
 
-        // TODO make this a paramater
-        auto shadow_map_levels = 1 + std::floor(std::log2(std::max(size.x, size.y)));
+        // Generate the framebuffers for the shadow maps.
+        shadow_framebuffers_.resize(count, 0);
+        glGenFramebuffers(shadow_framebuffers_.size(), shadow_framebuffers_.data());
 
         // Generate the textures for the shadow maps.
-        shadow_textures_.resize(3, 0);
+        shadow_textures_.resize(count, 0);
         glGenTextures(shadow_textures_.size(), shadow_textures_.data());
 
-        // Allocate storage for the shadow maps.
-        for (auto texture : shadow_textures_) {
-            glBindTexture(GL_TEXTURE_2D, texture);
+        for (std::size_t i = 0; i < shadow_framebuffers_.size(); ++i) {
+            // Allocate storage for the shadow map.
+            glBindTexture(GL_TEXTURE_2D, shadow_textures_[i]);
 
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 
-            glTexStorage2D(GL_TEXTURE_2D, shadow_map_levels, GL_RG32F, size.x, size.y);
+            glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT32F, size.x, size.y);
+
+            // Bind the depth texture to the frame buffer
+            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, shadow_framebuffers_[i]);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadow_textures_[i], 0);
         }
-
-        // Generate and allocate the depth buffer for the framebuffer.
-        glGenRenderbuffers(1, &shadow_depth_buffer_);
-        glBindRenderbuffer(GL_RENDERBUFFER, shadow_depth_buffer_);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, size.x, size.y);
-
-        // Generate the framebuffer and attach the depth buffer.
-        glGenFramebuffers(1, &shadow_fbo_);
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, shadow_fbo_);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, shadow_depth_buffer_);
     }
 
     void renderer::bind_for_shadow_read()
@@ -298,24 +293,18 @@ namespace opengl {
         for (std::size_t i = 0; i < shadow_textures_.size(); ++i) {
             glActiveTexture(geometry_buffer::SHADOW_MAP0_TEXTURE_UINT + i);
             glBindTexture(GL_TEXTURE_2D, shadow_textures_[i]);
-            glGenerateMipmap(GL_TEXTURE_2D);
         }
     }
 
     void renderer::bind_for_shadow_write(unsigned int index)
     {
-        static GLenum attachments[] = { GL_COLOR_ATTACHMENT0 };
-
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, shadow_fbo_);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, shadow_textures_[index], 0);
-        glDrawBuffers(1, attachments);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, shadow_framebuffers_[index]);
         glViewport(0, 0, shadow_map_size_.x, shadow_map_size_.y);
     }
 
     void renderer::destroy_shadow_maps()
     {
-        glDeleteFramebuffers(1, &shadow_fbo_);
-        glDeleteRenderbuffers(1, &shadow_depth_buffer_);
+        glDeleteFramebuffers(shadow_framebuffers_.size(), shadow_framebuffers_.data());
         glDeleteTextures(shadow_textures_.size(), shadow_textures_.data());
     }
 

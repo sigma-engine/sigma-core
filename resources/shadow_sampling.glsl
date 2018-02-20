@@ -4,7 +4,7 @@
 #include <math.glsl>
 
 #define SAMPLES 25
-#define SAMPLE_SPREAD 2
+#define SAMPLE_SPREAD 4
 
 bool check_coords(vec2 shadow_coords)
 {
@@ -22,20 +22,29 @@ float variance_shadow(vec2 moments, float compare)
     return min(max(p, p_max), 1.0);
 }
 
-float calculate_shadow(sampler2D shadow_map, vec4 light_space_position, float compare)
+float calculate_shadow(sampler2DShadow shadow_map, vec4 light_space_position, float compare)
 {
+
     vec2 texel_size = vec2(1.0) / textureSize(shadow_map, 0);
     vec3 ndc_position = (light_space_position.xyz / light_space_position.w) * vec3(.5) + vec3(.5);
 
     float shadow = 0.0;
+
+    /* const float NUM_SAMPLES = 5.0f; */
+    /* const float SAMPLES_START = (NUM_SAMPLES - 1) / 2.0f; */
+    /* const float SAMPLES_SQUARED = NUM_SAMPLES * NUM_SAMPLES; */
+    /* for(float y=-SAMPLES_START;y<=SAMPLES_START;++y) */
+    /* { */
+    /*     for(float x=-SAMPLES_START;x<=SAMPLES_START;++x) { */
+    /*         vec2 offset = vec2(x,y) * texel_size; */
+    /*         shadow += step(compare, textureProj(shadow_map, vec4(ndc_position.xy + offset, ndc_position.z - 2*texel_size.y, 1.0))); */
+    /*     } */
+    /* } */
+    /* return shadow / SAMPLES_SQUARED; */
     for (uint i = 0; i < SAMPLES; i++) {
         vec2 Xi = (2 * hammersley(i, SAMPLES) - vec2(1)) * SAMPLE_SPREAD;
         vec2 shadow_coords = ndc_position.xy + Xi * texel_size;
-        if (check_coords(shadow_coords)) {
-            shadow += variance_shadow(texture(shadow_map, shadow_coords).xy, compare);
-        } else {
-            shadow += 1;
-        }
+        shadow += step(compare, textureProj(shadow_map, vec4(shadow_coords, ndc_position.z - texel_size.y, 1.0), 0.0));
     }
 
     return shadow / SAMPLES;

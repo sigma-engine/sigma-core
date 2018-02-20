@@ -60,8 +60,8 @@ namespace opengl {
         std::vector<GLuint> gbuffer_accumulation_textures_;
 
         glm::ivec2 shadow_map_size_;
-        GLuint shadow_fbo_;
-        GLuint shadow_depth_buffer_;
+
+        std::vector<GLuint> shadow_framebuffers_;
         std::vector<GLuint> shadow_textures_;
         std::vector<frustum> cascade_frustums_;
 
@@ -98,7 +98,7 @@ namespace opengl {
         std::vector<render_token> geometry_pass_token_stream_;
         std::vector<render_token> shadow_map_token_stream_;
 
-        void create_shadow_maps(const glm::ivec2& size);
+        void create_shadow_maps(std::size_t count, const glm::ivec2& size);
 
         void bind_for_shadow_read();
 
