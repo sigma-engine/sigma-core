@@ -21,7 +21,7 @@ uniform sampler2D in_diffuse_roughness;
 uniform sampler2D in_normal_metalness;
 uniform sampler2D in_depth_stencil;
 uniform sampler2D in_image;
-uniform sampler2DShadow in_shadow_maps[3];
+uniform sampler2DArrayShadow in_shadow_map;
 
 layout(location = 0) out vec3 out_image;
 

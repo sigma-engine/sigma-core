@@ -20,7 +20,7 @@ namespace opengl {
         BOOST_HANA_DEFINE_STRUCT(
             directional_light_block,
             (glm::vec4, color_intensity),
-            (glm::vec3, direction));
+            (glm::vec4, direction_layer));
     };
 
     struct point_light_block {
@@ -35,7 +35,7 @@ namespace opengl {
             spot_light_block,
             (glm::vec4, color_intensity),
             (glm::vec4, position_cutoff),
-            (glm::vec3, direction));
+            (glm::vec4, direction_layer));
     };
 }
 }

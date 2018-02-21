@@ -7,22 +7,18 @@
 #include <sigma/graphics/shadow_block.glsl>
 // clang-format on
 
-layout(location = 5) in spot_light
-{
-    vec3 color;
-    float intensity;
-    vec3 position;
-    vec3 direction;
-    float cutoff;
-}
-in_light;
+layout(std140, binding = 3) uniform spot_light_block {
+    vec4 color_intensity;
+    vec4 position_cutoff;
+    vec4 direction_layer;
+};
 
 void main()
 {
     surface s = read_geometry_buffer();
 
     vec3 V = normalize(eye_position.xyz - s.position);
-    vec3 L = in_light.position - s.position;
+    vec3 L = position_cutoff.xyz - s.position;
     float light_distance = length(L);
     L = normalize(L);
 
@@ -31,10 +27,10 @@ void main()
     // float att = smoothstep(1, 0, light_distance / in_light.radius) / (light_distance * light_distance);
     float att = 1.0 / (light_distance * light_distance);
 
-    float factor = dot(L, in_light.direction);
+    float factor = dot(L, direction_layer.xyz);
 
-    if (factor > in_light.cutoff) {
-        att *= (1.0 - (1.0 - factor) * 1.0 / (1.0 - in_light.cutoff));
+    if (factor > position_cutoff.w) {
+        att *= (1.0 - (1.0 - factor) * 1.0 / (1.0 - position_cutoff.w));
     } else {
         att = 0;
     }
@@ -45,7 +41,7 @@ void main()
     vec2 shadow_coords = ndc_position.xy;
     float current_depth = ndc_position.z;
 
-    float shadow = calculate_shadow(in_shadow_maps[0], light_space_position, current_depth);
+    float shadow = calculate_shadow(in_shadow_map, direction_layer.w, light_space_position, current_depth);
 
-    out_image = shadow * att * in_light.intensity * in_light.color * compute_lighting(s, L, V);
+    out_image = shadow * att * color_intensity.w * color_intensity.xyz * compute_lighting(s, L, V);
 }

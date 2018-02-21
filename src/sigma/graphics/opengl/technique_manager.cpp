@@ -71,20 +71,13 @@ namespace opengl {
             GLint in_diffuse_loc = glGetUniformLocation(programs_[hndl.index], geometry_buffer::DIFFUSE_ROUGHNESS_INPUT_NAME);
             GLint in_normal_loc = glGetUniformLocation(programs_[hndl.index], geometry_buffer::NORMAL_METALNESS_INPUT_NAME);
             GLint in_depth_stencil_loc = glGetUniformLocation(programs_[hndl.index], geometry_buffer::DEPTH_STENCIL_INPUT_NAME);
-            GLint in_shadow_map0_loc = glGetUniformLocation(programs_[hndl.index], geometry_buffer::SHADOW_MAP0_INPUT_NAME);
-            GLint in_shadow_map1_loc = glGetUniformLocation(programs_[hndl.index], geometry_buffer::SHADOW_MAP1_INPUT_NAME);
-            GLint in_shadow_map2_loc = glGetUniformLocation(programs_[hndl.index], geometry_buffer::SHADOW_MAP2_INPUT_NAME);
+            GLint in_shadow_map_loc = glGetUniformLocation(programs_[hndl.index], geometry_buffer::SHADOW_MAP_NAME);
 
             glUniform1i(in_image_loc, geometry_buffer::INPUT_IMAGE_LOCATION);
             glUniform1i(in_diffuse_loc, geometry_buffer::DIFFUSE_ROUGHNESS_OUTPUT_LOCATION);
             glUniform1i(in_normal_loc, geometry_buffer::NORMAL_METALNESS_LOCATION);
             glUniform1i(in_depth_stencil_loc, geometry_buffer::DEPTH_STENCIL_LOCATION);
-            glUniform1i(in_shadow_map0_loc, geometry_buffer::SHADOW_MAP0_LOCATION);
-            glUniform1i(in_shadow_map1_loc, geometry_buffer::SHADOW_MAP1_LOCATION);
-            glUniform1i(in_shadow_map2_loc, geometry_buffer::SHADOW_MAP2_LOCATION);
-
-            // glBindFragDataLocation(programs_[hndl.index], geometry_buffer::DIFFUSE_ROUGHNESS_OUTPUT_LOCATION, geometry_buffer::DIFFUSE_ROUGHNESS_OUTPUT_NAME);
-            // glBindFragDataLocation(programs_[hndl.index], geometry_buffer::NORMAL_METALNESS_LOCATION, geometry_buffer::NORMAL_METALNESS_OUTPUT_NAME);
+            glUniform1i(in_shadow_map_loc, geometry_buffer::SHADOW_MAP_LOCATION);
         }
 
         return { data, programs_[hndl.index] };

@@ -7,20 +7,17 @@
 #include <sigma/graphics/shadow_block.glsl>
 // clang-format on
 
-layout(location = 5) in directional_light
-{
-    vec3 color;
-    float intensity;
-    vec3 direction;
-}
-in_light;
+layout (std140, binding = 3) uniform directional_light_block {
+    vec4 color_intensity;
+    vec4 direction_layer;
+};
 
 void main()
 {
     surface s = read_geometry_buffer();
 
     vec3 V = normalize(eye_position.xyz - s.position);
-    vec3 L = in_light.direction;
+    vec3 L = direction_layer.xyz;
 
     float shadow = 0;
     for (int i = 0; i < 3; ++i) {
@@ -31,11 +28,11 @@ void main()
             vec2 shadow_coords = ndc_position.xy;
             float current_depth = ndc_position.z;
 
-            shadow = calculate_shadow(in_shadow_maps[i], light_space_position, current_depth);
+            shadow = calculate_shadow(in_shadow_map, direction_layer.w + i, light_space_position, current_depth);
 
             break;
         }
     }
 
-    out_image = shadow * in_light.intensity * in_light.color * compute_lighting(s, L, V);
+    out_image = shadow * color_intensity.xyz * color_intensity.w * compute_lighting(s, L, V);
 }

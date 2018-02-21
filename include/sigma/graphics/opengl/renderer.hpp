@@ -61,8 +61,8 @@ namespace opengl {
 
         glm::ivec2 shadow_map_size_;
 
+        GLuint shadow_array_texture_;
         std::vector<GLuint> shadow_framebuffers_;
-        std::vector<GLuint> shadow_textures_;
         std::vector<frustum> cascade_frustums_;
 
         std::chrono::high_resolution_clock::time_point start_time_;

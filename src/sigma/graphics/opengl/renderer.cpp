@@ -64,7 +64,7 @@ namespace opengl {
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, false);
 
         create_geometry_buffer(size_);
-        create_shadow_maps(3, { 1024, 1024 });
+        create_shadow_maps(8, { 1024, 1024 });
 
         debug_renderer_.windowWidth = size.x;
         debug_renderer_.windowHeight = size.y;
@@ -262,38 +262,32 @@ namespace opengl {
     {
         shadow_map_size_ = size;
 
+        // Generate and allocate the shadow map array texture.
+        glGenTextures(1, &shadow_array_texture_);
+        glBindTexture(GL_TEXTURE_2D_ARRAY, shadow_array_texture_);
+
+        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+
+        glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_DEPTH_COMPONENT16, size.x, size.y, count);
+
         // Generate the framebuffers for the shadow maps.
         shadow_framebuffers_.resize(count, 0);
         glGenFramebuffers(shadow_framebuffers_.size(), shadow_framebuffers_.data());
-
-        // Generate the textures for the shadow maps.
-        shadow_textures_.resize(count, 0);
-        glGenTextures(shadow_textures_.size(), shadow_textures_.data());
-
         for (std::size_t i = 0; i < shadow_framebuffers_.size(); ++i) {
-            // Allocate storage for the shadow map.
-            glBindTexture(GL_TEXTURE_2D, shadow_textures_[i]);
-
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-
-            glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT32F, size.x, size.y);
-
             // Bind the depth texture to the frame buffer
             glBindFramebuffer(GL_DRAW_FRAMEBUFFER, shadow_framebuffers_[i]);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadow_textures_[i], 0);
+            glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, shadow_array_texture_, 0, i);
         }
     }
 
     void renderer::bind_for_shadow_read()
     {
-        for (std::size_t i = 0; i < shadow_textures_.size(); ++i) {
-            glActiveTexture(geometry_buffer::SHADOW_MAP0_TEXTURE_UINT + i);
-            glBindTexture(GL_TEXTURE_2D, shadow_textures_[i]);
-        }
+        glActiveTexture(geometry_buffer::SHADOW_MAP_TEXTURE_UINT);
+        glBindTexture(GL_TEXTURE_2D_ARRAY, shadow_array_texture_);
     }
 
     void renderer::bind_for_shadow_write(unsigned int index)
@@ -305,7 +299,7 @@ namespace opengl {
     void renderer::destroy_shadow_maps()
     {
         glDeleteFramebuffers(shadow_framebuffers_.size(), shadow_framebuffers_.data());
-        glDeleteTextures(shadow_textures_.size(), shadow_textures_.data());
+        glDeleteTextures(1, &shadow_array_texture_);
     }
 
     void renderer::setup_view_projection(const glm::vec2& viewport_size, float fovy, float z_near, float z_far, const glm::mat4& view_matrix, const glm::mat4& projection_matrix)
@@ -425,7 +419,7 @@ namespace opengl {
             float minZ, maxZ;
             viewport.view_frustum.full_light_projection(light_view, minZ, maxZ);
 
-            for (std::size_t i = 0; i < shadow_textures_.size(); ++i) {
+            for (std::size_t i = 0; i < cascade_frustums_.size(); ++i) {
                 auto light_projection = cascade_frustums_[i].clip_light_projection(light_view, minZ, maxZ);
                 shadow_.light_projection_view_matrix[i] = light_projection * light_view;
                 shadow_.light_frustum_far_plane[i] = cascade_frustums_[i].far_plane();
@@ -458,7 +452,7 @@ namespace opengl {
                 geometry_buffer::NEXT_FREE_TEXTURE_UINT);
 
             directional_light_.color_intensity = glm::vec4(light.color, light.intensity);
-            directional_light_.direction = glm::normalize(light.direction);
+            directional_light_.direction_layer = glm::vec4(glm::normalize(light.direction), 0);
             directional_light_buffer_.set_data(directional_light_);
 
             draw_effect_mesh(directional_light_effect);
@@ -549,7 +543,7 @@ namespace opengl {
 
             spot_light_.color_intensity = glm::vec4(light.color, light.intensity);
             spot_light_.position_cutoff = glm::vec4(txform.position, std::cos(light.cutoff));
-            spot_light_.direction = light.direction;
+            spot_light_.direction_layer = glm::vec4(glm::normalize(light.direction), 0);
             spot_light_buffer_.set_data(spot_light_);
 
             draw_effect_mesh(spot_light_effect);

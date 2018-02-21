@@ -3,29 +3,8 @@
 #include <uniforms.glsl>
 #include <vertex.glsl>
 
-layout (std140, binding = 3) uniform directional_light_block {
-    vec4 color_intensity;
-    vec3 direction;
-};
-
-// per-instance attributes.
-// layout(location = 4) in vec4 color_intensity;
-// layout(location = 5) in vec3 direction;
-
-layout(location = 5) out directional_light
-{
-    vec3 color;
-    float intensity;
-    vec3 direction;
-}
-out_light;
-
 void main()
 {
-    out_light.color = color_intensity.rgb;
-    out_light.intensity = color_intensity.a;
-    out_light.direction = direction;
-
     out_vertex.position = vec4(in_position, 1);
     out_vertex.normal = normalize(in_normal);
     out_vertex.tangent = normalize(in_tangent);
