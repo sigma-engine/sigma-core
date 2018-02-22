@@ -44,7 +44,7 @@ float calculate_shadow(sampler2DArrayShadow shadow_map, float layer, vec4 light_
     for (uint i = 0; i < SAMPLES; i++) {
         vec2 Xi = (2 * hammersley(i, SAMPLES) - vec2(1)) * SAMPLE_SPREAD;
         vec2 shadow_coords = ndc_position.xy + Xi * texel_size;
-        shadow += textureLod(shadow_map, vec4(shadow_coords, layer, compare - texel_size.y), 0.0);
+        shadow += texture(shadow_map, vec4(shadow_coords, layer, compare - texel_size.y));
     }
 
     return shadow / SAMPLES;
