@@ -55,12 +55,11 @@ namespace opengl {
         GLuint gbuffer_diffuse_texture_;
         GLuint gbuffer_normal_texture_;
         GLuint gbuffer_depth_stencil_texture_;
-        GLuint gbuffer_input_image_;
-        GLuint gbuffer_output_image_;
-        std::vector<GLuint> gbuffer_accumulation_textures_;
+
+        GLuint accumulation_texture_;
+        GLuint accumulation_fbo_;
 
         glm::ivec2 shadow_map_size_;
-
         GLuint shadow_array_texture_;
         std::vector<GLuint> shadow_framebuffers_;
         std::vector<frustum> cascade_frustums_;
@@ -107,8 +106,6 @@ namespace opengl {
         void destroy_shadow_maps();
 
         void create_geometry_buffer(const glm::ivec2& size);
-
-        void geometry_swap_input_image();
 
         void bind_for_geometry_read();
 

@@ -149,10 +149,14 @@ namespace opengl {
         // vignette_effect_tech->bind(textures_, cubemaps_, vignette_effect, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
         // STATIC_MESH_PTR(static_meshes_, vignette_effect->mesh)->render_all();
 
-        geometry_swap_input_image();
         bind_for_geometry_read();
 
+        glActiveTexture(geometry_buffer::INPUT_IMAGE_TEXTURE_UINT);
+        glBindTexture(GL_TEXTURE_2D, accumulation_texture_);
+
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, default_fbo_);
+        glViewport(0, 0, size_.x, size_.y);
+
         glClearColor(0, 0, 0, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -169,6 +173,8 @@ namespace opengl {
         size_ = size;
 
         // TODO filp roughness and metalnes.
+        // Create geomerty framebuffer.
+
         // Generate diffuse and roughness texture.
         glGenTextures(1, &gbuffer_diffuse_texture_);
         glBindTexture(GL_TEXTURE_2D, gbuffer_diffuse_texture_);
@@ -184,36 +190,45 @@ namespace opengl {
         glBindTexture(GL_TEXTURE_2D, gbuffer_depth_stencil_texture_);
         glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH32F_STENCIL8, size_.x, size_.y);
 
-        // Generate accumulation textures.
-        gbuffer_accumulation_textures_.resize(2, 0);
-        glGenTextures(gbuffer_accumulation_textures_.size(), gbuffer_accumulation_textures_.data());
-        for (auto accumulation_texture : gbuffer_accumulation_textures_) {
-            glBindTexture(GL_TEXTURE_2D, accumulation_texture);
-            glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB16F, size_.x, size_.y);
-        }
-
-        // Generate the framebuffer.
+        // Create the framebufer.
         glGenFramebuffers(1, &gbuffer_fbo_);
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, gbuffer_fbo_);
 
-        // Attach the images to the framebuffer.
+        // Attach the textures to the framebuffer.
         glFramebufferTexture2D(GL_FRAMEBUFFER, geometry_buffer::DIFFUSE_ROUGHNESS_ATTACHMENT, GL_TEXTURE_2D, gbuffer_diffuse_texture_, 0);
         glFramebufferTexture2D(GL_FRAMEBUFFER, geometry_buffer::NORMAL_METALNESS_ATTACHMENT, GL_TEXTURE_2D, gbuffer_normal_texture_, 0);
-        for (std::size_t i = 0; i < gbuffer_accumulation_textures_.size(); ++i) {
-            glFramebufferTexture2D(GL_FRAMEBUFFER, geometry_buffer::IMAGE_ATTACHMENTS[i], GL_TEXTURE_2D, gbuffer_accumulation_textures_[i], 0);
-        }
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, gbuffer_depth_stencil_texture_, 0);
 
-        gbuffer_input_image_ = 0;
-        gbuffer_output_image_ = 1;
-    }
+        // Set framebuffer draw buffers.
+        {
+            GLenum attachments[] = {
+                geometry_buffer::DIFFUSE_ROUGHNESS_ATTACHMENT,
+                geometry_buffer::NORMAL_METALNESS_ATTACHMENT
+            };
+            glDrawBuffers(2, attachments);
+        }
 
-    void renderer::geometry_swap_input_image()
-    {
-        gbuffer_output_image_++;
-        gbuffer_output_image_ %= 2;
-        gbuffer_input_image_++;
-        gbuffer_input_image_ %= 2;
+        // Create accumulation framebufer.
+
+        // Generate accumulation texture.
+        glGenTextures(1, &accumulation_texture_);
+        glBindTexture(GL_TEXTURE_2D, accumulation_texture_);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB16F, size_.x, size_.y);
+
+        // Create the framebufer.
+        glGenFramebuffers(1, &accumulation_fbo_);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, accumulation_fbo_);
+
+        // Attach accumulation texture to the framebuffer.
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, accumulation_texture_, 0);
+
+        // Set framebuffer draw buffers.
+        {
+            GLenum attachments[] = {
+                GL_COLOR_ATTACHMENT0
+            };
+            glDrawBuffers(1, attachments);
+        }
     }
 
     void renderer::bind_for_geometry_read()
@@ -227,32 +242,22 @@ namespace opengl {
         glActiveTexture(geometry_buffer::DEPTH_STENCIL_TEXTURE_UINT);
         glBindTexture(GL_TEXTURE_2D, gbuffer_depth_stencil_texture_);
 
-        glActiveTexture(geometry_buffer::INPUT_IMAGE_TEXTURE_UINT);
-        glBindTexture(GL_TEXTURE_2D, gbuffer_accumulation_textures_[gbuffer_input_image_]);
-
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, gbuffer_fbo_);
-        GLenum attachments[] = { geometry_buffer::IMAGE_ATTACHMENTS[gbuffer_output_image_] };
-        glDrawBuffers(1, attachments);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, accumulation_fbo_);
         glViewport(0, 0, size_.x, size_.y);
     }
 
     void renderer::bind_for_geometry_write()
     {
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, gbuffer_fbo_);
-        GLenum attachments[] = { geometry_buffer::DIFFUSE_ROUGHNESS_ATTACHMENT,
-            geometry_buffer::NORMAL_METALNESS_ATTACHMENT,
-            geometry_buffer::IMAGE_ATTACHMENTS[gbuffer_output_image_] };
-        glDrawBuffers(3, attachments);
         glViewport(0, 0, size_.x, size_.y);
-
-        glActiveTexture(geometry_buffer::INPUT_IMAGE_TEXTURE_UINT);
-        glBindTexture(GL_TEXTURE_2D, gbuffer_accumulation_textures_[gbuffer_input_image_]);
     }
 
     void renderer::destroy_geometry_buffer()
     {
+        glDeleteFramebuffers(1, &accumulation_fbo_);
+        glDeleteTextures(1, &accumulation_fbo_);
+
         glDeleteFramebuffers(1, &gbuffer_fbo_);
-        glDeleteTextures(gbuffer_accumulation_textures_.size(), gbuffer_accumulation_textures_.data());
         glDeleteTextures(1, &gbuffer_depth_stencil_texture_);
         glDeleteTextures(1, &gbuffer_normal_texture_);
         glDeleteTextures(1, &gbuffer_diffuse_texture_);
@@ -346,7 +351,11 @@ namespace opengl {
 
     void renderer::light_pass(const graphics::view_port& viewport, const renderer::world_view_type& world)
     {
-        // glClear(GL_COLOR_BUFFER_BIT);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, accumulation_fbo_);
+        glViewport(0, 0, size_.x, size_.y);
+
+        glClearColor(0, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
 
         // TODO:perf look into passing all analytical lights(directional,point,spot) into one shader
         // instead of rendering the geometry for each. This not only would reduce the number of polygons
@@ -395,6 +404,9 @@ namespace opengl {
         glBlendEquation(GL_FUNC_ADD);
         glBlendFunc(GL_ONE, GL_ONE);
         glEnable(GL_BLEND);
+
+        glDisable(GL_DEPTH_TEST);
+        glDepthMask(GL_FALSE);
     }
 
     void renderer::directional_light_pass(const graphics::view_port& viewport, const renderer::world_view_type& world)
@@ -482,9 +494,6 @@ namespace opengl {
 
         analytical_light_setup();
 
-        glDepthFunc(GL_GREATER);
-        glEnable(GL_DEPTH_TEST);
-
         glCullFace(GL_FRONT);
         glEnable(GL_CULL_FACE);
 
@@ -532,7 +541,6 @@ namespace opengl {
 
             analytical_light_setup();
 
-            glDisable(GL_DEPTH_TEST);
             glDisable(GL_CULL_FACE);
 
             auto spot_light_effect = effects_.acquire(settings_.spot_light_effect);
