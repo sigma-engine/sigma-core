@@ -89,83 +89,346 @@ namespace opengl {
 
     void renderer::render(const graphics::view_port& viewport, const graphics::renderer::world_view_type& world)
     {
-        setup_view_projection(size_,
-            viewport.view_frustum.fovy(),
-            viewport.view_frustum.z_near(),
-            viewport.view_frustum.z_far(),
-            viewport.view_frustum.view(),
-            viewport.view_frustum.projection());
+        int pass_id = 0;
+        int viewport_ind = 0;
+        int shadow_map_ind = 0;
+        int spot_light_ind = 0;
 
-        // Opaque objects
-        geometry_pass(viewport, world, false);
-        light_pass(viewport, world);
+        // Create the geometry pass
+        if (pass_id >= passes_.size())
+            passes_.resize(pass_id + 1);
+        passes_[pass_id].order = GEOMETRY_PASS_ORDER;
+        passes_[pass_id].framebuffer = gbuffer_fbo_;
+        passes_[pass_id].override_program = 0;
 
-        // TODO Transparent objects
+        // Create the primary viewport
+        if (viewport_ind >= viewports_.size())
+            viewports_.resize(viewport_ind + 1);
+        viewports_[viewport_ind].projection_matrix = viewport.view_frustum.projection();
+        viewports_[viewport_ind].inverse_projection_matrix = viewport.view_frustum.inverse_projection();
+        viewports_[viewport_ind].view_matrix = viewport.view_frustum.view();
+        viewports_[viewport_ind].inverse_view_matrix = viewport.view_frustum.inverse_view();
+        viewports_[viewport_ind].projection_view_matrix = viewport.view_frustum.projection_view();
+        viewports_[viewport_ind].inverse_projection_view_matrix = viewport.view_frustum.inverse_projection_view();
+        viewports_[viewport_ind].view_port_size = viewport.size;
+        viewports_[viewport_ind].eye_position = viewport.view_frustum.inverse_view() * glm::vec4(0, 0, 0, 1);
+        viewports_[viewport_ind].fovy = viewport.view_frustum.fovy();
+        viewports_[viewport_ind].z_near = viewport.view_frustum.z_near();
+        viewports_[viewport_ind].z_far = viewport.view_frustum.z_far();
 
-        glDisable(GL_BLEND);
+        // Add the geometry pass to primary viewport
+        if (viewport_ind >= viewport_passes_.size())
+            viewport_passes_.resize(viewport_ind + 1);
+        viewport_passes_[viewport_ind] = pass_id;
 
-        glDepthMask(GL_TRUE);
-        glDepthFunc(GL_LESS);
-        glEnable(GL_DEPTH_TEST);
+        // Move to next viewport
+        viewport_ind++;
+        // Move to next pass
+        pass_id++;
 
-        glCullFace(GL_BACK);
-        glEnable(GL_CULL_FACE);
+        auto shadow_technique = techniques_.acquire(settings_.shadow_technique);
+        world.for_each<transform, graphics::spot_light>([&](const auto& e, const auto& txform, const auto& spot) {
+            if (shadow_map_ind < shadow_framebuffers_.size()) {
+                // Create the shadow map pass
+                if (pass_id >= passes_.size())
+                    passes_.resize(pass_id + 1);
+                passes_[pass_id].framebuffer = shadow_framebuffers_[shadow_map_ind];
+                passes_[pass_id].order = SHADOW_PASS_ORDER;
+                passes_[pass_id].override_program = shadow_technique.second;
 
-        if (settings_.enable_debug_rendering) {
-            debug_renderer_.mvpMatrix = viewport.view_frustum.projection_view();
-            for (const auto& f : debug_frustums_)
-                dd::frustum(glm::value_ptr(f.second), glm::value_ptr(f.first));
+                // Create the shadow viewport
+                if (viewport_ind >= viewports_.size())
+                    viewports_.resize(viewport_ind + 1);
+                viewports_[viewport_ind].projection_matrix = spot.shadow_frustum.projection();
+                viewports_[viewport_ind].inverse_projection_matrix = spot.shadow_frustum.inverse_projection();
+                viewports_[viewport_ind].view_matrix = spot.shadow_frustum.view();
+                viewports_[viewport_ind].inverse_view_matrix = spot.shadow_frustum.inverse_view();
+                viewports_[viewport_ind].projection_view_matrix = spot.shadow_frustum.projection_view();
+                viewports_[viewport_ind].inverse_projection_view_matrix = spot.shadow_frustum.inverse_projection_view();
+                viewports_[viewport_ind].view_port_size = shadow_map_size_;
+                viewports_[viewport_ind].eye_position = glm::vec4(txform.position, 1);
+                viewports_[viewport_ind].fovy = spot.shadow_frustum.fovy();
+                viewports_[viewport_ind].z_near = spot.shadow_frustum.z_near();
+                viewports_[viewport_ind].z_far = spot.shadow_frustum.z_far();
 
-            glm::vec3 debug_color{ 0, 1, 1 };
-            world.for_each<transform, graphics::point_light>([&](const auto& e, const auto& txform, const auto& point) {
-                dd::sphere(glm::value_ptr(txform.position), glm::value_ptr(debug_color), txform.scale.x);
-            });
+                // Add the shadow pass to shadow viewport
+                if (viewport_ind >= viewport_passes_.size())
+                    viewport_passes_.resize(viewport_ind + 1);
+                viewport_passes_[viewport_ind] = pass_id;
 
-            world.for_each<transform, graphics::spot_light>([&](const auto& e, const auto& txform, const auto& spot) {
-                float scale = 10;
-                glm::vec3 dir = -scale * spot.direction;
-                dd::cone(glm::value_ptr(txform.position),
-                    glm::value_ptr(dir),
-                    glm::value_ptr(debug_color), scale * std::tan(spot.cutoff), 0);
-            });
+                // spot_light_blocks_[spot_light_ind].color_intensity = glm::vec4(spot.color, spot.intensity);
+                // spot_light_blocks_[spot_light_ind].position_cutoff = glm::vec4(txform.position, std::cos(spot.cutoff));
+                // spot_light_blocks_[spot_light_ind].direction_layer = glm::vec4(glm::normalize(spot.direction), shadow_map_ind);
 
-            // world.for_each<transform, graphics::static_mesh_instance>([&](entity e, const transform& txform, const graphics::static_mesh_instance& mesh_instance) {
-            //     auto mesh = context_.get_cache<graphics::static_mesh>().acquire(mesh_instance.mesh);
-            //     dd::sphere(glm::value_ptr(txform.position), glm::value_ptr(debug_color), mesh->radius);
-            // });
+                // Move to next viewport
+                viewport_ind++;
+                // Move to next pass
+                pass_id++;
+                // Move to next shadow map
+                shadow_map_ind++;
 
-            dd::flush(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time_).count());
+                // spot_light_ind++;
+            }
+        });
+
+        world.for_each<transform, graphics::static_mesh_instance>([&](entity e, const transform& txform, const graphics::static_mesh_instance& mesh_instance) {
+            auto[cpu_mesh, gpu_mesh] = static_meshes_.acquire(mesh_instance.mesh);
+            for (int i = 0; i < viewport_ind; ++i) {
+                auto model_view_matrix = viewports_[i].view_matrix * txform.matrix;
+                auto normal_matrix = glm::transpose(glm::inverse(glm::mat3(txform.matrix)));
+
+                if (passes_[viewport_passes_[i]].override_program) {
+                    token tok;
+                    tok.order = passes_[viewport_passes_[i]].order;
+                    tok.framebuffer = passes_[viewport_passes_[i]].framebuffer;
+                    tok.viewport = i;
+
+                    tok.program = passes_[viewport_passes_[i]].override_program;
+                    tok.buffer = gpu_mesh;
+                    tok.offset = 0;
+                    tok.count = 3 * cpu_mesh->triangles.size();
+                    tok.matrices.model_matrix = txform.matrix;
+                    tok.matrices.model_view_matrix = model_view_matrix;
+                    tok.matrices.normal_matrix = normal_matrix;
+                    tok.material = nullptr;
+
+                    tokens_.push_back(std::move(tok));
+                } else {
+                    for (unsigned int j = 0; j < cpu_mesh->material_slots.size(); ++j) {
+                        auto material = materials_.acquire(cpu_mesh->materials[j]);
+                        auto[cpu_technique, gpu_program] = techniques_.acquire(material->technique_id);
+
+                        token tok;
+                        tok.order = passes_[viewport_passes_[i]].order;
+                        tok.framebuffer = passes_[viewport_passes_[i]].framebuffer;
+                        tok.viewport = i;
+
+                        tok.program = gpu_program;
+                        tok.buffer = gpu_mesh;
+                        tok.offset = 3 * cpu_mesh->material_slots[j].first;
+                        tok.count = 3 * cpu_mesh->material_slots[j].second;
+                        tok.matrices.model_matrix = txform.matrix;
+                        tok.matrices.model_view_matrix = model_view_matrix;
+                        tok.matrices.normal_matrix = normal_matrix;
+                        tok.material = material;
+
+                        tokens_.push_back(std::move(tok));
+                    }
+                }
+            }
+        });
+
+        std::sort(tokens_.begin(), tokens_.end(), [](const auto& a, const auto& b) {
+            if (a.order == b.order) {
+                if (a.framebuffer == b.framebuffer) {
+                    if (a.viewport == b.viewport) {
+                        if (a.program == b.program) {
+                            // TODO this sort order seams weird but it seams to run faster
+                            if (a.buffer.batch_index == b.buffer.batch_index)
+                                return a.material < b.material;
+
+                            return a.buffer.batch_index < b.buffer.batch_index;
+                        }
+
+                        return a.program < b.program;
+                    }
+                    return a.viewport < b.viewport;
+                }
+
+                return a.framebuffer < b.framebuffer;
+            }
+            return a.order < b.order;
+        });
+
+        GLuint current_framebuffer = -1;
+        GLuint current_program = -1;
+        graphics::material* current_material = nullptr;
+        int current_viewport = -1;
+        std::size_t current_batch = -1;
+
+        for (std::size_t i = 0; i < tokens_.size(); ++i) {
+            if (current_framebuffer != tokens_[i].framebuffer) {
+                framebuffer_read_bind(current_framebuffer);
+                current_framebuffer = tokens_[i].framebuffer;
+                framebuffer_write_bind(current_framebuffer);
+            }
+
+            if (current_viewport != tokens_[i].viewport) {
+                current_viewport = tokens_[i].viewport;
+                standard_.projection_matrix = viewports_[current_viewport].projection_matrix;
+                standard_.inverse_projection_matrix = viewports_[current_viewport].inverse_projection_matrix;
+                standard_.view_matrix = viewports_[current_viewport].view_matrix;
+                standard_.inverse_view_matrix = viewports_[current_viewport].inverse_view_matrix;
+                standard_.projection_view_matrix = viewports_[current_viewport].projection_view_matrix;
+                standard_.inverse_projection_view_matrix = viewports_[current_viewport].inverse_projection_view_matrix;
+                standard_.view_port_size = viewports_[current_viewport].view_port_size;
+                standard_.eye_position = viewports_[current_viewport].eye_position;
+                standard_.time = 0;
+                standard_.fovy = viewports_[current_viewport].fovy;
+                standard_.z_near = viewports_[current_viewport].z_near;
+                standard_.z_far = viewports_[current_viewport].z_far;
+                standard_uniform_buffer_.set_data(standard_);
+            }
+
+            if (current_program != tokens_[i].program) {
+                current_program = tokens_[i].program;
+                glUseProgram(current_program);
+            }
+
+            if (current_material != tokens_[i].material) {
+                current_material = tokens_[i].material;
+                if (current_material)
+                    bind_technique(current_material->technique_id,
+                        current_material,
+                        geometry_buffer::NEXT_FREE_TEXTURE_UINT);
+            }
+
+            if (current_batch != tokens_[i].buffer.batch_index) {
+                current_batch = tokens_[i].buffer.batch_index;
+                static_meshes_.bind_batch(current_batch);
+            }
+
+            matrices_buffer_.set_data(tokens_[i].matrices);
+            glDrawElementsBaseVertex(GL_TRIANGLES,
+                tokens_[i].count,
+                GL_UNSIGNED_INT,
+                (const void*)(sizeof(unsigned int) * (tokens_[i].buffer.base_index + tokens_[i].offset)),
+                tokens_[i].buffer.base_vertex);
         }
 
-        // Render final effects
-        glDisable(GL_BLEND);
-        glDisable(GL_DEPTH_TEST);
-        glDisable(GL_CULL_FACE);
+        tokens_.clear();
 
-        // gbuffer_.swap_input_image();
-        // gbuffer_.bind_for_geometry_read();
-        // auto vignette_effect = effects_.acquire(settings_.vignette_effect);
-        // auto vignette_effect_tech = TECHNIQUE_PTR(techniques_, vignette_effect->technique_id);
-        // vignette_effect_tech->bind(textures_, cubemaps_, vignette_effect, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
-        // STATIC_MESH_PTR(static_meshes_, vignette_effect->mesh)->render_all();
+        // setup_view_projection(size_,
+        //     viewport.view_frustum.fovy(),
+        //     viewport.view_frustum.z_near(),
+        //     viewport.view_frustum.z_far(),
+        //     viewport.view_frustum.view(),
+        //     viewport.view_frustum.projection());
+        //
+        // // Opaque objects
+        // geometry_pass(viewport, world, false);
+        // light_pass(viewport, world);
+        //
+        // // TODO Transparent objects
+        //
+        // glDisable(GL_BLEND);
+        //
+        // glDepthMask(GL_TRUE);
+        // glDepthFunc(GL_LESS);
+        // glEnable(GL_DEPTH_TEST);
+        //
+        // glCullFace(GL_BACK);
+        // glEnable(GL_CULL_FACE);
+        //
+        // if (settings_.enable_debug_rendering) {
+        //     debug_renderer_.mvpMatrix = viewport.view_frustum.projection_view();
+        //     for (const auto& f : debug_frustums_)
+        //         dd::frustum(glm::value_ptr(f.second), glm::value_ptr(f.first));
+        //
+        //     glm::vec3 debug_color{ 0, 1, 1 };
+        //     world.for_each<transform, graphics::point_light>([&](const auto& e, const auto& txform, const auto& point) {
+        //         dd::sphere(glm::value_ptr(txform.position), glm::value_ptr(debug_color), txform.scale.x);
+        //     });
+        //
+        //     world.for_each<transform, graphics::spot_light>([&](const auto& e, const auto& txform, const auto& spot) {
+        //         float scale = 10;
+        //         glm::vec3 dir = -scale * spot.direction;
+        //         dd::cone(glm::value_ptr(txform.position),
+        //             glm::value_ptr(dir),
+        //             glm::value_ptr(debug_color), scale * std::tan(spot.cutoff), 0);
+        //     });
+        //
+        //     // world.for_each<transform, graphics::static_mesh_instance>([&](entity e, const transform& txform, const graphics::static_mesh_instance& mesh_instance) {
+        //     //     auto mesh = context_.get_cache<graphics::static_mesh>().acquire(mesh_instance.mesh);
+        //     //     dd::sphere(glm::value_ptr(txform.position), glm::value_ptr(debug_color), mesh->radius);
+        //     // });
+        //
+        //     dd::flush(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time_).count());
+        // }
+        //
+        // // Render final effects
+        // glDisable(GL_BLEND);
+        // glDisable(GL_DEPTH_TEST);
+        // glDisable(GL_CULL_FACE);
+        //
+        // // gbuffer_.swap_input_image();
+        // // gbuffer_.bind_for_geometry_read();
+        // // auto vignette_effect = effects_.acquire(settings_.vignette_effect);
+        // // auto vignette_effect_tech = TECHNIQUE_PTR(techniques_, vignette_effect->technique_id);
+        // // vignette_effect_tech->bind(textures_, cubemaps_, vignette_effect, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
+        // // STATIC_MESH_PTR(static_meshes_, vignette_effect->mesh)->render_all();
+        //
+        // bind_for_geometry_read();
+        //
+        // glActiveTexture(geometry_buffer::INPUT_IMAGE_TEXTURE_UINT);
+        // glBindTexture(GL_TEXTURE_2D, accumulation_texture_);
+        //
+        // glBindFramebuffer(GL_DRAW_FRAMEBUFFER, default_fbo_);
+        // glViewport(0, 0, size_.x, size_.y);
+        //
+        // glClearColor(0, 0, 0, 1);
+        // glClear(GL_COLOR_BUFFER_BIT);
+        //
+        // auto gamma_conversion_effect = effects_.acquire(settings_.gamma_conversion);
+        // auto [cpu_gamma_conversion_effect, gpu_gamma_conversion_program] = bind_technique(
+        //     gamma_conversion_effect->technique_id,
+        //     gamma_conversion_effect,
+        //     geometry_buffer::NEXT_FREE_TEXTURE_UINT);
+        // draw_effect_mesh(gamma_conversion_effect);
+    }
 
-        bind_for_geometry_read();
+    void renderer::framebuffer_read_bind(GLuint framebuffer)
+    {
+        if (framebuffer == gbuffer_fbo_) {
+            glActiveTexture(geometry_buffer::DIFFUSE_ROUGHNESS_TEXTURE_UINT);
+            glBindTexture(GL_TEXTURE_2D, gbuffer_diffuse_texture_);
 
-        glActiveTexture(geometry_buffer::INPUT_IMAGE_TEXTURE_UINT);
-        glBindTexture(GL_TEXTURE_2D, accumulation_texture_);
+            glActiveTexture(geometry_buffer::NORMAL_METALNESS_TEXTURE_UINT);
+            glBindTexture(GL_TEXTURE_2D, gbuffer_normal_texture_);
 
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, default_fbo_);
-        glViewport(0, 0, size_.x, size_.y);
+            glActiveTexture(geometry_buffer::DEPTH_STENCIL_TEXTURE_UINT);
+            glBindTexture(GL_TEXTURE_2D, gbuffer_depth_stencil_texture_);
+        } else if (framebuffer == accumulation_fbo_) {
+            // TODO do suff
+        } else {
+            glActiveTexture(geometry_buffer::SHADOW_MAP_TEXTURE_UINT);
+            glBindTexture(GL_TEXTURE_2D_ARRAY, shadow_array_texture_);
+        }
+    }
 
-        glClearColor(0, 0, 0, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
+    void renderer::framebuffer_write_bind(GLuint framebuffer)
+    {
+        if (framebuffer == gbuffer_fbo_) {
+            glDepthMask(GL_TRUE);
+            glDepthFunc(GL_LESS);
+            glEnable(GL_DEPTH_TEST);
 
-        auto gamma_conversion_effect = effects_.acquire(settings_.gamma_conversion);
-        auto [cpu_gamma_conversion_effect, gpu_gamma_conversion_program] = bind_technique(
-            gamma_conversion_effect->technique_id,
-            gamma_conversion_effect,
-            geometry_buffer::NEXT_FREE_TEXTURE_UINT);
-        draw_effect_mesh(gamma_conversion_effect);
+            glCullFace(GL_BACK);
+            glEnable(GL_CULL_FACE);
+
+            glDisable(GL_BLEND);
+
+            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, gbuffer_fbo_);
+            glViewport(0, 0, size_.x, size_.y);
+
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        } else if (framebuffer == accumulation_fbo_) {
+            // TODO do suff
+        } else {
+            glDepthMask(GL_TRUE);
+            glDepthFunc(GL_LESS);
+            glEnable(GL_DEPTH_TEST);
+
+            glCullFace(GL_BACK);
+            glEnable(GL_CULL_FACE);
+
+            glDisable(GL_BLEND);
+
+            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer);
+            glViewport(0, 0, shadow_map_size_.x, shadow_map_size_.y);
+
+            glClear(GL_DEPTH_BUFFER_BIT);
+        }
     }
 
     void renderer::create_geometry_buffer(const glm::ivec2& size)
@@ -392,7 +655,7 @@ namespace opengl {
         glDisable(GL_CULL_FACE);
 
         auto image_based_light_effect = effects_.acquire(settings_.image_based_light_effect);
-        auto [cpu_image_based_light_effect, gpu_image_based_program] = bind_technique(
+        auto[cpu_image_based_light_effect, gpu_image_based_program] = bind_technique(
             image_based_light_effect->technique_id,
             image_based_light_effect,
             geometry_buffer::NEXT_FREE_TEXTURE_UINT);
@@ -458,7 +721,7 @@ namespace opengl {
             glDisable(GL_CULL_FACE);
 
             auto directional_light_effect = effects_.acquire(settings_.directional_light_effect);
-            auto [cpu_directional_light_effect, gpu_directional_program] = bind_technique(
+            auto[cpu_directional_light_effect, gpu_directional_program] = bind_technique(
                 directional_light_effect->technique_id,
                 directional_light_effect,
                 geometry_buffer::NEXT_FREE_TEXTURE_UINT);
@@ -498,7 +761,7 @@ namespace opengl {
         glEnable(GL_CULL_FACE);
 
         auto point_light_effect = effects_.acquire(settings_.point_light_effect);
-        auto [cpu_point_tech, gpu_point_program] = bind_technique(
+        auto[cpu_point_tech, gpu_point_program] = bind_technique(
             point_light_effect->technique_id,
             point_light_effect,
             geometry_buffer::NEXT_FREE_TEXTURE_UINT);
@@ -544,7 +807,7 @@ namespace opengl {
             glDisable(GL_CULL_FACE);
 
             auto spot_light_effect = effects_.acquire(settings_.spot_light_effect);
-            auto [cpu_spot_effect, gpu_spot_program] = bind_technique(
+            auto[cpu_spot_effect, gpu_spot_program] = bind_technique(
                 spot_light_effect->technique_id,
                 spot_light_effect,
                 geometry_buffer::NEXT_FREE_TEXTURE_UINT);
@@ -575,7 +838,7 @@ namespace opengl {
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         if (cast_shadows) {
-            auto [cpu_technique, gpu_program] = techniques_.acquire(settings_.shadow_technique);
+            auto[cpu_technique, gpu_program] = techniques_.acquire(settings_.shadow_technique);
             glUseProgram(gpu_program);
 
             fill_render_token_stream(view_frustum, world, shadow_map_token_stream_, gpu_program);
@@ -593,7 +856,7 @@ namespace opengl {
     {
         auto view_matrix = view.view();
         world.for_each<transform, graphics::static_mesh_instance>([&](const entity& e, const transform& txform, const graphics::static_mesh_instance& mesh_instance) {
-            auto [cpu_mesh, gpu_mesh] = static_meshes_.acquire(mesh_instance.mesh);
+            auto[cpu_mesh, gpu_mesh] = static_meshes_.acquire(mesh_instance.mesh);
             if (view.contains_sphere(txform.position, cpu_mesh->radius)) {
                 auto model_view_matrix = view_matrix * txform.matrix;
                 auto normal_matrix = glm::transpose(glm::inverse(glm::mat3(txform.matrix)));
@@ -612,7 +875,7 @@ namespace opengl {
                 } else {
                     for (unsigned int i = 0; i < cpu_mesh->material_slots.size(); ++i) {
                         auto material = materials_.acquire(cpu_mesh->materials[i]);
-                        auto [cpu_technique, gpu_program] = techniques_.acquire(material->technique_id);
+                        auto[cpu_technique, gpu_program] = techniques_.acquire(material->technique_id);
 
                         render_token tok;
                         tok.program = gpu_program;
@@ -685,31 +948,31 @@ namespace opengl {
         const graphics::technique_uniform_data* data,
         GLenum first_texture_unit)
     {
-        auto [cpu_technique, gpu_program] = techniques_.acquire(technique);
+        auto[cpu_technique, gpu_program] = techniques_.acquire(technique);
         glUseProgram(gpu_program);
 
-        for (const auto& [name, value] : data->floats) {
+        for (const auto & [ name, value ] : data->floats) {
             // TODO store these or use uniform buffers
             GLint loc = glGetUniformLocation(gpu_program, name.c_str());
             if (loc != -1)
                 glUniform1f(loc, value);
         }
 
-        for (const auto& [name, value] : data->vec2s) {
+        for (const auto & [ name, value ] : data->vec2s) {
             // TODO store these or use uniform buffers
             GLint loc = glGetUniformLocation(gpu_program, name.c_str());
             if (loc != -1)
                 glUniform2fv(loc, 1, glm::value_ptr(value));
         }
 
-        for (const auto& [name, value] : data->vec3s) {
+        for (const auto & [ name, value ] : data->vec3s) {
             // TODO store these or use uniform buffers
             GLint loc = glGetUniformLocation(gpu_program, name.c_str());
             if (loc != -1)
                 glUniform3fv(loc, 1, glm::value_ptr(value));
         }
 
-        for (const auto& [name, value] : data->vec4s) {
+        for (const auto & [ name, value ] : data->vec4s) {
             // TODO store these or use uniform buffers
             GLint loc = glGetUniformLocation(gpu_program, name.c_str());
             if (loc != -1)
@@ -719,7 +982,7 @@ namespace opengl {
         auto texture_unit = first_texture_unit;
         auto unit_number = GLenum(first_texture_unit) - GL_TEXTURE0;
 
-        for (const auto& [name, value] : data->textures) {
+        for (const auto & [ name, value ] : data->textures) {
             // TODO store these or use uniform buffers
             GLint loc = glGetUniformLocation(gpu_program, name.c_str());
             if (loc != -1) {
@@ -731,7 +994,7 @@ namespace opengl {
             }
         }
 
-        for (const auto& [name, value] : data->cubemaps) {
+        for (const auto & [ name, value ] : data->cubemaps) {
             // TODO store these or use uniform buffers
             GLint loc = glGetUniformLocation(gpu_program, name.c_str());
             if (loc != -1) {
@@ -748,7 +1011,7 @@ namespace opengl {
 
     void renderer::draw_effect_mesh(graphics::post_process_effect* effect)
     {
-        auto [cpu_mesh, gpu_mesh] = static_meshes_.acquire(effect->mesh);
+        auto[cpu_mesh, gpu_mesh] = static_meshes_.acquire(effect->mesh);
 
         static_meshes_.bind_batch(gpu_mesh.batch_index);
         glDrawElementsBaseVertex(GL_TRIANGLES,

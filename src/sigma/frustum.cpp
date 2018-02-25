@@ -94,15 +94,19 @@ void frustum::set_projection_view(float fovy, float aspect, float z_near, float 
     rebuild_();
 }
 
-glm::mat4 frustum::inverse_projection_view() const
+glm::mat4 frustum::inverse_view() const
 {
-    return inverse_projection_view_;
+    return inverse_view_;
 }
 
 glm::mat4 frustum::inverse_projection() const
 {
-    // TODO pre compute this
-    return glm::inverse(projection_);
+    return inverse_projection_;
+}
+
+glm::mat4 frustum::inverse_projection_view() const
+{
+    return inverse_projection_view_;
 }
 
 glm::vec4 frustum::far_plane() const
@@ -168,6 +172,8 @@ glm::mat4 frustum::light_projection_(const glm::mat4& light_projection_view_matr
 void frustum::rebuild_()
 {
     projection_view_ = projection_ * view_;
+    inverse_view_ = glm::inverse(view_);
+    inverse_projection_ = glm::inverse(projection_);
     inverse_projection_view_ = glm::inverse(projection_view_);
 
     corners_[0] = { -1, -1, -1, 1 };

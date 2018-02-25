@@ -29,6 +29,39 @@ namespace opengl {
         instance_matrices matrices;
     };
 
+    struct pass {
+        int order;
+        GLuint framebuffer;
+        GLuint override_program;
+    };
+
+    struct viewport_block {
+        glm::mat4 projection_matrix;
+        glm::mat4 inverse_projection_matrix;
+        glm::mat4 view_matrix;
+        glm::mat4 inverse_view_matrix;
+        glm::mat4 projection_view_matrix;
+        glm::mat4 inverse_projection_view_matrix;
+        glm::vec2 view_port_size;
+        glm::vec4 eye_position;
+        float fovy;
+        float z_near;
+        float z_far;
+    };
+
+    struct token {
+        int order;
+        int framebuffer;
+        int viewport;
+
+        std::size_t program;
+        static_mesh_manager::mesh_buffer buffer;
+        std::size_t offset;
+        std::size_t count;
+        graphics::material* material;
+        instance_matrices matrices;
+    };
+
     void calculate_cascade_frustums(const frustum& view_frustum, std::vector<frustum>& cascade_frustums);
 
     class SIGMA_API renderer : public graphics::renderer {
@@ -83,6 +116,15 @@ namespace opengl {
         spot_light_block spot_light_;
         uniform_buffer<spot_light_block> spot_light_buffer_;
 
+        static constexpr const int GEOMETRY_PASS_ORDER = 0;
+        static constexpr const int SHADOW_PASS_ORDER = 1;
+        static constexpr const int ACCUMLATION_PASS_ORDER = 2;
+
+        std::vector<pass> passes_;
+        std::vector<viewport_block> viewports_;
+        std::vector<int> viewport_passes_;
+        std::vector<token> tokens_;
+
         opengl::texture_manager textures_;
         opengl::cubemap_manager cubemaps_;
         opengl::shader_manager shaders_;
@@ -96,6 +138,10 @@ namespace opengl {
 
         std::vector<render_token> geometry_pass_token_stream_;
         std::vector<render_token> shadow_map_token_stream_;
+
+        void framebuffer_read_bind(GLuint framebuffer);
+
+        void framebuffer_write_bind(GLuint framebuffer);
 
         void create_shadow_maps(std::size_t count, const glm::ivec2& size);
 
