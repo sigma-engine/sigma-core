@@ -4,7 +4,9 @@
 #include <sigma/config.hpp>
 #include <sigma/resource/resource.hpp>
 
-#include <string>
+#include <boost/serialization/vector.hpp>
+
+#include <vector>
 
 namespace sigma {
 namespace graphics {
@@ -19,13 +21,13 @@ namespace graphics {
 
     struct shader {
         shader_type type;
-        std::string source;
+        std::vector<unsigned char> spirv;
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
         {
             ar& type;
-            ar& source;
+            ar& spirv;
         }
     };
 }

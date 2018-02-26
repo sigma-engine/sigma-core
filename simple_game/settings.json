@@ -3,7 +3,8 @@
         "build_directory": "${CMAKE_BINARY_DIR}",
         "source_directories": [
             "${CMAKE_SOURCE_DIR}/resources",
-            "${CMAKE_CURRENT_SOURCE_DIR}/resources"
+            "${CMAKE_CURRENT_SOURCE_DIR}/resources",
+            "${CMAKE_BINARY_DIR}/resources"
         ]
     },
     "render": {

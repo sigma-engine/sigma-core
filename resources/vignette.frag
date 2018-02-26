@@ -2,10 +2,12 @@
 
 #include <pbr/deffered/post_process_effect.glsl>
 
-uniform float inner_radius;
-uniform float outer_radius;
-uniform float opacity;
-uniform vec3 color;
+layout(binding=10) uniform vignette {
+    float inner_radius;
+    float outer_radius;
+    float opacity;
+    vec3 color;
+};
 
 void main()
 {

@@ -77,7 +77,14 @@ namespace tools {
                             continue;
                         }
 
-                        auto ext = boost::algorithm::to_lower_copy(path.extension().string());
+                        std::string ext;
+                        auto temp_path = path;
+                        while(temp_path.has_extension()) {
+                            ext = temp_path.extension().string() + ext;
+                            temp_path = temp_path.replace_extension();
+                        }
+
+                        ext = boost::algorithm::to_lower_copy(ext);
                         if (boost::filesystem::is_regular_file(path) && loader->supports_filetype(ext)) {
                             try {
                                 loader->load(source_directory, ext, path);
