@@ -21,7 +21,6 @@ find_package(benchmark REQUIRED)
 find_package(Boost 1.65.0 COMPONENTS filesystem program_options serialization log REQUIRED)
 find_package(glm 0.9.8 REQUIRED)
 find_package(GTest 1.8.0 REQUIRED)
-find_package(GTest REQUIRED)
 find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
 find_package(SDL2 REQUIRED)
@@ -30,7 +29,10 @@ find_package(TIFF REQUIRED)
 
 set(SHADERC_THIRD_PARTY_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty" CACHE STRING "")
 add_subdirectory(thirdparty/shaderc EXCLUDE_FROM_ALL)
-add_subdirectory(thirdparty/debug-draw EXCLUDE_FROM_ALL)
+
+add_library(debug-draw INTERFACE)
+target_include_directories(debug-draw INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/debug-draw>)
+
 add_subdirectory(thirdparty/glad EXCLUDE_FROM_ALL)
 add_subdirectory(thirdparty/jsoncpp EXCLUDE_FROM_ALL)
 
@@ -51,6 +53,9 @@ target_include_directories(sigma-core
 )
 
 target_compile_definitions(sigma-core
+    PUBLIC
+    -DGLM_ENABLE_EXPERIMENTAL
+    -DGLM_FORCE_CTOR_INIT
     PRIVATE
     -DSIGMA_EXPORT
 )

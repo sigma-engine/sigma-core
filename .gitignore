@@ -2,9 +2,9 @@
 !/.gitignore
 
 # Thirdparty Library source files
-/thirdparty/*
-!/thirdparty/CMakeLists.txt
-!/thirdparty/licences.txt
+#/thirdparty/*
+#!/thirdparty/CMakeLists.txt
+#!/thirdparty/licences.txt
 
 tools/scompiler/glslang
 
