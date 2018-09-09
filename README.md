@@ -1,5 +1,5 @@
-# Sigma Engine
-Sigma Engine is a graphics engine written in C++17 using OpenGL 4.6. The primary purpose of this project is to be a platform for learning new real-time graphical techniques.
+# Sigma Core
+Sigma Core is a graphics engine written in C++17 using OpenGL 4.6. The primary purpose of this project is to be a platform for learning new real-time graphical techniques.
 ## Features
 ### Deferred Rendering
 ![Alt text](screenshots/gbuffer.png?raw=true "Geometry Buffer")
