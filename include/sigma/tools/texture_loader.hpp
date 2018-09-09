@@ -7,13 +7,7 @@
 #include <sigma/tools/packager.hpp>
 #include <sigma/tools/texturing.hpp>
 
-#define png_infopp_NULL (png_infopp) NULL
-#define int_p_NULL (int*)NULL
-#define png_bytep_NULL (png_bytep) NULL
-
-#include <boost/gil/extension/io/jpeg_io.hpp>
-#include <boost/gil/extension/io/png_io.hpp>
-#include <boost/gil/extension/io/tiff_io.hpp>
+#include <stb/stb_image.h>
 
 #include <string>
 #include <unordered_map>
@@ -33,24 +27,20 @@ namespace tools {
         auto file_path_string = source_file.string();
 
         switch (source_type) {
-        case texture_source_type::tiff: {
-            boost::gil::tiff_read_and_convert_image(file_path_string, image);
-            break;
-        }
-        case texture_source_type::jpeg: {
-            boost::gil::jpeg_read_and_convert_image(file_path_string, image);
-            break;
-        }
-        case texture_source_type::png: {
-            boost::gil::png_read_and_convert_image(file_path_string, image);
-            break;
-        }
         case texture_source_type::hdr: {
             hdr_read_and_convert_image(file_path_string, image);
             break;
         }
+        default: {
+			int width, height, bbp;
+			auto pixels = (boost::gil::rgba8_pixel_t *)stbi_load(file_path_string.c_str(), &width, &height, &bbp, 4);
+			auto src_view = boost::gil::interleaved_view(width, height, pixels, width * 4 * sizeof(unsigned char));
+			image = Image(width, height);
+			boost::gil::copy_pixels(src_view, boost::gil::view(image));
+			break;
         }
-    }
+		}
+	}
 
     template <class ContextType>
     class texture_loader : public resource_loader<ContextType> {

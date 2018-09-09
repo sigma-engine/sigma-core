@@ -11,7 +11,5 @@ add_executable(sigma-core-tests
 target_link_libraries(sigma-core-tests
     PRIVATE
     sigma-core
-    GTest::GTest
-    GTest::Main
-    gmock
+	GMock::main
 )
