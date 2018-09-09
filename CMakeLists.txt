@@ -1,15 +1,15 @@
 cmake_minimum_required(VERSION 3.5)
-project(sigma-engine)
+project(sigma-core)
 
 add_library(sigma-core STATIC
-    src/sigma/frustum.cpp
-    src/sigma/game.cpp
-    src/sigma/buddy_array_allocator.cpp
-    src/sigma/graphics/renderer.cpp
-    src/sigma/trackball_controller.cpp
-    src/sigma/util/filesystem.cpp
-    src/sigma/window.cpp
-    src/sigma/graphics/texture.cpp
+	src/sigma/frustum.cpp
+	src/sigma/game.cpp
+	src/sigma/buddy_array_allocator.cpp
+	src/sigma/graphics/renderer.cpp
+	src/sigma/trackball_controller.cpp
+	src/sigma/util/filesystem.cpp
+	src/sigma/window.cpp
+	src/sigma/graphics/texture.cpp
 )
 
 target_include_directories(sigma-core PUBLIC include)
