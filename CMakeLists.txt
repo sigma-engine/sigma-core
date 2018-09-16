@@ -15,7 +15,9 @@ add_library(sigma-core STATIC
 target_include_directories(sigma-core PUBLIC include)
 target_compile_definitions(sigma-core PUBLIC -DGLM_ENABLE_EXPERIMENTAL -DGLM_FORCE_CTOR_INIT PRIVATE -DSIGMA_EXPORT)
 target_link_libraries(sigma-core PUBLIC ${CMAKE_DL_LIBS} Boost::filesystem Boost::serialization Boost::system Threads::Threads glm jsoncpp_lib_static stb::stb)
-target_package_resources(sigma-core "${CMAKE_CURRENT_SOURCE_DIR}/resources")
+
+target_package_resources(sigma-core resources)
+
 if(COTIRE_CMAKE_MODULE_VERSION)
 	cotire(sigma-core)
 endif()
