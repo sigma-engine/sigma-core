@@ -2,9 +2,10 @@
 #define SIGMA_GRAPHICS_TEXTURE_HPP
 
 #include <sigma/config.hpp>
-#include <sigma/reflect.hpp>
 #include <sigma/resource/resource.hpp>
 #include <sigma/util/glm_serialize.hpp>
+
+#include <nlohmann/json.hpp>
 
 #include <glm/vec2.hpp>
 
@@ -16,16 +17,19 @@
 namespace sigma {
 namespace graphics {
 
-    enum class R_EXPORT() texture_filter {
+    enum class texture_filter {
         LINEAR,
         NEAREST,
         NONE
     };
 
-    enum class R_EXPORT() texture_format {
+    enum class texture_format {
         RGB8,
         RGBA8,
-        RGB32F
+        RGB16F,
+        RGBA16F,
+        RGB32F,
+        DEPTH32F_STENCIL8
     };
 
     template <class T>
@@ -46,38 +50,38 @@ namespace graphics {
         static const constexpr texture_format value = texture_format::RGB32F;
     };
 
-    class texture {
-        glm::ivec2 size_;
-        texture_format format_;
-        texture_filter minification_filter_;
-        texture_filter magnification_filter_;
-        texture_filter mipmap_filter_;
-        std::vector<std::size_t> mipmap_offsets_;
-        std::vector<char> data_;
-
+    class texture : public resource::base_resource {
     public:
-        texture();
+        texture(std::weak_ptr<sigma::context> context, const resource::key_type& key);
 
-        texture(glm::ivec2 size,
+        texture(std::weak_ptr<sigma::context> context,
+            const resource::key_type& key,
+            glm::ivec2 size,
             texture_format format,
             texture_filter minification_filter = texture_filter::LINEAR,
             texture_filter magnification_filter = texture_filter::LINEAR,
             texture_filter mipmap_filter = texture_filter::LINEAR,
             bool store_mipmaps = false);
 
-        texture(const boost::gil::rgb8c_view_t& view,
+        texture(std::weak_ptr<sigma::context> context,
+            const resource::key_type& key,
+            const boost::gil::rgb8c_view_t& view,
             texture_filter minification_filter = texture_filter::LINEAR,
             texture_filter magnification_filter = texture_filter::LINEAR,
             texture_filter mipmap_filter = texture_filter::LINEAR,
             bool store_mipmaps = false);
 
-        texture(const boost::gil::rgba8c_view_t& view,
+        texture(std::weak_ptr<sigma::context> context,
+            const resource::key_type& key,
+            const boost::gil::rgba8c_view_t& view,
             texture_filter minification_filter = texture_filter::LINEAR,
             texture_filter magnification_filter = texture_filter::LINEAR,
             texture_filter mipmap_filter = texture_filter::LINEAR,
             bool store_mipmaps = false);
 
-        texture(const boost::gil::rgb32fc_view_t& view,
+        texture(std::weak_ptr<sigma::context> context,
+            const resource::key_type& key,
+            const boost::gil::rgb32fc_view_t& view,
             texture_filter minification_filter = texture_filter::LINEAR,
             texture_filter magnification_filter = texture_filter::LINEAR,
             texture_filter mipmap_filter = texture_filter::LINEAR,
@@ -140,10 +144,27 @@ namespace graphics {
             ar& mipmap_offsets_;
             ar& data_;
         }
+
+    private:
+        glm::ivec2 size_;
+        texture_format format_;
+        texture_filter minification_filter_;
+        texture_filter magnification_filter_;
+        texture_filter mipmap_filter_;
+        std::vector<std::size_t> mipmap_offsets_;
+        std::vector<char> data_;
     };
+
+    void to_json(nlohmann::json& j, const texture_filter& filt);
+
+    void from_json(const nlohmann::json& j, texture_filter& fmt);
+
+    void to_json(nlohmann::json& j, const texture_format& fmt);
+
+    void from_json(const nlohmann::json& j, texture_format& fmt);
 }
 }
 
-REGISTER_RESOURCE(sigma::graphics::texture, texture, 1)
+REGISTER_RESOURCE(sigma::graphics::texture, texture, 1);
 
 #endif // SIGMA_GRAPHICS_TEXTURE_HPP

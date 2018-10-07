@@ -1,46 +1,27 @@
-#ifndef SIGMA_ENGINE_RESOURCE_MANAGER_HPP
-#define SIGMA_ENGINE_RESOURCE_MANAGER_HPP
+#ifndef SIGMA_CORE_RESOURCE_CACHE_HPP
+#define SIGMA_CORE_RESOURCE_CACHE_HPP
 
-#include <sigma/config.hpp>
 #include <sigma/resource/resource.hpp>
+#include <sigma/util/filesystem.hpp>
 
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
-#include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
-#include <boost/functional/hash.hpp>
 
-#include <exception>
 #include <fstream>
-#include <memory>
-#include <sstream>
 #include <unordered_map>
-#include <vector>
 
 namespace sigma {
+class context;
+
 namespace resource {
-    using resource_id = std::vector<boost::filesystem::path>;
+    using key_type = boost::filesystem::path;
 
     class missing_resource : public std::exception {
     public:
-        missing_resource(const resource::resource_id& cid)
+        missing_resource(const key_type& key)
         {
-            std::stringstream ss;
-
-            ss << "missing resource ";
-            if (cid.size() >= 2) {
-                ss << "{ " << cid[0];
-                for (std::size_t i = 1; i < cid.size() - 1; ++i) {
-                    if (cid[i].size() > 0)
-                        ss << cid[i] << ", ";
-                }
-                ss << cid[cid.size() - 1] << "}";
-            } else if (cid.size() == 1) {
-                ss << cid[0];
-            } else {
-                ss << "<UNKNOWN>";
-            }
-            message_ = ss.str();
+            message_ = "missing resource " + key.string();
         }
 
         virtual const char* what() const noexcept override
@@ -52,143 +33,87 @@ namespace resource {
         std::string message_;
     };
 
-    template <class Resource>
-    class cache {
+    class base_cache {
     public:
-        cache(const boost::filesystem::path& cache_directory)
-            : cache_directory_(cache_directory)
+        base_cache(std::shared_ptr<context> context, const std::string& short_name);
+
+        base_cache(const base_cache&) = delete;
+
+        base_cache(base_cache&&) = default;
+
+        virtual ~base_cache() = default;
+
+        base_cache& operator=(const base_cache&) = delete;
+
+        base_cache& operator=(base_cache&&) = default;
+
+        bool exists(const key_type& key) const;
+
+        std::time_t last_modification_time(const key_type& key) const;
+
+    protected:
+        std::shared_ptr<context> context_;
+        boost::filesystem::path cache_path_;
+    };
+
+    template <class T>
+    class cache : public base_cache {
+    public:
+        cache(std::shared_ptr<context> context)
+            : base_cache(context, resource_shortname(T))
+            , next_id(1)
         {
-            auto database_path = cache_directory_ / "database";
-            if (!boost::filesystem::exists(cache_directory_)) {
-                boost::filesystem::create_directories(cache_directory_);
-            } else if (boost::filesystem::exists(database_path)) {
-                std::ifstream file{ database_path.string(), std::ios::binary | std::ios::in };
-                boost::archive::binary_iarchive ia{ file };
-                ia >> database_;
-            }
         }
 
-        cache(cache<Resource>&&) = default;
-
-        cache& operator=(cache<Resource>&&) = default;
-
-        ~cache() = default;
-
-        bool contains(const resource_id& rid) const
+        std::shared_ptr<T> insert(const key_type& key, std::shared_ptr<T> r, bool write_to_disk)
         {
-            return database_.count(rid) > 0;
-        }
-
-        handle<Resource> handle_for(const resource_id& rid) const
-        {
-            if (!contains(rid))
-                throw missing_resource(rid);
-
-            return database_.at(rid);
-        }
-
-        std::time_t last_modification_time(const handle<Resource>& hnd) const
-        {
-            auto resource_path = cache_directory_ / std::to_string(hnd.index);
-            if (boost::filesystem::exists(resource_path))
-                return boost::filesystem::last_write_time(resource_path);
-            return 0;
-        }
-
-        handle<Resource> insert(const resource_id& rid, Resource resource, bool write_to_disk)
-        {
-            handle<Resource> hnd;
-            if (contains(rid)) {
-                hnd = database_.at(rid);
-            } else {
-                hnd = next_free_handle();
-                database_[rid] = hnd;
-            }
-
-            assert(hnd.is_valid());
-
             if (write_to_disk) {
-                auto resource_path = cache_directory_ / std::to_string(hnd.index);
-                std::ofstream file{ resource_path.string(), std::ios::binary | std::ios::out };
-                boost::archive::binary_oarchive oa{ file };
-                oa << resource;
+                auto path = cache_path_ / key;
+                std::ofstream file { path.string(), std::ios::binary | std::ios::out };
+                boost::archive::binary_oarchive oa { file };
+                oa << *r;
             }
 
-            insert_(hnd, std::move(resource));
-
-            return hnd;
+            return insert_(key, r);
         }
 
-        Resource* acquire(const handle<Resource>& hnd)
+        std::shared_ptr<T> get(const key_type& key)
         {
-            assert(hnd.is_valid());
-            if (hnd.index >= resources_.size() || resources_[hnd.index].second == nullptr)
-                insert_(hnd, std::move(load(cache_directory_, hnd)));
-            return resources_[hnd.index].second.get();
-        }
+            auto it = resources_.find(key);
+            if (it != resources_.end() && !it->second.expired())
+                return it->second.lock();
 
-        void save() const
-        {
-            auto database_path = cache_directory_ / "database";
-            std::ofstream file{ database_path.string(), std::ios::binary | std::ios::out };
-            boost::archive::binary_oarchive oa{ file };
-            oa << database_;
+            if (!exists(key))
+                throw missing_resource(key);
+
+            auto r = std::make_shared<T>(context_, key);
+            auto path = cache_path_ / key;
+            std::ifstream file { path.string(), std::ios::binary | std::ios::in };
+            boost::archive::binary_iarchive oa { file };
+            oa >> *r;
+
+            return insert_(key, r);
         }
 
     private:
-        cache(const cache<Resource>&) = delete;
-        cache& operator=(const cache<Resource>&) = delete;
-
-        handle<Resource> next_free_handle() const
+        std::shared_ptr<T> insert_(const key_type& key, std::shared_ptr<T> r)
         {
-            for (std::size_t i = 0; i < resources_.size(); ++i) {
-                if (resources_[i].second == nullptr)
-                    return resources_[i].first.bump_version();
+            auto it = resources_.find(key);
+            if (it == resources_.end()) {
+                resources_[key] = std::make_pair(next_id, r);
+                r->set_id(next_id);
+                next_id++;
+            } else {
+                it->second.second = r;
+                r->set_id(it->second.first);
             }
-            assert(resources_.size() < std::numeric_limits<std::size_t>::max());
-            return { std::uint32_t(resources_.size()), 0 };
+            return r;
         }
 
-        void insert_(const handle<Resource>& hnd, Resource res)
-        {
-            assert(hnd.is_valid());
-            if (hnd.index >= resources_.size())
-                resources_.resize(hnd.index + 1);
-            resources_[hnd.index].first = hnd;
-            resources_[hnd.index].second = std::make_unique<Resource>(std::move(res));
-        }
-
-        Resource load(const boost::filesystem::path& cache_directory, const handle<Resource>& hnd) const
-        {
-            assert(hnd.is_valid());
-            auto resource_path = cache_directory / std::to_string(hnd.index);
-            std::ifstream file{ resource_path.string(), std::ios::binary | std::ios::in };
-            boost::archive::binary_iarchive ia{ file };
-            Resource data;
-            ia >> data;
-            return std::move(data);
-        }
-
-        boost::filesystem::path cache_directory_;
-        std::vector<std::pair<handle<Resource>, std::unique_ptr<Resource>>> resources_;
-        std::unordered_map<resource_id, handle<Resource>> database_;
+        size_t next_id;
+        std::unordered_map<key_type, std::pair<size_t, std::weak_ptr<T>>> resources_;
     };
 }
 }
 
-namespace std {
-template <>
-struct hash<sigma::resource::resource_id> {
-    size_t operator()(const sigma::resource::resource_id& rid) const
-    {
-        size_t hash_code = 0;
-        for (const auto& id : rid) {
-            if (id.size() > 0)
-                boost::hash_combine(hash_code, id);
-        }
-        return hash_code;
-    }
-};
-}
-
-#endif // SIGMA_ENGINE_RESOURCE_MANAGER_HPP
+#endif // SIGMA_CORE_RESOURCE_CACHE_HPP

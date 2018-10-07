@@ -2,11 +2,8 @@
 #define SIGMA_GRAPHICS_CUBEMAP_HPP
 
 #include <sigma/config.hpp>
-#include <sigma/graphics/texture.hpp>
-#include <sigma/resource/cache.hpp>
-#include <sigma/resource/resource.hpp>
 
-#include <boost/serialization/array.hpp>
+#include <sigma/graphics/texture.hpp>
 
 #include <array>
 
@@ -22,17 +19,9 @@ namespace graphics {
             NEGATIVE_Z
         };
 
-        std::array<resource::handle<graphics::texture>, 6> faces;
-
-        template <class Archive>
-        void serialize(Archive& ar, const unsigned int version)
-        {
-            ar& faces;
-        }
+        std::array<std::shared_ptr<texture>, 6> faces;
     };
 }
 }
-
-REGISTER_RESOURCE(sigma::graphics::cubemap, cubemap, 1)
 
 #endif // SIGMA_GRAPHICS_CUBEMAP_HPP

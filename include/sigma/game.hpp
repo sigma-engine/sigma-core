@@ -6,8 +6,6 @@
 #include <sigma/graphics/static_mesh_instance.hpp>
 #include <sigma/world.hpp>
 
-#include <json/json.h>
-
 #include <boost/filesystem/path.hpp>
 
 #include <fstream>

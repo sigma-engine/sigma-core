@@ -1,8 +1,0 @@
-{
-    "color_intensity": [1.0, 1.0, 1.0, 1.0],
-    "position_radius": [0.0, 0.0, 0.0, 1.0],
-    "vertex" : "pbr/deffered/lights/point",
-    "fragment" : "pbr/deffered/lights/point",
-
-    "static_mesh" : "sigma/shapes/sphere"
-}

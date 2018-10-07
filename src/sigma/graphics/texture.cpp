@@ -1,29 +1,36 @@
 #include <sigma/graphics/texture.hpp>
 
+#include <boost/algorithm/string.hpp>
 #include <boost/gil/image.hpp>
+
+#include <iostream>
 
 namespace sigma {
 namespace graphics {
-    texture::texture()
-        : size_{ 0, 0 }
-        , format_{ texture_format::RGB8 }
-        , minification_filter_{ texture_filter::LINEAR }
-        , magnification_filter_{ texture_filter::LINEAR }
-        , mipmap_filter_{ texture_filter::LINEAR }
+    texture::texture(std::weak_ptr<sigma::context> context, const resource::key_type& key)
+        : resource::base_resource::base_resource(context, key)
+        , size_ { 0, 0 }
+        , format_ { texture_format::RGB8 }
+        , minification_filter_ { texture_filter::LINEAR }
+        , magnification_filter_ { texture_filter::LINEAR }
+        , mipmap_filter_ { texture_filter::LINEAR }
     {
     }
 
-    texture::texture(glm::ivec2 size,
+    texture::texture(std::weak_ptr<sigma::context> context,
+        const resource::key_type& key,
+        glm::ivec2 size,
         texture_format format,
         texture_filter minification_filter,
         texture_filter magnification_filter,
         texture_filter mipmap_filter,
         bool store_mipmaps)
-        : size_{ size }
-        , format_{ format }
-        , minification_filter_{ minification_filter }
-        , magnification_filter_{ magnification_filter }
-        , mipmap_filter_{ mipmap_filter }
+        : resource::base_resource::base_resource(context, key)
+        , size_ { size }
+        , format_ { format }
+        , minification_filter_ { minification_filter }
+        , magnification_filter_ { magnification_filter }
+        , mipmap_filter_ { mipmap_filter }
     {
         auto pixel_size = size_of_pixel();
         if (store_mipmaps) {
@@ -43,12 +50,14 @@ namespace graphics {
         }
     }
 
-    texture::texture(const boost::gil::rgb8c_view_t& view,
+    texture::texture(std::weak_ptr<sigma::context> context,
+        const resource::key_type& key,
+        const boost::gil::rgb8c_view_t& view,
         texture_filter minification_filter,
         texture_filter magnification_filter,
         texture_filter mipmap_filter,
         bool store_mipmaps)
-        : texture({ view.width(), view.height() },
+        : texture(context, key, { view.width(), view.height() },
               texture_format::RGB8,
               minification_filter,
               magnification_filter,
@@ -60,12 +69,14 @@ namespace graphics {
         assert(store_mipmaps == false);
     }
 
-    texture::texture(const boost::gil::rgba8c_view_t& view,
+    texture::texture(std::weak_ptr<sigma::context> context,
+        const resource::key_type& key,
+        const boost::gil::rgba8c_view_t& view,
         texture_filter minification_filter,
         texture_filter magnification_filter,
         texture_filter mipmap_filter,
         bool store_mipmaps)
-        : texture({ view.width(), view.height() },
+        : texture(context, key, { view.width(), view.height() },
               texture_format::RGBA8,
               minification_filter,
               magnification_filter,
@@ -77,12 +88,14 @@ namespace graphics {
         assert(store_mipmaps == false);
     }
 
-    texture::texture(const boost::gil::rgb32fc_view_t& view,
+    texture::texture(std::weak_ptr<sigma::context> context,
+        const resource::key_type& key,
+        const boost::gil::rgb32fc_view_t& view,
         texture_filter minification_filter,
         texture_filter magnification_filter,
         texture_filter mipmap_filter,
         bool store_mipmaps)
-        : texture({ view.width(), view.height() },
+        : texture(context, key, { view.width(), view.height() },
               texture_format::RGB32F,
               minification_filter,
               magnification_filter,
@@ -152,6 +165,68 @@ namespace graphics {
     {
         assert(level < stored_mipmap_count());
         return data_.data() + mipmap_offsets_[level];
+    }
+
+    void to_json(nlohmann::json& j, const texture_filter& flt)
+    {
+        static std::map<texture_filter, std::string> filter_map = {
+            { texture_filter::NEAREST, "NEAREST" },
+            { texture_filter::LINEAR, "LINEAR" },
+            { texture_filter::NONE, "NONE" }
+        };
+
+        j = filter_map.at(flt);
+    }
+
+    void from_json(const nlohmann::json& j, texture_filter& flt)
+    {
+        static std::map<std::string, texture_filter> filter_map = {
+            { "NEAREST", texture_filter::NEAREST },
+            { "LINEAR", texture_filter::LINEAR },
+            { "NONE", texture_filter::NONE }
+        };
+
+        auto str_val = boost::to_upper_copy(j.get<std::string>());
+        auto it = filter_map.find(str_val);
+
+        if (it != filter_map.end())
+            flt = it->second;
+        else
+            flt = texture_filter::LINEAR;
+    }
+
+    void to_json(nlohmann::json& j, const texture_format& fmt)
+    {
+        static std::map<texture_format, std::string> format_map = {
+            { texture_format::RGB8, "RGB8" },
+            { texture_format::RGBA8, "RGBA8" },
+            { texture_format::RGB16F, "RGB16F" },
+            { texture_format::RGBA16F, "RGBA16F" },
+            { texture_format::RGB32F, "RGB32F" },
+            { texture_format::DEPTH32F_STENCIL8, "DEPTH32F_STENCIL8" }
+        };
+
+        j = format_map.at(fmt);
+    }
+
+    void from_json(const nlohmann::json& j, texture_format& fmt)
+    {
+        static std::map<std::string, texture_format> format_map = {
+            { "RGB8", texture_format::RGB8 },
+            { "RGBA8", texture_format::RGBA8 },
+            { "RGB16F", texture_format::RGB16F },
+            { "RGBA16F", texture_format::RGBA16F },
+            { "RGB32F", texture_format::RGB32F },
+            { "DEPTH32F_STENCIL8", texture_format::DEPTH32F_STENCIL8 }
+        };
+
+        auto str_val = boost::to_upper_copy(j.get<std::string>());
+        auto it = format_map.find(str_val);
+
+        if (it != format_map.end())
+            fmt = it->second;
+        else
+            fmt = texture_format::RGB8;
     }
 }
 }

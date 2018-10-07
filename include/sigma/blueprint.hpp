@@ -2,13 +2,10 @@
 #define SIGMA_BLUEPRINT_HPP
 
 #include <sigma/component.hpp>
-#include <sigma/resource/resource.hpp>
 
 #include <locale>
 
 #include <boost/cstdint.hpp>
-#include <boost/serialization/variant.hpp>
-#include <boost/serialization/vector.hpp>
 #include <boost/variant.hpp>
 
 namespace sigma {
@@ -22,21 +19,7 @@ public:
     using component_set_type = component_set<Components...>;
 
     std::vector<entity_type> entities;
-
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version)
-    {
-        ar& entities;
-    }
 };
-
-namespace resource {
-    template <class... Components>
-    struct resource_traits<blueprint<Components...>> {
-        static constexpr const char* fullname = "sigma::blueprint";
-        static constexpr const char* shortname = "blueprint";
-    };
-}
 }
 
 #endif // SIGMA_BLUEPRINT_HPP

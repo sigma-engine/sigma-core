@@ -22,12 +22,12 @@ struct type_set {
 // Count number of occurrences of `T` in `Types`.
 template <class T, class... Types>
 struct count_type {
-    inline static constexpr const std::size_t value = (std::is_same_v<T, Types> + ...);
+    static constexpr const std::size_t value = (std::is_same_v<T, Types> + ...);
 };
 
 template <class T>
 struct count_type<T> {
-    inline static constexpr const std::size_t value = 0;
+    static constexpr const std::size_t value = 0;
 };
 
 template <class T, class... Types>
@@ -36,12 +36,12 @@ inline constexpr const std::size_t count_type_v = count_type<T, Types...>::value
 // Check if `T` is in `Types`.
 template <class T, class... Types>
 struct contains_type {
-    inline static constexpr const bool value = (std::is_same_v<T, Types> || ...);
+    static constexpr const bool value = (std::is_same_v<T, Types> || ...);
 };
 
 template <class T>
 struct contains_type<T> {
-    inline static constexpr const bool value = false;
+    static constexpr const bool value = false;
 };
 
 template <class T, class... Types>
@@ -50,12 +50,12 @@ inline constexpr const bool contains_type_v = contains_type<T, Types...>::value;
 // Check if `Types` is a set.
 template <class... Types>
 struct is_type_set {
-    inline static constexpr const bool value = (count_type_v<Types, Types...> + ...) == sizeof...(Types);
+    static constexpr const bool value = (count_type_v<Types, Types...> + ...) == sizeof...(Types);
 };
 
 template <>
 struct is_type_set<> {
-    inline static constexpr const bool value = true;
+    static constexpr const bool value = true;
 };
 
 template <class... Types>
@@ -75,7 +75,7 @@ using type_set_t = typename detail::type_set_helper<Types...>::type;
 
 template <class T, class... Types>
 struct contains_type<T, type_set<Types...>> {
-    inline static constexpr const bool value = contains_type<T, Types...>::value;
+    static constexpr const bool value = contains_type<T, Types...>::value;
 };
 
 // Get the index of type `T` from the type_set `TypeSet`.
@@ -85,12 +85,12 @@ struct index_of_type;
 template <class T, class Head, class... Tail>
 struct index_of_type<T, type_set<Head, Tail...>> {
     static_assert(contains_type_v<T, Head, Tail...>, "The type_set must contain the type to find it's index.");
-    inline static constexpr const std::size_t value = 1 + index_of_type<T, type_set<Tail...>>::value;
+    static constexpr const std::size_t value = 1 + index_of_type<T, type_set<Tail...>>::value;
 };
 
 template <class T, class... Tail>
 struct index_of_type<T, type_set<T, Tail...>> {
-    inline static constexpr const std::size_t value = 0;
+    static constexpr const std::size_t value = 0;
 };
 
 template <class T, class TypeSet>
@@ -102,7 +102,7 @@ struct is_type_subset;
 
 template <class... TypeSubSet, class... TypeSet>
 struct is_type_subset<type_set<TypeSubSet...>, type_set<TypeSet...>> {
-    inline static constexpr const bool value = (contains_type_v<TypeSubSet, TypeSet...> && ...);
+    static constexpr const bool value = (contains_type_v<TypeSubSet, TypeSet...> && ...);
 };
 
 template <class TypeSubSet, class TypeSet>
@@ -115,12 +115,12 @@ struct type_mask;
 template <class... TypeSubSet, class... TypeSet>
 struct type_mask<type_set<TypeSubSet...>, type_set<TypeSet...>> {
     static_assert(sizeof...(TypeSet) <= 64, "Can only create a type mask for 64 or less types.");
-    inline static constexpr const std::uint64_t value = ((std::uint64_t(1) << index_of_type_v<TypeSubSet, type_set<TypeSet...>>) | ...);
+    static constexpr const std::uint64_t value = ((std::uint64_t(1) << index_of_type_v<TypeSubSet, type_set<TypeSet...>>) | ...);
 };
 
 template <class... TypeSet>
 struct type_mask<type_set<>, type_set<TypeSet...>> {
-    inline static constexpr const std::uint64_t value = 0;
+    static constexpr const std::uint64_t value = 0;
 };
 
 template <class TypeSubSet, class TypeSet>

@@ -3,17 +3,10 @@
 
 #include <sigma/config.hpp>
 #include <sigma/graphics/material.hpp>
-#include <sigma/resource/cache.hpp>
-#include <sigma/resource/resource.hpp>
 #include <sigma/util/filesystem.hpp>
-#include <sigma/util/glm_serialize.hpp>
 
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
-
-#include <boost/serialization/array.hpp>
-#include <boost/serialization/unordered_map.hpp>
-#include <boost/serialization/vector.hpp>
 
 #include <array>
 #include <cstddef>
@@ -29,37 +22,16 @@ namespace graphics {
             glm::vec3 bitangent;
             glm::vec3 tangent;
             glm::vec2 texcoord;
-            template <class Archive>
-            void serialize(Archive& ar, const unsigned int version)
-            {
-                ar& position;
-                ar& normal;
-                ar& bitangent;
-                ar& tangent;
-                ar& texcoord;
-            }
         };
         typedef std::array<unsigned int, 3> triangle;
 
         float radius = 0;
         std::vector<vertex> vertices;
         std::vector<triangle> triangles;
-        std::vector<resource::handle<material>> materials;
+        std::vector<std::shared_ptr<material>> materials;
         std::vector<std::pair<std::size_t, std::size_t>> material_slots;
-
-        template <class Archive>
-        void serialize(Archive& ar, const unsigned int version)
-        {
-            ar& radius;
-            ar& vertices;
-            ar& triangles;
-            ar& materials;
-            ar& material_slots;
-        }
     };
 }
 }
-
-REGISTER_RESOURCE(sigma::graphics::static_mesh, static_mesh, 1)
 
 #endif // SIGMA_GRAPHICS_STATIC_MESH_HPP

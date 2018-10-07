@@ -4,7 +4,6 @@
 #include <sigma/component.hpp>
 #include <sigma/config.hpp>
 #include <sigma/reflect.hpp>
-#include <sigma/util/glm_serialize.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -25,14 +24,6 @@ struct R_EXPORT() transform {
         , rotation(rotation)
         , scale(scale)
     {
-    }
-
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version)
-    {
-        ar& position;
-        ar& rotation;
-        ar& scale;
     }
 
     glm::mat4 get_matrix() const

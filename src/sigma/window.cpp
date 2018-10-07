@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 
 #include <stdexcept>
+#include <string>
 #include <unordered_map>
 
 namespace sigma {
@@ -20,8 +21,7 @@ namespace detail {
 }
 
 window::window(glm::ivec2 size)
-    : title_("")
-    , size_(size)
+    : size_(size)
     , good_(false)
 {
     detail::init_sdl2_if_not_already();

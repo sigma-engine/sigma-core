@@ -1,4 +1,0 @@
-{
-    "fragment" : "pbr/deffered/texture_blit",
-    "vertex": "fullscreen_quad"
-}

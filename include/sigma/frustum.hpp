@@ -41,9 +41,11 @@ public:
 
     void set_projection_view(float fovy, float aspect, float z_near, float z_far, const glm::mat4& view);
 
-    glm::mat4 inverse_projection_view() const;
+    glm::mat4 inverse_view() const;
 
     glm::mat4 inverse_projection() const;
+
+    glm::mat4 inverse_projection_view() const;
 
     glm::vec4 far_plane() const;
 
@@ -66,6 +68,8 @@ private:
     glm::mat4 projection_;
     glm::mat4 view_;
     glm::mat4 projection_view_;
+    glm::mat4 inverse_view_;
+    glm::mat4 inverse_projection_;
     glm::mat4 inverse_projection_view_;
     std::array<glm::vec4, 8> corners_;
     std::array<glm::vec4, 6> planes_;
