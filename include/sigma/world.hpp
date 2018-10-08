@@ -57,7 +57,7 @@ struct component_storage {
         if (chunk_index >= chunks.size())
             create_chunk(chunk_index);
 
-        return *(new (&get(index)) T{ std::forward<Arguments>(args)... });
+        return *(new (&get(index)) T { std::forward<Arguments>(args)... });
     }
 
     void remove(size_t index)
@@ -175,7 +175,7 @@ struct world<type_set<Components...>> {
     void remove_components(entity e)
     {
         using expand_type = int[];
-        expand_type d{ (world::template remove<Components>(e), 0)... };
+        expand_type d { (world::template remove<Components>(e), 0)... };
         (void)d;
     }
 
@@ -193,8 +193,8 @@ struct world<type_set<Components...>> {
     {
         static_assert(is_type_subset_v<type_set_t<SubComponents...>, component_set_type>, "Can only iterate over a subset of components is this world.");
 
-        auto mask{ type_mask_v<type_set_t<SubComponents...>, component_set_type> };
-        auto count{ entities.size() };
+        auto mask { type_mask_v<type_set_t<SubComponents...>, component_set_type> };
+        auto count { entities.size() };
 
         for (std::size_t i = 0; i < count; ++i) {
             const auto& e = entities[i];
@@ -208,8 +208,8 @@ struct world<type_set<Components...>> {
     {
         static_assert(is_type_subset_v<type_set_t<SubComponents...>, component_set_type>, "Can only iterate over a subset of components is this world.");
 
-        auto mask{ type_mask_v<type_set_t<SubComponents...>, component_set_type> };
-        auto count{ entities.size() };
+        auto mask { type_mask_v<type_set_t<SubComponents...>, component_set_type> };
+        auto count { entities.size() };
 
         for (std::size_t i = 0; i < count; ++i) {
             const auto& e = entities[i];
@@ -254,12 +254,12 @@ public:
 
     template <class... Components>
     world_view(const world<type_set<Components...>>& world)
-        : count_{ world.count_ }
-        , entities{ world.entities }
-        , free_entities{ world.free_entities }
-        , entity_masks{ world.entity_masks }
-        , component_data{ std::get<index_of_type_v<SubComponents, component_set<Components...>>>(world.component_data)... }
-        , maskes{ { (component_mask_type(1) << index_of_type_v<SubComponents, component_set<Components...>>)... } }
+        : count_ { world.count_ }
+        , entities { world.entities }
+        , free_entities { world.free_entities }
+        , entity_masks { world.entity_masks }
+        , component_data { std::get<index_of_type_v<SubComponents, component_set<Components...>>>(world.component_data)... }
+        , maskes { { (component_mask_type(1) << index_of_type_v<SubComponents, component_set<Components...>>)... } }
     {
         static_assert(is_type_subset_v<component_subset_type, component_set<Components...>>, "world_view components must be a subset of world components.");
     }
@@ -299,7 +299,7 @@ public:
         static_assert(is_type_subset_v<type_set_t<ForeachComponents...>, component_subset_type>, "Can only iterate over a subset of components is this world_view.");
 
         auto mask = (maskes[index_of_type_v<ForeachComponents, component_subset_type>] | ...);
-        auto count{ entities.size() };
+        auto count { entities.size() };
 
         for (std::size_t i = 0; i < count; ++i) {
             const auto& e = entities[i];

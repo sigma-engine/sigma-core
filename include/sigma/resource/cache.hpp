@@ -6,6 +6,7 @@
 
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
+#include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 
 #include <fstream>
@@ -19,15 +20,9 @@ namespace resource {
 
     class missing_resource : public std::exception {
     public:
-        missing_resource(const key_type& key)
-        {
-            message_ = "missing resource " + key.string();
-        }
+        missing_resource(const key_type& key);
 
-        virtual const char* what() const noexcept override
-        {
-            return message_.c_str();
-        }
+        virtual const char* what() const noexcept override;
 
     private:
         std::string message_;
@@ -69,6 +64,11 @@ namespace resource {
         {
             if (write_to_disk) {
                 auto path = cache_path_ / key;
+
+                auto p_path = path.parent_path();
+                if (!boost::filesystem::exists(p_path))
+                    boost::filesystem::create_directories(p_path);
+
                 std::ofstream file { path.string(), std::ios::binary | std::ios::out };
                 boost::archive::binary_oarchive oa { file };
                 oa << *r;
@@ -80,8 +80,8 @@ namespace resource {
         std::shared_ptr<T> get(const key_type& key)
         {
             auto it = resources_.find(key);
-            if (it != resources_.end() && !it->second.expired())
-                return it->second.lock();
+            if (it != resources_.end() && !it->second.second.expired())
+                return it->second.second.lock();
 
             if (!exists(key))
                 throw missing_resource(key);

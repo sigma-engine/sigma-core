@@ -51,6 +51,8 @@ namespace graphics {
 
         void add_source(shader_type type, std::vector<unsigned char>&& spirv, shader_schema&& schema);
 
+        const shader_schema& schema() const;
+
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
         {
@@ -60,7 +62,6 @@ namespace graphics {
         }
 
     private:
-        size_t id_;
         shader_type type_;
         shader_schema schema_;
         std::vector<unsigned char> spirv_;

@@ -15,8 +15,8 @@ class AABB {
 
 public:
     AABB(const glm::vec3& center = { 0.0f, 0.0f, 0.0f }, const glm::vec3& size = { 1.0f, 1.0f, 1.0f })
-        : center_{ center }
-        , half_size_{ size / 2.0f }
+        : center_ { center }
+        , half_size_ { size / 2.0f }
     {
         recalculate();
     }

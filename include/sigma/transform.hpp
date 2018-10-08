@@ -19,7 +19,7 @@ struct R_EXPORT() transform {
         (glm::vec3, scale));
     glm::mat4 matrix;
 
-    transform(glm::vec3 position = glm::vec3{ 0 }, glm::quat rotation = glm::quat{}, glm::vec3 scale = glm::vec3{ 1 })
+    transform(glm::vec3 position = glm::vec3 { 0 }, glm::quat rotation = glm::quat {}, glm::vec3 scale = glm::vec3 { 1 })
         : position(position)
         , rotation(rotation)
         , scale(scale)

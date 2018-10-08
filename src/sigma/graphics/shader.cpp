@@ -14,6 +14,10 @@ namespace graphics {
         schema_ = std::move(schema);
     }
 
+    const shader_schema& shader::schema() const
+    {
+        return schema_;
+    }
     void from_json(const nlohmann::json& j, shader_schema& schema)
     {
         auto ubos_it = j.find("ubos");

@@ -62,7 +62,7 @@ template <class TagType>
 handle<TagType> create_handle(std::vector<handle<TagType>>& handles, std::vector<std::uint32_t>& free_handles)
 {
     if (free_handles.empty()) {
-        handle<TagType> e{ std::uint32_t(handles.size()), 0 };
+        handle<TagType> e { std::uint32_t(handles.size()), 0 };
         handles.push_back(e);
         return e;
     } else {

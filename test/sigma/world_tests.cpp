@@ -28,7 +28,7 @@ TEST(world_tests, is_alive_false)
 {
     test_world w;
 
-    sigma::entity e{ 1, 8 };
+    sigma::entity e { 1, 8 };
 
     EXPECT_FALSE(w.is_alive(e));
 }

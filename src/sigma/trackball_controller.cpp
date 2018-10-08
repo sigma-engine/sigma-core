@@ -30,7 +30,7 @@ bool trackball_controller::is_rotating() const
 void trackball_controller::beginRotate(float x, float y)
 {
     // TODO end panning if already panning
-    glm::vec2 location{ x, y };
+    glm::vec2 location { x, y };
     lastLocation_ = currentLocation_;
     currentLocation_ = location;
     rotating_ = true;
@@ -44,7 +44,7 @@ void trackball_controller::beginPan()
 
 void trackball_controller::update(float x, float y)
 {
-    glm::vec2 location{ x, y };
+    glm::vec2 location { x, y };
 
     lastLocation_ = currentLocation_;
     currentLocation_ = location;
@@ -65,7 +65,7 @@ void trackball_controller::update(float x, float y)
 
 void trackball_controller::endRotate(float x, float y)
 {
-    glm::vec2 location{ x, y };
+    glm::vec2 location { x, y };
 
     lastLocation_ = currentLocation_;
     currentLocation_ = location;

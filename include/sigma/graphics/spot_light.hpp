@@ -27,12 +27,12 @@ namespace graphics {
             bool cast_shadows = true,
             const glm::vec3& direction = { 0.0f, 1.0f, 0.0f },
             const frustum& shadow_frustum = { 2.0f * 0.3926991f, 1.0f, .01f, 100.0f })
-            : color{ color }
-            , intensity{ intensity }
-            , cutoff{ cutoff }
-            , cast_shadows{ cast_shadows }
-            , direction{ direction }
-            , shadow_frustum{ shadow_frustum }
+            : color { color }
+            , intensity { intensity }
+            , cutoff { cutoff }
+            , cast_shadows { cast_shadows }
+            , direction { direction }
+            , shadow_frustum { shadow_frustum }
         {
         }
 

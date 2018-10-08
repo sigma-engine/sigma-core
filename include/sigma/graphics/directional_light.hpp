@@ -15,13 +15,13 @@ namespace graphics {
             (glm::vec3, color),
             (float, intensity),
             (bool, cast_shadows));
-        glm::vec3 direction{ 0.0f, 1.0f, 0.0f };
+        glm::vec3 direction { 0.0f, 1.0f, 0.0f };
 
         directional_light(const glm::vec3& color = { 1.0f, 1.0f, 1.0f }, float intensity = 1.0f, bool cast_shadows = true, const glm::vec3& direction = { 0.0f, 1.0f, 0.0f })
-            : color{ color }
-            , intensity{ intensity }
-            , cast_shadows{ cast_shadows }
-            , direction{ direction }
+            : color { color }
+            , intensity { intensity }
+            , cast_shadows { cast_shadows }
+            , direction { direction }
         {
         }
 

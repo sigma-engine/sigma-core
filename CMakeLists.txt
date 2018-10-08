@@ -3,10 +3,12 @@ project(sigma-core)
 
 add_library(sigma-core STATIC
 		src/sigma/context.cpp
-		src/sigma/graphics/shader.cpp
 		src/sigma/graphics/buffer.cpp
+		src/sigma/graphics/material.cpp
+		src/sigma/graphics/shader.cpp
 		src/sigma/resource/cache.cpp
 		src/sigma/resource/resource.cpp
+		src/sigma/util/glm_json.cpp
         src/sigma/buddy_array_allocator.cpp
         src/sigma/frustum.cpp
         src/sigma/game.cpp

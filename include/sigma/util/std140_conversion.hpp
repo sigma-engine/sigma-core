@@ -42,7 +42,7 @@ namespace std140 {
     template <typename T>
     static constexpr std::size_t member_offset(std::size_t member_index)
     {
-        const T temp{};
+        const T temp {};
         std::size_t i = 0;
         std::size_t offset = 0;
         boost::hana::for_each(temp, boost::hana::fuse([&](auto name, auto member) {
@@ -73,7 +73,7 @@ namespace std140 {
         struct type_traits {
             static constexpr std::size_t size()
             {
-                const T temp{};
+                const T temp {};
                 std::size_t total = 0;
                 boost::hana::for_each(temp, boost::hana::fuse([&total](auto name, auto member) {
                     using member_type = decltype(member);
