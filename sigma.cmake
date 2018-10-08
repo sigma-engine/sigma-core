@@ -80,9 +80,23 @@ function(target_package_resources RESOURCE_TARGET RESOURCE_PACKAGE_DIRECTORY)
         )
 
         add_custom_command(
+			OUTPUT "${SHADER_OUTPUT}${SHADER_EXT}_vulkan_spv"
+			COMMAND ${CMAKE_COMMAND} -E make_directory ${SHADER_OUTPUT_DIRECTORY}
+			COMMAND ${GLSLC_COMMAND} --target-env=vulkan -D${SHADER_STAGE} ${RESOURCE_INCLUDE_ARGUMENTS} "${SHADER}" -o "${SHADER_OUTPUT}${SHADER_EXT}_vulkan_spv"
+			DEPENDS ${R_DEPENDS}
+        )
+
+        add_custom_command(
+			OUTPUT "${SHADER_OUTPUT}${SHADER_EXT}_vulkan_spv.json"
+			COMMAND ${CMAKE_COMMAND} -E make_directory ${SHADER_OUTPUT_DIRECTORY}
+			COMMAND ${SPIRV_CROSS_COMMAND} "${SHADER_OUTPUT}${SHADER_EXT}_spv" --reflect --output "${SHADER_OUTPUT}${SHADER_EXT}_vulkan_spv.json"
+			DEPENDS "${SHADER_OUTPUT}${SHADER_EXT}_spv"
+        )
+
+        add_custom_command(
 			OUTPUT "${SHADER_OUTPUT}"
 			COMMAND sigma-bake -o "${CMAKE_BINARY_DIR}" "${SHADER_OUTPUT}${SHADER_EXT}_spv"
-			DEPENDS "${SHADER_OUTPUT}${SHADER_EXT}_spv" "${SHADER_OUTPUT}${SHADER_EXT}_spv.json"
+			DEPENDS "${SHADER_OUTPUT}${SHADER_EXT}_spv" "${SHADER_OUTPUT}${SHADER_EXT}_spv.json" "${SHADER_OUTPUT}${SHADER_EXT}_vulkan_spv" "${SHADER_OUTPUT}${SHADER_EXT}_vulkan_spv.json"
 			WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/data/shader"
         )
 
