@@ -5,8 +5,6 @@
 #include <sigma/resource/resource.hpp>
 #include <sigma/util/glm_serialize.hpp>
 
-#include <nlohmann/json.hpp>
-
 #include <cereal/types/vector.hpp>
 
 #include <glm/vec2.hpp>
@@ -174,14 +172,6 @@ namespace graphics {
         std::vector<std::size_t> mipmap_offsets_;
         std::vector<char> data_;
     };
-
-    void to_json(nlohmann::json& j, const texture_filter& filt);
-
-    void from_json(const nlohmann::json& j, texture_filter& fmt);
-
-    void to_json(nlohmann::json& j, const texture_format& fmt);
-
-    void from_json(const nlohmann::json& j, texture_format& fmt);
 }
 }
 

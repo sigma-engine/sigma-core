@@ -8,8 +8,6 @@
 
 #include <cereal/types/vector.hpp>
 
-#include <nlohmann/json.hpp>
-
 #include <vector>
 
 namespace sigma {
@@ -55,10 +53,6 @@ namespace graphics {
         shader_schema schema_;
         std::vector<unsigned char> spirv_;
     };
-
-    void to_json(nlohmann::json& j, const shader_schema& schema);
-
-    void from_json(const nlohmann::json& j, shader_schema& schema);
 }
 }
 

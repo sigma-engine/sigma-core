@@ -10,8 +10,6 @@
 
 #include <cereal/types/unordered_map.hpp>
 
-#include <nlohmann/json.hpp>
-
 #include <unordered_map>
 
 namespace sigma {
@@ -20,28 +18,32 @@ namespace graphics {
     public:
         material(std::weak_ptr<sigma::context> context, const resource::key_type& key);
 
-        const std::unordered_map<size_t, resource::handle_type<buffer>>& buffers();
+        resource::handle_type<graphics::buffer> buffer(size_t index);
+
+        void set_buffer(size_t index, resource::handle_type<graphics::buffer> buffer);
+
+        const std::unordered_map<size_t, resource::handle_type<graphics::buffer>>& buffers();
+
+        resource::handle_type<graphics::shader> shader(shader_type type);
+
+        void set_shader(shader_type type, resource::handle_type<graphics::shader> shader);
+
+        const std::unordered_map<shader_type, resource::handle_type<graphics::shader>>& shaders();
+
+        bool texture_binding_point(const std::string& sampler_name, size_t& index) const;
+
+        void set_texture(size_t index, resource::handle_type<graphics::texture> texture);
 
         template <class Archive>
         void serialize(Archive& ar)
         {
             ar(shaders_, textures_, buffers_);
         }
-
     private:
-        bool binding_point(const std::string& sampler_name, size_t& index) const;
-
-        std::unordered_map<shader_type, resource::handle_type<shader>> shaders_;
-        std::unordered_map<size_t, resource::handle_type<texture>> textures_;
-        std::unordered_map<size_t, resource::handle_type<buffer>> buffers_;
-
-        friend void to_json(nlohmann::json& j, const material& mat);
-        friend void from_json(const nlohmann::json& j, material& mat);
+        std::unordered_map<shader_type, resource::handle_type<graphics::shader>> shaders_;
+        std::unordered_map<size_t, resource::handle_type<graphics::texture>> textures_;
+        std::unordered_map<size_t, resource::handle_type<graphics::buffer>> buffers_;
     };
-
-    void to_json(nlohmann::json& j, const material& mat);
-
-    void from_json(const nlohmann::json& j, material& mat);
 }
 }
 

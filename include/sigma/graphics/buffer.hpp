@@ -3,8 +3,6 @@
 
 #include <sigma/resource/resource.hpp>
 
-#include <nlohmann/json.hpp>
-
 #include <cereal/types/string.hpp>
 #include <cereal/types/unordered_map.hpp>
 #include <cereal/types/vector.hpp>
@@ -109,18 +107,6 @@ namespace graphics {
         buffer_schema schema_;
         std::vector<uint8_t> buffer_;
     };
-
-    // void to_json(nlohmann::json& j, const buffer_member& member);
-
-    void from_json(const nlohmann::json& j, buffer_member& member);
-
-    // void to_json(nlohmann::json& j, const buffer_schema& schema);
-
-    void from_json(const nlohmann::json& j, buffer_schema& schema);
-
-    // void to_json(nlohmann::json& j, const buffer& b);
-
-    void from_json(const nlohmann::json& j, buffer& b);
 }
 }
 

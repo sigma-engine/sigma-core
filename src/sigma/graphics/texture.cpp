@@ -1,9 +1,6 @@
 #include <sigma/graphics/texture.hpp>
 
-#include <boost/algorithm/string.hpp>
 #include <boost/gil/image.hpp>
-
-#include <iostream>
 
 namespace sigma {
 namespace graphics {
@@ -165,68 +162,6 @@ namespace graphics {
     {
         assert(level < stored_mipmap_count());
         return data_.data() + mipmap_offsets_[level];
-    }
-
-    void to_json(nlohmann::json& j, const texture_filter& flt)
-    {
-        static std::map<texture_filter, std::string> filter_map = {
-            { texture_filter::NEAREST, "NEAREST" },
-            { texture_filter::LINEAR, "LINEAR" },
-            { texture_filter::NONE, "NONE" }
-        };
-
-        j = filter_map.at(flt);
-    }
-
-    void from_json(const nlohmann::json& j, texture_filter& flt)
-    {
-        static std::map<std::string, texture_filter> filter_map = {
-            { "NEAREST", texture_filter::NEAREST },
-            { "LINEAR", texture_filter::LINEAR },
-            { "NONE", texture_filter::NONE }
-        };
-
-        auto str_val = boost::to_upper_copy(j.get<std::string>());
-        auto it = filter_map.find(str_val);
-
-        if (it != filter_map.end())
-            flt = it->second;
-        else
-            flt = texture_filter::LINEAR;
-    }
-
-    void to_json(nlohmann::json& j, const texture_format& fmt)
-    {
-        static std::map<texture_format, std::string> format_map = {
-            { texture_format::RGB8, "RGB8" },
-            { texture_format::RGBA8, "RGBA8" },
-            { texture_format::RGB16F, "RGB16F" },
-            { texture_format::RGBA16F, "RGBA16F" },
-            { texture_format::RGB32F, "RGB32F" },
-            { texture_format::DEPTH32F_STENCIL8, "DEPTH32F_STENCIL8" }
-        };
-
-        j = format_map.at(fmt);
-    }
-
-    void from_json(const nlohmann::json& j, texture_format& fmt)
-    {
-        static std::map<std::string, texture_format> format_map = {
-            { "RGB8", texture_format::RGB8 },
-            { "RGBA8", texture_format::RGBA8 },
-            { "RGB16F", texture_format::RGB16F },
-            { "RGBA16F", texture_format::RGBA16F },
-            { "RGB32F", texture_format::RGB32F },
-            { "DEPTH32F_STENCIL8", texture_format::DEPTH32F_STENCIL8 }
-        };
-
-        auto str_val = boost::to_upper_copy(j.get<std::string>());
-        auto it = format_map.find(str_val);
-
-        if (it != format_map.end())
-            fmt = it->second;
-        else
-            fmt = texture_format::RGB8;
     }
 }
 }
