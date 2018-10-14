@@ -5,15 +5,16 @@
 
 #include <nlohmann/json.hpp>
 
+#include <cereal/types/string.hpp>
+#include <cereal/types/unordered_map.hpp>
+#include <cereal/types/vector.hpp>
+
 #include <glm/mat2x2.hpp>
 #include <glm/mat3x3.hpp>
 #include <glm/mat4x4.hpp>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
-
-#include <boost/serialization/unordered_map.hpp>
-#include <boost/serialization/vector.hpp>
 
 #include <unordered_map>
 
@@ -47,14 +48,9 @@ namespace graphics {
         }
 
         template <class Archive>
-        void serialize(Archive& ar, const unsigned int version)
+        void serialize(Archive& ar)
         {
-            ar& offset;
-            ar& type;
-            ar& name;
-            ar& is_array;
-            ar& count;
-            ar& stride;
+            ar(offset, type, name, is_array, count, stride);
         }
     };
 
@@ -69,14 +65,9 @@ namespace graphics {
         bool merge(const buffer_schema& other);
 
         template <class Archive>
-        void serialize(Archive& ar, const unsigned int version)
+        void serialize(Archive& ar)
         {
-            ar& size;
-            ar& descriptor_set;
-            ar& binding_point;
-            ar& members;
-            ar& type_name;
-            ar& name;
+            ar(size, descriptor_set, binding_point, members, type_name, name);
         }
     };
 
@@ -109,10 +100,9 @@ namespace graphics {
         void set(const std::string& member, size_t index, const glm::mat4& v);
 
         template <class Archive>
-        void serialize(Archive& ar, const unsigned int version)
+        void serialize(Archive& ar)
         {
-            ar& schema_;
-            ar& buffer_;
+            ar(schema_, buffer_);
         }
 
     private:
@@ -135,7 +125,5 @@ namespace graphics {
 }
 
 REGISTER_RESOURCE(sigma::graphics::buffer, buffer, 1);
-BOOST_CLASS_VERSION(sigma::graphics::buffer_schema, 1);
-BOOST_CLASS_VERSION(sigma::graphics::buffer_member, 1);
 
 #endif // SIGMA_GRAPHICS_BUFFER_HPP

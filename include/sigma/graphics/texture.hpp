@@ -7,10 +7,11 @@
 
 #include <nlohmann/json.hpp>
 
+#include <cereal/types/vector.hpp>
+
 #include <glm/vec2.hpp>
 
 #include <boost/gil/typedefs.hpp>
-#include <boost/serialization/vector.hpp>
 
 #include <vector>
 
@@ -30,6 +31,24 @@ namespace graphics {
         RGBA16F,
         RGB32F,
         DEPTH32F_STENCIL8
+    };
+
+    enum class texture_sampler_type {
+        SAMPLER2D,
+        SAMPLER2D_ARRAY_SHADOW
+    };
+
+    struct texture_schema {
+        texture_sampler_type type;
+        size_t descriptor_set;
+        size_t binding_point;
+        std::string name;
+
+        template <class Archive>
+        void serialize(Archive& ar)
+        {
+            ar(type, descriptor_set, binding_point, name);
+        }
     };
 
     template <class T>
@@ -134,15 +153,16 @@ namespace graphics {
         }
 
         template <class Archive>
-        void serialize(Archive& ar, const unsigned int version)
+        void serialize(Archive& ar)
         {
-            ar& size_;
-            ar& format_;
-            ar& minification_filter_;
-            ar& magnification_filter_;
-            ar& mipmap_filter_;
-            ar& mipmap_offsets_;
-            ar& data_;
+            ar(
+                size_,
+                format_,
+                minification_filter_,
+                magnification_filter_,
+                mipmap_filter_,
+                mipmap_offsets_,
+                data_);
         }
 
     private:

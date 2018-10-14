@@ -10,10 +10,10 @@ namespace sigma {
 namespace graphics {
     struct static_mesh_instance {
         BOOST_HANA_DEFINE_STRUCT(static_mesh_instance,
-            (std::shared_ptr<static_mesh>, mesh),
+            (resource::handle_type<static_mesh>, mesh),
             (bool, cast_shadows));
 
-        static_mesh_instance(std::shared_ptr<static_mesh> mesh, bool cast_shadows = true)
+        static_mesh_instance(resource::handle_type<static_mesh> mesh, bool cast_shadows = true)
             : mesh { mesh }
             , cast_shadows { true }
         {

@@ -2,10 +2,11 @@
 #define SIGMA_CORE_RESOURCE_CACHE_HPP
 
 #include <sigma/resource/resource.hpp>
-#include <sigma/util/filesystem.hpp>
 
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
+#define CEREAL_FUTURE_EXPERIMENTAL
+#include <cereal/archives/adapters.hpp>
+#include <cereal/archives/binary.hpp>
+
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 
@@ -16,8 +17,6 @@ namespace sigma {
 class context;
 
 namespace resource {
-    using key_type = boost::filesystem::path;
-
     class missing_resource : public std::exception {
     public:
         missing_resource(const key_type& key);
@@ -47,7 +46,7 @@ namespace resource {
         std::time_t last_modification_time(const key_type& key) const;
 
     protected:
-        std::shared_ptr<context> context_;
+        std::weak_ptr<context> context_;
         boost::filesystem::path cache_path_;
     };
 
@@ -60,43 +59,51 @@ namespace resource {
         {
         }
 
-        std::shared_ptr<T> insert(const key_type& key, std::shared_ptr<T> r, bool write_to_disk)
+        void write_to_disk(const key_type& key)
         {
-            if (write_to_disk) {
-                auto path = cache_path_ / key;
+            auto path = cache_path_ / key;
 
-                auto p_path = path.parent_path();
-                if (!boost::filesystem::exists(p_path))
-                    boost::filesystem::create_directories(p_path);
+            auto p_path = path.parent_path();
+            if (!boost::filesystem::exists(p_path))
+                boost::filesystem::create_directories(p_path);
 
-                std::ofstream file { path.string(), std::ios::binary | std::ios::out };
-                boost::archive::binary_oarchive oa { file };
-                oa << *r;
-            }
-
-            return insert_(key, r);
+            std::ofstream file { path.string(), std::ios::binary | std::ios::out };
+            auto ctx = context_.lock();
+            cereal::UserDataAdapter<std::shared_ptr<context>, cereal::BinaryOutputArchive> oa(ctx, file);
+            oa(*get(key));
         }
 
-        std::shared_ptr<T> get(const key_type& key)
+        handle_type<T> insert(const key_type& key, std::shared_ptr<T> r, bool should_write = false)
+        {
+            handle_type<T> h = insert_(key, r);
+            if (should_write) {
+                write_to_disk(key);
+            }
+
+            return h;
+        }
+
+        handle_type<T> get(const key_type& key)
         {
             auto it = resources_.find(key);
             if (it != resources_.end() && !it->second.second.expired())
-                return it->second.second.lock();
+                return handle_type<T> { it->second.second.lock() };
 
             if (!exists(key))
                 throw missing_resource(key);
 
             auto r = std::make_shared<T>(context_, key);
             auto path = cache_path_ / key;
+            auto ctx = context_.lock();
             std::ifstream file { path.string(), std::ios::binary | std::ios::in };
-            boost::archive::binary_iarchive oa { file };
-            oa >> *r;
+            cereal::UserDataAdapter<std::shared_ptr<context>, cereal::BinaryInputArchive> ia(ctx, file);
+            ia(*r);
 
             return insert_(key, r);
         }
 
     private:
-        std::shared_ptr<T> insert_(const key_type& key, std::shared_ptr<T> r)
+        handle_type<T> insert_(const key_type& key, std::shared_ptr<T> r)
         {
             auto it = resources_.find(key);
             if (it == resources_.end()) {
@@ -107,7 +114,7 @@ namespace resource {
                 it->second.second = r;
                 r->set_id(it->second.first);
             }
-            return r;
+            return handle_type<T> { r };
         }
 
         size_t next_id;

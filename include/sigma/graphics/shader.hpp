@@ -3,11 +3,12 @@
 
 #include <sigma/config.hpp>
 #include <sigma/graphics/buffer.hpp>
+#include <sigma/graphics/texture.hpp>
 #include <sigma/resource/resource.hpp>
 
-#include <nlohmann/json.hpp>
+#include <cereal/types/vector.hpp>
 
-#include <boost/serialization/vector.hpp>
+#include <nlohmann/json.hpp>
 
 #include <vector>
 
@@ -22,26 +23,14 @@ namespace graphics {
         header
     };
 
-    enum class shader_sampler_type {
-        SAMPLER2D,
-        SAMPLER2D_ARRAY_SHADOW
-    };
-
-    struct shader_sampler {
-        shader_sampler_type type;
-        size_t descriptor_set;
-        std::string name;
-    };
-
     struct shader_schema {
         std::vector<buffer_schema> buffers;
-        std::vector<shader_sampler_type> textures;
+        std::vector<texture_schema> textures;
 
         template <class Archive>
-        void serialize(Archive& ar, const unsigned int version)
+        void serialize(Archive& ar)
         {
-            ar& buffers;
-            ar& textures;
+            ar(buffers, textures);
         }
     };
 
@@ -51,14 +40,14 @@ namespace graphics {
 
         void add_source(shader_type type, std::vector<unsigned char>&& spirv, shader_schema&& schema);
 
+        shader_type type() const;
+
         const shader_schema& schema() const;
 
         template <class Archive>
-        void serialize(Archive& ar, const unsigned int version)
+        void serialize(Archive& ar)
         {
-            ar& type_;
-            ar& spirv_;
-            ar& schema_;
+            ar(type_, schema_, spirv_);
         }
 
     private:
@@ -67,13 +56,13 @@ namespace graphics {
         std::vector<unsigned char> spirv_;
     };
 
-    // void to_json(nlohmann::json& j, const shader_schema& schema);
+    void to_json(nlohmann::json& j, const shader_schema& schema);
 
     void from_json(const nlohmann::json& j, shader_schema& schema);
 }
 }
 
 REGISTER_RESOURCE(sigma::graphics::shader, shader, 0);
-BOOST_CLASS_VERSION(sigma::graphics::shader_schema, 0);
+CEREAL_CLASS_VERSION(sigma::graphics::shader_schema, 0);
 
 #endif // SIGMA_GRAPHICS_SHADER_HPP

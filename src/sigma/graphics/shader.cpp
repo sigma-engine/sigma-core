@@ -14,10 +14,16 @@ namespace graphics {
         schema_ = std::move(schema);
     }
 
+    shader_type shader::type() const
+    {
+        return type_;
+    }
+
     const shader_schema& shader::schema() const
     {
         return schema_;
     }
+
     void from_json(const nlohmann::json& j, shader_schema& schema)
     {
         auto ubos_it = j.find("ubos");
@@ -38,15 +44,17 @@ namespace graphics {
         if (textures_it != j.end()) {
             for (const auto& j_texture : *textures_it) {
                 std::string type = j_texture["type"].get<std::string>();
-                shader_sampler sampler;
-                sampler.name = j_texture["name"].get<std::string>();
-                sampler.descriptor_set = j_texture["set"].get<size_t>();
+                texture_schema tex_schema;
+                tex_schema.name = j_texture["name"].get<std::string>();
+                tex_schema.descriptor_set = j_texture["set"].get<size_t>();
+                tex_schema.binding_point = j_texture["binding"].get<size_t>();
                 if (type == "sampler2D")
-                    sampler.type = shader_sampler_type::SAMPLER2D;
+                    tex_schema.type = texture_sampler_type::SAMPLER2D;
                 else if (type == "sampler2DArrayShadow")
-                    sampler.type = shader_sampler_type::SAMPLER2D_ARRAY_SHADOW;
+                    tex_schema.type = texture_sampler_type::SAMPLER2D_ARRAY_SHADOW;
                 else
                     throw std::runtime_error("Sampler Type: " + type + " is not supported!");
+                schema.textures.push_back(tex_schema);
             }
         }
     }

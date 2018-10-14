@@ -8,9 +8,6 @@
 #include <sigma/reflect.hpp>
 #include <sigma/util/glm_serialize.hpp>
 
-#include <boost/serialization/set.hpp>
-#include <boost/serialization/unordered_map.hpp>
-
 #include <set>
 #include <string>
 #include <unordered_map>

@@ -1,8 +1,13 @@
 #ifndef SIGMA_CORE_RESOURCE_HPP
 #define SIGMA_CORE_RESOURCE_HPP
 
+#include <sigma/util/filesystem.hpp>
+
+#define CEREAL_FUTURE_EXPERIMENTAL
+#include <cereal/archives/adapters.hpp>
+#include <cereal/cereal.hpp>
+
 #include <boost/filesystem/path.hpp>
-#include <boost/serialization/serialization.hpp>
 
 #define REGISTER_RESOURCE(Klass, ShortName, Version)             \
     namespace sigma {                                            \
@@ -14,7 +19,7 @@
         };                                                       \
     }                                                            \
     }                                                            \
-    BOOST_CLASS_VERSION(Klass, Version)
+    CEREAL_CLASS_VERSION(Klass, Version)
 
 #define resource_name(Klass) sigma::resource::resource_traits<Klass>::fullname
 #define resource_shortname(Klass) sigma::resource::resource_traits<Klass>::shortname
@@ -26,6 +31,57 @@ namespace resource {
     struct resource_traits;
 
     using key_type = boost::filesystem::path;
+
+    template <class T>
+    class handle_type {
+    public:
+        handle_type(std::shared_ptr<T> rsc = nullptr)
+            : rsc_(rsc)
+        {
+        }
+
+        T* get() const noexcept
+        {
+            return rsc_.get();
+        }
+
+        T& operator*() const noexcept
+        {
+            return *rsc_;
+        }
+
+        T* operator->() const noexcept
+        {
+            return rsc_.get();
+        }
+
+        explicit operator bool() const noexcept
+        {
+            if (rsc_)
+                return true;
+            return false;
+        }
+
+        template <class Archive>
+        void save(Archive& ar) const
+        {
+            ar(rsc_->key());
+        }
+
+        template <class Archive>
+        void load(Archive& ar)
+        {
+            auto ctx = cereal::get_user_data<std::shared_ptr<context>>(ar);
+
+            key_type key;
+            ar(key);
+
+            *this = ctx->template cache<T>()->get(key);
+        }
+
+    private:
+        std::shared_ptr<T> rsc_;
+    };
 
     class base_resource {
     public:

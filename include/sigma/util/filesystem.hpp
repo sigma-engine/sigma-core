@@ -3,10 +3,10 @@
 
 #include <sigma/config.hpp>
 
+#include <cereal/types/string.hpp>
+
 #include <boost/filesystem/path.hpp>
 #include <boost/functional/hash.hpp>
-#include <boost/serialization/level.hpp>
-#include <boost/serialization/nvp.hpp>
 
 namespace sigma {
 namespace filesystem {
@@ -28,18 +28,20 @@ struct hash<boost::filesystem::path> {
 };
 }
 
-namespace boost {
-namespace serialization {
-    template <class Archive>
-    void serialize(Archive& ar, boost::filesystem::path& p, const unsigned int version)
-    {
-        boost::filesystem::path::string_type s;
-        if (Archive::is_saving::value)
-            s = p.string();
-        ar& boost::serialization::make_nvp("string", s);
-        if (Archive::is_loading::value)
-            p = s;
-    }
+namespace cereal {
+template <class Archive>
+inline void save(Archive& ar, const boost::filesystem::path& p)
+{
+    auto str = p.string();
+    ar(str);
+}
+
+template <class Archive>
+inline void load(Archive& ar, boost::filesystem::path& p)
+{
+    boost::filesystem::path::string_type str;
+    ar(str);
+    p = str;
 }
 }
 

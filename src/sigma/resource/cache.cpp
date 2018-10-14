@@ -2,10 +2,7 @@
 
 #include <sigma/context.hpp>
 
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
 #include <boost/filesystem/operations.hpp>
-#include <boost/serialization/unordered_map.hpp>
 
 namespace sigma {
 namespace resource {
@@ -22,7 +19,7 @@ namespace resource {
 
     base_cache::base_cache(std::shared_ptr<context> context, const std::string& short_name)
         : context_(context)
-        , cache_path_(context_->cache_path() / "data" / short_name)
+        , cache_path_(context->cache_path() / "data" / short_name)
     {
         if (!boost::filesystem::exists(cache_path_))
             boost::filesystem::create_directories(cache_path_);

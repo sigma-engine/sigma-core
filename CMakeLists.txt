@@ -22,7 +22,7 @@ add_library(sigma-core STATIC
 
 target_include_directories(sigma-core PUBLIC include)
 target_compile_definitions(sigma-core PUBLIC -DGLM_ENABLE_EXPERIMENTAL -DGLM_FORCE_CTOR_INIT PRIVATE -DSIGMA_EXPORT)
-target_link_libraries(sigma-core PUBLIC ${CMAKE_DL_LIBS} Boost::filesystem Boost::serialization Boost::system Threads::Threads glm nlohmann_json::nlohmann_json)
+target_link_libraries(sigma-core PUBLIC ${CMAKE_DL_LIBS} cereal::cereal Boost::filesystem Boost::system Threads::Threads glm nlohmann_json::nlohmann_json)
 
 if(COTIRE_CMAKE_MODULE_VERSION)
 	cotire(sigma-core)

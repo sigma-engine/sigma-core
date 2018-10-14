@@ -24,8 +24,7 @@ namespace graphics {
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
         {
-            ar& color;
-            ar& intensity;
+            ar(color, intensity);
         }
     };
 }

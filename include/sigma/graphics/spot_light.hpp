@@ -39,10 +39,7 @@ namespace graphics {
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
         {
-            ar& color;
-            ar& intensity;
-            ar& cutoff;
-            ar& cast_shadows;
+            ar(color, intensity, cutoff, cast_shadows);
         }
     };
 }
