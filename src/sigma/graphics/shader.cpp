@@ -2,8 +2,8 @@
 
 namespace sigma {
 namespace graphics {
-    shader::shader(std::weak_ptr<sigma::context> context, const resource::key_type& key)
-        : resource::base_resource::base_resource(context, key)
+    shader::shader(std::weak_ptr<sigma::context> context, resource::key_type key)
+        : resource::base_resource::base_resource(std::move(context), std::move(key))
     {
     }
 

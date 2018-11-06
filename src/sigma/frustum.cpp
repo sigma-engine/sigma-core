@@ -134,10 +134,14 @@ bool frustum::contains_sphere(const glm::vec3& center, float radius) const
     for (const auto& plane : planes_) {
         float distance = glm::dot(plane, glm::vec4 { center, 1 });
         if (distance < -radius)
+        {
             return false;
+        }
 
         if (std::abs(distance) < radius)
+        {
             return true;
+        }
     }
     return true;
 }
@@ -196,7 +200,9 @@ void frustum::rebuild_()
 
     radius_ = std::numeric_limits<float>::min();
     for (auto c : corners_)
+    {
         radius_ = std::max(radius_, glm::distance(glm::vec3 { c }, center_));
+    }
 
     diagonal_ = glm::length(glm::vec3(corners_[6] - corners_[0]));
 
@@ -211,6 +217,8 @@ void frustum::rebuild_()
     planes_[5] = glm::row(projection_view_, 3) - glm::row(projection_view_, 2);
 
     for (auto& plane : planes_)
+    {
         plane = plane / glm::length(glm::vec3(plane));
+    }
 }
 }

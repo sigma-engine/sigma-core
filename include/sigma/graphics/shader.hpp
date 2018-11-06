@@ -34,7 +34,7 @@ namespace graphics {
 
     class shader : public resource::base_resource {
     public:
-        shader(std::weak_ptr<sigma::context> context, const resource::key_type& key);
+        shader(std::weak_ptr<sigma::context> context, resource::key_type key);
 
         void add_source(shader_type type, std::vector<unsigned char>&& spirv, shader_schema&& schema);
 

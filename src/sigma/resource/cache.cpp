@@ -22,7 +22,9 @@ namespace resource {
         , cache_path_(context->cache_path() / "data" / short_name)
     {
         if (!boost::filesystem::exists(cache_path_))
+        {
             boost::filesystem::create_directories(cache_path_);
+        }
     }
 
     bool base_cache::exists(const key_type& key) const
@@ -34,7 +36,9 @@ namespace resource {
     {
         auto path = cache_path_ / key;
         if (boost::filesystem::exists(path))
+        {
             return boost::filesystem::last_write_time(path);
+        }
         return 0;
     }
 }

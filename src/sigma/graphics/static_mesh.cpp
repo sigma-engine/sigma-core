@@ -12,7 +12,7 @@ namespace graphics {
     mesh_part::mesh_part(size_t start, size_t end, resource::handle_type<graphics::material> material)
         : start_(start)
         , end_(end)
-        , material_(material)
+        , material_(std::move(material))
     {
     }
 
@@ -31,8 +31,8 @@ namespace graphics {
         return material_;
     }
 
-    static_mesh::static_mesh(std::weak_ptr<sigma::context> ctx, const resource::key_type& key)
-        : resource::base_resource::base_resource(ctx, key)
+    static_mesh::static_mesh(std::weak_ptr<sigma::context> ctx, resource::key_type key)
+        : resource::base_resource::base_resource(std::move(ctx), std::move(key))
     {
     }
 

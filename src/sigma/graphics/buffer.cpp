@@ -7,14 +7,20 @@ namespace graphics {
     bool buffer_schema::merge(const buffer_schema& other)
     {
         if (type_name != other.type_name || descriptor_set != other.descriptor_set || binding_point != other.binding_point)
+        {
             return false;
+        }
 
         for (const auto& m : other.members) {
             auto it = members.find(m.first);
             if (it == members.end())
+            {
                 members[m.first] = m.second;
+            }
             else if (it->second != m.second)
+            {
                 return false;
+            }
         }
 
         size = std::max(other.size, size);
@@ -22,14 +28,14 @@ namespace graphics {
         return true;
     }
 
-    buffer::buffer(std::weak_ptr<sigma::context> context, const resource::key_type& key)
-        : resource::base_resource::base_resource(context, key)
+    buffer::buffer(std::weak_ptr<sigma::context> context, resource::key_type key)
+        : resource::base_resource::base_resource(std::move(context), std::move(key))
     {
     }
 
-    buffer::buffer(std::weak_ptr<sigma::context> context, const resource::key_type& key, const buffer_schema& schema)
-        : resource::base_resource::base_resource(context, key)
-        , schema_(schema)
+    buffer::buffer(std::weak_ptr<sigma::context> context, resource::key_type key, buffer_schema schema)
+        : resource::base_resource::base_resource(std::move(context), std::move(key))
+        , schema_(std::move(schema))
         , buffer_(schema_.size, 0)
     {
     }
@@ -42,8 +48,12 @@ namespace graphics {
     bool buffer::merge(const buffer_schema& other)
     {
         if (!schema_.merge(other))
+        {
             return false;
+        }
+
         buffer_.resize(schema_.size);
+
         return true;
     }
 
@@ -156,7 +166,5 @@ namespace graphics {
         assert(index < m.count);
         std::memcpy(buffer_.data() + (m.offset + (index * m.stride)), glm::value_ptr(mat), sizeof(glm::mat4));
     }
-
-
 }
 }

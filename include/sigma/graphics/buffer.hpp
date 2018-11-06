@@ -71,9 +71,9 @@ namespace graphics {
 
     class buffer : public resource::base_resource {
     public:
-        buffer(std::weak_ptr<sigma::context> context, const resource::key_type& key);
+        buffer(std::weak_ptr<sigma::context> context, resource::key_type key);
 
-        buffer(std::weak_ptr<sigma::context> context, const resource::key_type& key, const buffer_schema& schema);
+        buffer(std::weak_ptr<sigma::context> context, resource::key_type key, buffer_schema schema);
 
         const buffer_schema& schema() const;
 
@@ -91,11 +91,11 @@ namespace graphics {
         void set(const std::string& member, const glm::vec4& v);
         void set(const std::string& member, size_t index, const glm::vec4& v);
 
-        void set(const std::string& member, const glm::mat3& v);
-        void set(const std::string& member, size_t index, const glm::mat3& v);
+        void set(const std::string& member, const glm::mat3& mat);
+        void set(const std::string& member, size_t index, const glm::mat3& mat);
 
-        void set(const std::string& member, const glm::mat4& v);
-        void set(const std::string& member, size_t index, const glm::mat4& v);
+        void set(const std::string& member, const glm::mat4& mat);
+        void set(const std::string& member, size_t index, const glm::mat4& mat);
 
         template <class Archive>
         void serialize(Archive& ar)

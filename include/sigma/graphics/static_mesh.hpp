@@ -58,7 +58,7 @@ namespace graphics {
 
         typedef std::array<unsigned int, 3> triangle;
 
-        static_mesh(std::weak_ptr<sigma::context> ctx, const resource::key_type& key);
+        static_mesh(std::weak_ptr<sigma::context> ctx, resource::key_type key);
 
         const std::vector<vertex>& vertices() const;
 

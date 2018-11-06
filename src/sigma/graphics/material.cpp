@@ -15,14 +15,16 @@ namespace graphics {
     {
         auto it = buffers_.find(index);
         if (it != buffers_.end())
+        {
             return it->second;
+        }
         return resource::handle_type<graphics::buffer>{};
     }
 
     void material::set_buffer(size_t index, resource::handle_type<graphics::buffer> buffer)
     {
         // TODO: check that the buffer matches the shaders
-        buffers_[index] = buffer;
+        buffers_[index] = std::move(buffer);
     }
 
     const std::unordered_map<size_t, resource::handle_type<graphics::buffer>>& material::buffers()
@@ -34,14 +36,16 @@ namespace graphics {
     {
         auto it = shaders_.find(type);
         if (it != shaders_.end())
+        {
             return it->second;
+        }
         return resource::handle_type<graphics::shader>{};
     }
 
     void material::set_shader(shader_type type, resource::handle_type<graphics::shader> shader)
     {
         // TODO: check that the buffers matches the shader
-        shaders_[type] = shader;
+        shaders_[type] = std::move(shader);
     }
 
     const std::unordered_map<shader_type, resource::handle_type<graphics::shader>>& material::shaders()

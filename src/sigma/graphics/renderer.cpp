@@ -6,7 +6,5 @@ namespace graphics {
         : context_(ctx)
     {
     }
-
-    renderer::~renderer() {}
 }
 }

@@ -3,13 +3,11 @@
 namespace sigma {
 namespace resource {
 
-    base_resource::base_resource(std::weak_ptr<sigma::context> context, const key_type& key)
-        : context_(context)
-        , key_(key)
+    base_resource::base_resource(std::weak_ptr<sigma::context> context, key_type key)
+        : context_(std::move(context))
+        , key_(std::move(key))
     {
     }
-
-    base_resource::~base_resource() {}
 
     std::weak_ptr<sigma::context> base_resource::context()
     {

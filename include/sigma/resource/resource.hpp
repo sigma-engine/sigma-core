@@ -85,7 +85,7 @@ namespace resource {
 
     class base_resource {
     public:
-        base_resource(std::weak_ptr<sigma::context> context, const key_type& key);
+        base_resource(std::weak_ptr<sigma::context> context, key_type key);
 
         base_resource(const base_resource&) = delete;
 
@@ -95,7 +95,7 @@ namespace resource {
 
         base_resource& operator=(base_resource&&) = default;
 
-        virtual ~base_resource();
+        virtual ~base_resource() = default;
 
         std::weak_ptr<sigma::context> context();
 

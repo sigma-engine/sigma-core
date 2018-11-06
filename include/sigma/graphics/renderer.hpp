@@ -30,7 +30,7 @@ namespace graphics {
 
         renderer(glm::ivec2 size, std::shared_ptr<sigma::context> ctx);
 
-        virtual ~renderer();
+        virtual ~renderer() = default;
 
         virtual void resize(glm::uvec2 size) = 0;
 
