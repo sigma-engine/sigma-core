@@ -3,7 +3,6 @@
 
 #include <sigma/resource/resource.hpp>
 
-#define CEREAL_FUTURE_EXPERIMENTAL
 #include <cereal/archives/adapters.hpp>
 #include <cereal/archives/binary.hpp>
 

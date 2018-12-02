@@ -3,7 +3,6 @@
 
 #include <sigma/util/filesystem.hpp>
 
-#define CEREAL_FUTURE_EXPERIMENTAL
 #include <cereal/archives/adapters.hpp>
 #include <cereal/cereal.hpp>
 
