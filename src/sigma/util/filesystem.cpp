@@ -22,10 +22,11 @@ namespace filesystem {
     std::filesystem::path make_relative(std::filesystem::path directory, std::filesystem::path file)
     {
         auto dbegin = directory.begin();
+        auto dend = directory.end();
         auto fbegin = file.begin();
         auto fend = file.end();
 
-        while (*dbegin == *fbegin) {
+        while (dbegin != dend && fbegin != fend && *dbegin == *fbegin) {
             dbegin++;
             fbegin++;
         }
