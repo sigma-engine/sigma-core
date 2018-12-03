@@ -6,9 +6,7 @@
 #include <cereal/archives/adapters.hpp>
 #include <cereal/archives/binary.hpp>
 
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/path.hpp>
-
+#include <filesystem>
 #include <fstream>
 #include <unordered_map>
 
@@ -42,11 +40,9 @@ namespace resource {
 
         bool exists(const key_type& key) const;
 
-        std::time_t last_modification_time(const key_type& key) const;
-
     protected:
         std::weak_ptr<context> context_;
-        boost::filesystem::path cache_path_;
+        std::filesystem::path cache_path_;
     };
 
     template <class T>
@@ -63,8 +59,8 @@ namespace resource {
             auto path = cache_path_ / key;
 
             auto p_path = path.parent_path();
-            if (!boost::filesystem::exists(p_path))
-                boost::filesystem::create_directories(p_path);
+            if (!std::filesystem::exists(p_path))
+                std::filesystem::create_directories(p_path);
 
             std::ofstream file { path.string(), std::ios::binary | std::ios::out };
             auto ctx = context_.lock();

@@ -6,7 +6,7 @@
 #include <cereal/archives/adapters.hpp>
 #include <cereal/cereal.hpp>
 
-#include <boost/filesystem/path.hpp>
+#include <filesystem>
 
 #define REGISTER_RESOURCE(Klass, ShortName, Version)             \
     namespace sigma {                                            \
@@ -29,7 +29,7 @@ namespace resource {
     template <class T>
     struct resource_traits;
 
-    using key_type = boost::filesystem::path;
+    using key_type = std::filesystem::path;
 
     template <class T>
     class handle_type {

@@ -6,8 +6,7 @@
 #include <sigma/graphics/static_mesh_instance.hpp>
 #include <sigma/world.hpp>
 
-#include <boost/filesystem/path.hpp>
-
+#include <filesystem>
 #include <fstream>
 
 namespace sigma {

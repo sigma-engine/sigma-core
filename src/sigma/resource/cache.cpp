@@ -2,7 +2,7 @@
 
 #include <sigma/context.hpp>
 
-#include <boost/filesystem/operations.hpp>
+#include <filesystem>
 
 namespace sigma {
 namespace resource {
@@ -21,25 +21,14 @@ namespace resource {
         : context_(context)
         , cache_path_(context->cache_path() / "data" / short_name)
     {
-        if (!boost::filesystem::exists(cache_path_))
-        {
-            boost::filesystem::create_directories(cache_path_);
+        if (!std::filesystem::exists(cache_path_)) {
+            std::filesystem::create_directories(cache_path_);
         }
     }
 
     bool base_cache::exists(const key_type& key) const
     {
-        return boost::filesystem::exists(cache_path_ / key);
-    }
-
-    std::time_t base_cache::last_modification_time(const key_type& key) const
-    {
-        auto path = cache_path_ / key;
-        if (boost::filesystem::exists(path))
-        {
-            return boost::filesystem::last_write_time(path);
-        }
-        return 0;
+        return std::filesystem::exists(cache_path_ / key);
     }
 }
 }

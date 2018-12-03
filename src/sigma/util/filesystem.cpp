@@ -1,10 +1,10 @@
 #include <sigma/util/filesystem.hpp>
 
-#include <boost/filesystem/path.hpp>
+#include <filesystem>
 
 namespace sigma {
 namespace filesystem {
-    bool contains_file(boost::filesystem::path directory, boost::filesystem::path file)
+    bool contains_file(std::filesystem::path directory, std::filesystem::path file)
     {
         auto dbegin = directory.begin();
         auto dend = directory.end();
@@ -19,7 +19,7 @@ namespace filesystem {
         return std::equal(dbegin, dend, fbegin);
     }
 
-    boost::filesystem::path make_relative(boost::filesystem::path directory, boost::filesystem::path file)
+    std::filesystem::path make_relative(std::filesystem::path directory, std::filesystem::path file)
     {
         auto dbegin = directory.begin();
         auto fbegin = file.begin();
@@ -29,7 +29,7 @@ namespace filesystem {
             dbegin++;
             fbegin++;
         }
-        boost::filesystem::path output;
+        std::filesystem::path output;
         do {
             output = output / (*fbegin).string();
             fbegin++;
@@ -37,7 +37,7 @@ namespace filesystem {
         return output;
     }
 
-    bool is_hidden(const boost::filesystem::path& path)
+    bool is_hidden(const std::filesystem::path& path)
     {
         auto name = path.filename().string();
         return !name.empty() && name != ".." && name != "." && name[0] == '.';

@@ -1,8 +1,7 @@
 #ifndef SIGMA_CONTEXT_HPP
 #define SIGMA_CONTEXT_HPP
 
-#include <boost/filesystem/path.hpp>
-
+#include <filesystem>
 #include <memory>
 #include <typeindex>
 #include <unordered_map>
@@ -22,13 +21,13 @@ namespace graphics {
 
 class context : public std::enable_shared_from_this<context> {
 public:
-    context(const boost::filesystem::path& cache_path);
+    context(const std::filesystem::path& cache_path);
 
     context(context&&) = default;
 
     context& operator=(context&&) = default;
 
-    const boost::filesystem::path& cache_path() const;
+    const std::filesystem::path& cache_path() const;
 
     std::shared_ptr<graphics::pipeline> pipeline();
 
@@ -48,7 +47,7 @@ private:
 
     context& operator=(const context&) = delete;
 
-    boost::filesystem::path cache_path_;
+    std::filesystem::path cache_path_;
     std::shared_ptr<graphics::pipeline> pipeline_;
     std::unordered_map<std::type_index, std::shared_ptr<resource::base_cache>> caches_;
 };
