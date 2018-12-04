@@ -3,7 +3,6 @@
 
 #include <sigma/component.hpp>
 #include <sigma/config.hpp>
-#include <sigma/reflect.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -11,12 +10,11 @@
 
 namespace sigma {
 
-struct R_EXPORT() transform {
-    BOOST_HANA_DEFINE_STRUCT(
-        transform,
-        (glm::vec3, position),
-        (glm::quat, rotation),
-        (glm::vec3, scale));
+struct transform {
+    glm::vec3 position;
+    glm::quat rotation;
+    glm::vec3 scale;
+
     glm::mat4 matrix;
 
     transform(glm::vec3 position = glm::vec3 { 0 }, glm::quat rotation = glm::quat {}, glm::vec3 scale = glm::vec3 { 1 })

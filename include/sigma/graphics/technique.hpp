@@ -2,10 +2,10 @@
 #define SIGMA_GRAPHICS_TECHNIQUE_HPP
 
 #include <sigma/config.hpp>
+
 #include <sigma/graphics/cubemap.hpp>
 #include <sigma/graphics/shader.hpp>
 #include <sigma/graphics/texture.hpp>
-#include <sigma/reflect.hpp>
 #include <sigma/util/glm_serialize.hpp>
 
 #include <set>

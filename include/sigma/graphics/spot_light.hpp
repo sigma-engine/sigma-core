@@ -1,22 +1,20 @@
 #ifndef SIGMA_GRAPHICS_SPOT_LIGHT_HPP
 #define SIGMA_GRAPHICS_SPOT_LIGHT_HPP
 
-#include <sigma/component.hpp>
 #include <sigma/config.hpp>
+
+#include <sigma/component.hpp>
 #include <sigma/frustum.hpp>
-#include <sigma/reflect.hpp>
 
 #include <glm/vec3.hpp>
 
 namespace sigma {
 namespace graphics {
-    struct R_EXPORT() spot_light {
-        BOOST_HANA_DEFINE_STRUCT(
-            spot_light,
-            (glm::vec3, color),
-            (float, intensity),
-            (float, cutoff),
-            (bool, cast_shadows));
+    struct spot_light {
+        glm::vec3 color;
+        float intensity;
+        float cutoff;
+        bool cast_shadows;
 
         glm::vec3 direction;
         frustum shadow_frustum;

@@ -6,15 +6,66 @@
 #include <sigma/util/glm_serialize.hpp>
 
 #include <cereal/types/vector.hpp>
-
 #include <glm/vec2.hpp>
-
-#include <boost/gil/typedefs.hpp>
 
 #include <vector>
 
 namespace sigma {
 namespace graphics {
+    struct rgb8_pixel_t {
+        uint8_t r, g, b;
+    };
+
+    struct rgba8_pixel_t {
+        uint8_t r, g, b, a;
+    };
+
+    struct rgb32f_pixel_t {
+        float r, g, b;
+    };
+
+    template <class T>
+    struct image_t {
+        using pixel_type = T;
+        glm::ivec2 size;
+        std::vector<pixel_type> pixels;
+        image_t()
+            : size({ 0, 0 })
+        {
+        }
+
+        image_t(glm::ivec2 size)
+            : size(size)
+            , pixels(size.x * size.y)
+        {
+        }
+    };
+
+    template <class T>
+    struct channel_count {
+    };
+
+    template <class T>
+    struct channel_count<image_t<T>> : public channel_count<T> {
+    };
+
+    template <>
+    struct channel_count<rgb8_pixel_t> {
+        static constexpr const size_t value = 3;
+    };
+
+    template <>
+    struct channel_count<rgba8_pixel_t> {
+        static constexpr const size_t value = 4;
+    };
+
+    template <>
+    struct channel_count<rgb32f_pixel_t> {
+        static constexpr const size_t value = 3;
+    };
+
+    template <class T>
+    inline constexpr size_t channel_count_v = channel_count<T>::value;
 
     enum class texture_filter {
         LINEAR,
@@ -53,17 +104,17 @@ namespace graphics {
     struct texture_type_for_pixel;
 
     template <>
-    struct texture_type_for_pixel<boost::gil::rgb8_pixel_t> {
+    struct texture_type_for_pixel<rgb8_pixel_t> {
         static const constexpr texture_format value = texture_format::RGB8;
     };
 
     template <>
-    struct texture_type_for_pixel<boost::gil::rgba8_pixel_t> {
+    struct texture_type_for_pixel<rgba8_pixel_t> {
         static const constexpr texture_format value = texture_format::RGBA8;
     };
 
     template <>
-    struct texture_type_for_pixel<boost::gil::rgb32f_pixel_t> {
+    struct texture_type_for_pixel<rgb32f_pixel_t> {
         static const constexpr texture_format value = texture_format::RGB32F;
     };
 
@@ -82,7 +133,7 @@ namespace graphics {
 
         texture(std::weak_ptr<sigma::context> context,
             const resource::key_type& key,
-            const boost::gil::rgb8c_view_t& view,
+            const image_t<rgb8_pixel_t>& image,
             texture_filter minification_filter = texture_filter::LINEAR,
             texture_filter magnification_filter = texture_filter::LINEAR,
             texture_filter mipmap_filter = texture_filter::LINEAR,
@@ -90,7 +141,7 @@ namespace graphics {
 
         texture(std::weak_ptr<sigma::context> context,
             const resource::key_type& key,
-            const boost::gil::rgba8c_view_t& view,
+            const image_t<rgba8_pixel_t>& image,
             texture_filter minification_filter = texture_filter::LINEAR,
             texture_filter magnification_filter = texture_filter::LINEAR,
             texture_filter mipmap_filter = texture_filter::LINEAR,
@@ -98,7 +149,7 @@ namespace graphics {
 
         texture(std::weak_ptr<sigma::context> context,
             const resource::key_type& key,
-            const boost::gil::rgb32fc_view_t& view,
+            const image_t<rgb32f_pixel_t>& image,
             texture_filter minification_filter = texture_filter::LINEAR,
             texture_filter magnification_filter = texture_filter::LINEAR,
             texture_filter mipmap_filter = texture_filter::LINEAR,
@@ -123,32 +174,6 @@ namespace graphics {
         char* data(std::size_t level);
 
         const char* data(std::size_t level) const;
-
-        template <class PixelType>
-        typename boost::gil::type_from_x_iterator<PixelType*>::view_t as_view(std::size_t level)
-        {
-            assert(texture_type_for_pixel<PixelType>::value == format_);
-            assert(level < stored_mipmap_count());
-
-            long int size_x = std::max(1, size_.x >> level);
-            long int size_y = std::max(1, size_.y >> level);
-
-            using view_type = typename boost::gil::type_from_x_iterator<PixelType*>::view_t;
-            return view_type({ size_x, size_y }, typename view_type::locator((PixelType*)data(level), size_x * sizeof(PixelType)));
-        }
-
-        template <class PixelType>
-        typename boost::gil::type_from_x_iterator<PixelType*>::cview_t as_view(std::size_t level) const
-        {
-            assert(texture_type_for_pixel<PixelType>::value == format_);
-            assert(level < stored_mipmap_count());
-
-            std::size_t size_x = std::max(1, size_.x >> level);
-            std::size_t size_y = std::max(1, size_.y >> level);
-
-            using view_type = typename boost::gil::type_from_x_iterator<PixelType*>::cview_t;
-            return view_type({ size_x, size_y }, typename view_type::locator((PixelType*)data(level), size_x * sizeof(PixelType)));
-        }
 
         template <class Archive>
         void serialize(Archive& ar)

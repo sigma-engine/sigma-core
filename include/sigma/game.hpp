@@ -37,7 +37,7 @@ public:
             for (const auto& component : entity) {
                 component_set_type::for_each([&](auto type_tag) {
                     using component_type = typename decltype(type_tag)::type;
-                    if (const component_type* cmp = boost::get<component_type>(&component))
+                    if (const component_type* cmp = std::get<component_type>(&component))
                         world_.template add<component_type>(e, *cmp);
                 });
             }

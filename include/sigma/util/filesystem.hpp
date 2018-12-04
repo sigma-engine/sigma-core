@@ -5,8 +5,6 @@
 
 #include <cereal/types/string.hpp>
 
-#include <boost/functional/hash.hpp>
-
 #include <filesystem>
 
 namespace sigma {
