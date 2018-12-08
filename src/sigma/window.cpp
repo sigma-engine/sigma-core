@@ -72,7 +72,17 @@ window::window(glm::ivec2 size)
 
 window::~window()
 {
-    close();
+    good_ = false;
+
+    if (gl_context_) {
+        SDL_GL_DeleteContext(gl_context_);
+        gl_context_ = nullptr;
+    }
+
+    if (window_) {
+        SDL_DestroyWindow(window_);
+        window_ = nullptr;
+    }
 }
 
 glm::ivec2 window::size()
@@ -103,14 +113,6 @@ bool window::good()
 
 void window::close()
 {
-    if (window_) {
-        if (gl_context_) {
-            SDL_GL_DeleteContext(gl_context_);
-            gl_context_ = nullptr;
-        }
-        SDL_DestroyWindow(window_);
-        window_ = nullptr;
-        good_ = false;
-    }
+    good_ = false;
 }
 }
