@@ -22,7 +22,7 @@ add_library(sigma-core STATIC
 
 target_include_directories(sigma-core PUBLIC include)
 target_compile_definitions(sigma-core PUBLIC -DCEREAL_FUTURE_EXPERIMENTAL -DGLM_ENABLE_EXPERIMENTAL -DGLM_FORCE_CTOR_INIT PRIVATE -DSIGMA_EXPORT)
-target_link_libraries(sigma-core PUBLIC ${CMAKE_DL_LIBS} cereal::cereal Threads::Threads glm)
+target_link_libraries(sigma-core PUBLIC ${CMAKE_DL_LIBS} Threads::Threads cereal::cereal glm)
 
 if(COTIRE_CMAKE_MODULE_VERSION)
 	cotire(sigma-core)
@@ -34,5 +34,5 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 	target_link_libraries(sigma-core PUBLIC stdc++fs)
 endif()
 
-add_subdirectory(test)
-add_subdirectory(benchmark)
+#add_subdirectory(test)
+#add_subdirectory(benchmark)

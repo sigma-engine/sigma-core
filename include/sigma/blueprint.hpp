@@ -4,6 +4,7 @@
 #include <sigma/component.hpp>
 
 #include <variant>
+#include <vector>
 
 namespace sigma {
 template <class ComponentSet>
