@@ -34,5 +34,5 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 	target_link_libraries(sigma-core PUBLIC stdc++fs)
 endif()
 
-#add_subdirectory(test)
-#add_subdirectory(benchmark)
+add_subdirectory(test)
+add_subdirectory(benchmark)
