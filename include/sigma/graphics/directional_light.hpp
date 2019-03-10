@@ -3,8 +3,6 @@
 
 #include <sigma/config.hpp>
 
-#include <sigma/component.hpp>
-
 #include <glm/vec3.hpp>
 
 namespace sigma {
@@ -31,7 +29,5 @@ namespace graphics {
     };
 }
 }
-
-REGISTER_COMPONENT(sigma::graphics::directional_light)
 
 #endif // SIGMA_GRAPHICS_DIRECTIONAL_LIGHT_HPP

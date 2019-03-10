@@ -3,7 +3,6 @@
 
 #include <sigma/config.hpp>
 
-#include <sigma/component.hpp>
 #include <sigma/graphics/static_mesh.hpp>
 
 namespace sigma {
@@ -20,7 +19,5 @@ namespace graphics {
     };
 }
 }
-
-REGISTER_COMPONENT(sigma::graphics::static_mesh_instance)
 
 #endif // SIGMA_GRAPHICS_STATIC_MESH_INSTANCE_HPP

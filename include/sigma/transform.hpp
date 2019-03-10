@@ -1,7 +1,6 @@
 #ifndef SIGMA_TRANSFORM_HPP
 #define SIGMA_TRANSFORM_HPP
 
-#include <sigma/component.hpp>
 #include <sigma/config.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -30,7 +29,5 @@ struct transform {
     }
 };
 }
-
-REGISTER_COMPONENT(sigma::transform)
 
 #endif // SIGMA_TRANSFORM_HPP

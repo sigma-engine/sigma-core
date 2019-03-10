@@ -3,7 +3,6 @@
 
 #include <sigma/config.hpp>
 
-#include <sigma/component.hpp>
 #include <sigma/frustum.hpp>
 
 #include <glm/vec3.hpp>
@@ -42,7 +41,5 @@ namespace graphics {
     };
 }
 }
-
-REGISTER_COMPONENT(sigma::graphics::spot_light)
 
 #endif // SIGMA_GRAPHICS_SPOT_LIGHT_HPP

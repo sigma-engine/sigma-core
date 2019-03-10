@@ -3,8 +3,6 @@
 
 #include <sigma/config.hpp>
 
-#include <sigma/component.hpp>
-
 #include <glm/vec3.hpp>
 
 namespace sigma {
@@ -27,7 +25,5 @@ namespace graphics {
     };
 }
 }
-
-REGISTER_COMPONENT(sigma::graphics::point_light)
 
 #endif // SIGMA_GRAPHICS_POINT_LIGHT_HPP
