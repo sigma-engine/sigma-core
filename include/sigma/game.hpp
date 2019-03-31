@@ -2,6 +2,7 @@
 #define SIGMA_GAME_HPP
 
 #include <sigma/config.hpp>
+#include <sigma/graphics/renderer.hpp>
 
 #include <entt/entt.hpp>
 
@@ -20,11 +21,12 @@ public:
 
     virtual ~game() = default;
 
-    entt::registry<> &registry() { return registry_; }
+    entt::registry<>& registry() { return registry_; }
 
-    const entt::registry<> &registry() const { return registry_; }
+    const entt::registry<>& registry() const { return registry_; }
 
-    virtual void update(std::chrono::duration<float> dt) = 0;
+    virtual void update(const graphics::view_port& viewport, std::chrono::duration<float> dt) = 0;
+
 protected:
     game(const game&) = delete;
     game& operator=(const game&) = delete;

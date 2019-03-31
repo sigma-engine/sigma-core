@@ -14,11 +14,10 @@ namespace graphics {
     resource::handle_type<graphics::buffer> material::buffer(size_t index)
     {
         auto it = buffers_.find(index);
-        if (it != buffers_.end())
-        {
+        if (it != buffers_.end()) {
             return it->second;
         }
-        return resource::handle_type<graphics::buffer>{};
+        return resource::handle_type<graphics::buffer> {};
     }
 
     void material::set_buffer(size_t index, resource::handle_type<graphics::buffer> buffer)
@@ -35,11 +34,10 @@ namespace graphics {
     resource::handle_type<graphics::shader> material::shader(shader_type type)
     {
         auto it = shaders_.find(type);
-        if (it != shaders_.end())
-        {
+        if (it != shaders_.end()) {
             return it->second;
         }
-        return resource::handle_type<graphics::shader>{};
+        return resource::handle_type<graphics::shader> {};
     }
 
     void material::set_shader(shader_type type, resource::handle_type<graphics::shader> shader)
@@ -75,6 +73,11 @@ namespace graphics {
     {
         // TODO: warn if texture will not be used
         textures_[index] = texture;
+    }
+
+    const std::unordered_map<size_t, resource::handle_type<graphics::texture>>& material::textures()
+    {
+        return textures_;
     }
 }
 }

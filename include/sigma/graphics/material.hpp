@@ -34,11 +34,14 @@ namespace graphics {
 
         void set_texture(size_t index, resource::handle_type<graphics::texture> texture);
 
+        const std::unordered_map<size_t, resource::handle_type<graphics::texture>>& textures();
+
         template <class Archive>
         void serialize(Archive& ar)
         {
             ar(shaders_, textures_, buffers_);
         }
+
     private:
         std::unordered_map<shader_type, resource::handle_type<graphics::shader>> shaders_;
         std::unordered_map<size_t, resource::handle_type<graphics::texture>> textures_;

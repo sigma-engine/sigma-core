@@ -15,10 +15,6 @@ namespace resource {
     class cache;
 }
 
-namespace graphics {
-    class pipeline;
-}
-
 class context : public std::enable_shared_from_this<context> {
 public:
     context(const std::filesystem::path& cache_path);
@@ -28,8 +24,6 @@ public:
     context& operator=(context&&) = default;
 
     const std::filesystem::path& cache_path() const;
-
-    std::shared_ptr<graphics::pipeline> pipeline();
 
     template <class U>
     inline std::shared_ptr<resource::cache<U>> cache()
@@ -48,7 +42,6 @@ private:
     context& operator=(const context&) = delete;
 
     std::filesystem::path cache_path_;
-    std::shared_ptr<graphics::pipeline> pipeline_;
     std::unordered_map<std::type_index, std::shared_ptr<resource::base_cache>> caches_;
 };
 }

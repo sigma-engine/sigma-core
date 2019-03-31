@@ -12,7 +12,7 @@ add_library(sigma-core STATIC
 	include/sigma/graphics/cubemap.hpp
 	include/sigma/graphics/directional_light.hpp
 	include/sigma/graphics/material.hpp
-	include/sigma/graphics/pipeline.hpp
+	include/sigma/graphics/render_queue.hpp
 	include/sigma/graphics/point_light.hpp
 	include/sigma/graphics/post_process_effect.hpp
 	include/sigma/graphics/renderer.hpp
@@ -24,7 +24,6 @@ add_library(sigma-core STATIC
 	include/sigma/graphics/static_mesh.hpp
 	include/sigma/graphics/technique.hpp
 	include/sigma/graphics/texture.hpp
-	include/sigma/handle.hpp
 	include/sigma/resource/cache.hpp
 	include/sigma/resource/resource.hpp
 	include/sigma/trackball_controller.hpp
@@ -44,7 +43,7 @@ add_library(sigma-core STATIC
 	src/sigma/game.cpp
 	src/sigma/graphics/buffer.cpp
 	src/sigma/graphics/material.cpp
-	src/sigma/graphics/pipeline.cpp
+	src/sigma/graphics/render_queue.cpp
 	src/sigma/graphics/renderer.cpp
 	src/sigma/graphics/shader.cpp
 	src/sigma/graphics/static_mesh.cpp
@@ -54,7 +53,6 @@ add_library(sigma-core STATIC
 	src/sigma/trackball_controller.cpp
 	src/sigma/util/filesystem.cpp
 	src/sigma/window.cpp
-
 )
 
 target_include_directories(sigma-core PUBLIC include)
