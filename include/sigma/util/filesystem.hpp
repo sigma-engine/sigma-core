@@ -3,27 +3,28 @@
 
 #include <sigma/config.hpp>
 
-#include <boost/filesystem/path.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/serialization/level.hpp>
 #include <boost/serialization/nvp.hpp>
 
+#include <filesystem>
+
 namespace sigma {
 namespace filesystem {
-    bool SIGMA_API contains_file(boost::filesystem::path directory, boost::filesystem::path file);
+    bool SIGMA_API contains_file(std::filesystem::path directory, std::filesystem::path file);
 
-    boost::filesystem::path SIGMA_API make_relative(boost::filesystem::path directory, boost::filesystem::path file);
+    std::filesystem::path SIGMA_API make_relative(std::filesystem::path directory, std::filesystem::path file);
 
-    bool SIGMA_API is_hidden(const boost::filesystem::path& path);
+    bool SIGMA_API is_hidden(const std::filesystem::path& path);
 }
 }
 
 namespace std {
 template <>
-struct hash<boost::filesystem::path> {
-    size_t operator()(const boost::filesystem::path& p) const
+struct hash<std::filesystem::path> {
+    size_t operator()(const std::filesystem::path& p) const
     {
-        return boost::filesystem::hash_value(p);
+        return std::filesystem::hash_value(p);
     }
 };
 }
@@ -31,9 +32,9 @@ struct hash<boost::filesystem::path> {
 namespace boost {
 namespace serialization {
     template <class Archive>
-    void serialize(Archive& ar, boost::filesystem::path& p, const unsigned int version)
+    void serialize(Archive& ar, std::filesystem::path& p, const unsigned int version)
     {
-        boost::filesystem::path::string_type s;
+        std::filesystem::path::string_type s;
         if (Archive::is_saving::value)
             s = p.string();
         ar& boost::serialization::make_nvp("string", s);

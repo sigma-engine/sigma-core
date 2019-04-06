@@ -68,6 +68,7 @@ target_link_libraries(sigma-core
     glm
     jsoncpp
     SDL2
+    stdc++fs
 )
 
 add_library(sigma-opengl-graphics STATIC

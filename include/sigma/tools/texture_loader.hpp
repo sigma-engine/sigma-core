@@ -24,7 +24,7 @@ namespace tools {
     };
 
     template <class Image>
-    void load_texture(const boost::filesystem::path& source_file, texture_source_type source_type, Image& image)
+    void load_texture(const std::filesystem::path& source_file, texture_source_type source_type, Image& image)
     {
         auto file_path_string = source_file.string();
 
@@ -79,7 +79,7 @@ namespace tools {
             return supported_extensions.count(ext) > 0;
         }
 
-        virtual void load(const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) override
+        virtual void load(const std::filesystem::path& source_directory, const std::string& ext, const std::filesystem::path& source_file) override
         {
             static const std::unordered_map<std::string, texture_source_type> type_map = {
                 { ".tiff", texture_source_type::tiff },
@@ -104,10 +104,10 @@ namespace tools {
             if (texture_cache.contains({ rid })) {
                 auto h = texture_cache.handle_for({ rid });
 
-                auto source_file_time = boost::filesystem::last_write_time(source_file);
+                auto source_file_time = std::filesystem::last_write_time(source_file);
                 auto settings_time = source_file_time;
-                if (boost::filesystem::exists(settings_path))
-                    settings_time = boost::filesystem::last_write_time(settings_path);
+                if (std::filesystem::exists(settings_path))
+                    settings_time = std::filesystem::last_write_time(settings_path);
 
                 auto resource_time = texture_cache.last_modification_time(h);
                 if (source_file_time <= resource_time && settings_time <= resource_time)
@@ -123,7 +123,7 @@ namespace tools {
             settings["filter"]["magnification"] = "linear";
             settings["filter"]["mipmap"] = "linear";
 
-            if (boost::filesystem::exists(settings_path)) {
+            if (std::filesystem::exists(settings_path)) {
                 std::ifstream file(settings_path.string());
                 file >> settings;
             }

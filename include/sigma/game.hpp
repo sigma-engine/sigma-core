@@ -8,8 +8,7 @@
 
 #include <json/json.h>
 
-#include <boost/filesystem/path.hpp>
-
+#include <filesystem>
 #include <fstream>
 
 namespace sigma {

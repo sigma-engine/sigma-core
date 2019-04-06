@@ -39,7 +39,7 @@ namespace tools {
             return supported_extensions.count(ext) > 0;
         }
 
-        virtual void load(const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) override
+        virtual void load(const std::filesystem::path& source_directory, const std::string& ext, const std::filesystem::path& source_file) override
         {
             auto& technique_cache = context_.template get_cache<graphics::technique>();
             auto& static_mesh_cache = context_.template get_cache<graphics::static_mesh>();
@@ -50,7 +50,7 @@ namespace tools {
             if (post_process_effect_cache.contains({ rid })) {
                 auto h = post_process_effect_cache.handle_for({ rid });
 
-                auto source_file_time = boost::filesystem::last_write_time(source_file);
+                auto source_file_time = std::filesystem::last_write_time(source_file);
                 auto resource_time = post_process_effect_cache.last_modification_time(h);
                 // TODO (NOW): other dependencies
                 if (source_file_time <= resource_time)
@@ -80,9 +80,9 @@ namespace tools {
             extract_unifrom_data(context_, settings, effect);
 
             auto mesh_prefix = resource_shortname(graphics::static_mesh);
-            auto mesh_rid = boost::filesystem::path{ mesh_prefix } / "fullscreen_quad";
+            auto mesh_rid = std::filesystem::path{ mesh_prefix } / "fullscreen_quad";
             if (settings.isMember(mesh_prefix))
-                mesh_rid = boost::filesystem::path{ mesh_prefix } / settings[mesh_prefix].asString();
+                mesh_rid = std::filesystem::path{ mesh_prefix } / settings[mesh_prefix].asString();
 
             effect.mesh = static_mesh_cache.handle_for({ mesh_rid });
 

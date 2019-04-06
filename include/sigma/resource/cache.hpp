@@ -6,10 +6,9 @@
 
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/path.hpp>
 #include <boost/functional/hash.hpp>
 
+#include <filesystem>
 #include <exception>
 #include <fstream>
 #include <memory>
@@ -19,7 +18,7 @@
 
 namespace sigma {
 namespace resource {
-    using resource_id = std::vector<boost::filesystem::path>;
+    using resource_id = std::vector<std::filesystem::path>;
 
     class missing_resource : public std::exception {
     public:
@@ -31,7 +30,7 @@ namespace resource {
             if (cid.size() >= 2) {
                 ss << "{ " << cid[0];
                 for (std::size_t i = 1; i < cid.size() - 1; ++i) {
-                    if (cid[i].size() > 0)
+                    if (!cid[i].empty())
                         ss << cid[i] << ", ";
                 }
                 ss << cid[cid.size() - 1] << "}";
@@ -55,13 +54,13 @@ namespace resource {
     template <class Resource>
     class cache {
     public:
-        cache(const boost::filesystem::path& cache_directory)
+        cache(const std::filesystem::path& cache_directory)
             : cache_directory_(cache_directory)
         {
             auto database_path = cache_directory_ / "database";
-            if (!boost::filesystem::exists(cache_directory_)) {
-                boost::filesystem::create_directories(cache_directory_);
-            } else if (boost::filesystem::exists(database_path)) {
+            if (!std::filesystem::exists(cache_directory_)) {
+                std::filesystem::create_directories(cache_directory_);
+            } else if (std::filesystem::exists(database_path)) {
                 std::ifstream file{ database_path.string(), std::ios::binary | std::ios::in };
                 boost::archive::binary_iarchive ia{ file };
                 ia >> database_;
@@ -87,12 +86,12 @@ namespace resource {
             return database_.at(rid);
         }
 
-        std::time_t last_modification_time(const handle<Resource>& hnd) const
+        std::filesystem::file_time_type last_modification_time(const handle<Resource>& hnd) const
         {
             auto resource_path = cache_directory_ / std::to_string(hnd.index);
-            if (boost::filesystem::exists(resource_path))
-                return boost::filesystem::last_write_time(resource_path);
-            return 0;
+            if (std::filesystem::exists(resource_path))
+                return std::filesystem::last_write_time(resource_path);
+            return {};
         }
 
         handle<Resource> insert(const resource_id& rid, Resource resource, bool write_to_disk)
@@ -158,7 +157,7 @@ namespace resource {
             resources_[hnd.index].second = std::make_unique<Resource>(std::move(res));
         }
 
-        Resource load(const boost::filesystem::path& cache_directory, const handle<Resource>& hnd) const
+        Resource load(const std::filesystem::path& cache_directory, const handle<Resource>& hnd) const
         {
             assert(hnd.is_valid());
             auto resource_path = cache_directory / std::to_string(hnd.index);
@@ -169,7 +168,7 @@ namespace resource {
             return std::move(data);
         }
 
-        boost::filesystem::path cache_directory_;
+        std::filesystem::path cache_directory_;
         std::vector<std::pair<handle<Resource>, std::unique_ptr<Resource>>> resources_;
         std::unordered_map<resource_id, handle<Resource>> database_;
     };
@@ -183,7 +182,7 @@ struct hash<sigma::resource::resource_id> {
     {
         size_t hash_code = 0;
         for (const auto& id : rid) {
-            if (id.size() > 0)
+            if (!id.empty())
                 boost::hash_combine(hash_code, id);
         }
         return hash_code;

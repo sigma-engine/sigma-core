@@ -30,7 +30,7 @@ namespace tools {
             return supported_extensions.count(ext) > 0;
         }
 
-        virtual void load(const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) override
+        virtual void load(const std::filesystem::path& source_directory, const std::string& ext, const std::filesystem::path& source_file) override
         {
             auto rid = resource_shortname(sigma::graphics::cubemap) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
 
@@ -38,7 +38,7 @@ namespace tools {
             if (cubemap_cache.contains({ rid })) {
                 auto h = cubemap_cache.handle_for({ rid });
 
-                auto source_file_time = boost::filesystem::last_write_time(source_file);
+                auto source_file_time = std::filesystem::last_write_time(source_file);
                 auto resource_time = cubemap_cache.last_modification_time(h);
                 // TODO(NOW): other dependencies
                 if (source_file_time <= resource_time)

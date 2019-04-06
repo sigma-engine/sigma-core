@@ -23,9 +23,9 @@
 
 int main(int argc, char* argv[])
 {
-    auto cache_path = boost::filesystem::current_path() / "data";
-    if (!boost::filesystem::exists(cache_path))
-        cache_path = boost::filesystem::current_path() / ".." / "data";
+    auto cache_path = std::filesystem::current_path() / "data";
+    if (!std::filesystem::exists(cache_path))
+        cache_path = std::filesystem::current_path() / ".." / "data";
 
     simple_context context{ cache_path };
 

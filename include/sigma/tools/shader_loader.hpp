@@ -28,19 +28,19 @@ namespace tools {
             const char* requesting_source,
             size_t include_depth) override
         {
-            boost::filesystem::path requested_path{ requested_source };
-            boost::filesystem::path requesting_path{ requesting_source };
+            std::filesystem::path requested_path{ requested_source };
+            std::filesystem::path requesting_path{ requesting_source };
 
-            boost::filesystem::path full_path = requesting_path.parent_path() / requested_path;
-            if (!boost::filesystem::exists(full_path)) {
+            std::filesystem::path full_path = requesting_path.parent_path() / requested_path;
+            if (!std::filesystem::exists(full_path)) {
                 for (const auto& base_path : settings_.source_directories) {
                     auto path = base_path / requested_path;
-                    if (boost::filesystem::exists(path)) {
+                    if (std::filesystem::exists(path)) {
                         full_path = path;
                         break;
                     }
                 }
-                if (!boost::filesystem::exists(full_path))
+                if (!std::filesystem::exists(full_path))
                     return make_result("Include file does not exist.");
             }
 
@@ -118,7 +118,7 @@ namespace tools {
             return supported_extensions.count(ext);
         }
 
-        virtual void load(const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) override
+        virtual void load(const std::filesystem::path& source_directory, const std::string& ext, const std::filesystem::path& source_file) override
         {
             static const std::unordered_map<std::string, std::pair<sigma::graphics::shader_type, shaderc_shader_kind>> source_types = {
                 { ".vert", { sigma::graphics::shader_type::vertex, shaderc_glsl_vertex_shader } },
@@ -145,7 +145,7 @@ namespace tools {
             if (shader_database.contains({ rid })) {
                 auto h = shader_database.handle_for({ rid });
 
-                auto source_file_time = boost::filesystem::last_write_time(source_file);
+                auto source_file_time = std::filesystem::last_write_time(source_file);
                 auto resource_time = shader_database.last_modification_time(h);
                 // TODO (NOW): other dependencies
                 if (source_file_time <= resource_time)

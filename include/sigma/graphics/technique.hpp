@@ -23,11 +23,11 @@ namespace graphics {
         // TODO this only place this is used is in the tools
         BOOST_HANA_DEFINE_STRUCT(
             technique_identifier,
-            (boost::filesystem::path, vertex),
-            (boost::filesystem::path, tessellation_control),
-            (boost::filesystem::path, tessellation_evaluation),
-            (boost::filesystem::path, geometry),
-            (boost::filesystem::path, fragment));
+            (std::filesystem::path, vertex),
+            (std::filesystem::path, tessellation_control),
+            (std::filesystem::path, tessellation_evaluation),
+            (std::filesystem::path, geometry),
+            (std::filesystem::path, fragment));
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)

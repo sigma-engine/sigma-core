@@ -7,8 +7,8 @@
 #include <sigma/util/filesystem.hpp>
 
 #include <boost/algorithm/string/case_conv.hpp>
-#include <boost/filesystem/operations.hpp>
 
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -24,8 +24,8 @@ namespace tools {
 
         BOOST_HANA_DEFINE_STRUCT(
             build_settings,
-            (boost::filesystem::path, build_directory),
-            (std::vector<boost::filesystem::path>, source_directories));
+            (std::filesystem::path, build_directory),
+            (std::vector<std::filesystem::path>, source_directories));
     };
 
     template <class ContextType>
@@ -40,7 +40,7 @@ namespace tools {
 
         virtual bool supports_filetype(const std::string& ext) const = 0;
 
-        virtual void load(const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) = 0;
+        virtual void load(const std::filesystem::path& source_directory, const std::string& ext, const std::filesystem::path& source_file) = 0;
     };
 
     template <class... Resources, class... Settings>
@@ -67,18 +67,18 @@ namespace tools {
 
             for (const auto& loader : loaders_) {
                 for (const auto& source_directory : settings_.source_directories) {
-                    boost::filesystem::recursive_directory_iterator it{ source_directory };
-                    boost::filesystem::recursive_directory_iterator end;
+                    std::filesystem::recursive_directory_iterator it{ source_directory };
+                    std::filesystem::recursive_directory_iterator end;
                     for (; it != end; ++it) {
                         auto path = it->path();
                         if (sigma::filesystem::is_hidden(path)) {
-                            if (boost::filesystem::is_directory(path))
-                                it.no_push();
+                            if (std::filesystem::is_directory(path))
+                                it.disable_recursion_pending();
                             continue;
                         }
 
                         auto ext = boost::algorithm::to_lower_copy(path.extension().string());
-                        if (boost::filesystem::is_regular_file(path) && loader->supports_filetype(ext)) {
+                        if (std::filesystem::is_regular_file(path) && loader->supports_filetype(ext)) {
                             try {
                                 loader->load(source_directory, ext, path);
                             } catch (const std::exception& e) {

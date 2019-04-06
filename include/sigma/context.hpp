@@ -5,12 +5,11 @@
 #include <sigma/resource/resource.hpp>
 #include <sigma/util/type_sequence.hpp>
 
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/path.hpp>
 #include <boost/hana/define_struct.hpp>
 
 #include <tuple>
 #include <vector>
+#include <filesystem>
 
 namespace sigma {
 template <class... Resources>
@@ -28,13 +27,13 @@ public:
     using resource_set_type = resource_set<Resources...>;
     using settings_set_type = settings_set<Settings...>;
 
-    context(const boost::filesystem::path& cache_path)
+    context(const std::filesystem::path& cache_path)
         : cache_path_{ cache_path }
         , caches_{ resource::cache<Resources>{ cache_path_ / resource_shortname(Resources) }... }
     {
     }
 
-    const boost::filesystem::path& get_cache_path() const
+    const std::filesystem::path& get_cache_path() const
     {
         return cache_path_;
     }
@@ -67,7 +66,7 @@ private:
     context(const context<resource_set_type, settings_set_type>&) = delete;
     context<resource_set_type, settings_set_type>& operator=(const context<resource_set_type, settings_set_type>&) = delete;
 
-    boost::filesystem::path cache_path_;
+    std::filesystem::path cache_path_;
     std::tuple<resource::cache<Resources>...> caches_;
     std::tuple<Settings...> settings_;
 
@@ -92,7 +91,7 @@ public:
     {
     }
 
-    const boost::filesystem::path& get_cache_path() const
+    const std::filesystem::path& get_cache_path() const
     {
         return cache_path_;
     }
@@ -122,7 +121,7 @@ public:
     }
 
 private:
-    boost::filesystem::path& cache_path_;
+    std::filesystem::path& cache_path_;
     std::tuple<resource::cache<ViewResources>&...> caches_;
     std::tuple<ViewSettings&...> settings_;
 };

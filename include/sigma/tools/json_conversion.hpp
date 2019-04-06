@@ -19,13 +19,13 @@
 
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/filesystem/path.hpp>
 #include <boost/hana/at_key.hpp>
 #include <boost/hana/for_each.hpp>
 #include <boost/hana/keys.hpp>
 #include <boost/hana/length.hpp>
 
 #include <vector>
+#include <filesystem>
 
 namespace sigma {
 namespace json {
@@ -183,9 +183,9 @@ namespace json {
         };
 
         template <>
-        struct type_traits<boost::filesystem::path> {
+        struct type_traits<std::filesystem::path> {
             template <class Context>
-            static bool from(Context& ctx, const Json::Value& source, boost::filesystem::path& output)
+            static bool from(Context& ctx, const Json::Value& source, std::filesystem::path& output)
             {
                 output = source.asString();
                 return true;

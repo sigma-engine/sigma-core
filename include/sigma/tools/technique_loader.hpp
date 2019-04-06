@@ -26,12 +26,12 @@ namespace tools {
             } else if (it.key() == "textures") {
                 const auto& texture_object = *it;
                 for (auto it2 = texture_object.begin(); it2 != texture_object.end(); ++it2) {
-                    data.textures[it2.key().asString()] = texture_cache.handle_for({ boost::filesystem::path{ "texture" } / (*it2).asString() }); // TODO warn if tring to set texture more than once
+                    data.textures[it2.key().asString()] = texture_cache.handle_for({ std::filesystem::path{ "texture" } / (*it2).asString() }); // TODO warn if tring to set texture more than once
                 }
             } else if (it.key() == "cubemaps") {
                 const auto& cubemap_object = *it;
                 for (auto it2 = cubemap_object.begin(); it2 != cubemap_object.end(); ++it2) {
-                    data.cubemaps[it2.key().asString()] = cubemap_cache.handle_for({ boost::filesystem::path{ "cubemap" } / (*it2).asString() }); // TODO warn if tring to set cubemap more than once
+                    data.cubemaps[it2.key().asString()] = cubemap_cache.handle_for({ std::filesystem::path{ "cubemap" } / (*it2).asString() }); // TODO warn if tring to set cubemap more than once
                 }
             } else {
                 float f;
@@ -71,7 +71,7 @@ namespace tools {
             return supported_extensions.count(ext) > 0;
         }
 
-        virtual void load(const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file) override
+        virtual void load(const std::filesystem::path& source_directory, const std::string& ext, const std::filesystem::path& source_file) override
         {
             auto& shader_cache = context_.template get_cache<graphics::shader>();
             auto& technique_cache = context_.template get_cache<graphics::technique>();
@@ -95,7 +95,7 @@ namespace tools {
             if (technique_cache.contains(rid)) {
                 auto h = technique_cache.handle_for(rid);
 
-                auto source_file_time = boost::filesystem::last_write_time(source_file);
+                auto source_file_time = std::filesystem::last_write_time(source_file);
                 auto resource_time = technique_cache.last_modification_time(h);
                 // TODO (NOW): other dependencies
                 if (source_file_time <= resource_time)
@@ -104,7 +104,7 @@ namespace tools {
 
             std::cout << "packaging: technique { " << rid[0] << ", ";
             for (std::size_t i = 1; i < rid.size() - 1; ++i) {
-                if (rid[i].size() > 0)
+                if (!rid[i].empty())
                     std::cout << rid[i] << ", ";
             }
             std::cout << rid[rid.size() - 1] << "}\n";
@@ -112,11 +112,11 @@ namespace tools {
             graphics::technique technique;
 
             technique.vertex = shader_cache.handle_for({ tech_id.vertex });
-            if (tech_id.tessellation_control.size() > 0)
+            if (!tech_id.tessellation_control.empty())
                 technique.tessellation_control = shader_cache.handle_for({ tech_id.tessellation_control });
-            if (tech_id.tessellation_evaluation.size() > 0)
+            if (!tech_id.tessellation_evaluation.empty())
                 technique.tessellation_evaluation = shader_cache.handle_for({ tech_id.tessellation_evaluation });
-            if (tech_id.geometry.size() > 0)
+            if (!tech_id.geometry.empty())
                 technique.geometry = shader_cache.handle_for({ tech_id.geometry });
             technique.fragment = shader_cache.handle_for({ tech_id.fragment });
 

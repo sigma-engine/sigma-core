@@ -43,7 +43,7 @@ namespace tools {
         return glm::vec2(v.x, v.y);
     }
 
-    std::string get_name(const aiMaterial* mat, const boost::filesystem::path& package_directory)
+    std::string get_name(const aiMaterial* mat, const std::filesystem::path& package_directory)
     {
         aiString matName;
         mat->Get(AI_MATKEY_NAME, matName);
@@ -75,7 +75,7 @@ namespace tools {
         return name;
     }
 
-    void convert_static_mesh(const boost::filesystem::path& package_directory, const resource::cache<graphics::material>& material_cache, const aiScene* scene, const aiMesh* src_mesh, graphics::static_mesh& dest_mesh)
+    void convert_static_mesh(const std::filesystem::path& package_directory, const resource::cache<graphics::material>& material_cache, const aiScene* scene, const aiMesh* src_mesh, graphics::static_mesh& dest_mesh)
     {
         std::vector<graphics::static_mesh::vertex> submesh_vertices(src_mesh->mNumVertices);
         std::vector<graphics::static_mesh::triangle> submesh_triangles(src_mesh->mNumFaces);
@@ -108,7 +108,7 @@ namespace tools {
         std::string material_name = get_name(scene->mMaterials[src_mesh->mMaterialIndex], package_directory);
 
         // TODO warn if material slot has been used.
-        boost::filesystem::path material_prefix{ resource_shortname(graphics::material) };
+        std::filesystem::path material_prefix{ resource_shortname(graphics::material) };
         dest_mesh.materials.push_back(material_cache.handle_for({ material_prefix / material_name }));
         dest_mesh.material_slots.push_back(std::make_pair(dest_mesh.triangles.size(), submesh_triangles.size()));
 
@@ -120,7 +120,7 @@ namespace tools {
     }
 
     void convert_static_mesh(
-        const boost::filesystem::path& package_directory,
+        const std::filesystem::path& package_directory,
         const resource::cache<graphics::material>& material_cache,
         const aiScene* scene,
         const aiMesh* src_mesh,
@@ -152,13 +152,13 @@ namespace tools {
             return supported_extensions.count(ext) > 0;
         }
 
-        void load(const boost::filesystem::path& source_directory, const std::string& ext, const boost::filesystem::path& source_file)
+        void load(const std::filesystem::path& source_directory, const std::string& ext, const std::filesystem::path& source_file)
         {
             auto package_path = filesystem::make_relative(source_directory, source_file).replace_extension("");
             auto model_settings_path = source_file.parent_path() / (source_file.stem().string() + ".mdl");
             auto scene_settings_path = source_file.parent_path() / (source_file.stem().string() + ".bpt");
 
-            if (boost::filesystem::exists(scene_settings_path)) {
+            if (std::filesystem::exists(scene_settings_path)) {
                 load_as_blueprint(
                     package_path,
                     source_file,
@@ -185,7 +185,7 @@ namespace tools {
         }
 
         void convert_node(const resource::cache<graphics::static_mesh>& static_mesh_cache,
-            const boost::filesystem::path& package_path,
+            const std::filesystem::path& package_path,
             const aiScene* scene,
             std::string parent_name,
             const aiMatrix4x4 parent_matrix,
@@ -235,9 +235,9 @@ namespace tools {
         }
 
         void load_as_blueprint(
-            const boost::filesystem::path& package_path,
-            const boost::filesystem::path& source_file,
-            const boost::filesystem::path& settings_path)
+            const std::filesystem::path& package_path,
+            const std::filesystem::path& source_file,
+            const std::filesystem::path& settings_path)
         {
             auto& material_cache = context_.template get_cache<graphics::material>();
             auto& static_mesh_cache = context_.template get_cache<graphics::static_mesh>();
@@ -249,10 +249,10 @@ namespace tools {
             if (blueprint_cache.contains({ blueprint_rid })) {
                 auto h = blueprint_cache.handle_for({ blueprint_rid });
 
-                auto source_file_time = boost::filesystem::last_write_time(source_file);
+                auto source_file_time = std::filesystem::last_write_time(source_file);
                 auto settings_time = source_file_time;
-                if (boost::filesystem::exists(settings_path))
-                    settings_time = boost::filesystem::last_write_time(settings_path);
+                if (std::filesystem::exists(settings_path))
+                    settings_time = std::filesystem::last_write_time(settings_path);
 
                 auto resource_time = blueprint_cache.last_modification_time(h);
                 if (source_file_time <= resource_time && settings_time <= resource_time)
@@ -262,7 +262,7 @@ namespace tools {
             std::cout << "packaging: " << blueprint_rid << "\n";
 
             Json::Value settings(Json::objectValue);
-            if (boost::filesystem::exists(settings_path)) {
+            if (std::filesystem::exists(settings_path)) {
                 std::ifstream file(settings_path.string());
                 file >> settings;
             }
@@ -331,9 +331,9 @@ namespace tools {
         }
 
         void load_as_static_mesh(
-            const boost::filesystem::path& package_path,
-            const boost::filesystem::path& source_file,
-            const boost::filesystem::path& settings_path)
+            const std::filesystem::path& package_path,
+            const std::filesystem::path& source_file,
+            const std::filesystem::path& settings_path)
         {
             auto& material_cache = context_.template get_cache<graphics::material>();
             auto& static_mesh_cache = context_.template get_cache<graphics::static_mesh>();
@@ -344,10 +344,10 @@ namespace tools {
             if (static_mesh_cache.contains({ rid })) {
                 auto h = static_mesh_cache.handle_for({ rid });
 
-                auto source_file_time = boost::filesystem::last_write_time(source_file);
+                auto source_file_time = std::filesystem::last_write_time(source_file);
                 auto settings_time = source_file_time;
-                if (boost::filesystem::exists(settings_path))
-                    settings_time = boost::filesystem::last_write_time(settings_path);
+                if (std::filesystem::exists(settings_path))
+                    settings_time = std::filesystem::last_write_time(settings_path);
 
                 auto resource_time = static_mesh_cache.last_modification_time(h);
                 if (source_file_time <= resource_time && settings_time <= resource_time)
@@ -357,7 +357,7 @@ namespace tools {
             std::cout << "packaging: " << rid << "\n";
 
             Json::Value settings(Json::objectValue);
-            if (boost::filesystem::exists(settings_path)) {
+            if (std::filesystem::exists(settings_path)) {
                 std::ifstream file(settings_path.string());
                 file >> settings;
             }
