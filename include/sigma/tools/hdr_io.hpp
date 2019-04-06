@@ -1,8 +1,8 @@
 #ifndef SIGMA_HDR_IO_HPP
 #define SIGMA_HDR_IO_HPP
 
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string/replace.hpp>
+#include <sigma/util/string.hpp>
+
 #include <boost/gil/image.hpp>
 #include <boost/gil/typedefs.hpp>
 
@@ -85,8 +85,8 @@ void hdr_read_and_convert_image(const std::string& filename, Image& res)
     while (std::getline(file, line) && line != "") {
         if (line[0] == '#')
             continue;
-        if (boost::starts_with(line, "FORMAT=")) {
-            boost::replace_all(line, "FORMAT=", "");
+        if (sigma::util::starts_with(line, "FORMAT=")) {
+            line = sigma::util::replace_all(line, "FORMAT=", "");
             if (line != "32-bit_rle_rgbe" && line != "32-bit_rle_xyze")
                 throw std::runtime_error("The format '" + line + "' is not supported!");
         }

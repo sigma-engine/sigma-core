@@ -17,8 +17,8 @@
         "gamma_conversion": "post_process_effect/pbr/deffered/gamma_conversion",
         "vignette_effect": "post_process_effect/vignette",
         "shadow_technique": {
-            "vertex": "vertex/default",
-            "fragment": "fragment/shadow"
+            "vertex": "default",
+            "fragment": "shadow"
         }
     },
     "level": {

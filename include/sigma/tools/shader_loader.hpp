@@ -7,8 +7,6 @@
 
 #include <shaderc/shaderc.hpp>
 
-#include <boost/algorithm/string.hpp>
-
 #include <regex>
 #include <sstream>
 #include <string>

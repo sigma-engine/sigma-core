@@ -6,8 +6,6 @@
 #include <sigma/tools/json_conversion.hpp>
 #include <sigma/util/filesystem.hpp>
 
-#include <boost/algorithm/string/case_conv.hpp>
-
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -77,7 +75,7 @@ namespace tools {
                             continue;
                         }
 
-                        auto ext = boost::algorithm::to_lower_copy(path.extension().string());
+                        auto ext = sigma::util::to_lower_copy(path.extension().string());
                         if (std::filesystem::is_regular_file(path) && loader->supports_filetype(ext)) {
                             try {
                                 loader->load(source_directory, ext, path);

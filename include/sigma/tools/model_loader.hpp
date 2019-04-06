@@ -15,8 +15,6 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
-#include <boost/algorithm/string.hpp>
-
 #include <iostream>
 #include <set>
 #include <string>
@@ -52,7 +50,7 @@ namespace tools {
         if (name == "DefaultMaterial")
             return "default";
 
-        if (boost::starts_with(name, "//"))
+        if (sigma::util::starts_with(name, "//"))
             return (package_directory / name.substr(2)).string();
         if (name[0] == '/')
             return name.substr(1);
@@ -304,7 +302,7 @@ namespace tools {
                 throw std::runtime_error(importer.GetErrorString());
 
             for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
-                if (boost::ends_with(get_name(scene->mMeshes[i]), "_high"))
+                if (sigma::util::ends_with(get_name(scene->mMeshes[i]), "_high"))
                     continue;
 
                 auto rid = resource_shortname(graphics::static_mesh) / package_path / (get_name(scene->mMeshes[i]) + std::to_string(i));
@@ -402,7 +400,7 @@ namespace tools {
 
             graphics::static_mesh dest_mesh;
             for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
-                if (boost::ends_with(get_name(scene->mMeshes[i]), "_high"))
+                if (sigma::util::ends_with(get_name(scene->mMeshes[i]), "_high"))
                     continue;
                 convert_static_mesh(package_directory, material_cache, scene, scene->mMeshes[i], dest_mesh);
             }

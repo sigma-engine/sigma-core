@@ -6,6 +6,7 @@
 #include <sigma/graphics/technique.hpp>
 #include <sigma/graphics/texture.hpp>
 #include <sigma/resource/resource.hpp>
+#include <sigma/util/string.hpp>
 
 #include <json/json.h>
 
@@ -17,8 +18,6 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
-#include <boost/algorithm/string.hpp>
-#include <boost/algorithm/string/predicate.hpp>
 #include <boost/hana/at_key.hpp>
 #include <boost/hana/for_each.hpp>
 #include <boost/hana/keys.hpp>
@@ -26,6 +25,7 @@
 
 #include <vector>
 #include <filesystem>
+#include <iostream>
 
 namespace sigma {
 namespace json {
@@ -211,28 +211,28 @@ namespace json {
 
                 // TODO warn/error about missing vertex shader.
                 output.vertex = source["vertex"].asString();
-                if (!boost::starts_with(output.vertex.string(), "vertex"))
+                if (!sigma::util::starts_with(output.vertex.string(), "vertex"))
                     output.vertex = "vertex" / output.vertex;
 
                 if (source.isMember("tessellation_control")) {
                     output.tessellation_control = source["tessellation_control"].asString();
-                    if (!boost::starts_with(output.tessellation_control.string(), "tessellation_control"))
+                    if (!sigma::util::starts_with(output.tessellation_control.string(), "tessellation_control"))
                         output.tessellation_control = "tessellation_control" / output.tessellation_control;
                 }
                 if (source.isMember("tessellation_evaluation")) {
                     output.tessellation_evaluation = source["tessellation_evaluation"].asString();
-                    if (!boost::starts_with(output.tessellation_evaluation.string(), "tessellation_evaluation"))
+                    if (!sigma::util::starts_with(output.tessellation_evaluation.string(), "tessellation_evaluation"))
                         output.tessellation_evaluation = "tessellation_evaluation" / output.tessellation_evaluation;
                 }
                 if (source.isMember("geometry")) {
                     output.geometry = source["geometry"].asString();
-                    if (!boost::starts_with(output.geometry.string(), "geometry"))
+                    if (!sigma::util::starts_with(output.geometry.string(), "geometry"))
                         output.geometry = "geometry" / output.geometry;
                 }
 
                 // TODO warn/error about missing fragment shader.
                 output.fragment = source["fragment"].asString();
-                if (!boost::starts_with(output.fragment.string(), "fragment"))
+                if (!sigma::util::starts_with(output.fragment.string(), "fragment"))
                     output.fragment = "fragment" / output.fragment;
 
                 return true;
@@ -294,7 +294,7 @@ namespace json {
             template <class Context>
             static bool from(Context& ctx, const Json::Value& source, sigma::graphics::texture_filter& output)
             {
-                auto lower = boost::to_upper_copy(source.asString());
+                auto lower = sigma::util::to_upper_copy(source.asString());
                 if (lower == "LINEAR")
                     output = graphics::texture_filter::LINEAR;
                 else if (lower == "NEAREST")
@@ -313,7 +313,7 @@ namespace json {
             template <class Context>
             static bool from(Context& ctx, const Json::Value& source, sigma::graphics::texture_format& output)
             {
-                auto lower = boost::to_upper_copy(source.asString());
+                auto lower = sigma::util::to_upper_copy(source.asString());
                 if (lower == "RGB8")
                     output = sigma::graphics::texture_format::RGB8;
                 else if (lower == "RGBA8")

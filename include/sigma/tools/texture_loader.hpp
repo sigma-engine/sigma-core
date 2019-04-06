@@ -30,18 +30,15 @@ namespace tools {
 
         switch (source_type) {
         case texture_source_type::tiff: {
-            // boost::gil::tiff_read_and_convert_image(file_path_string, image);
             boost::gil::read_and_convert_image(file_path_string, image, boost::gil::tiff_tag());
             break;
         }
         case texture_source_type::jpeg: {
             boost::gil::read_and_convert_image(file_path_string, image, boost::gil::jpeg_tag());
-            // boost::gil::jpeg_read_and_convert_image(file_path_string, image);
             break;
         }
         case texture_source_type::png: {
-            boost::gil::read_and_convert_image(file_path_string, image, boost::gil::png_tag());
-            // boost::gil::png_read_and_convert_image(file_path_string, image);
+            boost::gil::read_and_convert_image(file_path_string, image, boost::gil::png_tag());            
             break;
         }
         case texture_source_type::hdr: {
