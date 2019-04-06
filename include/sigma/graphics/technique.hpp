@@ -10,9 +10,6 @@
 #include <sigma/resource/resource.hpp>
 #include <sigma/util/glm_serialize.hpp>
 
-#include <boost/serialization/set.hpp>
-#include <boost/serialization/unordered_map.hpp>
-
 #include <set>
 #include <string>
 #include <unordered_map>
@@ -30,13 +27,13 @@ namespace graphics {
             (std::filesystem::path, fragment));
 
         template <class Archive>
-        void serialize(Archive& ar, const unsigned int version)
+        void serialize(Archive& ar)
         {
-            ar& vertex;
-            ar& tessellation_control;
-            ar& tessellation_evaluation;
-            ar& geometry;
-            ar& fragment;
+            ar(vertex,
+            tessellation_control,
+            tessellation_evaluation,
+            geometry,
+            fragment);
         }
     };
 
@@ -49,14 +46,14 @@ namespace graphics {
         std::unordered_map<std::string, resource::handle<cubemap>> cubemaps;
 
         template <class Archive>
-        void serialize(Archive& ar, const unsigned int version)
+        void serialize(Archive& ar)
         {
-            ar& floats;
-            ar& vec2s;
-            ar& vec3s;
-            ar& vec4s;
-            ar& textures;
-            ar& cubemaps;
+            ar(floats,
+            vec2s,
+            vec3s,
+            vec4s,
+            textures,
+            cubemaps);
         }
     };
 
@@ -75,27 +72,24 @@ namespace graphics {
         std::set<std::string> cubemap_uniforms;
 
         template <class Archive>
-        void serialize(Archive& ar, const unsigned int version)
+        void serialize(Archive& ar)
         {
-            ar& vertex;
-            ar& tessellation_control;
-            ar& tessellation_evaluation;
-            ar& geometry;
-            ar& fragment;
-
-            ar& float_uniforms;
-            ar& vec2_uniforms;
-            ar& vec3_uniforms;
-            ar& vec4_uniforms;
-            ar& texture_uniforms;
-            ar& cubemap_uniforms;
+            ar(vertex,
+            tessellation_control,
+            tessellation_evaluation,
+            geometry,
+            fragment,
+            float_uniforms,
+            vec2_uniforms,
+            vec3_uniforms,
+            vec4_uniforms,
+            texture_uniforms,
+            cubemap_uniforms);
         }
     };
 }
 }
 
-BOOST_CLASS_VERSION(sigma::graphics::technique_identifier, 1)
-BOOST_CLASS_VERSION(sigma::graphics::technique_uniform_data, 1)
 REGISTER_RESOURCE(sigma::graphics::technique, technique, 1)
 
 #endif // SIGMA_GRAPHICS_TECHNIQUE_HPP

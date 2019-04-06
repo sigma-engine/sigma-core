@@ -26,11 +26,11 @@ namespace graphics {
         }
 
         template <class Archive>
-        void serialize(Archive& ar, const unsigned int version)
+        void serialize(Archive& ar)
         {
-            ar& color;
-            ar& intensity;
-            ar& cast_shadows;
+            ar(color,
+            intensity,
+            cast_shadows);
         }
     };
 }

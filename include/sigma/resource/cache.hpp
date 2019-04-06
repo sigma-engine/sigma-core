@@ -4,8 +4,15 @@
 #include <sigma/config.hpp>
 #include <sigma/resource/resource.hpp>
 
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/array.hpp>
+#include <cereal/types/memory.hpp>
+#include <cereal/types/unordered_map.hpp>
+#include <cereal/types/unordered_set.hpp>
+#include <cereal/types/utility.hpp>
+#include <cereal/types/vector.hpp>
+#include <cereal/types/set.hpp>
+
 #include <boost/functional/hash.hpp>
 
 #include <filesystem>
@@ -62,8 +69,8 @@ namespace resource {
                 std::filesystem::create_directories(cache_directory_);
             } else if (std::filesystem::exists(database_path)) {
                 std::ifstream file{ database_path.string(), std::ios::binary | std::ios::in };
-                boost::archive::binary_iarchive ia{ file };
-                ia >> database_;
+                cereal::BinaryInputArchive ia{ file };
+                ia(database_);
             }
         }
 
@@ -109,8 +116,8 @@ namespace resource {
             if (write_to_disk) {
                 auto resource_path = cache_directory_ / std::to_string(hnd.index);
                 std::ofstream file{ resource_path.string(), std::ios::binary | std::ios::out };
-                boost::archive::binary_oarchive oa{ file };
-                oa << resource;
+                cereal::BinaryOutputArchive oa{ file };
+                oa(resource);
             }
 
             insert_(hnd, std::move(resource));
@@ -130,8 +137,8 @@ namespace resource {
         {
             auto database_path = cache_directory_ / "database";
             std::ofstream file{ database_path.string(), std::ios::binary | std::ios::out };
-            boost::archive::binary_oarchive oa{ file };
-            oa << database_;
+            cereal::BinaryOutputArchive oa{ file };
+            oa(database_);
         }
 
     private:
@@ -162,9 +169,9 @@ namespace resource {
             assert(hnd.is_valid());
             auto resource_path = cache_directory / std::to_string(hnd.index);
             std::ifstream file{ resource_path.string(), std::ios::binary | std::ios::in };
-            boost::archive::binary_iarchive ia{ file };
+            cereal::BinaryInputArchive ia{ file };
             Resource data;
-            ia >> data;
+            ia(data);
             return std::move(data);
         }
 

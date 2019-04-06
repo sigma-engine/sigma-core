@@ -14,24 +14,30 @@ foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${CMAKE_BINARY_DIR}/lib")
 endforeach()
 
-SET(Boost_USE_STATIC_LIBS ON)
-#find_package(GMock REQUIRED)
-find_package(Assimp 4.0.0 REQUIRED)
-#find_package(benchmark REQUIRED)
-find_package(Boost 1.65.0 COMPONENTS filesystem program_options serialization log REQUIRED)
-find_package(glm 0.9.8 REQUIRED)
-#find_package(GTest 1.8.0 REQUIRED)
-#find_package(GTest REQUIRED)
+set(Boost_USE_STATIC_LIBS ON)
+find_package(Boost 1.65.0 COMPONENTS filesystem program_options log REQUIRED)
+
 find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(Threads REQUIRED)
 find_package(TIFF REQUIRED)
 
+find_package(Assimp REQUIRED)
+find_package(benchmark REQUIRED)
+find_package(cereal REQUIRED)
+find_package(debug-draw REQUIRED)
+find_package(glad REQUIRED)
+find_package(glm REQUIRED)
+find_package(GTest REQUIRED NO_CMAKE_ENVIRONMENT_PATH)
+find_package(nlohmann_json REQUIRED)
+find_package(SDL2 REQUIRED)
+find_package(stb REQUIRED)
+find_package(Threads REQUIRED)
+find_package(EnTT REQUIRED)
+
 set(SHADERC_THIRD_PARTY_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty" CACHE STRING "")
 add_subdirectory(thirdparty/shaderc EXCLUDE_FROM_ALL)
-add_subdirectory(thirdparty/debug-draw EXCLUDE_FROM_ALL)
-add_subdirectory(thirdparty/glad EXCLUDE_FROM_ALL)
 add_subdirectory(thirdparty/jsoncpp EXCLUDE_FROM_ALL)
 
 add_library(sigma-core STATIC
@@ -67,7 +73,8 @@ target_link_libraries(sigma-core
     Threads::Threads
     glm
     jsoncpp
-    SDL2
+    #nlohmann_json::nlohmann_json
+    SDL2::SDL2
     stdc++fs
 )
 
@@ -95,8 +102,7 @@ target_compile_definitions(sigma-opengl-graphics
 target_link_libraries(sigma-opengl-graphics
     PUBLIC
     sigma-core
-    debug-draw
-    glad
+    debug-draw::debug-draw glad::glad
 )
 
 add_library(sigma-tools INTERFACE)
@@ -104,12 +110,11 @@ target_include_directories(sigma-tools INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRE
 target_link_libraries(sigma-tools
     INTERFACE
     sigma-core
-
     PNG::PNG
     TIFF::TIFF
     jpeg
-    assimp
-
+    assimp::assimp
+    stb::stb_image
     shaderc
 )
 

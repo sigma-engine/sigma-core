@@ -22,10 +22,9 @@ namespace graphics {
         std::string source;
 
         template <class Archive>
-        void serialize(Archive& ar, const unsigned int version)
+        void serialize(Archive& ar)
         {
-            ar& type;
-            ar& source;
+            ar(type, source);
         }
     };
 }

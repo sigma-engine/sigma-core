@@ -5,8 +5,6 @@
 #include <sigma/graphics/technique.hpp>
 #include <sigma/resource/resource.hpp>
 
-#include <boost/serialization/base_object.hpp>
-
 namespace sigma {
 namespace graphics {
     struct material : public technique_uniform_data {
@@ -14,11 +12,9 @@ namespace graphics {
         bool transparent = false;
 
         template <class Archive>
-        void serialize(Archive& ar, const unsigned int version)
+        void serialize(Archive& ar)
         {
-            ar& boost::serialization::base_object<technique_uniform_data>(*this);
-            ar& technique_id;
-            ar& transparent;
+            ar(cereal::base_class<technique_uniform_data>(this), technique_id, transparent);
         }
     };
 }

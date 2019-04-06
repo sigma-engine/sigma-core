@@ -6,8 +6,6 @@
 #include <sigma/graphics/technique.hpp>
 #include <sigma/resource/resource.hpp>
 
-#include <boost/serialization/base_object.hpp>
-
 namespace sigma {
 namespace graphics {
     struct post_process_effect : public technique_uniform_data {
@@ -15,11 +13,9 @@ namespace graphics {
         resource::handle<static_mesh> mesh;
 
         template <class Archive>
-        void serialize(Archive& ar, const unsigned int version)
+        void serialize(Archive& ar)
         {
-            ar& boost::serialization::base_object<technique_uniform_data>(*this);
-            ar& technique_id;
-            ar& mesh;
+            ar(cereal::base_class<technique_uniform_data>(this), technique_id,mesh);
         }
     };
 }

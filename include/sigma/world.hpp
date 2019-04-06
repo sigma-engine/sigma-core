@@ -6,8 +6,6 @@
 #include <sigma/handle.hpp>
 #include <sigma/util/type_sequence.hpp>
 
-#include <boost/serialization/split_member.hpp>
-
 #include <array>
 #include <cassert>
 #include <tuple>

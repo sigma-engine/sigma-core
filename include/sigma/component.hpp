@@ -3,6 +3,15 @@
 
 #include <sigma/util/type_sequence.hpp>
 
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/array.hpp>
+#include <cereal/types/memory.hpp>
+#include <cereal/types/unordered_map.hpp>
+#include <cereal/types/unordered_set.hpp>
+#include <cereal/types/utility.hpp>
+#include <cereal/types/vector.hpp>
+#include <cereal/types/set.hpp>
+
 #define REGISTER_COMPONENT(X)                       \
     namespace sigma {                               \
     template <>                                     \

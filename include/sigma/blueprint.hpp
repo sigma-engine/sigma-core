@@ -6,10 +6,8 @@
 
 #include <locale>
 
-#include <boost/cstdint.hpp>
-#include <boost/serialization/variant.hpp>
-#include <boost/serialization/vector.hpp>
 #include <boost/variant.hpp>
+#include <cereal/types/boost_variant.hpp>
 
 namespace sigma {
 template <class ComponentSet>
@@ -24,9 +22,9 @@ public:
     std::vector<entity_type> entities;
 
     template <class Archive>
-    void serialize(Archive& ar, const unsigned int version)
+    void serialize(Archive& ar)
     {
-        ar& entities;
+        ar(entities);
     }
 };
 

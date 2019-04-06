@@ -21,11 +21,9 @@ namespace graphics {
         }
 
         template <class Archive>
-        void serialize(Archive& ar, const unsigned int version)
+        void serialize(Archive& ar)
         {
-            ar& mesh;
-            ar& cast_shadows;
-            //ar& materials;
+            ar(mesh,cast_shadows);
         }
     };
 }

@@ -44,9 +44,9 @@ struct simple_level_settings {
         (sigma::resource::handle<simple_blueprint>, current_level_blueprint));
 
     template <class Archive>
-    void serialize(Archive& ar, const unsigned int version)
+    void serialize(Archive& ar)
     {
-        ar& current_level_blueprint;
+        ar(current_level_blueprint);
     }
 };
 

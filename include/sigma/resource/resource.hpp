@@ -3,8 +3,6 @@
 
 #include <sigma/handle.hpp>
 
-#include <boost/serialization/serialization.hpp>
-#include <boost/serialization/version.hpp>
 
 #define REGISTER_RESOURCE(Klass, ShortName, Version)             \
     namespace sigma {                                            \
@@ -15,8 +13,7 @@
             static constexpr const char* shortname = #ShortName; \
         };                                                       \
     }                                                            \
-    }                                                            \
-    BOOST_CLASS_VERSION(Klass, Version)
+    }
 
 #define resource_name(Klass) sigma::resource::resource_traits<Klass>::fullname
 #define resource_shortname(Klass) sigma::resource::resource_traits<Klass>::shortname

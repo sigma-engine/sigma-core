@@ -4,8 +4,8 @@
 #include <sigma/config.hpp>
 
 #include <boost/functional/hash.hpp>
-#include <boost/serialization/level.hpp>
-#include <boost/serialization/nvp.hpp>
+
+#include <cereal/cereal.hpp>
 
 #include <filesystem>
 
@@ -29,19 +29,17 @@ struct hash<std::filesystem::path> {
 };
 }
 
-namespace boost {
-namespace serialization {
+namespace cereal {
     template <class Archive>
-    void serialize(Archive& ar, std::filesystem::path& p, const unsigned int version)
+    void serialize(Archive& ar, std::filesystem::path& p)
     {
         std::filesystem::path::string_type s;
         if (Archive::is_saving::value)
             s = p.string();
-        ar& boost::serialization::make_nvp("string", s);
+        ar(cereal::make_nvp("string", s));
         if (Archive::is_loading::value)
             p = s;
     }
-}
 }
 
 #endif // SIGMA_ENGINE_FILESYSTEM_FILESYSTEM_HPP

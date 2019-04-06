@@ -45,18 +45,18 @@ namespace graphics {
                 (resource::handle<graphics::technique>, shadow_technique));
 
             template <class Archive>
-            void serialize(Archive& ar, const unsigned int version)
+            void serialize(Archive& ar)
             {
-                ar& enable_image_based_lighting;
-                ar& enable_debug_rendering;
-                ar& image_based_light_effect;
-                ar& point_light_effect;
-                ar& directional_light_effect;
-                ar& spot_light_effect;
-                ar& texture_blit_effect;
-                ar& gamma_conversion;
-                ar& vignette_effect;
-                ar& shadow_technique;
+                ar(enable_image_based_lighting,
+                enable_debug_rendering,
+                image_based_light_effect,
+                point_light_effect,
+                directional_light_effect,
+                spot_light_effect,
+                texture_blit_effect,
+                gamma_conversion,
+                vignette_effect,
+                shadow_technique);
             }
         };
 

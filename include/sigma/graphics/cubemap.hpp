@@ -6,8 +6,6 @@
 #include <sigma/resource/cache.hpp>
 #include <sigma/resource/resource.hpp>
 
-#include <boost/serialization/array.hpp>
-
 #include <array>
 
 namespace sigma {
@@ -25,9 +23,9 @@ namespace graphics {
         std::array<resource::handle<graphics::texture>, 6> faces;
 
         template <class Archive>
-        void serialize(Archive& ar, const unsigned int version)
+        void serialize(Archive& ar)
         {
-            ar& faces;
+            ar(faces);
         }
     };
 }

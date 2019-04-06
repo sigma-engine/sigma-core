@@ -11,10 +11,6 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
-#include <boost/serialization/array.hpp>
-#include <boost/serialization/unordered_map.hpp>
-#include <boost/serialization/vector.hpp>
-
 #include <array>
 #include <cstddef>
 #include <unordered_map>
@@ -30,13 +26,13 @@ namespace graphics {
             glm::vec3 tangent;
             glm::vec2 texcoord;
             template <class Archive>
-            void serialize(Archive& ar, const unsigned int version)
+            void serialize(Archive& ar)
             {
-                ar& position;
-                ar& normal;
-                ar& bitangent;
-                ar& tangent;
-                ar& texcoord;
+                ar(position,
+                normal,
+                bitangent,
+                tangent,
+                texcoord);
             }
         };
         typedef std::array<unsigned int, 3> triangle;
@@ -48,13 +44,13 @@ namespace graphics {
         std::vector<std::pair<std::size_t, std::size_t>> material_slots;
 
         template <class Archive>
-        void serialize(Archive& ar, const unsigned int version)
+        void serialize(Archive& ar)
         {
-            ar& radius;
-            ar& vertices;
-            ar& triangles;
-            ar& materials;
-            ar& material_slots;
+            ar(radius,
+            vertices,
+            triangles,
+            materials,
+            material_slots);
         }
     };
 }

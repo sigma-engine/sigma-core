@@ -28,11 +28,11 @@ struct R_EXPORT() transform {
     }
 
     template <class Archive>
-    void serialize(Archive& ar, const unsigned int version)
+    void serialize(Archive& ar)
     {
-        ar& position;
-        ar& rotation;
-        ar& scale;
+        ar(position,
+        rotation,
+        scale);
     }
 
     glm::mat4 get_matrix() const

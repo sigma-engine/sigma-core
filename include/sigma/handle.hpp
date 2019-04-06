@@ -51,10 +51,9 @@ struct handle {
     }
 
     template <class Archive>
-    void serialize(Archive& ar, const unsigned int version)
+    void serialize(Archive& ar)
     {
-        ar & this->index;
-        ar & this->version;
+        ar(index, version);
     }
 };
 

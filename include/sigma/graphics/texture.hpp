@@ -9,7 +9,6 @@
 #include <glm/vec2.hpp>
 
 #include <boost/gil/typedefs.hpp>
-#include <boost/serialization/vector.hpp>
 
 #include <vector>
 
@@ -130,15 +129,15 @@ namespace graphics {
         }
 
         template <class Archive>
-        void serialize(Archive& ar, const unsigned int version)
+        void serialize(Archive& ar)
         {
-            ar& size_;
-            ar& format_;
-            ar& minification_filter_;
-            ar& magnification_filter_;
-            ar& mipmap_filter_;
-            ar& mipmap_offsets_;
-            ar& data_;
+            ar(size_,
+            format_,
+            minification_filter_,
+            magnification_filter_,
+            mipmap_filter_,
+            mipmap_offsets_,
+            data_);
         }
     };
 }

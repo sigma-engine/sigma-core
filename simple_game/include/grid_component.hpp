@@ -25,13 +25,13 @@ struct grid_component {
     }
 
     template <class Archive>
-    void serialize(Archive& ar, const unsigned int version)
+    void serialize(Archive& ar)
     {
-        ar& rows;
-        ar& columns;
-        ar& row_spacing;
-        ar& column_spacing;
-        ar& mesh;
+        ar(rows,
+        columns,
+        row_spacing,
+        column_spacing,
+        mesh);
     }
 };
 

@@ -1,6 +1,5 @@
 #include <sigma/graphics/renderer.hpp>
 
-#include <boost/archive/binary_iarchive.hpp>
 #include <filesystem>
 
 #include <fstream>
