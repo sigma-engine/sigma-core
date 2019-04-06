@@ -7,13 +7,9 @@
 #include <sigma/tools/packager.hpp>
 #include <sigma/tools/texturing.hpp>
 
-#define png_infopp_NULL (png_infopp) NULL
-#define int_p_NULL (int*)NULL
-#define png_bytep_NULL (png_bytep) NULL
-
-#include <boost/gil/extension/io/jpeg_io.hpp>
-#include <boost/gil/extension/io/png_io.hpp>
-#include <boost/gil/extension/io/tiff_io.hpp>
+#include <boost/gil/extension/io/tiff/read.hpp>
+#include <boost/gil/extension/io/jpeg/read.hpp>
+#include <boost/gil/extension/io/png/read.hpp>
 
 #include <string>
 #include <unordered_map>
@@ -34,15 +30,18 @@ namespace tools {
 
         switch (source_type) {
         case texture_source_type::tiff: {
-            boost::gil::tiff_read_and_convert_image(file_path_string, image);
+            // boost::gil::tiff_read_and_convert_image(file_path_string, image);
+            boost::gil::read_and_convert_image(file_path_string, image, boost::gil::tiff_tag());
             break;
         }
         case texture_source_type::jpeg: {
-            boost::gil::jpeg_read_and_convert_image(file_path_string, image);
+            boost::gil::read_and_convert_image(file_path_string, image, boost::gil::jpeg_tag());
+            // boost::gil::jpeg_read_and_convert_image(file_path_string, image);
             break;
         }
         case texture_source_type::png: {
-            boost::gil::png_read_and_convert_image(file_path_string, image);
+            boost::gil::read_and_convert_image(file_path_string, image, boost::gil::png_tag());
+            // boost::gil::png_read_and_convert_image(file_path_string, image);
             break;
         }
         case texture_source_type::hdr: {
