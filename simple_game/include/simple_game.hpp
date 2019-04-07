@@ -13,7 +13,6 @@
 #include <sigma/graphics/spot_light.hpp>
 #include <sigma/graphics/static_mesh_instance.hpp>
 #include <sigma/transform.hpp>
-#include <sigma/world.hpp>
 
 #include <glm/vec3.hpp>
 
@@ -23,8 +22,6 @@ using simple_component_set = sigma::component_set<sigma::transform,
     sigma::graphics::spot_light,
     sigma::graphics::static_mesh_instance,
     grid_component>;
-
-using simple_world = sigma::world<simple_component_set>;
 
 using simple_blueprint = sigma::blueprint<simple_component_set>;
 
@@ -53,7 +50,7 @@ struct simple_level_settings {
 using simple_settings = sigma::settings_set<simple_level_settings, sigma::graphics::renderer::settings>;
 using simple_context = sigma::context<simple_resource_set, simple_settings>;
 
-class simple_game : public sigma::game<simple_world> {
+class simple_game : public sigma::game {
 public:
     simple_game(simple_context& ctx);
 

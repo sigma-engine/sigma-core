@@ -87,7 +87,7 @@ namespace opengl {
         glViewport(0, 0, size.x, size.y);
     }
 
-    void renderer::render(const graphics::view_port& viewport, const graphics::renderer::world_view_type& world)
+    void renderer::render(const graphics::view_port& viewport, const entt::registry<>& registry)
     {
         setup_view_projection(size_,
             viewport.view_frustum.fovy(),
@@ -97,8 +97,8 @@ namespace opengl {
             viewport.view_frustum.projection());
 
         // Opaque objects
-        geometry_pass(viewport, world, false);
-        light_pass(viewport, world);
+        geometry_pass(viewport, registry, false);
+        light_pass(viewport, registry);
 
         // TODO Transparent objects
 
@@ -117,11 +117,11 @@ namespace opengl {
                 dd::frustum(glm::value_ptr(f.second), glm::value_ptr(f.first));
 
             glm::vec3 debug_color{ 0, 1, 1 };
-            world.for_each<transform, graphics::point_light>([&](const auto& e, const auto& txform, const auto& point) {
+            registry.view<const transform, const graphics::point_light>().each([&](const auto& e, const auto& txform, const auto& point) {
                 dd::sphere(glm::value_ptr(txform.position), glm::value_ptr(debug_color), txform.scale.x);
             });
 
-            world.for_each<transform, graphics::spot_light>([&](const auto& e, const auto& txform, const auto& spot) {
+            registry.view<const transform, const graphics::spot_light>().each([&](const auto& e, const auto& txform, const auto& spot) {
                 float scale = 10;
                 glm::vec3 dir = -scale * spot.direction;
                 dd::cone(glm::value_ptr(txform.position),
@@ -129,7 +129,7 @@ namespace opengl {
                     glm::value_ptr(debug_color), scale * std::tan(spot.cutoff), 0);
             });
 
-            // world.for_each<transform, graphics::static_mesh_instance>([&](entity e, const transform& txform, const graphics::static_mesh_instance& mesh_instance) {
+            // registry.for_each<transform, graphics::static_mesh_instance>([&](entity e, const transform& txform, const graphics::static_mesh_instance& mesh_instance) {
             //     auto mesh = context_.get_cache<graphics::static_mesh>().acquire(mesh_instance.mesh);
             //     dd::sphere(glm::value_ptr(txform.position), glm::value_ptr(debug_color), mesh->radius);
             // });
@@ -324,7 +324,7 @@ namespace opengl {
         standard_uniform_buffer_.set_data(standard_);
     }
 
-    void renderer::geometry_pass(const graphics::view_port& viewport, const renderer::world_view_type& world, bool transparent)
+    void renderer::geometry_pass(const graphics::view_port& viewport, const entt::registry<>& registry, bool transparent)
     {
         bind_for_geometry_write();
         glDepthMask(GL_TRUE);
@@ -339,7 +339,7 @@ namespace opengl {
         glCullFace(GL_BACK);
         glEnable(GL_CULL_FACE);
 
-        fill_render_token_stream(viewport.view_frustum, world, geometry_pass_token_stream_);
+        fill_render_token_stream(viewport.view_frustum, registry, geometry_pass_token_stream_);
         sort_render_token_stream(geometry_pass_token_stream_);
 
         render_token_stream(geometry_pass_token_stream_);
@@ -349,7 +349,7 @@ namespace opengl {
         glDepthMask(GL_FALSE);
     }
 
-    void renderer::light_pass(const graphics::view_port& viewport, const renderer::world_view_type& world)
+    void renderer::light_pass(const graphics::view_port& viewport, const entt::registry<>& registry)
     {
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, accumulation_fbo_);
         glViewport(0, 0, size_.x, size_.y);
@@ -368,13 +368,13 @@ namespace opengl {
         }
 
         // Render directional lights
-        directional_light_pass(viewport, world);
+        directional_light_pass(viewport, registry);
 
         // Render point lights
-        point_light_pass(viewport, world);
+        point_light_pass(viewport, registry);
 
         // Render spot lights
-        spot_light_pass(viewport, world);
+        spot_light_pass(viewport, registry);
     }
 
     void renderer::image_based_light_pass(const graphics::view_port& viewport)
@@ -409,7 +409,7 @@ namespace opengl {
         glDepthMask(GL_FALSE);
     }
 
-    void renderer::directional_light_pass(const graphics::view_port& viewport, const renderer::world_view_type& world)
+    void renderer::directional_light_pass(const graphics::view_port& viewport, const entt::registry<>& registry)
     {
         directional_light_buffer_.set_binding_point(3);
 
@@ -421,7 +421,7 @@ namespace opengl {
             viewport.view_frustum.view(),
             viewport.view_frustum.projection());
 
-        world.for_each<transform, graphics::directional_light>([&](entity e, const transform& txform, const graphics::directional_light& light) {
+        registry.view<const transform, const graphics::directional_light>().each([&](auto e, const transform& txform, const graphics::directional_light& light) {
             calculate_cascade_frustums(viewport.view_frustum, cascade_frustums_);
 
             auto full_position = viewport.view_frustum.center();
@@ -437,7 +437,7 @@ namespace opengl {
                 shadow_.light_frustum_far_plane[i] = cascade_frustums_[i].far_plane();
 
                 setup_view_projection(size_, 1.5708f, 0.0, 0.0, light_view, light_projection);
-                render_to_shadow_map(cascade_frustums_[i], i, world, light.cast_shadows);
+                render_to_shadow_map(cascade_frustums_[i], i, registry, light.cast_shadows);
             }
 
             setup_view_projection(size_,
@@ -471,7 +471,7 @@ namespace opengl {
         });
     }
 
-    void renderer::point_light_pass(const graphics::view_port& viewport, const renderer::world_view_type& world)
+    void renderer::point_light_pass(const graphics::view_port& viewport, const entt::registry<>& registry)
     {
         point_light_buffer_.set_binding_point(3);
 
@@ -503,7 +503,7 @@ namespace opengl {
             point_light_effect,
             geometry_buffer::NEXT_FREE_TEXTURE_UINT);
 
-        world.for_each<transform, graphics::point_light>([&](entity e, const transform& txform, const graphics::point_light& light) {
+        registry.view<const transform, const graphics::point_light>().each([&](auto e, const transform& txform, const graphics::point_light& light) {
             point_light_.color_intensity = glm::vec4(light.color, light.intensity);
             point_light_.position_radius = glm::vec4(txform.position, txform.scale.x);
             point_light_buffer_.set_data(point_light_);
@@ -511,12 +511,12 @@ namespace opengl {
         });
     }
 
-    void renderer::spot_light_pass(const graphics::view_port& viewport, const renderer::world_view_type& world)
+    void renderer::spot_light_pass(const graphics::view_port& viewport, const entt::registry<>& registry)
     {
         // TODO:perf render cones for spot lights to limit there effects.
         spot_light_buffer_.set_binding_point(3);
 
-        world.for_each<transform, graphics::spot_light>([&](entity e, const transform& txform, const graphics::spot_light& light) {
+        registry.view<const transform, const graphics::spot_light>().each([&](auto e, const transform& txform, const graphics::spot_light& light) {
             setup_view_projection(size_,
                 light.shadow_frustum.fovy(),
                 light.shadow_frustum.z_near(),
@@ -524,7 +524,7 @@ namespace opengl {
                 light.shadow_frustum.view(),
                 light.shadow_frustum.projection());
 
-            render_to_shadow_map(light.shadow_frustum, 0, world, light.cast_shadows);
+            render_to_shadow_map(light.shadow_frustum, 0, registry, light.cast_shadows);
 
             setup_view_projection(size_,
                 viewport.view_frustum.fovy(),
@@ -558,7 +558,7 @@ namespace opengl {
         });
     }
 
-    void renderer::render_to_shadow_map(const frustum& view_frustum, int index, const renderer::world_view_type& world, bool cast_shadows)
+    void renderer::render_to_shadow_map(const frustum& view_frustum, int index, const entt::registry<>& registry, bool cast_shadows)
     {
         bind_for_shadow_write(index);
 
@@ -578,7 +578,7 @@ namespace opengl {
             auto [cpu_technique, gpu_program] = techniques_.acquire(settings_.shadow_technique);
             glUseProgram(gpu_program);
 
-            fill_render_token_stream(view_frustum, world, shadow_map_token_stream_, gpu_program);
+            fill_render_token_stream(view_frustum, registry, shadow_map_token_stream_, gpu_program);
             sort_render_token_stream(shadow_map_token_stream_);
 
             render_token_stream(shadow_map_token_stream_);
@@ -589,10 +589,10 @@ namespace opengl {
         glDepthMask(GL_FALSE);
     }
 
-    void renderer::fill_render_token_stream(const frustum& view, const world_view_type& world, std::vector<render_token>& tokens, GLuint global_program)
+    void renderer::fill_render_token_stream(const frustum& view, const entt::registry<>& registry, std::vector<render_token>& tokens, GLuint global_program)
     {
         auto view_matrix = view.view();
-        world.for_each<transform, graphics::static_mesh_instance>([&](const entity& e, const transform& txform, const graphics::static_mesh_instance& mesh_instance) {
+        registry.view<const transform, const graphics::static_mesh_instance>().each([&](const auto& e, const transform& txform, const graphics::static_mesh_instance& mesh_instance) {
             auto [cpu_mesh, gpu_mesh] = static_meshes_.acquire(mesh_instance.mesh);
             if (view.contains_sphere(txform.position, cpu_mesh->radius)) {
                 auto model_view_matrix = view_matrix * txform.matrix;

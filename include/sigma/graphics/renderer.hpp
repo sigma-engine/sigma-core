@@ -16,7 +16,8 @@
 #include <sigma/graphics/technique.hpp>
 #include <sigma/graphics/texture.hpp>
 #include <sigma/transform.hpp>
-#include <sigma/world.hpp>
+
+#include <entt/entt.hpp>
 
 #include <glm/vec2.hpp>
 
@@ -77,7 +78,6 @@ namespace graphics {
             sigma::graphics::point_light,
             sigma::graphics::spot_light,
             sigma::graphics::static_mesh_instance>;
-        using world_view_type = world_view<render_component_set>;
 
         renderer(glm::ivec2 size, context_view_type ctx);
 
@@ -85,7 +85,7 @@ namespace graphics {
 
         virtual void resize(glm::uvec2 size) = 0;
 
-        virtual void render(const view_port& viewport, const world_view_type& world) = 0;
+        virtual void render(const view_port& viewport, const entt::registry<>& registry) = 0;
 
     protected:
         context_view_type context_;

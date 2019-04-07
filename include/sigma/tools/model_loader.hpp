@@ -11,6 +11,8 @@
 #include <sigma/util/filesystem.hpp>
 #include <sigma/util/type_sequence.hpp>
 
+#include <entt/entt.hpp>
+
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
@@ -170,14 +172,13 @@ namespace tools {
         }
 
     private:
-        void convert_entity(const Json::Value& json_entity, typename blueprint_type::entity_type& blueprint_entity)
+        void convert_entity(blueprint_type &blueprint, entt::registry<>::entity_type &e, const Json::Value& json_entity)
         {
             component_set_type::for_each([&](auto component_tag) {
                 using component_type = typename decltype(component_tag)::type;
                 if (json_entity.isMember(component_name(component_type))) {
-                    component_type cmp;
+                    auto &cmp = blueprint.registry.template assign<component_type>(e);
                     json::from_json(context_, json_entity[component_name(component_type)], cmp);
-                    blueprint_entity.push_back(cmp);
                 }
             });
         }
@@ -204,26 +205,19 @@ namespace tools {
                 if (j > 0)
                     entity_name += std::to_string(j);
 
+                auto e = blueprint.registry.create();
+
                 auto mesh = scene->mMeshes[root->mMeshes[j]];
                 auto rid = resource_shortname(graphics::static_mesh) / package_path / (get_name(mesh) + std::to_string(root->mMeshes[j]));
 
-                graphics::static_mesh_instance mshinst{
-                    static_mesh_cache.handle_for({ rid })
-                };
+                blueprint.registry.template assign<graphics::static_mesh_instance>(e, static_mesh_cache.handle_for({ rid }));
+                blueprint.registry.template assign<sigma::transform>(e, convert_3d(position), convert(rotation), convert_3d(scale));
 
-                transform txfrom{
-                    convert_3d(position),
-                    convert(rotation),
-                    convert_3d(scale)
-                };
-
-                typename blueprint_type::entity_type blueprint_entity{ txfrom, mshinst };
                 if (blueprint_settings.isMember(entity_name)) {
                     Json::Value json_entity;
                     blueprint_settings.removeMember(entity_name, &json_entity);
-                    convert_entity(json_entity, blueprint_entity);
+                    convert_entity(blueprint, e, json_entity);
                 }
-                blueprint.entities.push_back(blueprint_entity);
             }
 
             for (unsigned int i = 0; i < root->mNumChildren; ++i) {
@@ -320,12 +314,11 @@ namespace tools {
             convert_node(static_mesh_cache, package_path, scene, "", aiMatrix4x4{}, scene->mRootNode, settings, blueprint);
 
             for (const auto& json_enttiy : settings) {
-                typename blueprint_type::entity_type blueprint_entity;
-                convert_entity(json_enttiy, blueprint_entity);
-                blueprint.entities.push_back(blueprint_entity);
+                auto e = blueprint.registry.create();
+                convert_entity(blueprint, e, json_enttiy);
             }
 
-            blueprint_cache.insert({ blueprint_rid }, blueprint, true);
+            blueprint_cache.insert({ blueprint_rid }, std::move(blueprint), true);
         }
 
         void load_as_static_mesh(

@@ -4,10 +4,7 @@
 #include <sigma/component.hpp>
 #include <sigma/resource/resource.hpp>
 
-#include <locale>
-
-#include <boost/variant.hpp>
-#include <cereal/types/boost_variant.hpp>
+#include <entt/entt.hpp>
 
 namespace sigma {
 template <class ComponentSet>
@@ -16,15 +13,23 @@ class blueprint;
 template <class... Components>
 class blueprint<type_set<Components...>> {
 public:
-    using entity_type = std::vector<boost::variant<Components...>>;
-    using component_set_type = component_set<Components...>;
+    entt::registry<> registry;
 
-    std::vector<entity_type> entities;
-
-    template <class Archive>
-    void serialize(Archive& ar)
+    void save(cereal::BinaryOutputArchive & ar) const
     {
-        ar(entities);
+        registry.snapshot()
+        .entities(ar)
+        .destroyed(ar)
+        .component<Components...>(ar);
+    }
+
+    void load(cereal::BinaryInputArchive &ar)
+    {
+        registry.loader()
+        .entities(ar)
+        .destroyed(ar)
+        .component<Components...>(ar)
+        .orphans();
     }
 };
 

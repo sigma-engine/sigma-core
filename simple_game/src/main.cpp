@@ -44,7 +44,6 @@ int main(int argc, char* argv[])
     auto game = std::make_unique<simple_game>(context);
 
     auto renderer = std::make_unique<sigma::opengl::renderer>(window.size(), context);
-    sigma::opengl::renderer::world_view_type render_view{ game->world() };
 
     sigma::graphics::view_port viewport{
         window.size(),
@@ -75,7 +74,7 @@ int main(int argc, char* argv[])
 
         if (renderer && game) {
             SDL_GL_MakeCurrent(window.window_, window.gl_context_);
-            renderer->render(viewport, render_view);
+            renderer->render(viewport, game->registry);
             game->update(std::chrono::duration_cast<std::chrono::duration<float>>(dt));
         }
 

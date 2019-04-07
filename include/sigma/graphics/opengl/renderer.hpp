@@ -41,7 +41,7 @@ namespace opengl {
 
         virtual void resize(glm::uvec2 size) override;
 
-        virtual void render(const graphics::view_port& viewport, const world_view_type& world) override;
+        virtual void render(const graphics::view_port& viewport, const entt::registry<>& world) override;
 
     private:
         renderer(const renderer&) = delete;
@@ -115,23 +115,23 @@ namespace opengl {
 
         void setup_view_projection(const glm::vec2& viewport_size, float fovy, float z_near, float z_far, const glm::mat4& view_matrix, const glm::mat4& projection_matrix);
 
-        void geometry_pass(const graphics::view_port& viewport, const world_view_type& world, bool transparent);
+        void geometry_pass(const graphics::view_port& viewport, const entt::registry<>& world, bool transparent);
 
-        void light_pass(const graphics::view_port& viewport, const world_view_type& world);
+        void light_pass(const graphics::view_port& viewport, const entt::registry<>& world);
 
         void image_based_light_pass(const graphics::view_port& viewport);
 
         void analytical_light_setup();
 
-        void directional_light_pass(const graphics::view_port& viewport, const world_view_type& world);
+        void directional_light_pass(const graphics::view_port& viewport, const entt::registry<>& world);
 
-        void point_light_pass(const graphics::view_port& viewport, const world_view_type& world);
+        void point_light_pass(const graphics::view_port& viewport, const entt::registry<>& world);
 
-        void spot_light_pass(const graphics::view_port& viewport, const world_view_type& world);
+        void spot_light_pass(const graphics::view_port& viewport, const entt::registry<>& world);
 
-        void render_to_shadow_map(const frustum& view_frustum, int index, const renderer::world_view_type& world, bool cast_shadows);
+        void render_to_shadow_map(const frustum& view_frustum, int index, const entt::registry<>& world, bool cast_shadows);
 
-        void fill_render_token_stream(const frustum& view, const world_view_type& world, std::vector<render_token>& tokens, GLuint global_program = 0);
+        void fill_render_token_stream(const frustum& view, const entt::registry<>& world, std::vector<render_token>& tokens, GLuint global_program = 0);
 
         void sort_render_token_stream(std::vector<render_token>& tokens);
 
