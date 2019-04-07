@@ -2,14 +2,11 @@
 #define SIGMA_TOOLS_TEXTURE_LOADER_HPP
 
 #include <sigma/graphics/texture.hpp>
-#include <sigma/tools/hdr_io.hpp>
 #include <sigma/tools/json_conversion.hpp>
 #include <sigma/tools/packager.hpp>
 #include <sigma/tools/texturing.hpp>
 
-#include <boost/gil/extension/io/tiff/read.hpp>
-#include <boost/gil/extension/io/jpeg/read.hpp>
-#include <boost/gil/extension/io/png/read.hpp>
+#include <stb/stb_image.h>
 
 #include <string>
 #include <unordered_map>
@@ -24,28 +21,26 @@ namespace tools {
     };
 
     template <class Image>
-    void load_texture(const std::filesystem::path& source_file, texture_source_type source_type, Image& image)
+    void load_texture(const std::filesystem::path& source_path, Image& image)
     {
-        auto file_path_string = source_file.string();
+        auto file_path_string = source_path.string();
+        int width, height, bbp;
+        auto pixels = (typename Image::value_type*)stbi_load(file_path_string.c_str(), &width, &height, &bbp, sigma::graphics::channel_count_v<Image>);
+        image.size = { width, height };
+        image.pixels.resize(width * height);
+        std::copy(pixels, pixels + (width * height), image.pixels.begin());
+        stbi_image_free((void*)pixels);
+    }
 
-        switch (source_type) {
-        case texture_source_type::tiff: {
-            boost::gil::read_and_convert_image(file_path_string, image, boost::gil::tiff_tag());
-            break;
-        }
-        case texture_source_type::jpeg: {
-            boost::gil::read_and_convert_image(file_path_string, image, boost::gil::jpeg_tag());
-            break;
-        }
-        case texture_source_type::png: {
-            boost::gil::read_and_convert_image(file_path_string, image, boost::gil::png_tag());            
-            break;
-        }
-        case texture_source_type::hdr: {
-            hdr_read_and_convert_image(file_path_string, image);
-            break;
-        }
-        }
+    void load_texture(const std::filesystem::path& source_path, sigma::graphics::image_t<sigma::graphics::rgb32f_pixel_t>& image)
+    {
+        auto file_path_string = source_path.string();
+        int width, height, bbp;
+        auto pixels = (sigma::graphics::rgb32f_pixel_t*)stbi_loadf(file_path_string.c_str(), &width, &height, &bbp, 3);
+        image.size = { width, height };
+        image.pixels.resize(width * height);
+        std::copy(pixels, pixels + (width * height), image.pixels.begin());
+        stbi_image_free((void*)pixels);
     }
 
     template <class ContextType>
@@ -136,27 +131,26 @@ namespace tools {
 
             switch (format) {
             case graphics::texture_format::RGB8: {
-                boost::gil::rgb8_image_t image;
-                load_texture(source_file, source_type, image);
+                sigma::graphics::image_t<sigma::graphics::rgb8_pixel_t> image;
+                load_texture(source_file, image);
 
-                graphics::texture texture(boost::gil::const_view(image), minification_filter, magnification_filter, mipmap_filter);
+                graphics::texture texture(image, minification_filter, magnification_filter, mipmap_filter);
                 texture_cache.insert({ rid }, texture, true);
                 break;
             }
             case graphics::texture_format::RGBA8: {
-                boost::gil::rgba8_image_t image;
-                load_texture(source_file, source_type, image);
+                sigma::graphics::image_t<sigma::graphics::rgba8_pixel_t> image;
+                load_texture(source_file, image);
 
-                graphics::texture texture(boost::gil::const_view(image), minification_filter, magnification_filter, mipmap_filter);
+                graphics::texture texture(image, minification_filter, magnification_filter, mipmap_filter);
                 texture_cache.insert({ rid }, texture, true);
                 break;
             }
             case graphics::texture_format::RGB32F: {
-                boost::gil::rgb32f_image_t image;
-                load_texture(source_file, source_type, image);
+                sigma::graphics::image_t<sigma::graphics::rgb32f_pixel_t> image;
+                load_texture(source_file, image);
 
                 if (settings.isMember("cubemap")) {
-                    auto source_view = boost::gil::const_view(image);
                     graphics::cubemap cubemap;
 
                     int SIZE = 1024;
@@ -170,9 +164,10 @@ namespace tools {
                              graphics::cubemap::face::POSITIVE_Z,
                              graphics::cubemap::face::NEGATIVE_Z }) {
 
-                        graphics::texture face_texture({ SIZE, SIZE }, format, minification_filter, magnification_filter, mipmap_filter);
-                        auto face_view = face_texture.as_view<boost::gil::rgb32f_pixel_t>(0);
-                        equirectangular_to_cubemap_face(face, source_view, face_view);
+                        sigma::graphics::image_t<sigma::graphics::rgb32f_pixel_t> face_image({SIZE, SIZE});
+                        equirectangular_to_cubemap_face(face, image, face_image);
+
+                        graphics::texture face_texture(face_image, minification_filter, magnification_filter, mipmap_filter);
 
                         auto face_number = static_cast<unsigned int>(face);
                         cubemap.faces[face_number] = texture_cache.insert({ rid / std::to_string(face_number) }, face_texture, true);
@@ -183,7 +178,7 @@ namespace tools {
                 }
 
                 // TODO do not convert and export texture if cubemap is generated?
-                graphics::texture texture(boost::gil::const_view(image), minification_filter, magnification_filter, mipmap_filter);
+                graphics::texture texture(image, minification_filter, magnification_filter, mipmap_filter);
                 texture_cache.insert({ rid }, texture, true);
                 break;
             }

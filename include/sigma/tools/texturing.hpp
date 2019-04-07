@@ -3,8 +3,6 @@
 
 #include <sigma/graphics/cubemap.hpp>
 
-#include <boost/gil/image.hpp>
-
 #include <glm/gtc/constants.hpp>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
@@ -36,7 +34,7 @@ namespace tools {
         int x_p1 = std::min(x + 1, int(tex.width()) - 1);
         int y_p1 = std::min(y + 1, int(tex.height()) - 1);
         typename Image::value_type output;
-        for (int c = 0; c < boost::gil::num_channels<Image>::value; ++c)
+        for (int c = 0; c < sigma::graphics::channel_count_v<Image>; ++c)
             output[c] = (tex(x, y)[c] * u_opposite + tex(x_p1, y)[c] * u_ratio) * v_opposite + (tex(x, y_p1)[c] * u_opposite + tex(x_p1, y_p1)[c] * u_ratio) * v_ratio;
         return output;
     }
@@ -73,10 +71,8 @@ namespace tools {
         return glm::vec2(x, y);
     }
 
-    template <class SourceView, class DestView>
-    void equirectangular_to_cubemap_face(const graphics::cubemap::face& face,
-        const SourceView& source_view,
-        DestView& output)
+    template <class SourceImage, class DestImage>
+    void equirectangular_to_cubemap_face(const graphics::cubemap::face& face, const SourceImage& source_view, DestImage& output)
     {
         const int SIZE = output.width();
         for (int y = 0; y < output.height(); ++y) {

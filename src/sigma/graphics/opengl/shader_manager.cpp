@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <vector>
+#include <assert.h>
 
 namespace sigma {
 namespace opengl {

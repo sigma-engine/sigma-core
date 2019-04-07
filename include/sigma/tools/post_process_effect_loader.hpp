@@ -10,8 +10,6 @@
 #include <sigma/tools/technique_loader.hpp>
 #include <sigma/util/filesystem.hpp>
 
-#include <boost/range/adaptor/transformed.hpp>
-
 #include <set>
 #include <string>
 

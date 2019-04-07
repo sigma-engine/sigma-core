@@ -2,8 +2,6 @@
 
 #include <sigma/world.hpp>
 
-#include <boost/math/constants/constants.hpp>
-
 #include <chrono>
 #include <cmath>
 

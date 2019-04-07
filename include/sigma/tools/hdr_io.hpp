@@ -3,9 +3,6 @@
 
 #include <sigma/util/string.hpp>
 
-#include <boost/gil/image.hpp>
-#include <boost/gil/typedefs.hpp>
-
 #include <array>
 #include <fstream>
 #include <vector>

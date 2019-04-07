@@ -3,8 +3,6 @@
 
 #include <sigma/config.hpp>
 
-#include <boost/functional/hash.hpp>
-
 #include <cereal/cereal.hpp>
 
 #include <filesystem>

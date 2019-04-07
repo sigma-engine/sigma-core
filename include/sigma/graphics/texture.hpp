@@ -8,52 +8,132 @@
 
 #include <glm/vec2.hpp>
 
-#include <boost/gil/typedefs.hpp>
-
 #include <vector>
 
 namespace sigma {
 namespace graphics {
+    struct rgb8_pixel_t {
+        uint8_t r, g, b;
+        const uint8_t& operator[](int c) const { return (&r)[c]; }
+        uint8_t& operator[](int c) { return (&r)[c]; }
+    };
 
-    enum class R_EXPORT() texture_filter {
+    struct rgba8_pixel_t {
+        uint8_t r, g, b, a;
+        const uint8_t& operator[](int c) const { return (&r)[c]; }
+        uint8_t& operator[](int c) { return (&r)[c]; }
+    };
+
+    struct rgb32f_pixel_t {
+        float r, g, b;
+        const float& operator[](int c) const { return (&r)[c]; }
+        float& operator[](int c) { return (&r)[c]; }
+    };
+
+    template <class T>
+    struct image_t {
+        using value_type = T;
+        glm::ivec2 size;
+        std::vector<value_type> pixels;
+        image_t()
+            : size({ 0, 0 })
+        {
+        }
+
+        image_t(glm::ivec2 size)
+            : size(size)
+            , pixels(size.x * size.y)
+        {
+        }
+
+        int width() const { return size.x; }
+        int height() const { return size.y; }
+
+        value_type *row_begin(int row) { return pixels.data() + row * size.x; }
+
+        const value_type& operator()(int x, int y) const { return pixels[y * size.x + x]; }
+
+        value_type& operator()(int x, int y) { return pixels[y * size.x + x]; }
+    };
+
+    template <class T>
+    struct channel_count {
+    };
+
+    template <class T>
+    struct channel_count<image_t<T>> : public channel_count<T> {
+    };
+
+    template <>
+    struct channel_count<rgb8_pixel_t> {
+        static constexpr const size_t value = 3;
+    };
+
+    template <>
+    struct channel_count<rgba8_pixel_t> {
+        static constexpr const size_t value = 4;
+    };
+
+    template <>
+    struct channel_count<rgb32f_pixel_t> {
+        static constexpr const size_t value = 3;
+    };
+
+    template <class T>
+    inline constexpr size_t channel_count_v = channel_count<T>::value;
+
+    enum class texture_filter {
         LINEAR,
         NEAREST,
         NONE
     };
 
-    enum class R_EXPORT() texture_format {
+    enum class texture_format {
         RGB8,
         RGBA8,
-        RGB32F
+        RGB16F,
+        RGBA16F,
+        RGB32F,
+        DEPTH32F_STENCIL8
+    };
+
+    enum class texture_sampler_type {
+        SAMPLER2D,
+        SAMPLER2D_ARRAY_SHADOW
+    };
+
+    struct texture_schema {
+        texture_sampler_type type;
+        size_t descriptor_set;
+        size_t binding_point;
+        std::string name;
+
+        template <class Archive>
+        void serialize(Archive& ar)
+        {
+            ar(type, descriptor_set, binding_point, name);
+        }
     };
 
     template <class T>
     struct texture_type_for_pixel;
 
     template <>
-    struct texture_type_for_pixel<boost::gil::rgb8_pixel_t> {
+    struct texture_type_for_pixel<rgb8_pixel_t> {
         static const constexpr texture_format value = texture_format::RGB8;
     };
 
     template <>
-    struct texture_type_for_pixel<boost::gil::rgba8_pixel_t> {
+    struct texture_type_for_pixel<rgba8_pixel_t> {
         static const constexpr texture_format value = texture_format::RGBA8;
     };
 
     template <>
-    struct texture_type_for_pixel<boost::gil::rgb32f_pixel_t> {
+    struct texture_type_for_pixel<rgb32f_pixel_t> {
         static const constexpr texture_format value = texture_format::RGB32F;
     };
 
     class texture {
-        glm::ivec2 size_;
-        texture_format format_;
-        texture_filter minification_filter_;
-        texture_filter magnification_filter_;
-        texture_filter mipmap_filter_;
-        std::vector<std::size_t> mipmap_offsets_;
-        std::vector<char> data_;
-
     public:
         texture();
 
@@ -64,19 +144,19 @@ namespace graphics {
             texture_filter mipmap_filter = texture_filter::LINEAR,
             bool store_mipmaps = false);
 
-        texture(const boost::gil::rgb8c_view_t& view,
+        texture(const image_t<rgb8_pixel_t>& image,
             texture_filter minification_filter = texture_filter::LINEAR,
             texture_filter magnification_filter = texture_filter::LINEAR,
             texture_filter mipmap_filter = texture_filter::LINEAR,
             bool store_mipmaps = false);
 
-        texture(const boost::gil::rgba8c_view_t& view,
+        texture(const image_t<rgba8_pixel_t>& image,
             texture_filter minification_filter = texture_filter::LINEAR,
             texture_filter magnification_filter = texture_filter::LINEAR,
             texture_filter mipmap_filter = texture_filter::LINEAR,
             bool store_mipmaps = false);
 
-        texture(const boost::gil::rgb32fc_view_t& view,
+        texture(const image_t<rgb32f_pixel_t>& image,
             texture_filter minification_filter = texture_filter::LINEAR,
             texture_filter magnification_filter = texture_filter::LINEAR,
             texture_filter mipmap_filter = texture_filter::LINEAR,
@@ -102,6 +182,7 @@ namespace graphics {
 
         const char* data(std::size_t level) const;
 
+        /*
         template <class PixelType>
         typename boost::gil::type_from_x_iterator<PixelType*>::view_t as_view(std::size_t level)
         {
@@ -127,18 +208,28 @@ namespace graphics {
             using view_type = typename boost::gil::type_from_x_iterator<PixelType*>::cview_t;
             return view_type({ size_x, size_y }, typename view_type::locator((PixelType*)data(level), size_x * sizeof(PixelType)));
         }
+        */
 
         template <class Archive>
         void serialize(Archive& ar)
         {
             ar(size_,
-            format_,
-            minification_filter_,
-            magnification_filter_,
-            mipmap_filter_,
-            mipmap_offsets_,
-            data_);
+                format_,
+                minification_filter_,
+                magnification_filter_,
+                mipmap_filter_,
+                mipmap_offsets_,
+                data_);
         }
+
+    private:
+        glm::ivec2 size_;
+        texture_format format_;
+        texture_filter minification_filter_;
+        texture_filter magnification_filter_;
+        texture_filter mipmap_filter_;
+        std::vector<std::size_t> mipmap_offsets_;
+        std::vector<char> data_;
     };
 }
 }

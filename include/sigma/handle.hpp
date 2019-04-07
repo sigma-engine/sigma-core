@@ -3,7 +3,7 @@
 
 #include <sigma/config.hpp>
 
-#include <boost/functional/hash.hpp>
+#include <sigma/util/hash.hpp>
 
 #include <cstddef>
 #include <cstdint>
@@ -95,8 +95,8 @@ struct hash<sigma::handle<TagType>> {
     size_t operator()(const sigma::handle<TagType>& h) const
     {
         std::size_t seed = 0;
-        boost::hash_combine(seed, h.index);
-        boost::hash_combine(seed, h.version);
+        sigma::util::hash_combine(seed, h.index);
+        sigma::util::hash_combine(seed, h.version);
         return seed;
     }
 };

@@ -1,7 +1,5 @@
 #include <sigma/graphics/texture.hpp>
 
-#include <boost/gil/image.hpp>
-
 namespace sigma {
 namespace graphics {
     texture::texture()
@@ -43,54 +41,54 @@ namespace graphics {
         }
     }
 
-    texture::texture(const boost::gil::rgb8c_view_t& view,
+    texture::texture(const image_t<rgb8_pixel_t>& image,
         texture_filter minification_filter,
         texture_filter magnification_filter,
         texture_filter mipmap_filter,
         bool store_mipmaps)
-        : texture({ view.width(), view.height() },
+        : texture(image.size,
               texture_format::RGB8,
               minification_filter,
               magnification_filter,
               mipmap_filter,
               store_mipmaps)
     {
-        boost::gil::copy_pixels(view, boost::gil::interleaved_view(size_.x, size_.y, (boost::gil::rgb8_pixel_t*)data_.data(), size_.x * sizeof(boost::gil::rgb8_pixel_t)));
         // TODO generate the mipmaps
+        std::copy(image.pixels.begin(), image.pixels.end(), (rgb8_pixel_t*)data_.data());
         assert(store_mipmaps == false);
     }
 
-    texture::texture(const boost::gil::rgba8c_view_t& view,
+    texture::texture(const image_t<rgba8_pixel_t>& image,
         texture_filter minification_filter,
         texture_filter magnification_filter,
         texture_filter mipmap_filter,
         bool store_mipmaps)
-        : texture({ view.width(), view.height() },
+        : texture(image.size,
               texture_format::RGBA8,
               minification_filter,
               magnification_filter,
               mipmap_filter,
               store_mipmaps)
     {
-        boost::gil::copy_pixels(view, boost::gil::interleaved_view(size_.x, size_.y, (boost::gil::rgba8_pixel_t*)data_.data(), size_.x * sizeof(boost::gil::rgba8_pixel_t)));
         // TODO generate the mipmaps
+        std::copy(image.pixels.begin(), image.pixels.end(), (rgba8_pixel_t*)data_.data());
         assert(store_mipmaps == false);
     }
 
-    texture::texture(const boost::gil::rgb32fc_view_t& view,
+    texture::texture(const image_t<rgb32f_pixel_t>& image,
         texture_filter minification_filter,
         texture_filter magnification_filter,
         texture_filter mipmap_filter,
         bool store_mipmaps)
-        : texture({ view.width(), view.height() },
+        : texture(image.size,
               texture_format::RGB32F,
               minification_filter,
               magnification_filter,
               mipmap_filter,
               store_mipmaps)
     {
-        boost::gil::copy_pixels(view, boost::gil::interleaved_view(size_.x, size_.y, (boost::gil::rgb32f_pixel_t*)data_.data(), size_.x * sizeof(boost::gil::rgb32f_pixel_t)));
         // TODO generate the mipmaps
+        std::copy(image.pixels.begin(), image.pixels.end(), (rgb32f_pixel_t*)data_.data());
         assert(store_mipmaps == false);
     }
 
@@ -123,11 +121,11 @@ namespace graphics {
     {
         switch (format_) {
         case texture_format::RGB8:
-            return sizeof(boost::gil::rgb8_pixel_t);
+            return sizeof(rgb8_pixel_t);
         case texture_format::RGBA8:
-            return sizeof(boost::gil::rgba8_pixel_t);
+            return sizeof(rgba8_pixel_t);
         case texture_format::RGB32F:
-            return sizeof(boost::gil::rgb32f_pixel_t);
+            return sizeof(rgb32f_pixel_t);
         }
         return 0;
     }

@@ -49,6 +49,7 @@ add_library(sigma-core STATIC
     src/sigma/util/filesystem.cpp
     src/sigma/window.cpp
     src/sigma/graphics/texture.cpp
+    src/sigma/tools/texture_loader.cpp
 )
 
 target_include_directories(sigma-core
@@ -68,8 +69,6 @@ target_link_libraries(sigma-core
     PUBLIC
     ${CMAKE_DL_LIBS}
     Boost::boost
-    Boost::filesystem
-    Boost::serialization
     Threads::Threads
     glm
     jsoncpp

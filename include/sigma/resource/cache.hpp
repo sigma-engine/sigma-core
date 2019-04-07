@@ -13,7 +13,8 @@
 #include <cereal/types/vector.hpp>
 #include <cereal/types/set.hpp>
 
-#include <boost/functional/hash.hpp>
+#include <sigma/util/hash.hpp>
+#include <sigma/util/filesystem.hpp>
 
 #include <filesystem>
 #include <exception>
@@ -22,6 +23,7 @@
 #include <sstream>
 #include <unordered_map>
 #include <vector>
+#include <assert.h>
 
 namespace sigma {
 namespace resource {
@@ -190,7 +192,7 @@ struct hash<sigma::resource::resource_id> {
         size_t hash_code = 0;
         for (const auto& id : rid) {
             if (!id.empty())
-                boost::hash_combine(hash_code, id);
+                sigma::util::hash_combine(hash_code, id);
         }
         return hash_code;
     }
