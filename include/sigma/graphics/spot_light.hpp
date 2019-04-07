@@ -11,13 +11,10 @@
 namespace sigma {
 namespace graphics {
     struct R_EXPORT() spot_light {
-        BOOST_HANA_DEFINE_STRUCT(
-            spot_light,
-            (glm::vec3, color),
-            (float, intensity),
-            (float, cutoff),
-            (bool, cast_shadows));
-
+        glm::vec3 color;
+        float intensity;
+        float cutoff;
+        bool cast_shadows;
         glm::vec3 direction;
         frustum shadow_frustum;
 
@@ -45,6 +42,27 @@ namespace graphics {
             cast_shadows);
         }
     };
+}
+
+namespace json {
+    static bool from_json(std::shared_ptr<context> ctx, const Json::Value& source, graphics::spot_light& output)
+    {
+        if (source.isMember("color"))
+            from_json(ctx, source["color"], output.color);
+        
+        if (source.isMember("intensity"))
+            from_json(ctx, source["intensity"], output.intensity);
+       
+        if (source.isMember("cutoff"))
+            from_json(ctx, source["cutoff"], output.cutoff);
+
+        if (source.isMember("cast_shadows"))
+            from_json(ctx, source["cast_shadows"], output.cast_shadows);
+        
+        if (source.isMember("direction"))
+            from_json(ctx, source["direction"], output.direction);
+        return true;
+    }   
 }
 }
 

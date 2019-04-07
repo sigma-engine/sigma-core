@@ -21,14 +21,13 @@ namespace tools {
 
     struct build_settings {
         static constexpr const char* GROUP = "build";
-        BOOST_HANA_DEFINE_STRUCT(
-            build_settings,
-            (std::filesystem::path, build_directory),
-            (std::vector<std::filesystem::path>, source_directories));
+        std::filesystem::path build_directory;
+        std::vector<std::filesystem::path> source_directories;
 
         void load_settings(std::shared_ptr<context> context, const Json::Value &settings)
         {
-            json::from_json(context, settings, *this);
+            json::from_json(context, settings["build_directory"], build_directory);
+            json::from_json(context, settings["source_directories"], source_directories);
         }
     };
 

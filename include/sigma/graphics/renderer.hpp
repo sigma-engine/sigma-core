@@ -33,18 +33,16 @@ namespace graphics {
     public:
         struct SIGMA_API settings {
             static constexpr const char* GROUP = "render";
-
-            BOOST_HANA_DEFINE_STRUCT(settings,
-                (bool, enable_image_based_lighting),
-                (bool, enable_debug_rendering),
-                (resource::handle<graphics::post_process_effect>, image_based_light_effect),
-                (resource::handle<graphics::post_process_effect>, point_light_effect),
-                (resource::handle<graphics::post_process_effect>, directional_light_effect),
-                (resource::handle<graphics::post_process_effect>, spot_light_effect),
-                (resource::handle<graphics::post_process_effect>, texture_blit_effect),
-                (resource::handle<graphics::post_process_effect>, gamma_conversion),
-                (resource::handle<graphics::post_process_effect>, vignette_effect),
-                (resource::handle<graphics::technique>, shadow_technique));
+            bool enable_image_based_lighting;
+            bool enable_debug_rendering;
+            resource::handle<graphics::post_process_effect> image_based_light_effect;
+            resource::handle<graphics::post_process_effect> point_light_effect;
+            resource::handle<graphics::post_process_effect> directional_light_effect;
+            resource::handle<graphics::post_process_effect> spot_light_effect;
+            resource::handle<graphics::post_process_effect> texture_blit_effect;
+            resource::handle<graphics::post_process_effect> gamma_conversion;
+            resource::handle<graphics::post_process_effect> vignette_effect;
+            resource::handle<graphics::technique> shadow_technique;
 
             template <class Archive>
             void serialize(Archive& ar)
@@ -63,7 +61,16 @@ namespace graphics {
 
             void load_settings(std::shared_ptr<context> context, const Json::Value &settings)
             {
-                json::from_json(context, settings, *this);
+                json::from_json(context, settings["enable_image_based_lighting"], enable_image_based_lighting);
+                json::from_json(context, settings["enable_debug_rendering"], enable_debug_rendering);
+                json::from_json(context, settings["image_based_light_effect"], image_based_light_effect);
+                json::from_json(context, settings["point_light_effect"], point_light_effect);
+                json::from_json(context, settings["directional_light_effect"], directional_light_effect);
+                json::from_json(context, settings["spot_light_effect"], spot_light_effect);
+                json::from_json(context, settings["texture_blit_effect"], texture_blit_effect);
+                json::from_json(context, settings["gamma_conversion"], gamma_conversion);
+                json::from_json(context, settings["vignette_effect"], vignette_effect);
+                json::from_json(context, settings["shadow_technique"], shadow_technique);
             }
         };
 

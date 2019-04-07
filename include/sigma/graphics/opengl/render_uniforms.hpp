@@ -9,33 +9,25 @@
 namespace sigma {
 namespace opengl {
     struct instance_matrices {
-        BOOST_HANA_DEFINE_STRUCT(
-            instance_matrices,
-            (glm::mat4, model_matrix),
-            (glm::mat4, model_view_matrix),
-            (glm::mat3, normal_matrix));
+        glm::mat4 model_matrix;
+        glm::mat4 model_view_matrix;
+        glm::vec4 normal_matrix[3];
     };
 
     struct directional_light_block {
-        BOOST_HANA_DEFINE_STRUCT(
-            directional_light_block,
-            (glm::vec4, color_intensity),
-            (glm::vec4, direction_layer));
+        glm::vec4 color_intensity;
+        glm::vec4 direction_layer;
     };
 
     struct point_light_block {
-        BOOST_HANA_DEFINE_STRUCT(
-            point_light_block,
-            (glm::vec4, color_intensity),
-            (glm::vec4, position_radius));
+        glm::vec4 color_intensity;
+        glm::vec4 position_radius;
     };
 
     struct spot_light_block {
-        BOOST_HANA_DEFINE_STRUCT(
-            spot_light_block,
-            (glm::vec4, color_intensity),
-            (glm::vec4, position_cutoff),
-            (glm::vec4, direction_layer));
+        glm::vec4 color_intensity;
+        glm::vec4 position_cutoff;
+        glm::vec4 direction_layer;
     };
 }
 }

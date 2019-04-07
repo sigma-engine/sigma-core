@@ -182,34 +182,6 @@ namespace graphics {
 
         const char* data(std::size_t level) const;
 
-        /*
-        template <class PixelType>
-        typename boost::gil::type_from_x_iterator<PixelType*>::view_t as_view(std::size_t level)
-        {
-            assert(texture_type_for_pixel<PixelType>::value == format_);
-            assert(level < stored_mipmap_count());
-
-            long int size_x = std::max(1, size_.x >> level);
-            long int size_y = std::max(1, size_.y >> level);
-
-            using view_type = typename boost::gil::type_from_x_iterator<PixelType*>::view_t;
-            return view_type({ size_x, size_y }, typename view_type::locator((PixelType*)data(level), size_x * sizeof(PixelType)));
-        }
-
-        template <class PixelType>
-        typename boost::gil::type_from_x_iterator<PixelType*>::cview_t as_view(std::size_t level) const
-        {
-            assert(texture_type_for_pixel<PixelType>::value == format_);
-            assert(level < stored_mipmap_count());
-
-            std::size_t size_x = std::max(1, size_.x >> level);
-            std::size_t size_y = std::max(1, size_.y >> level);
-
-            using view_type = typename boost::gil::type_from_x_iterator<PixelType*>::cview_t;
-            return view_type({ size_x, size_y }, typename view_type::locator((PixelType*)data(level), size_x * sizeof(PixelType)));
-        }
-        */
-
         template <class Archive>
         void serialize(Archive& ar)
         {

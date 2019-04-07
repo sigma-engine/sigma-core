@@ -12,8 +12,8 @@ layout (std140, binding = 0) uniform standard_block {
     mat4 projection_view_matrix;
     mat4 inverse_projection_view_matrix;
 
-    vec2 view_port_size;
     vec4 eye_position;
+    vec2 view_port_size;
 
     float time;
 

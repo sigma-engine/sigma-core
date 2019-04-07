@@ -605,7 +605,9 @@ namespace opengl {
                     tok.count = 3 * cpu_mesh->triangles.size();
                     tok.matrices.model_matrix = txform.matrix;
                     tok.matrices.model_view_matrix = model_view_matrix;
-                    tok.matrices.normal_matrix = normal_matrix;
+                    tok.matrices.normal_matrix[0] = glm::vec4(normal_matrix[0], 0);
+                    tok.matrices.normal_matrix[1] = glm::vec4(normal_matrix[1], 0);
+                    tok.matrices.normal_matrix[2] = glm::vec4(normal_matrix[2], 0);
                     tok.material = nullptr;
 
                     tokens.push_back(std::move(tok));
@@ -621,7 +623,9 @@ namespace opengl {
                         tok.count = 3 * cpu_mesh->material_slots[i].second;
                         tok.matrices.model_matrix = txform.matrix;
                         tok.matrices.model_view_matrix = model_view_matrix;
-                        tok.matrices.normal_matrix = normal_matrix;
+                        tok.matrices.normal_matrix[0] = glm::vec4(normal_matrix[0], 0);
+                        tok.matrices.normal_matrix[1] = glm::vec4(normal_matrix[1], 0);
+                        tok.matrices.normal_matrix[2] = glm::vec4(normal_matrix[2], 0);
                         tok.material = material;
 
                         tokens.push_back(std::move(tok));

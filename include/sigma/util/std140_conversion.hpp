@@ -11,14 +11,11 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
-#include <boost/hana/for_each.hpp>
-#include <boost/hana/fuse.hpp>
-
 #include <algorithm>
 #include <array>
 #include <cstddef>
 
-#define std140_sizeof(T) sigma::std140::detial::type_traits<T>::size()
+#define std140_sizeof(T) sizeof(T) // sigma::std140::detial::type_traits<T>::size()
 
 namespace sigma {
 namespace std140 {
@@ -40,58 +37,15 @@ namespace std140 {
     }
 
     template <typename T>
-    static constexpr std::size_t member_offset(std::size_t member_index)
-    {
-        const T temp{};
-        std::size_t i = 0;
-        std::size_t offset = 0;
-        boost::hana::for_each(temp, boost::hana::fuse([&](auto name, auto member) {
-            using member_type = decltype(member);
-            const std::size_t member_size = size<member_type>();
-            const std::size_t member_alignment = alignment<member_type>();
-
-            if (i < member_index) {
-                offset = numeric::round_up(offset, member_alignment);
-                offset += member_size;
-            } else if (i == member_index) {
-                offset = numeric::round_up(offset, member_alignment);
-            }
-            i++;
-        }));
-
-        return offset;
-    }
-
-    template <typename T>
     static void to_std140(const T& source, std::uint8_t* dest)
     {
-        detial::type_traits<T>::write(source, dest, 0);
+        memcpy(dest, &source, sizeof(T));
+        // detial::type_traits<T>::write(source, dest, 0);
     }
 
     namespace detial {
         template <class T>
         struct type_traits {
-            static constexpr std::size_t size()
-            {
-                const T temp{};
-                std::size_t total = 0;
-                boost::hana::for_each(temp, boost::hana::fuse([&total](auto name, auto member) {
-                    using member_type = decltype(member);
-                    const std::size_t member_size = type_traits<member_type>::size();
-                    const std::size_t member_alignment = type_traits<member_type>::alignment();
-                    total = numeric::round_up(total, member_alignment);
-                    total += member_size;
-                }));
-                return total;
-            }
-
-            static std::size_t write(const T& value, std::uint8_t* buffer, std::size_t offset)
-            {
-                boost::hana::for_each(value, boost::hana::fuse([&](auto name, auto member) {
-                    offset = type_traits<decltype(member)>::write(member, buffer, offset);
-                }));
-                return offset;
-            }
         };
 
         template <>

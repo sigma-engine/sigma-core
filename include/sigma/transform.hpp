@@ -13,11 +13,9 @@
 namespace sigma {
 
 struct R_EXPORT() transform {
-    BOOST_HANA_DEFINE_STRUCT(
-        transform,
-        (glm::vec3, position),
-        (glm::quat, rotation),
-        (glm::vec3, scale));
+    glm::vec3 position;
+    glm::quat rotation;
+    glm::vec3 scale;
     glm::mat4 matrix;
 
     transform(glm::vec3 position = glm::vec3{ 0 }, glm::quat rotation = glm::quat{}, glm::vec3 scale = glm::vec3{ 1 })
@@ -40,6 +38,21 @@ struct R_EXPORT() transform {
         return glm::translate(glm::mat4(1), position) * glm::mat4_cast(rotation) * glm::scale(glm::mat4(1), glm::vec3(scale));
     }
 };
+
+namespace json {
+    static bool from_json(std::shared_ptr<context> ctx, const Json::Value& source, transform& output)
+    {
+        if (source.isMember("position"))
+            from_json(ctx, source["position"], output.position);
+
+        if (source.isMember("rotation"))
+            from_json(ctx, source["rotation"], output.rotation);
+            
+        if (source.isMember("scale"))
+            from_json(ctx, source["scale"], output.scale);
+        return true;
+    }   
+}
 }
 
 REGISTER_COMPONENT(sigma::transform)

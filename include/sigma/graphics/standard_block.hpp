@@ -12,26 +12,20 @@
 
 namespace sigma {
 namespace graphics {
-    struct R_EXPORT(std140, binding = 0) standard_block {
-        BOOST_HANA_DEFINE_STRUCT(standard_block,
-
-            (glm::mat4, projection_matrix),
-            (glm::mat4, inverse_projection_matrix),
-
-            (glm::mat4, view_matrix),
-            (glm::mat4, inverse_view_matrix),
-
-            (glm::mat4, projection_view_matrix),
-            (glm::mat4, inverse_projection_view_matrix),
-
-            (glm::vec2, view_port_size),
-            (glm::vec4, eye_position),
-
-            (float, time),
-
-            (float, fovy),
-            (float, z_near),
-            (float, z_far));
+    struct R_EXPORT() standard_block {
+        glm::mat4 projection_matrix;
+        glm::mat4 inverse_projection_matrix;
+        glm::mat4 view_matrix;
+        glm::mat4 inverse_view_matrix;
+        glm::mat4 projection_view_matrix;
+        glm::mat4 inverse_projection_view_matrix;
+        glm::vec4 eye_position;
+        glm::vec2 view_port_size;
+        float time;
+        float fovy;
+        float z_near;
+        float z_far;
+        float pad[2];
     };
 }
 }

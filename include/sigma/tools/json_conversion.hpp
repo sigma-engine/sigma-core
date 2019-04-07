@@ -20,11 +20,6 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
-#include <boost/hana/at_key.hpp>
-#include <boost/hana/for_each.hpp>
-#include <boost/hana/keys.hpp>
-#include <boost/hana/length.hpp>
-
 #include <vector>
 #include <filesystem>
 #include <iostream>
@@ -305,24 +300,6 @@ namespace json {
                     output = sigma::graphics::texture_format::RGB32F;
                 else
                     return false;
-                return true;
-            }
-        };
-
-        template <class T>
-        struct type_traits {
-            static bool from(std::shared_ptr<context> ctx, const Json::Value& source, T& output)
-            {
-                // TODO check that the type actually has  keys
-                bool good = true;
-                boost::hana::for_each(boost::hana::keys(output), [&](auto key) {
-                    auto& member = boost::hana::at_key(output, key);
-                    using member_type = std::remove_reference_t<decltype(member)>;
-                    if (source.isMember(key.c_str())) {
-                        if (!type_traits<member_type>::from(ctx, source[key.c_str()], member))
-                            good = false;
-                    }
-                });
                 return true;
             }
         };

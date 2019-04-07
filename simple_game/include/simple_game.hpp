@@ -29,8 +29,7 @@ using simple_blueprint = sigma::blueprint<simple_component_set>;
 struct simple_level_settings {
     static constexpr const char* GROUP = "level";
 
-    BOOST_HANA_DEFINE_STRUCT(simple_level_settings,
-        (sigma::resource::handle<simple_blueprint>, current_level_blueprint));
+    sigma::resource::handle<simple_blueprint> current_level_blueprint;
 
     template <class Archive>
     void serialize(Archive& ar)
@@ -40,7 +39,7 @@ struct simple_level_settings {
 
     void load_settings(std::shared_ptr<sigma::context> context, const Json::Value &settings)
     {
-        sigma::json::from_json(context, settings, *this);
+        sigma::json::from_json(context, settings["current_level_blueprint"], current_level_blueprint);
     }
 };
 

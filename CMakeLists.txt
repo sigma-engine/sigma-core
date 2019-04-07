@@ -14,15 +14,9 @@ foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${CMAKE_BINARY_DIR}/lib")
 endforeach()
 
-set(Boost_USE_STATIC_LIBS ON)
-find_package(Boost 1.65.0 COMPONENTS filesystem program_options log REQUIRED)
 
-find_package(JPEG REQUIRED)
-find_package(PNG REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(Threads REQUIRED)
-find_package(TIFF REQUIRED)
-
 find_package(Assimp REQUIRED)
 find_package(benchmark REQUIRED)
 find_package(cereal REQUIRED)
@@ -69,7 +63,6 @@ PUBLIC
 target_link_libraries(sigma-core
     PUBLIC
     ${CMAKE_DL_LIBS}
-    Boost::boost
     Threads::Threads
     glm
     jsoncpp
@@ -110,9 +103,6 @@ target_include_directories(sigma-tools INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRE
 target_link_libraries(sigma-tools
     INTERFACE
     sigma-core
-    PNG::PNG
-    TIFF::TIFF
-    jpeg
     assimp::assimp
     stb::stb_image
     shaderc

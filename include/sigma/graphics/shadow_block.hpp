@@ -15,10 +15,8 @@
 namespace sigma {
 namespace graphics {
     struct shadow_block {
-        BOOST_HANA_DEFINE_STRUCT(
-            shadow_block,
-            (std::array<glm::mat4, 3>, light_projection_view_matrix),
-            (std::array<glm::vec4, 3>, light_frustum_far_plane));
+        std::array<glm::mat4, 3> light_projection_view_matrix;
+        std::array<glm::vec4, 3> light_frustum_far_plane;
     };
 }
 }
