@@ -6,9 +6,9 @@
 
 namespace sigma {
 namespace graphics {
-    renderer::renderer(glm::ivec2 size, context_view_type ctx)
-        : context_(ctx)
-        , settings_(ctx.get_settings<settings>())
+    renderer::renderer(glm::ivec2 size, std::shared_ptr<context> ctx)
+        : context_(ctx),
+        settings_(ctx->settings<renderer::settings>())
     {
     }
 

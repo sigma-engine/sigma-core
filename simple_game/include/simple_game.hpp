@@ -3,6 +3,7 @@
 
 #include <grid_component.hpp>
 
+#include <sigma/tools/json_conversion.hpp>
 #include <sigma/blueprint.hpp>
 #include <sigma/context.hpp>
 #include <sigma/game.hpp>
@@ -25,15 +26,6 @@ using simple_component_set = sigma::component_set<sigma::transform,
 
 using simple_blueprint = sigma::blueprint<simple_component_set>;
 
-using simple_resource_set = sigma::resource_set<sigma::graphics::texture,
-    sigma::graphics::cubemap,
-    sigma::graphics::shader,
-    sigma::graphics::technique,
-    sigma::graphics::material,
-    sigma::graphics::static_mesh,
-    sigma::graphics::post_process_effect,
-    simple_blueprint>;
-
 struct simple_level_settings {
     static constexpr const char* GROUP = "level";
 
@@ -45,14 +37,16 @@ struct simple_level_settings {
     {
         ar(current_level_blueprint);
     }
-};
 
-using simple_settings = sigma::settings_set<simple_level_settings, sigma::graphics::renderer::settings>;
-using simple_context = sigma::context<simple_resource_set, simple_settings>;
+    void load_settings(std::shared_ptr<sigma::context> context, const Json::Value &settings)
+    {
+        sigma::json::from_json(context, settings, *this);
+    }
+};
 
 class simple_game : public sigma::game {
 public:
-    simple_game(simple_context& ctx);
+    simple_game(std::shared_ptr<sigma::context> ctx);
 
     virtual void update(std::chrono::duration<float> dt) override;
 };

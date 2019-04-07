@@ -3,12 +3,13 @@
 #include <chrono>
 #include <cmath>
 
-simple_game::simple_game(simple_context& ctx)
+simple_game::simple_game(std::shared_ptr<sigma::context> ctx)
 {
-    auto bp = ctx.get_cache<simple_blueprint>().acquire(ctx.get_settings<simple_level_settings>().current_level_blueprint);
+    auto level_settings = ctx->settings<simple_level_settings>();
+    auto bp = ctx->cache<simple_blueprint>()->acquire(level_settings->current_level_blueprint);
     registry = std::move(bp->registry);
 
-    registry.view<sigma::transform, grid_component>().each([&](auto e, const sigma::transform& txform, const grid_component& grid) {
+    registry.view<const sigma::transform, const grid_component>().each([&](const auto& txform, const auto& grid) {
         for (int x = 0; x < grid.rows; ++x) {
             for (int z = 0; z < grid.columns; ++z) {
                 auto e = registry.create();

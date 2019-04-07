@@ -43,11 +43,10 @@ namespace tools {
         stbi_image_free((void*)pixels);
     }
 
-    template <class ContextType>
-    class texture_loader : public resource_loader<ContextType> {
+    class texture_loader : public resource_loader {
     public:
-        texture_loader(build_settings& settings, ContextType& ctx)
-            : resource_loader<ContextType>(settings, ctx)
+        texture_loader(std::shared_ptr<context> ctx)
+            : resource_loader(ctx)
             , context_(ctx)
         {
         }
@@ -92,16 +91,16 @@ namespace tools {
 
             auto rid = resource_shortname(graphics::texture) / filesystem::make_relative(source_directory, source_file).replace_extension("");
 
-            auto& texture_cache = context_.template get_cache<graphics::texture>();
-            if (texture_cache.contains({ rid })) {
-                auto h = texture_cache.handle_for({ rid });
+            auto texture_cache = context_->cache<graphics::texture>();
+            if (texture_cache->contains({ rid })) {
+                auto h = texture_cache->handle_for({ rid });
 
                 auto source_file_time = std::filesystem::last_write_time(source_file);
                 auto settings_time = source_file_time;
                 if (std::filesystem::exists(settings_path))
                     settings_time = std::filesystem::last_write_time(settings_path);
 
-                auto resource_time = texture_cache.last_modification_time(h);
+                auto resource_time = texture_cache->last_modification_time(h);
                 if (source_file_time <= resource_time && settings_time <= resource_time)
                     return;
             }
@@ -135,7 +134,7 @@ namespace tools {
                 load_texture(source_file, image);
 
                 graphics::texture texture(image, minification_filter, magnification_filter, mipmap_filter);
-                texture_cache.insert({ rid }, texture, true);
+                texture_cache->insert({ rid }, texture, true);
                 break;
             }
             case graphics::texture_format::RGBA8: {
@@ -143,7 +142,7 @@ namespace tools {
                 load_texture(source_file, image);
 
                 graphics::texture texture(image, minification_filter, magnification_filter, mipmap_filter);
-                texture_cache.insert({ rid }, texture, true);
+                texture_cache->insert({ rid }, texture, true);
                 break;
             }
             case graphics::texture_format::RGB32F: {
@@ -170,23 +169,23 @@ namespace tools {
                         graphics::texture face_texture(face_image, minification_filter, magnification_filter, mipmap_filter);
 
                         auto face_number = static_cast<unsigned int>(face);
-                        cubemap.faces[face_number] = texture_cache.insert({ rid / std::to_string(face_number) }, face_texture, true);
+                        cubemap.faces[face_number] = texture_cache->insert({ rid / std::to_string(face_number) }, face_texture, true);
                     }
 
                     auto cubemap_rid = resource_shortname(graphics::cubemap) / filesystem::make_relative(source_directory, source_file).replace_extension("");
-                    context_.template get_cache<graphics::cubemap>().insert({ cubemap_rid }, cubemap, true);
+                    context_->cache<graphics::cubemap>()->insert({ cubemap_rid }, cubemap, true);
                 }
 
                 // TODO do not convert and export texture if cubemap is generated?
                 graphics::texture texture(image, minification_filter, magnification_filter, mipmap_filter);
-                texture_cache.insert({ rid }, texture, true);
+                texture_cache->insert({ rid }, texture, true);
                 break;
             }
             }
         }
 
     private:
-        ContextType& context_;
+        std::shared_ptr<context> context_;
     };
 }
 }

@@ -35,7 +35,7 @@ namespace opengl {
     public:
         bool save_frustums = false;
 
-        renderer(glm::ivec2 size, graphics::renderer::context_view_type ctx);
+        renderer(glm::ivec2 size, std::shared_ptr<context> ctx);
 
         virtual ~renderer();
 
@@ -88,8 +88,8 @@ namespace opengl {
         opengl::shader_manager shaders_;
         opengl::technique_manager techniques_;
         opengl::static_mesh_manager static_meshes_;
-        resource::cache<graphics::material>& materials_;
-        resource::cache<graphics::post_process_effect>& effects_;
+        std::shared_ptr<resource::cache<graphics::material>> materials_;
+        std::shared_ptr<resource::cache<graphics::post_process_effect>> effects_;
 
         debug_draw_renderer debug_renderer_;
         std::vector<std::pair<glm::vec3, glm::mat4>> debug_frustums_;

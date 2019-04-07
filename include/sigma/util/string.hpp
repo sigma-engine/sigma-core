@@ -53,10 +53,11 @@ namespace util {
         return std::equal(std::begin(b), std::end(b), a_begin);
     }
 
-    std::string replace_all(std::string str, const std::string& old_str, const std::string& new_str)
+    template<class String>
+    String replace_all(String str, const String& old_str, const String& new_str)
     {
         size_t start = 0;
-        while ((start = str.find(old_str, start)) != std::string::npos) {
+        while ((start = str.find(old_str, start)) != String::npos) {
             str.replace(start, old_str.length(), new_str);
             start += new_str.length();
         }

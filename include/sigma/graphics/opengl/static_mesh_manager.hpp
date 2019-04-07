@@ -27,7 +27,7 @@ namespace opengl {
             std::size_t base_index = 0;
         };
 
-        static_mesh_manager(resource::cache<graphics::static_mesh>& static_mesh_cache);
+        static_mesh_manager(std::shared_ptr<resource::cache<graphics::static_mesh>> static_mesh_cache);
 
         static_mesh_manager(static_mesh_manager&&) = default;
 
@@ -45,7 +45,7 @@ namespace opengl {
         static_mesh_manager(const static_mesh_manager&) = delete;
         static_mesh_manager& operator=(const static_mesh_manager&) = delete;
 
-        resource::cache<graphics::static_mesh>& static_mesh_cache_;
+        std::shared_ptr<resource::cache<graphics::static_mesh>> static_mesh_cache_;
 
         std::vector<mesh_buffer> static_meshes_;
 

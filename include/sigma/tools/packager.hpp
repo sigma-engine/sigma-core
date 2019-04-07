@@ -1,10 +1,12 @@
 #ifndef SIGMA_TOOLS_PACKAGER_HPP
 #define SIGMA_TOOLS_PACKAGER_HPP
 
+#include <sigma/tools/json_conversion.hpp>
 #include <sigma/context.hpp>
 #include <sigma/graphics/renderer.hpp>
 #include <sigma/tools/json_conversion.hpp>
 #include <sigma/util/filesystem.hpp>
+
 
 #include <filesystem>
 #include <fstream>
@@ -18,21 +20,21 @@ namespace sigma {
 namespace tools {
 
     struct build_settings {
-        static constexpr const char* GROUP = "package";
-
+        static constexpr const char* GROUP = "build";
         BOOST_HANA_DEFINE_STRUCT(
             build_settings,
             (std::filesystem::path, build_directory),
             (std::vector<std::filesystem::path>, source_directories));
+
+        void load_settings(std::shared_ptr<context> context, const Json::Value &settings)
+        {
+            json::from_json(context, settings, *this);
+        }
     };
 
-    template <class ContextType>
-    class packager;
-
-    template <class ContextType>
     class resource_loader {
     public:
-        resource_loader(build_settings& settings, ContextType& ctx) {}
+        resource_loader(std::shared_ptr<context> ctx) {}
 
         virtual ~resource_loader() = default;
 
@@ -41,14 +43,9 @@ namespace tools {
         virtual void load(const std::filesystem::path& source_directory, const std::string& ext, const std::filesystem::path& source_file) = 0;
     };
 
-    template <class... Resources, class... Settings>
-    class packager<context<type_set<Resources...>, type_set<Settings...>>> {
+    class packager {
     public:
-        using resource_set_type = resource_set<Resources...>;
-        using settings_set_type = settings_set<Settings...>;
-        using context_type = context<resource_set_type, settings_set_type>;
-
-        packager(context_type& ctx)
+        packager(std::shared_ptr<context> ctx)
             : context_(ctx)
         {
         }
@@ -56,15 +53,14 @@ namespace tools {
         template <class Loader>
         void add_loader()
         {
-            this->loaders_.push_back(std::move(std::make_unique<Loader>(settings_, context_)));
+            this->loaders_.push_back(std::move(std::make_unique<Loader>(context_)));
         }
 
         void scan()
         {
-            load_build_settings();
-
+            auto settings = context_->settings<build_settings>();
             for (const auto& loader : loaders_) {
-                for (const auto& source_directory : settings_.source_directories) {
+                for (const auto& source_directory : settings->source_directories) {
                     std::filesystem::recursive_directory_iterator it{ source_directory };
                     std::filesystem::recursive_directory_iterator end;
                     for (; it != end; ++it) {
@@ -86,36 +82,12 @@ namespace tools {
                     }
                 }
             }
-
-            (context_.template get_cache<Resources>().save(), ...);
-
-            settings_set_type::for_each([&](auto tag) {
-                using settings_type = typename decltype(tag)::type;
-                if (json_settings_.isMember(settings_type::GROUP)) {
-                    try {
-                        json::from_json(context_, json_settings_[settings_type::GROUP], context_.template get_settings<settings_type>());
-                    } catch (const std::exception& e) {
-                        std::cerr << "error: " << e.what() << '\n';
-                    }
-                }
-            });
-            // TODO save the settings.
+            context_->write_database();
         }
 
     private:
-        context_type& context_;
-        Json::Value json_settings_;
-        build_settings settings_;
-        std::vector<std::unique_ptr<resource_loader<context_type>>> loaders_;
-
-        void load_build_settings()
-        {
-            auto settings_path = context_.get_cache_path() / "settings.json";
-            std::ifstream file{ settings_path.c_str() };
-            file >> json_settings_;
-
-            json::from_json(context_, json_settings_["build"], settings_);
-        }
+        std::shared_ptr<context> context_;
+        std::vector<std::unique_ptr<resource_loader>> loaders_;
     };
 }
 }

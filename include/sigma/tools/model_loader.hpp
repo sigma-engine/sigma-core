@@ -75,7 +75,7 @@ namespace tools {
         return name;
     }
 
-    void convert_static_mesh(const std::filesystem::path& package_directory, const resource::cache<graphics::material>& material_cache, const aiScene* scene, const aiMesh* src_mesh, graphics::static_mesh& dest_mesh)
+    void convert_static_mesh(const std::filesystem::path& package_directory, const std::shared_ptr<resource::cache<graphics::material>> material_cache, const aiScene* scene, const aiMesh* src_mesh, graphics::static_mesh& dest_mesh)
     {
         std::vector<graphics::static_mesh::vertex> submesh_vertices(src_mesh->mNumVertices);
         std::vector<graphics::static_mesh::triangle> submesh_triangles(src_mesh->mNumFaces);
@@ -109,7 +109,7 @@ namespace tools {
 
         // TODO warn if material slot has been used.
         std::filesystem::path material_prefix{ resource_shortname(graphics::material) };
-        dest_mesh.materials.push_back(material_cache.handle_for({ material_prefix / material_name }));
+        dest_mesh.materials.push_back(material_cache->handle_for({ material_prefix / material_name }));
         dest_mesh.material_slots.push_back(std::make_pair(dest_mesh.triangles.size(), submesh_triangles.size()));
 
         dest_mesh.vertices.reserve(dest_mesh.vertices.size() + submesh_vertices.size());
@@ -126,14 +126,14 @@ namespace tools {
         const aiMesh* src_mesh,
         graphics::static_mesh& dest_mesh);
 
-    template <class ContextType, class ComponentSet>
-    class model_loader : public resource_loader<ContextType> {
+    template <class ComponentSet>
+    class model_loader : public resource_loader {
     public:
         using component_set_type = ComponentSet;
         using blueprint_type = blueprint<component_set_type>;
 
-        model_loader(build_settings& settings, ContextType& ctx)
-            : resource_loader<ContextType>(settings, ctx)
+        model_loader(std::shared_ptr<context> ctx)
+            : resource_loader(ctx)
             , context_(ctx)
         {
         }
@@ -183,7 +183,7 @@ namespace tools {
             });
         }
 
-        void convert_node(const resource::cache<graphics::static_mesh>& static_mesh_cache,
+        void convert_node(std::shared_ptr<resource::cache<graphics::static_mesh>> static_mesh_cache,
             const std::filesystem::path& package_path,
             const aiScene* scene,
             std::string parent_name,
@@ -210,7 +210,7 @@ namespace tools {
                 auto mesh = scene->mMeshes[root->mMeshes[j]];
                 auto rid = resource_shortname(graphics::static_mesh) / package_path / (get_name(mesh) + std::to_string(root->mMeshes[j]));
 
-                blueprint.registry.template assign<graphics::static_mesh_instance>(e, static_mesh_cache.handle_for({ rid }));
+                blueprint.registry.template assign<graphics::static_mesh_instance>(e, static_mesh_cache->handle_for({ rid }));
                 blueprint.registry.template assign<sigma::transform>(e, convert_3d(position), convert(rotation), convert_3d(scale));
 
                 if (blueprint_settings.isMember(entity_name)) {
@@ -231,22 +231,22 @@ namespace tools {
             const std::filesystem::path& source_file,
             const std::filesystem::path& settings_path)
         {
-            auto& material_cache = context_.template get_cache<graphics::material>();
-            auto& static_mesh_cache = context_.template get_cache<graphics::static_mesh>();
-            auto& blueprint_cache = context_.template get_cache<blueprint_type>();
+            auto material_cache = context_->cache<graphics::material>();
+            auto static_mesh_cache = context_->cache<graphics::static_mesh>();
+            auto blueprint_cache = context_->cache<blueprint_type>();
 
             auto package_directory = package_path.parent_path();
             auto blueprint_rid = resource_shortname(blueprint_type) / package_path;
 
-            if (blueprint_cache.contains({ blueprint_rid })) {
-                auto h = blueprint_cache.handle_for({ blueprint_rid });
+            if (blueprint_cache->contains({ blueprint_rid })) {
+                auto h = blueprint_cache->handle_for({ blueprint_rid });
 
                 auto source_file_time = std::filesystem::last_write_time(source_file);
                 auto settings_time = source_file_time;
                 if (std::filesystem::exists(settings_path))
                     settings_time = std::filesystem::last_write_time(settings_path);
 
-                auto resource_time = blueprint_cache.last_modification_time(h);
+                auto resource_time = blueprint_cache->last_modification_time(h);
                 if (source_file_time <= resource_time && settings_time <= resource_time)
                     return;
             }
@@ -307,7 +307,7 @@ namespace tools {
                 dest_mesh.vertices.shrink_to_fit();
                 dest_mesh.triangles.shrink_to_fit();
 
-                static_mesh_cache.insert({ rid }, dest_mesh, true);
+                static_mesh_cache->insert({ rid }, dest_mesh, true);
             }
 
             blueprint_type blueprint;
@@ -318,7 +318,7 @@ namespace tools {
                 convert_entity(blueprint, e, json_enttiy);
             }
 
-            blueprint_cache.insert({ blueprint_rid }, std::move(blueprint), true);
+            blueprint_cache->insert({ blueprint_rid }, std::move(blueprint), true);
         }
 
         void load_as_static_mesh(
@@ -326,21 +326,21 @@ namespace tools {
             const std::filesystem::path& source_file,
             const std::filesystem::path& settings_path)
         {
-            auto& material_cache = context_.template get_cache<graphics::material>();
-            auto& static_mesh_cache = context_.template get_cache<graphics::static_mesh>();
+            auto material_cache = context_->cache<graphics::material>();
+            auto static_mesh_cache = context_->cache<graphics::static_mesh>();
 
             auto package_directory = package_path.parent_path();
             auto rid = resource_shortname(graphics::static_mesh) / package_path;
 
-            if (static_mesh_cache.contains({ rid })) {
-                auto h = static_mesh_cache.handle_for({ rid });
+            if (static_mesh_cache->contains({ rid })) {
+                auto h = static_mesh_cache->handle_for({ rid });
 
                 auto source_file_time = std::filesystem::last_write_time(source_file);
                 auto settings_time = source_file_time;
                 if (std::filesystem::exists(settings_path))
                     settings_time = std::filesystem::last_write_time(settings_path);
 
-                auto resource_time = static_mesh_cache.last_modification_time(h);
+                auto resource_time = static_mesh_cache->last_modification_time(h);
                 if (source_file_time <= resource_time && settings_time <= resource_time)
                     return;
             }
@@ -400,11 +400,11 @@ namespace tools {
             dest_mesh.vertices.shrink_to_fit();
             dest_mesh.triangles.shrink_to_fit();
 
-            static_mesh_cache.insert({ rid }, dest_mesh, true);
+            static_mesh_cache->insert({ rid }, dest_mesh, true);
         }
 
     private:
-        ContextType& context_;
+        std::shared_ptr<context> context_;
     };
 }
 }

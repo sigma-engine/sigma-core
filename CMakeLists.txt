@@ -50,6 +50,7 @@ add_library(sigma-core STATIC
     src/sigma/window.cpp
     src/sigma/graphics/texture.cpp
     src/sigma/tools/texture_loader.cpp
+    src/sigma/context.cpp
 )
 
 target_include_directories(sigma-core

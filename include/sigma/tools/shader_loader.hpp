@@ -16,7 +16,7 @@ namespace sigma {
 namespace tools {
     class file_includer : public shaderc::CompileOptions::IncluderInterface {
     public:
-        file_includer(build_settings& settings)
+        file_includer(std::shared_ptr<build_settings> settings)
             : settings_(settings)
         {
         }
@@ -31,7 +31,7 @@ namespace tools {
 
             std::filesystem::path full_path = requesting_path.parent_path() / requested_path;
             if (!std::filesystem::exists(full_path)) {
-                for (const auto& base_path : settings_.source_directories) {
+                for (const auto& base_path : settings_->source_directories) {
                     auto path = base_path / requested_path;
                     if (std::filesystem::exists(path)) {
                         full_path = path;
@@ -63,7 +63,7 @@ namespace tools {
         }
 
     private:
-        build_settings& settings_;
+        std::shared_ptr<build_settings> settings_;
 
         shaderc_include_result* make_result(const char* message)
         {
@@ -90,12 +90,10 @@ namespace tools {
         };
     };
 
-    template <class ContextType>
-    class shader_loader : public resource_loader<ContextType> {
+    class shader_loader : public resource_loader {
     public:
-        shader_loader(build_settings& settings, ContextType& ctx)
-            : resource_loader<ContextType>(settings, ctx)
-            , settings_(settings)
+        shader_loader(std::shared_ptr<context> ctx)
+            : resource_loader(ctx)
             , context_(ctx)
         {
         }
@@ -139,12 +137,12 @@ namespace tools {
 
             auto rid = type_name_map.at(source_type) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
 
-            auto& shader_database = context_.template get_cache<graphics::shader>();
-            if (shader_database.contains({ rid })) {
-                auto h = shader_database.handle_for({ rid });
+            auto shader_cache = context_->cache<graphics::shader>();
+            if (shader_cache->contains({ rid })) {
+                auto h = shader_cache->handle_for({ rid });
 
                 auto source_file_time = std::filesystem::last_write_time(source_file);
-                auto resource_time = shader_database.last_modification_time(h);
+                auto resource_time = shader_cache->last_modification_time(h);
                 // TODO (NOW): other dependencies
                 if (source_file_time <= resource_time)
                     return;
@@ -164,7 +162,7 @@ namespace tools {
             shaderc::Compiler compiler;
             shaderc::CompileOptions options;
 
-            options.SetIncluder(std::make_unique<file_includer>(settings_));
+            options.SetIncluder(std::make_unique<file_includer>(context_->settings<build_settings>()));
 
             switch (shader.type) {
             case sigma::graphics::shader_type::vertex: {
@@ -199,12 +197,11 @@ namespace tools {
 
             shader.source = std::string{ result.cbegin(), result.cend() };
 
-            shader_database.insert({ rid }, shader, true);
+            shader_cache->insert({ rid }, shader, true);
         }
 
     private:
-        build_settings& settings_;
-        ContextType& context_;
+        std::shared_ptr<context> context_;
     };
 }
 }

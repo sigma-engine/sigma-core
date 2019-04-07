@@ -26,7 +26,7 @@ namespace opengl {
         return GL_TEXTURE_CUBE_MAP_POSITIVE_X;
     }
 
-    cubemap_manager::cubemap_manager(resource::cache<graphics::texture>& texture_cache, resource::cache<graphics::cubemap>& cubemap_cache)
+    cubemap_manager::cubemap_manager(std::shared_ptr<resource::cache<graphics::texture>> texture_cache, std::shared_ptr<resource::cache<graphics::cubemap>> cubemap_cache)
         : texture_cache_(texture_cache)
         , cubemap_cache_(cubemap_cache)
     {
@@ -43,11 +43,11 @@ namespace opengl {
         if (hndl.index >= cubemaps_.size())
             cubemaps_.resize(hndl.index + 1, 0);
 
-        auto data = cubemap_cache_.acquire(hndl);
+        auto data = cubemap_cache_->acquire(hndl);
         if (cubemaps_[hndl.index] == 0) {
             graphics::texture* textures[6];
             for (unsigned int i = 0; i < 6; ++i)
-                textures[i] = texture_cache_.acquire(data->faces[i]);
+                textures[i] = texture_cache_->acquire(data->faces[i]);
 
             auto size = textures[0]->size();
             auto format = convert(textures[0]->format());

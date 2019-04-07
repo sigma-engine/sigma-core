@@ -13,7 +13,7 @@ namespace opengl {
 
     class technique_manager {
     public:
-        technique_manager(resource::cache<graphics::technique>& technique_cache, shader_manager& shaders);
+        technique_manager(std::shared_ptr<resource::cache<graphics::technique>> technique_cache, shader_manager& shaders);
 
         technique_manager(technique_manager&&) = default;
 
@@ -27,7 +27,7 @@ namespace opengl {
         technique_manager(const technique_manager&) = delete;
         technique_manager& operator=(const technique_manager&) = delete;
 
-        resource::cache<graphics::technique>& technique_cache_;
+        std::shared_ptr<resource::cache<graphics::technique>> technique_cache_;
         shader_manager& shaders_;
         std::vector<GLuint> programs_;
     };

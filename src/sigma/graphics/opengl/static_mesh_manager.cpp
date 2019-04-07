@@ -2,7 +2,7 @@
 
 namespace sigma {
 namespace opengl {
-    static_mesh_manager::static_mesh_manager(resource::cache<graphics::static_mesh>& static_mesh_cache)
+    static_mesh_manager::static_mesh_manager(std::shared_ptr<resource::cache<graphics::static_mesh>> static_mesh_cache)
         : static_mesh_cache_(static_mesh_cache)
     {
     }
@@ -33,7 +33,7 @@ namespace opengl {
         if (hndl.index >= static_meshes_.size())
             static_meshes_.resize(hndl.index + 1, { std::size_t(-1), 0, 0 });
 
-        auto data = static_mesh_cache_.acquire(hndl);
+        auto data = static_mesh_cache_->acquire(hndl);
         if (static_meshes_[hndl.index].batch_index == -1) {
             auto vertex_blocks = 1 + ((data->vertices.size() - 1) / VERTEX_BLOCK_SIZE);
 

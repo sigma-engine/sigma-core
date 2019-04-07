@@ -16,7 +16,7 @@ namespace opengl {
 
     class texture_manager {
     public:
-        texture_manager(resource::cache<graphics::texture>& texture_cache);
+        texture_manager(std::shared_ptr<resource::cache<graphics::texture>> texture_cache);
 
         texture_manager(texture_manager&&) = default;
 
@@ -30,7 +30,7 @@ namespace opengl {
         texture_manager(const texture_manager&) = delete;
         texture_manager& operator=(const texture_manager&) = delete;
 
-        resource::cache<graphics::texture>& texture_cache_;
+        std::shared_ptr<resource::cache<graphics::texture>> texture_cache_;
         std::vector<GLuint> textures_;
     };
 }

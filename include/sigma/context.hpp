@@ -1,129 +1,88 @@
 #ifndef SIGMA_CONTEXT_HPP
 #define SIGMA_CONTEXT_HPP
 
-#include <sigma/resource/cache.hpp>
-#include <sigma/resource/resource.hpp>
-#include <sigma/util/type_sequence.hpp>
+#include <json/json.h>
 
-#include <boost/hana/define_struct.hpp>
-
-#include <tuple>
-#include <vector>
 #include <filesystem>
+#include <memory>
+#include <typeindex>
+#include <unordered_map>
+#include <vector>
+#include <iostream>
 
 namespace sigma {
-template <class... Resources>
-using resource_set = type_set_t<Resources...>;
 
-template <class... Settings>
-using settings_set = type_set_t<Settings...>;
+namespace resource {
+    class base_cache;
+    template <class>
+    class cache;
+}
 
-template <class ResourceSet, class SettingsSet>
-class context;
+class base_settings_group
+{};
 
-template <class... Resources, class... Settings>
-class context<type_set<Resources...>, type_set<Settings...>> {
-public:
-    using resource_set_type = resource_set<Resources...>;
-    using settings_set_type = settings_set<Settings...>;
+template<class T>
+class settings_group : public base_settings_group, public T
+{
 
-    context(const std::filesystem::path& cache_path)
-        : cache_path_{ cache_path }
-        , caches_{ resource::cache<Resources>{ cache_path_ / resource_shortname(Resources) }... }
-    {
-    }
-
-    const std::filesystem::path& get_cache_path() const
-    {
-        return cache_path_;
-    }
-
-    template <class U>
-    inline resource::cache<U>& get_cache()
-    {
-        return std::get<index_of_type_v<U, resource_set_type>>(caches_);
-    }
-
-    template <class U>
-    inline const resource::cache<U>& get_cache() const
-    {
-        return std::get<index_of_type_v<U, resource_set_type>>(caches_);
-    }
-
-    template <class U>
-    inline U& get_settings()
-    {
-        return std::get<index_of_type_v<U, settings_set_type>>(settings_);
-    }
-
-    template <class U>
-    inline const U& get_settings() const
-    {
-        return std::get<index_of_type_v<U, settings_set_type>>(settings_);
-    }
-
-private:
-    context(const context<resource_set_type, settings_set_type>&) = delete;
-    context<resource_set_type, settings_set_type>& operator=(const context<resource_set_type, settings_set_type>&) = delete;
-
-    std::filesystem::path cache_path_;
-    std::tuple<resource::cache<Resources>...> caches_;
-    std::tuple<Settings...> settings_;
-
-    template <class ViewResourceSet, class ViewSettingsSet>
-    friend class context_view;
 };
 
-template <class ViewResourceSet, class ViewSettingsSet>
-class context_view;
-
-template <class... ViewResources, class... ViewSettings>
-class context_view<type_set<ViewResources...>, type_set<ViewSettings...>> {
+class context : public std::enable_shared_from_this<context> {
 public:
-    using resource_set_type = resource_set<ViewResources...>;
-    using settings_set_type = settings_set<ViewSettings...>;
+    context(const std::filesystem::path& cache_path);
 
-    template <class... Resources, class... Settings>
-    context_view(context<type_set<Resources...>, type_set<Settings...>>& ctx)
-        : cache_path_{ ctx.cache_path_ }
-        , caches_{ ctx.template get_cache<ViewResources>()... }
-        , settings_{ ctx.template get_settings<ViewSettings>()... }
-    {
-    }
+    context(context&&) = default;
 
-    const std::filesystem::path& get_cache_path() const
+    context& operator=(context&&) = default;
+
+    const std::filesystem::path& cache_path() const;
+
+    template <class U>
+    inline std::shared_ptr<resource::cache<U>> cache()
     {
-        return cache_path_;
+        auto it = caches_.find(typeid(U));
+        if (it != caches_.end())
+            return std::static_pointer_cast<resource::cache<U>>(it->second);
+        auto cache = std::make_shared<resource::cache<U>>(cache_path_);
+        caches_[typeid(U)] = std::static_pointer_cast<resource::base_cache>(cache);
+        return cache;
     }
 
     template <class U>
-    inline resource::cache<U>& get_cache()
+    inline std::shared_ptr<settings_group<U>> settings()
     {
-        return std::get<index_of_type_v<U, resource_set_type>>(caches_);
+        auto it = settings_.find(typeid(U));
+        if (it != settings_.end())
+            return std::static_pointer_cast<settings_group<U>>(it->second);
+        
+        auto group = std::make_shared<settings_group<U>>();
+        settings_[typeid(U)] = std::static_pointer_cast<base_settings_group>(group);
+
+        auto settings_path = cache_path_ / "settings.json";
+        std::ifstream file{ settings_path };
+        Json::Value json_settings;
+        file >> json_settings;
+
+        if (json_settings.isMember(U::GROUP)) {
+            try {
+                group->load_settings(shared_from_this(), json_settings[U::GROUP]);
+            } catch (const std::exception& e) {
+                std::cerr << "error: " << e.what() << '\n';
+            }
+        }
+        return group;
     }
 
-    template <class U>
-    inline const resource::cache<U>& get_cache() const
-    {
-        return std::get<index_of_type_v<U, resource_set_type>>(caches_);
-    }
-
-    template <class U>
-    inline U& get_settings()
-    {
-        return std::get<index_of_type_v<U, settings_set_type>>(settings_);
-    }
-
-    template <class U>
-    inline const U& get_settings() const
-    {
-        return std::get<index_of_type_v<U, settings_set_type>>(settings_);
-    }
+    void write_database();
 
 private:
-    std::filesystem::path& cache_path_;
-    std::tuple<resource::cache<ViewResources>&...> caches_;
-    std::tuple<ViewSettings&...> settings_;
+    context(const context&) = delete;
+
+    context& operator=(const context&) = delete;
+
+    std::filesystem::path cache_path_;
+    std::unordered_map<std::type_index, std::shared_ptr<resource::base_cache>> caches_;
+    std::unordered_map<std::type_index, std::shared_ptr<base_settings_group>> settings_;
 };
 }
 

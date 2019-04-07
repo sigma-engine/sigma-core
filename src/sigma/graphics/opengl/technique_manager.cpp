@@ -11,7 +11,7 @@
 
 namespace sigma {
 namespace opengl {
-    technique_manager::technique_manager(resource::cache<graphics::technique>& technique_cache, shader_manager& shaders)
+    technique_manager::technique_manager(std::shared_ptr<resource::cache<graphics::technique>> technique_cache, shader_manager& shaders)
         : technique_cache_(technique_cache)
         , shaders_(shaders)
     {
@@ -29,7 +29,7 @@ namespace opengl {
         if (hndl.index >= programs_.size())
             programs_.resize(hndl.index + 1, 0);
 
-        auto data = technique_cache_.acquire(hndl);
+        auto data = technique_cache_->acquire(hndl);
 
         if (programs_[hndl.index] == 0) {
             programs_[hndl.index] = glCreateProgram();

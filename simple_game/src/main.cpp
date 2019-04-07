@@ -1,6 +1,7 @@
 #include <simple_game.hpp>
 
 #include <sigma/config.hpp>
+#include <sigma/tools/json_conversion.hpp>
 #include <sigma/context.hpp>
 #include <sigma/graphics/opengl/renderer.hpp>
 #include <sigma/graphics/renderer.hpp>
@@ -27,16 +28,16 @@ int main(int argc, char* argv[])
     if (!std::filesystem::exists(cache_path))
         cache_path = std::filesystem::current_path() / ".." / "data";
 
-    simple_context context{ cache_path };
+    auto context = std::make_shared<sigma::context>(cache_path);
 
-    sigma::tools::packager<simple_context> packager{ context };
-    packager.add_loader<sigma::tools::texture_loader<simple_context>>();
-    packager.add_loader<sigma::tools::cubemap_loader<simple_context>>();
-    packager.add_loader<sigma::tools::shader_loader<simple_context>>();
-    packager.add_loader<sigma::tools::technique_loader<simple_context>>();
-    packager.add_loader<sigma::tools::material_loader<simple_context>>();
-    packager.add_loader<sigma::tools::model_loader<simple_context, simple_component_set>>();
-    packager.add_loader<sigma::tools::post_process_effect_loader<simple_context>>();
+    sigma::tools::packager packager{ context };
+    packager.add_loader<sigma::tools::texture_loader>();
+    packager.add_loader<sigma::tools::cubemap_loader>();
+    packager.add_loader<sigma::tools::shader_loader>();
+    packager.add_loader<sigma::tools::technique_loader>();
+    packager.add_loader<sigma::tools::material_loader>();
+    packager.add_loader<sigma::tools::model_loader<simple_component_set>>();
+    packager.add_loader<sigma::tools::post_process_effect_loader>();
     packager.scan();
 
     sigma::window window{ glm::ivec2{ 1920, 1080 } };

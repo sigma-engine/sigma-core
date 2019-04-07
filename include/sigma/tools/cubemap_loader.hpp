@@ -11,11 +11,10 @@
 namespace sigma {
 namespace tools {
 
-    template <class ContextType>
-    class cubemap_loader : public resource_loader<ContextType> {
+    class cubemap_loader : public resource_loader {
     public:
-        cubemap_loader(build_settings& settings, ContextType& ctx)
-            : resource_loader<ContextType>(settings, ctx)
+        cubemap_loader(std::shared_ptr<context> ctx)
+            : resource_loader(ctx)
             , context_(ctx)
         {
         }
@@ -34,12 +33,12 @@ namespace tools {
         {
             auto rid = resource_shortname(sigma::graphics::cubemap) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
 
-            auto& cubemap_cache = context_.template get_cache<graphics::cubemap>();
-            if (cubemap_cache.contains({ rid })) {
-                auto h = cubemap_cache.handle_for({ rid });
+            auto cubemap_cache = context_->cache<graphics::cubemap>();
+            if (cubemap_cache->contains({ rid })) {
+                auto h = cubemap_cache->handle_for({ rid });
 
                 auto source_file_time = std::filesystem::last_write_time(source_file);
-                auto resource_time = cubemap_cache.last_modification_time(h);
+                auto resource_time = cubemap_cache->last_modification_time(h);
                 // TODO(NOW): other dependencies
                 if (source_file_time <= resource_time)
                     return;
@@ -67,11 +66,11 @@ namespace tools {
                 json::from_json(context_, settings[face_name.first].asString(), cubemap.faces[static_cast<unsigned int>(face_name.second)]);
 
             // TODO: throw better error message if missing a face.
-            cubemap_cache.insert({ rid }, cubemap, true);
+            cubemap_cache->insert({ rid }, cubemap, true);
         }
 
     private:
-        ContextType& context_;
+        std::shared_ptr<context> context_;
     };
 }
 }

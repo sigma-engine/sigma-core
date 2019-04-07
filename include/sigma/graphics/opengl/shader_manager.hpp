@@ -16,7 +16,7 @@ namespace opengl {
 
     class shader_manager {
     public:
-        shader_manager(resource::cache<graphics::shader>& shader_cache);
+        shader_manager(std::shared_ptr<resource::cache<graphics::shader>> shader_cache);
 
         shader_manager(shader_manager&&) = default;
 
@@ -30,7 +30,7 @@ namespace opengl {
         shader_manager(const shader_manager&) = delete;
         shader_manager& operator=(const shader_manager&) = delete;
 
-        resource::cache<graphics::shader>& shader_cache_;
+        std::shared_ptr<resource::cache<graphics::shader>> shader_cache_;
         std::vector<GLuint> shaders_;
     };
 }

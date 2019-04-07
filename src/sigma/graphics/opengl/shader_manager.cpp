@@ -30,7 +30,7 @@ namespace opengl {
         return GL_NONE;
     }
 
-    shader_manager::shader_manager(resource::cache<graphics::shader>& shader_cache)
+    shader_manager::shader_manager(std::shared_ptr<resource::cache<graphics::shader>> shader_cache)
         : shader_cache_(shader_cache)
     {
     }
@@ -47,7 +47,7 @@ namespace opengl {
         if (hndl.index >= shaders_.size())
             shaders_.resize(hndl.index + 1, 0);
 
-        auto data = shader_cache_.acquire(hndl);
+        auto data = shader_cache_->acquire(hndl);
         if (shaders_[hndl.index] == 0) {
             const char* src = data->source.c_str();
 

@@ -7,6 +7,8 @@
 #include <sigma/graphics/texture.hpp>
 #include <sigma/resource/resource.hpp>
 #include <sigma/util/string.hpp>
+#include <sigma/tools/json_conversion.hpp>
+#include <sigma/context.hpp>
 
 #include <json/json.h>
 
@@ -34,8 +36,8 @@ namespace json {
         struct type_traits;
     }
 
-    template <class Context, class T>
-    bool from_json(Context& ctx, const Json::Value& source, T& output)
+    template <class T>
+    bool from_json(std::shared_ptr<context> ctx, const Json::Value& source, T& output)
     {
         return detial::type_traits<T>::from(ctx, source, output);
     }
@@ -43,8 +45,7 @@ namespace json {
     namespace detial {
         template <>
         struct type_traits<bool> {
-            template <class Context>
-            static bool from(Context& ctx, const Json::Value& source, bool& output)
+            static bool from(std::shared_ptr<context> ctx, const Json::Value& source, bool& output)
             {
                 if (source.isConvertibleTo(Json::booleanValue)) {
                     output = source.asBool();
@@ -56,8 +57,7 @@ namespace json {
 
         template <>
         struct type_traits<int> {
-            template <class Context>
-            static bool from(Context& ctx, const Json::Value& source, int& output)
+            static bool from(std::shared_ptr<context> ctx, const Json::Value& source, int& output)
             {
                 if (source.isConvertibleTo(Json::intValue)) {
                     output = source.asInt();
@@ -68,8 +68,7 @@ namespace json {
         };
         template <>
         struct type_traits<unsigned long int> {
-            template <class Context>
-            static bool from(Context& ctx, const Json::Value& source, unsigned long int& output)
+            static bool from(std::shared_ptr<context> ctx, const Json::Value& source, unsigned long int& output)
             {
                 if (source.isConvertibleTo(Json::uintValue)) {
                     output = source.asUInt64();
@@ -81,8 +80,7 @@ namespace json {
 
         template <>
         struct type_traits<float> {
-            template <class Context>
-            static bool from(Context& ctx, const Json::Value& source, float& output)
+            static bool from(std::shared_ptr<context> ctx, const Json::Value& source, float& output)
             {
                 if (source.isConvertibleTo(Json::realValue)) {
                     output = float(source.asDouble());
@@ -94,8 +92,7 @@ namespace json {
 
         template <>
         struct type_traits<glm::vec2> {
-            template <class Context>
-            static bool from(Context& ctx, const Json::Value& source, glm::vec2& output)
+            static bool from(std::shared_ptr<context> ctx, const Json::Value& source, glm::vec2& output)
             {
                 // TODO support x,y
                 return source.isArray() && source.size() == 2 && from_json(ctx, source[0], output.x) && from_json(ctx, source[1], output.y);
@@ -104,8 +101,7 @@ namespace json {
 
         template <>
         struct type_traits<glm::vec3> {
-            template <class Context>
-            static bool from(Context& ctx, const Json::Value& source, glm::vec3& output)
+            static bool from(std::shared_ptr<context> ctx, const Json::Value& source, glm::vec3& output)
             {
                 // TODO support x,y,z
                 return source.isArray() && source.size() == 3 && from_json(ctx, source[0], output.x) && from_json(ctx, source[1], output.y) && from_json(ctx, source[2], output.z);
@@ -114,8 +110,7 @@ namespace json {
 
         template <>
         struct type_traits<glm::vec4> {
-            template <class Context>
-            static bool from(Context& ctx, const Json::Value& source, glm::vec4& output)
+            static bool from(std::shared_ptr<context> ctx, const Json::Value& source, glm::vec4& output)
             {
                 // TODO support w,x,y,z
                 return source.isArray() && source.size() == 4 && from_json(ctx, source[0], output.w) && from_json(ctx, source[1], output.x) && from_json(ctx, source[2], output.y) && from_json(ctx, source[3], output.z);
@@ -124,8 +119,7 @@ namespace json {
 
         template <>
         struct type_traits<glm::quat> {
-            template <class Context>
-            static bool from(Context& ctx, const Json::Value& source, glm::quat& output)
+            static bool from(std::shared_ptr<context> ctx, const Json::Value& source, glm::quat& output)
             {
                 if (source.isArray()) {
                     if (source.size() == 4) {
@@ -157,8 +151,7 @@ namespace json {
 
         template <>
         struct type_traits<glm::mat2> {
-            template <class Context>
-            static bool from(Context& ctx, const Json::Value& source, glm::mat2& output)
+            static bool from(std::shared_ptr<context> ctx, const Json::Value& source, glm::mat2& output)
             {
                 return source.isArray() && source.size() == 2 && from_json(ctx, source[0], output[0]) && from_json(ctx, source[1], output[1]);
             }
@@ -166,8 +159,7 @@ namespace json {
 
         template <>
         struct type_traits<glm::mat3> {
-            template <class Context>
-            static bool from(Context& ctx, const Json::Value& source, glm::mat3& output)
+            static bool from(std::shared_ptr<context> ctx, const Json::Value& source, glm::mat3& output)
             {
                 return source.isArray() && source.size() == 3 && from_json(ctx, source[0], output[0]) && from_json(ctx, source[1], output[1]) && from_json(ctx, source[2], output[2]);
             }
@@ -175,8 +167,7 @@ namespace json {
 
         template <>
         struct type_traits<glm::mat4> {
-            template <class Context>
-            static bool from(Context& ctx, const Json::Value& source, glm::mat4& output)
+            static bool from(std::shared_ptr<context> ctx, const Json::Value& source, glm::mat4& output)
             {
                 return source.isArray() && source.size() == 4 && from_json(ctx, source[0], output[0]) && from_json(ctx, source[1], output[1]) && from_json(ctx, source[2], output[2]) && from_json(ctx, source[3], output[3]);
             }
@@ -184,8 +175,7 @@ namespace json {
 
         template <>
         struct type_traits<std::filesystem::path> {
-            template <class Context>
-            static bool from(Context& ctx, const Json::Value& source, std::filesystem::path& output)
+            static bool from(std::shared_ptr<context> ctx, const Json::Value& source, std::filesystem::path& output)
             {
                 output = source.asString();
                 return true;
@@ -194,18 +184,16 @@ namespace json {
 
         template <class Resource>
         struct type_traits<resource::handle<Resource>> {
-            template <class Context>
-            static bool from(Context& ctx, const Json::Value& source, resource::handle<Resource>& output)
+            static bool from(std::shared_ptr<context> ctx, const Json::Value& source, resource::handle<Resource>& output)
             {
-                output = ctx.template get_cache<Resource>().handle_for({ source.asString() });
+                output = ctx->cache<Resource>()->handle_for({ source.asString() });
                 return false;
             }
         };
 
         template <>
         struct type_traits<graphics::technique_identifier> {
-            template <class Context>
-            static bool from(Context& ctx, const Json::Value& source, graphics::technique_identifier& output)
+            static bool from(std::shared_ptr<context> ctx, const Json::Value& source, graphics::technique_identifier& output)
             {
                 // TODO add any other other shaders here.
 
@@ -241,8 +229,7 @@ namespace json {
 
         template <>
         struct type_traits<resource::handle<graphics::technique>> {
-            template <class Context>
-            static bool from(Context& ctx, const Json::Value& source, resource::handle<graphics::technique>& output)
+            static bool from(std::shared_ptr<context> ctx, const Json::Value& source, resource::handle<graphics::technique>& output)
             {
                 graphics::technique_identifier tech_id;
                 from_json(ctx, source, tech_id);
@@ -256,7 +243,7 @@ namespace json {
                     tech_id.fragment
                 };
 
-                output = ctx.template get_cache<graphics::technique>().handle_for(rid);
+                output = ctx->cache<graphics::technique>()->handle_for(rid);
 
                 return true;
             }
@@ -264,8 +251,7 @@ namespace json {
 
         template <class T, long int N>
         struct type_traits<T[N]> {
-            template <class Context>
-            static bool from(Context& ctx, const Json::Value& source, T* output)
+            static bool from(std::shared_ptr<context> ctx, const Json::Value& source, T* output)
             {
                 for (long int i = 0; i < N; ++i) {
                     if (!from_json(ctx, source[(int)i], output[i]))
@@ -277,8 +263,7 @@ namespace json {
 
         template <class T>
         struct type_traits<std::vector<T>> {
-            template <class Context>
-            static bool from(Context& ctx, const Json::Value& source, std::vector<T>& output)
+            static bool from(std::shared_ptr<context> ctx, const Json::Value& source, std::vector<T>& output)
             {
                 output.resize(source.size());
                 for (std::size_t i = 0; i < output.size(); ++i) {
@@ -291,8 +276,7 @@ namespace json {
 
         template <>
         struct type_traits<sigma::graphics::texture_filter> {
-            template <class Context>
-            static bool from(Context& ctx, const Json::Value& source, sigma::graphics::texture_filter& output)
+            static bool from(std::shared_ptr<context> ctx, const Json::Value& source, sigma::graphics::texture_filter& output)
             {
                 auto lower = sigma::util::to_upper_copy(source.asString());
                 if (lower == "LINEAR")
@@ -310,8 +294,7 @@ namespace json {
 
         template <>
         struct type_traits<sigma::graphics::texture_format> {
-            template <class Context>
-            static bool from(Context& ctx, const Json::Value& source, sigma::graphics::texture_format& output)
+            static bool from(std::shared_ptr<context> ctx, const Json::Value& source, sigma::graphics::texture_format& output)
             {
                 auto lower = sigma::util::to_upper_copy(source.asString());
                 if (lower == "RGB8")
@@ -328,8 +311,7 @@ namespace json {
 
         template <class T>
         struct type_traits {
-            template <class Context>
-            static bool from(Context& ctx, const Json::Value& source, T& output)
+            static bool from(std::shared_ptr<context> ctx, const Json::Value& source, T& output)
             {
                 // TODO check that the type actually has  keys
                 bool good = true;

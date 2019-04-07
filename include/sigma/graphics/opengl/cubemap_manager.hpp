@@ -12,7 +12,7 @@ namespace opengl {
 
     class cubemap_manager {
     public:
-        cubemap_manager(resource::cache<graphics::texture>& texture_cache, resource::cache<graphics::cubemap>& cubemap_cache);
+        cubemap_manager(std::shared_ptr<resource::cache<graphics::texture>> texture_cache, std::shared_ptr<resource::cache<graphics::cubemap>> cubemap_cache);
 
         cubemap_manager(cubemap_manager&&) = default;
 
@@ -26,8 +26,8 @@ namespace opengl {
         cubemap_manager(const cubemap_manager&) = delete;
         cubemap_manager& operator=(const cubemap_manager&) = delete;
 
-        resource::cache<graphics::texture>& texture_cache_;
-        resource::cache<graphics::cubemap>& cubemap_cache_;
+        std::shared_ptr<resource::cache<graphics::texture>> texture_cache_;
+        std::shared_ptr<resource::cache<graphics::cubemap>> cubemap_cache_;
         std::vector<GLuint> cubemaps_;
     };
 }

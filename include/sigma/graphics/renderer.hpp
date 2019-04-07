@@ -2,6 +2,7 @@
 #define SIGMA_GRAPHICS_RENDERER_HPP
 
 #include <sigma/config.hpp>
+#include <sigma/tools/json_conversion.hpp>
 #include <sigma/context.hpp>
 #include <sigma/frustum.hpp>
 #include <sigma/graphics/cubemap.hpp>
@@ -59,27 +60,14 @@ namespace graphics {
                 vignette_effect,
                 shadow_technique);
             }
+
+            void load_settings(std::shared_ptr<context> context, const Json::Value &settings)
+            {
+                json::from_json(context, settings, *this);
+            }
         };
 
-        using render_resource_set = resource_set<sigma::graphics::texture,
-            sigma::graphics::cubemap,
-            sigma::graphics::shader,
-            sigma::graphics::technique,
-            sigma::graphics::material,
-            sigma::graphics::static_mesh,
-            sigma::graphics::post_process_effect>;
-
-        using render_settings_set = settings_set<settings>;
-
-        using context_view_type = context_view<render_resource_set, render_settings_set>;
-
-        using render_component_set = component_set<sigma::transform,
-            sigma::graphics::directional_light,
-            sigma::graphics::point_light,
-            sigma::graphics::spot_light,
-            sigma::graphics::static_mesh_instance>;
-
-        renderer(glm::ivec2 size, context_view_type ctx);
+        renderer(glm::ivec2 size, std::shared_ptr<context> ctx);
 
         virtual ~renderer();
 
@@ -88,8 +76,8 @@ namespace graphics {
         virtual void render(const view_port& viewport, const entt::registry<>& registry) = 0;
 
     protected:
-        context_view_type context_;
-        settings& settings_;
+        std::shared_ptr<context> context_;
+        std::shared_ptr<settings> settings_;
 
     private:
         renderer(const renderer&) = delete;

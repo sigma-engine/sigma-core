@@ -37,20 +37,20 @@ namespace opengl {
         }
     }
 
-    renderer::renderer(glm::ivec2 size, graphics::renderer::context_view_type ctx)
+    renderer::renderer(glm::ivec2 size, std::shared_ptr<context> ctx)
         : graphics::renderer(size, ctx)
         , loader_status_(gladLoadGL())
         , size_(size.x, size.y)
         , default_fbo_(0)
         , cascade_frustums_(3)
         , start_time_(std::chrono::high_resolution_clock::now())
-        , textures_(ctx.get_cache<graphics::texture>())
-        , cubemaps_(ctx.get_cache<graphics::texture>(), ctx.get_cache<graphics::cubemap>())
-        , shaders_(ctx.get_cache<graphics::shader>())
-        , techniques_(ctx.get_cache<graphics::technique>(), shaders_)
-        , static_meshes_(ctx.get_cache<graphics::static_mesh>())
-        , materials_(ctx.get_cache<graphics::material>())
-        , effects_(ctx.get_cache<graphics::post_process_effect>())
+        , textures_(ctx->cache<graphics::texture>())
+        , cubemaps_(ctx->cache<graphics::texture>(), ctx->cache<graphics::cubemap>())
+        , shaders_(ctx->cache<graphics::shader>())
+        , techniques_(ctx->cache<graphics::technique>(), shaders_)
+        , static_meshes_(ctx->cache<graphics::static_mesh>())
+        , materials_(ctx->cache<graphics::material>())
+        , effects_(ctx->cache<graphics::post_process_effect>())
     {
         if (!loader_status_)
             throw std::runtime_error("error: could not load OpenGL");
@@ -111,7 +111,7 @@ namespace opengl {
         glCullFace(GL_BACK);
         glEnable(GL_CULL_FACE);
 
-        if (settings_.enable_debug_rendering) {
+        if (settings_->enable_debug_rendering) {
             debug_renderer_.mvpMatrix = viewport.view_frustum.projection_view();
             for (const auto& f : debug_frustums_)
                 dd::frustum(glm::value_ptr(f.second), glm::value_ptr(f.first));
@@ -130,7 +130,7 @@ namespace opengl {
             });
 
             // registry.for_each<transform, graphics::static_mesh_instance>([&](entity e, const transform& txform, const graphics::static_mesh_instance& mesh_instance) {
-            //     auto mesh = context_.get_cache<graphics::static_mesh>().acquire(mesh_instance.mesh);
+            //     auto mesh = context_->cache<graphics::static_mesh>().acquire(mesh_instance.mesh);
             //     dd::sphere(glm::value_ptr(txform.position), glm::value_ptr(debug_color), mesh->radius);
             // });
 
@@ -144,7 +144,7 @@ namespace opengl {
 
         // gbuffer_.swap_input_image();
         // gbuffer_.bind_for_geometry_read();
-        // auto vignette_effect = effects_.acquire(settings_.vignette_effect);
+        // auto vignette_effect = effects_->acquire(settings_->vignette_effect);
         // auto vignette_effect_tech = TECHNIQUE_PTR(techniques_, vignette_effect->technique_id);
         // vignette_effect_tech->bind(textures_, cubemaps_, vignette_effect, geometry_buffer::NEXT_FREE_TEXTURE_UINT);
         // STATIC_MESH_PTR(static_meshes_, vignette_effect->mesh)->render_all();
@@ -160,7 +160,7 @@ namespace opengl {
         glClearColor(0, 0, 0, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        auto gamma_conversion_effect = effects_.acquire(settings_.gamma_conversion);
+        auto gamma_conversion_effect = effects_->acquire(settings_->gamma_conversion);
         auto [cpu_gamma_conversion_effect, gpu_gamma_conversion_program] = bind_technique(
             gamma_conversion_effect->technique_id,
             gamma_conversion_effect,
@@ -362,7 +362,7 @@ namespace opengl {
         // drawn but more inportantly would mean that the gbuffer would only have to be sampled once per
         // screen pixel.
 
-        if (settings_.enable_image_based_lighting) {
+        if (settings_->enable_image_based_lighting) {
             // Render Image based lighting
             image_based_light_pass(viewport);
         }
@@ -391,7 +391,7 @@ namespace opengl {
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
 
-        auto image_based_light_effect = effects_.acquire(settings_.image_based_light_effect);
+        auto image_based_light_effect = effects_->acquire(settings_->image_based_light_effect);
         auto [cpu_image_based_light_effect, gpu_image_based_program] = bind_technique(
             image_based_light_effect->technique_id,
             image_based_light_effect,
@@ -457,7 +457,7 @@ namespace opengl {
             glDisable(GL_DEPTH_TEST);
             glDisable(GL_CULL_FACE);
 
-            auto directional_light_effect = effects_.acquire(settings_.directional_light_effect);
+            auto directional_light_effect = effects_->acquire(settings_->directional_light_effect);
             auto [cpu_directional_light_effect, gpu_directional_program] = bind_technique(
                 directional_light_effect->technique_id,
                 directional_light_effect,
@@ -497,7 +497,7 @@ namespace opengl {
         glCullFace(GL_FRONT);
         glEnable(GL_CULL_FACE);
 
-        auto point_light_effect = effects_.acquire(settings_.point_light_effect);
+        auto point_light_effect = effects_->acquire(settings_->point_light_effect);
         auto [cpu_point_tech, gpu_point_program] = bind_technique(
             point_light_effect->technique_id,
             point_light_effect,
@@ -543,7 +543,7 @@ namespace opengl {
 
             glDisable(GL_CULL_FACE);
 
-            auto spot_light_effect = effects_.acquire(settings_.spot_light_effect);
+            auto spot_light_effect = effects_->acquire(settings_->spot_light_effect);
             auto [cpu_spot_effect, gpu_spot_program] = bind_technique(
                 spot_light_effect->technique_id,
                 spot_light_effect,
@@ -575,7 +575,7 @@ namespace opengl {
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         if (cast_shadows) {
-            auto [cpu_technique, gpu_program] = techniques_.acquire(settings_.shadow_technique);
+            auto [cpu_technique, gpu_program] = techniques_.acquire(settings_->shadow_technique);
             glUseProgram(gpu_program);
 
             fill_render_token_stream(view_frustum, registry, shadow_map_token_stream_, gpu_program);
@@ -611,7 +611,7 @@ namespace opengl {
                     tokens.push_back(std::move(tok));
                 } else {
                     for (unsigned int i = 0; i < cpu_mesh->material_slots.size(); ++i) {
-                        auto material = materials_.acquire(cpu_mesh->materials[i]);
+                        auto material = materials_->acquire(cpu_mesh->materials[i]);
                         auto [cpu_technique, gpu_program] = techniques_.acquire(material->technique_id);
 
                         render_token tok;

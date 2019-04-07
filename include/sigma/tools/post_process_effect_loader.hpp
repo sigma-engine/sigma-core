@@ -16,11 +16,10 @@
 namespace sigma {
 namespace tools {
 
-    template <class ContextType>
-    class post_process_effect_loader : public resource_loader<ContextType> {
+    class post_process_effect_loader : public resource_loader {
     public:
-        post_process_effect_loader(build_settings& settings, ContextType& ctx)
-            : resource_loader<ContextType>(settings, ctx)
+        post_process_effect_loader(std::shared_ptr<context> ctx)
+            : resource_loader(ctx)
             , context_(ctx)
         {
         }
@@ -37,17 +36,17 @@ namespace tools {
 
         virtual void load(const std::filesystem::path& source_directory, const std::string& ext, const std::filesystem::path& source_file) override
         {
-            auto& technique_cache = context_.template get_cache<graphics::technique>();
-            auto& static_mesh_cache = context_.template get_cache<graphics::static_mesh>();
-            auto& post_process_effect_cache = context_.template get_cache<graphics::post_process_effect>();
+            auto technique_cache = context_->cache<graphics::technique>();
+            auto static_mesh_cache = context_->cache<graphics::static_mesh>();
+            auto post_process_effect_cache = context_->cache<graphics::post_process_effect>();
 
             auto rid = resource_shortname(sigma::graphics::post_process_effect) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
 
-            if (post_process_effect_cache.contains({ rid })) {
-                auto h = post_process_effect_cache.handle_for({ rid });
+            if (post_process_effect_cache->contains({ rid })) {
+                auto h = post_process_effect_cache->handle_for({ rid });
 
                 auto source_file_time = std::filesystem::last_write_time(source_file);
-                auto resource_time = post_process_effect_cache.last_modification_time(h);
+                auto resource_time = post_process_effect_cache->last_modification_time(h);
                 // TODO (NOW): other dependencies
                 if (source_file_time <= resource_time)
                     return;
@@ -71,7 +70,7 @@ namespace tools {
                 tech_id.fragment
             };
             sigma::graphics::post_process_effect effect;
-            effect.technique_id = technique_cache.handle_for(tech_rid);
+            effect.technique_id = technique_cache->handle_for(tech_rid);
 
             extract_unifrom_data(context_, settings, effect);
 
@@ -80,13 +79,13 @@ namespace tools {
             if (settings.isMember(mesh_prefix))
                 mesh_rid = std::filesystem::path{ mesh_prefix } / settings[mesh_prefix].asString();
 
-            effect.mesh = static_mesh_cache.handle_for({ mesh_rid });
+            effect.mesh = static_mesh_cache->handle_for({ mesh_rid });
 
-            post_process_effect_cache.insert({ rid }, effect, true);
+            post_process_effect_cache->insert({ rid }, effect, true);
         }
 
     private:
-        ContextType& context_;
+        std::shared_ptr<context> context_;
     };
 }
 }

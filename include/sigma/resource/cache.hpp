@@ -60,11 +60,18 @@ namespace resource {
         std::string message_;
     };
 
+    class base_cache {
+    public:
+        virtual ~base_cache() {}
+
+        virtual void save() const = 0;
+    };
+
     template <class Resource>
-    class cache {
+    class cache : public base_cache {
     public:
         cache(const std::filesystem::path& cache_directory)
-            : cache_directory_(cache_directory)
+            : cache_directory_(cache_directory / resource_shortname(Resource))
         {
             auto database_path = cache_directory_ / "database";
             if (!std::filesystem::exists(cache_directory_)) {
@@ -135,7 +142,7 @@ namespace resource {
             return resources_[hnd.index].second.get();
         }
 
-        void save() const
+        void save() const override
         {
             auto database_path = cache_directory_ / "database";
             std::ofstream file{ database_path.string(), std::ios::binary | std::ios::out };

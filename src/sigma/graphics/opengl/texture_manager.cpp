@@ -24,7 +24,7 @@ namespace opengl {
         return { GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE };
     }
 
-    texture_manager::texture_manager(resource::cache<graphics::texture>& texture_cache)
+    texture_manager::texture_manager(std::shared_ptr<resource::cache<graphics::texture>> texture_cache)
         : texture_cache_(texture_cache)
     {
     }
@@ -40,7 +40,7 @@ namespace opengl {
         if (hndl.index >= textures_.size())
             textures_.resize(hndl.index + 1, 0);
 
-        auto data = texture_cache_.acquire(hndl);
+        auto data = texture_cache_->acquire(hndl);
 
         if (textures_[hndl.index] == 0) {
             auto size = data->size();

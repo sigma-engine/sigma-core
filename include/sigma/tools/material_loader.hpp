@@ -17,11 +17,10 @@
 namespace sigma {
 namespace tools {
 
-    template <class ContextType>
-    class material_loader : public resource_loader<ContextType> {
+    class material_loader : public resource_loader {
     public:
-        material_loader(build_settings& settings, ContextType& ctx)
-            : resource_loader<ContextType>(settings, ctx)
+        material_loader(std::shared_ptr<context> ctx)
+            : resource_loader(ctx)
             , context_(ctx)
         {
         }
@@ -38,16 +37,16 @@ namespace tools {
 
         virtual void load(const std::filesystem::path& source_directory, const std::string& ext, const std::filesystem::path& source_file) override
         {
-            auto& technique_cache = context_.template get_cache<graphics::technique>();
-            auto& material_cache = context_.template get_cache<graphics::material>();
+            auto technique_cache = context_->cache<graphics::technique>();
+            auto material_cache = context_->cache<graphics::material>();
 
             auto rid = resource_shortname(sigma::graphics::material) / sigma::filesystem::make_relative(source_directory, source_file).replace_extension("");
 
-            if (material_cache.contains({ rid })) {
-                auto h = material_cache.handle_for({ rid });
+            if (material_cache->contains({ rid })) {
+                auto h = material_cache->handle_for({ rid });
 
                 auto source_file_time = std::filesystem::last_write_time(source_file);
-                auto resource_time = material_cache.last_modification_time(h);
+                auto resource_time = material_cache->last_modification_time(h);
                 // TODO (NOW): other dependencies
                 if (source_file_time <= resource_time)
                     return;
@@ -71,15 +70,15 @@ namespace tools {
                 tech_id.fragment
             };
             sigma::graphics::material material;
-            material.technique_id = technique_cache.handle_for({ tech_rid });
+            material.technique_id = technique_cache->handle_for({ tech_rid });
 
             extract_unifrom_data(context_, settings, material);
 
-            material_cache.insert({ rid }, material, true);
+            material_cache->insert({ rid }, material, true);
         }
 
     private:
-        ContextType& context_;
+        std::shared_ptr<context> context_;
     };
 }
 }
