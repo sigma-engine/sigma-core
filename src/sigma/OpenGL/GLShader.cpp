@@ -1,4 +1,4 @@
-#include <sigma/GLShader.hpp>
+#include <sigma/OpenGL/GLShader.hpp>
 #include <sigma/Log.hpp>
 
 #include <glad/glad.h>

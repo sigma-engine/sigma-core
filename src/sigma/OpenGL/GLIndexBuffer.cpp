@@ -1,5 +1,5 @@
-#include <sigma/GLIndexBuffer.hpp>
-#include <sigma/GLDataTypes.hpp>
+#include <sigma/OpenGL/GLIndexBuffer.hpp>
+#include <sigma/OpenGL/GLDataTypes.hpp>
 
 #include <glad/glad.h>
 

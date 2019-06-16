@@ -1,6 +1,6 @@
 #include <sigma/Engine.hpp>
 
-#include <sigma/SDLWindow.hpp>
+#include <sigma/SDL/SDLWindow.hpp>
 #include <sigma/EventEmitter.hpp>
 #include <sigma/Log.hpp>
 

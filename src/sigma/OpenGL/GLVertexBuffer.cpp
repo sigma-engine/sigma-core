@@ -1,5 +1,5 @@
-#include <sigma/GLVertexBuffer.hpp>
-#include <sigma/GLDataTypes.hpp>
+#include <sigma/OpenGL/GLVertexBuffer.hpp>
+#include <sigma/OpenGL/GLDataTypes.hpp>
 
 #include <glad/glad.h>
 

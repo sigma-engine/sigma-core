@@ -1,7 +1,7 @@
 #pragma onnce
 
 #include <sigma/Window.hpp>
-#include <sigma/GLContext.hpp>
+#include <sigma/OpenGL/GLContext.hpp>
 #include <sigma/EventEmitter.hpp>
 #include <sigma/EventListener.hpp>
 

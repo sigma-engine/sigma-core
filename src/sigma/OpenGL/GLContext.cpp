@@ -1,10 +1,10 @@
-#include <sigma/GLContext.hpp>
+#include <sigma/OpenGL/GLContext.hpp>
 
 #include <sigma/Log.hpp>
-#include <sigma/GLShader.hpp>
-#include <sigma/GLProgram.hpp>
-#include <sigma/GLVertexBuffer.hpp>
-#include <sigma/GLIndexBuffer.hpp>
+#include <sigma/OpenGL/GLShader.hpp>
+#include <sigma/OpenGL/GLProgram.hpp>
+#include <sigma/OpenGL/GLVertexBuffer.hpp>
+#include <sigma/OpenGL/GLIndexBuffer.hpp>
 
 #include <glad/glad.h>
 

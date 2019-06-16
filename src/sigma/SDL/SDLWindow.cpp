@@ -1,7 +1,7 @@
-#include <sigma/SDLWindow.hpp>
+#include <sigma/SDL/SDLWindow.hpp>
 
 #include <sigma/Engine.hpp>
-#include <sigma/GLContext.hpp>
+#include <sigma/OpenGL/GLContext.hpp>
 
 #include <SDL2/SDL.h>
 #include <glad/glad.h>

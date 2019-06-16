@@ -31,26 +31,26 @@ add_library(sigma-core
 	include/sigma/Window.hpp
 	src/sigma/Window.cpp
 
-	include/sigma/SDLWindow.hpp
-	src/sigma/SDLWindow.cpp
+	include/sigma/SDL/SDLWindow.hpp
+	src/sigma/SDL/SDLWindow.cpp
 
-	include/sigma/GLContext.hpp
-	src/sigma/GLContext.cpp
+	include/sigma/OpenGL/GLContext.hpp
+	src/sigma/OpenGL/GLContext.cpp
 
-	include/sigma/GLDataTypes.hpp
-	src/sigma/GLDataTypes.cpp
+	include/sigma/OpenGL/GLDataTypes.hpp
+	src/sigma/OpenGL/GLDataTypes.cpp
 
-	include/sigma/GLShader.hpp
-	src/sigma/GLShader.cpp
+	include/sigma/OpenGL/GLShader.hpp
+	src/sigma/OpenGL/GLShader.cpp
 
-	include/sigma/GLProgram.hpp
-	src/sigma/GLProgram.cpp
+	include/sigma/OpenGL/GLProgram.hpp
+	src/sigma/OpenGL/GLProgram.cpp
 
-	include/sigma/GLVertexBuffer.hpp
-	src/sigma/GLVertexBuffer.cpp
+	include/sigma/OpenGL/GLVertexBuffer.hpp
+	src/sigma/OpenGL/GLVertexBuffer.cpp
 
-	include/sigma/GLIndexBuffer.hpp
-	src/sigma/GLIndexBuffer.cpp
+	include/sigma/OpenGL/GLIndexBuffer.hpp
+	src/sigma/OpenGL/GLIndexBuffer.cpp
 )
 
 target_include_directories(sigma-core
