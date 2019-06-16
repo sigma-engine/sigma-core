@@ -3,12 +3,37 @@
 		"git": [
 			"https://github.com/"
 		],
-		"hg":[
+		"hg": [
 			"http://hg.libsdl.org/"
 		]
 	},
-	
-	"dependencies" : [
+	"dependencies": [
+		{
+			"name": "git:gabime/spdlog",
+			"build_system": "cmake",
+			"cmake_args": [
+				"-DSPDLOG_BUILD_EXAMPLES=OFF",
+				"-DSPDLOG_BUILD_TESTS=OFF"
+			]
+		},
+		{
+			"name": "git:g-truc/glm",
+			"build_system": "cmake",
+			"cmake_args": [
+				"-DGLM_TEST_ENABLE=OFF",
+				"-DBUILD_SHARED_LIBS=OFF",
+				"-DBUILD_STATIC_LIBS=OFF"
+			]
+		},
+		{
+			"name": "git:sigma-engine/glad",
+			"build_system": "cmake",
+			"cmake_args": [
+				"-DGLAD_INSTALL=ON"
+			]
+		}
+	],
+	"dependencies2": [
 		{
 			"name": "git:KhronosGroup/glslang"
 		},

@@ -1,7 +1,0 @@
-{
-    "color_intensity": [1.0, 1.0, 1.0, 1.0],
-    "direction": [0.0, 0.0, 1.0],
-    "center": [0.0, 0.0, 0.0],
-    "fragment" : "pbr/deffered/lights/directional",
-    "vertex" : "pbr/deffered/lights/directional"
-}
