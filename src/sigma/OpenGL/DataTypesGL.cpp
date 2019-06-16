@@ -1,4 +1,4 @@
-#include <sigma/OpenGL/GLDataTypes.hpp>
+#include <sigma/OpenGL/DataTypesGL.hpp>
 
 #include <cassert>
 

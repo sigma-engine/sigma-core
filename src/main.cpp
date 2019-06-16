@@ -1,13 +1,11 @@
 #include <sigma/Engine.hpp>
 #include <sigma/Window.hpp>
-#include <sigma/Context.hpp>
+#include <sigma/Device.hpp>
 #include <sigma/Shader.hpp>
 #include <sigma/VertexBuffer.hpp>
 #include <sigma/IndexBuffer.hpp>
 #include <glm/vec3.hpp>
 #include <sigma/Log.hpp>
-
-#include <glad/glad.h>
 
 struct Vertex
 {
@@ -26,13 +24,18 @@ int main(int argc, char const *argv[])
     (void)argc;
     (void)argv;
     auto engine = Engine::create();
-    engine->initialize(GraphicsAPI::OpenGL);
+    if (!engine->initialize(GraphicsAPI::OpenGL))
+        return -1;
 
     auto window = engine->createWindow("Simple Game", 1920 / 2, 1080 / 2);
+    if (window == nullptr)
+        return -1;
     
-    auto context = engine->graphicsContext();
+    auto device = engine->graphicsDevice();
+    if (device == nullptr)
+        return -1;
     
-    auto vertexShader = context->createShader(ShaderType::VertexShader, R"(
+    auto vertexShader = device->createShader(ShaderType::VertexShader, R"(
         #version 450
         layout(location = 0) in vec3 position;
         layout(location = 1) in vec3 color;
@@ -47,7 +50,7 @@ int main(int argc, char const *argv[])
         }
     )");
     
-    auto fragmentShader = context->createShader(ShaderType::FragmentShader, R"(
+    auto fragmentShader = device->createShader(ShaderType::FragmentShader, R"(
         #version 450
 
         layout(location = 0) out vec4 color;
@@ -61,21 +64,20 @@ int main(int argc, char const *argv[])
         }
     )");
     
-    auto program = context->createProgram({vertexShader, fragmentShader});
+    auto program = device->createProgram({vertexShader, fragmentShader});
 
-    auto vertexBuffer = context->createVertexBuffer({
+    auto vertexBuffer = device->createVertexBuffer({
         {DataType::Vec3, "position"},
         {DataType::Vec3, "color"}
     });
     vertexBuffer->setData(vertices.data(), sizeof(Vertex) * vertices.size());
     
-    auto indexBuffer = context->createIndexBuffer(PrimitiveType::Triangle, DataType::UShort);
+    auto indexBuffer = device->createIndexBuffer(PrimitiveType::Triangle, DataType::UShort);
     indexBuffer->setData(indices.data(), sizeof(uint16_t) * 3);
-
 
     while(window->open() && engine->process())
     {
-        context->draw(program, vertexBuffer, indexBuffer);
+        device->draw(program, vertexBuffer, indexBuffer);
         window->swapBuffer();
     }
 }

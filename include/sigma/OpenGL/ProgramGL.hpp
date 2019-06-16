@@ -7,18 +7,18 @@
 
 class Shader;
 
-class GLProgram : public Program
-{
+class ProgramGL : public Program {
 public:
-	GLProgram();
+    ProgramGL();
 
-	virtual ~GLProgram();
+    virtual ~ProgramGL();
 
-	void attach(std::shared_ptr<Shader> inShader);
+    void attach(std::shared_ptr<Shader> inShader);
 
     bool link();
 
     void bind() const;
+
 private:
-	uint32_t mHandle = 0;
+    uint32_t mHandle = 0;
 };

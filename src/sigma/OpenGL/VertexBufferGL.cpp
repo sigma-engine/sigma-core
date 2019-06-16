@@ -1,30 +1,28 @@
-#include <sigma/OpenGL/GLVertexBuffer.hpp>
-#include <sigma/OpenGL/GLDataTypes.hpp>
+#include <sigma/OpenGL/VertexBufferGL.hpp>
+
+#include <sigma/OpenGL/DataTypesGL.hpp>
 
 #include <glad/glad.h>
 
 #include <cassert>
 
-VertexLayout calculateLayout(const std::initializer_list<VertexMemberDescription> &inLayout)
+VertexLayout calculateLayout(const std::initializer_list<VertexMemberDescription>& inLayout)
 {
     std::vector<VertexMember> members;
     std::size_t offset = 0;
-    for(const auto &des: inLayout)
-    {
-        members.push_back({
-            offset,
+    for (const auto& des : inLayout) {
+        members.push_back({ offset,
             sizeOfDataType(des.type),
             des.type,
             des.name,
-            des.normalized
-        });
+            des.normalized });
         offset += members.back().size;
     }
 
-    return {members, offset};
+    return { members, offset };
 }
 
-GLVertexBuffer::GLVertexBuffer(const std::initializer_list<VertexMemberDescription> &inLayout)
+VertexBufferGL::VertexBufferGL(const std::initializer_list<VertexMemberDescription>& inLayout)
     : mLayout(calculateLayout(inLayout))
 {
     glCreateVertexArrays(1, &mVAOHandle);
@@ -34,32 +32,30 @@ GLVertexBuffer::GLVertexBuffer(const std::initializer_list<VertexMemberDescripti
     glBindBuffer(GL_ARRAY_BUFFER, mBufferHandle);
 
     uint32_t i = 0;
-    for(const auto &member: mLayout)
-    {
+    for (const auto& member : mLayout) {
         glEnableVertexAttribArray(i);
         glVertexAttribPointer(i,
             componentCountOfDataType(member.type),
             baseTypeOfDataType(member.type),
             member.normalized ? GL_TRUE : GL_FALSE,
             static_cast<GLsizei>(mLayout.stride()),
-            reinterpret_cast<const void *>(member.offset)
-        );
+            reinterpret_cast<const void*>(member.offset));
         i++;
     }
 }
 
-GLVertexBuffer::~GLVertexBuffer()
+VertexBufferGL::~VertexBufferGL()
 {
     glDeleteVertexArrays(1, &mVAOHandle);
     glDeleteBuffers(1, &mBufferHandle);
 }
 
-const VertexLayout &GLVertexBuffer::layout() const
+const VertexLayout& VertexBufferGL::layout() const
 {
     return mLayout;
 }
 
-void GLVertexBuffer::setData(const void *inData, std::size_t inSize)
+void VertexBufferGL::setData(const void* inData, std::size_t inSize)
 {
     assert((inSize % mLayout.stride() == 0) && "Incorrect data for vertex buffer layout!");
 
@@ -67,7 +63,7 @@ void GLVertexBuffer::setData(const void *inData, std::size_t inSize)
     glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(inSize), inData, GL_STATIC_DRAW);
 }
 
-void GLVertexBuffer::bind() const
+void VertexBufferGL::bind() const
 {
     glBindVertexArray(mVAOHandle);
 }

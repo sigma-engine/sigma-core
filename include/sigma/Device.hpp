@@ -18,20 +18,17 @@ struct VertexMemberDescription;
 class IndexBuffer;
 enum class PrimitiveType;
 
-class Context 
-{
+class Device {
 public:
-    virtual ~Context() = default;
+    virtual ~Device() = default;
 
     virtual void initialize() = 0;
 
-	virtual void makeCurrent(Window *inWindow) = 0;
-
-    virtual std::shared_ptr<Shader> createShader(ShaderType inType, const std::string &inCode) = 0;
+    virtual std::shared_ptr<Shader> createShader(ShaderType inType, const std::string& inCode) = 0;
 
     virtual std::shared_ptr<Program> createProgram(const std::vector<std::shared_ptr<Shader>>& inShaders) = 0;
 
-    virtual std::shared_ptr<VertexBuffer> createVertexBuffer(const std::initializer_list<VertexMemberDescription> &inLayout) = 0;
+    virtual std::shared_ptr<VertexBuffer> createVertexBuffer(const std::initializer_list<VertexMemberDescription>& inLayout) = 0;
 
     virtual std::shared_ptr<IndexBuffer> createIndexBuffer(PrimitiveType inPrimitive, DataType inDataType) = 0;
 

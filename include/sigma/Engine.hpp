@@ -15,7 +15,7 @@ enum class GraphicsAPI
 };
 
 class Window;
-class Context;
+class Device;
 class EventListener;
 class EventEmitter;
 
@@ -26,7 +26,7 @@ public:
 
     GraphicsAPI graphicsAPI() const;
 
-    virtual void initialize(GraphicsAPI inGraphicsAPI);
+    virtual bool initialize(GraphicsAPI inGraphicsAPI);
 
     std::shared_ptr<Window> createWindow(const std::string &inTitle, std::size_t inWidth, std::size_t inHeight);
 
@@ -38,14 +38,15 @@ public:
 
     void removeListener(std::weak_ptr<EventListener> inListener);
 
-    std::shared_ptr<Context> graphicsContext();
+    std::shared_ptr<Device> graphicsDevice();
 
     bool process();
 
     static std::shared_ptr<Engine> create();
 private:
     GraphicsAPI mGraphicsAPI = GraphicsAPI::None;
-    std::shared_ptr<Context> mContext = nullptr;
+    bool mDeviceInitialized = false;
+    std::shared_ptr<Device> mDevice = nullptr;
     std::shared_ptr<spdlog::logger> mConsole = nullptr;
     std::vector<std::weak_ptr<EventEmitter>> mEventEmitters;
     std::vector<std::weak_ptr<EventListener>> mEventListeners;

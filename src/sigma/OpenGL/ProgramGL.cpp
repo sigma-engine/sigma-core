@@ -1,37 +1,36 @@
-#include <sigma/OpenGL/GLProgram.hpp>
+#include <sigma/OpenGL/ProgramGL.hpp>
 
-#include <sigma/OpenGL/GLShader.hpp>
 #include <sigma/Log.hpp>
+#include <sigma/OpenGL/ShaderGL.hpp>
 
 #include <glad/glad.h>
 
 #include <cassert>
 #include <vector>
 
-GLProgram::GLProgram()
+ProgramGL::ProgramGL()
 {
     mHandle = glCreateProgram();
 }
 
-GLProgram::~GLProgram()
+ProgramGL::~ProgramGL()
 {
     glDeleteProgram(mHandle);
 }
 
-void GLProgram::attach(std::shared_ptr<Shader> inShader)
+void ProgramGL::attach(std::shared_ptr<Shader> inShader)
 {
-    assert(std::dynamic_pointer_cast<GLShader>(inShader));
-    auto glShader = std::static_pointer_cast<GLShader>(inShader);
-    glAttachShader(mHandle, glShader->handle());
+    assert(std::dynamic_pointer_cast<ShaderGL>(inShader));
+    auto shader = std::static_pointer_cast<ShaderGL>(inShader);
+    glAttachShader(mHandle, shader->handle());
 }
 
-bool GLProgram::link()
+bool ProgramGL::link()
 {
     GLint linked = GL_FALSE;
     glLinkProgram(mHandle);
     glGetProgramiv(mHandle, GL_LINK_STATUS, &linked);
-    if (linked == GL_FALSE)
-    {
+    if (linked == GL_FALSE) {
         GLint length = 0;
         glGetProgramiv(mHandle, GL_INFO_LOG_LENGTH, &length);
         std::vector<GLchar> errorBuffer(static_cast<std::size_t>(length));
@@ -43,7 +42,7 @@ bool GLProgram::link()
     return true;
 }
 
-void GLProgram::bind() const
+void ProgramGL::bind() const
 {
     glUseProgram(mHandle);
 }

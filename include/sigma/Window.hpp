@@ -6,11 +6,9 @@
 #include <memory>
 
 class Engine;
-class Context;
 class Window;
 
-class WindowEvent : public Event
-{
+class WindowEvent : public Event {
 public:
     WindowEvent(std::weak_ptr<Window> inWindow, EventType inType);
 
@@ -20,8 +18,7 @@ private:
     std::weak_ptr<Window> mWindow;
 };
 
-class Window : public std::enable_shared_from_this<Window>, public EventListener
-{
+class Window : public std::enable_shared_from_this<Window>, public EventListener {
 public:
     virtual ~Window() = default;
 
@@ -29,14 +26,12 @@ public:
 
     bool open() const { return mOpen; }
 
-    std::shared_ptr<Context> graphicsContext();
-
-    virtual void initialize() = 0;
+    virtual bool initialize() = 0;
 
     virtual void swapBuffer() = 0;
 
-    virtual void processEvent(Event *inEvent) override;
+    virtual void processEvent(Event* inEvent) override;
+
 protected:
-    std::shared_ptr<Context> mContext = nullptr;
     bool mOpen = false;
 };

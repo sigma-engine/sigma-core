@@ -1,6 +1,8 @@
 #include <sigma/Engine.hpp>
 
-#include <sigma/SDL/SDLWindow.hpp>
+#include <sigma/Device.hpp>
+#include <sigma/OpenGL/DeviceGL.hpp>
+#include <sigma/SDL/WindowSDL.hpp>
 #include <sigma/EventEmitter.hpp>
 #include <sigma/Log.hpp>
 
@@ -16,10 +18,24 @@ GraphicsAPI Engine::graphicsAPI() const
     return mGraphicsAPI;
 }
 
-void Engine::initialize(GraphicsAPI inGraphicsAPI)
+bool Engine::initialize(GraphicsAPI inGraphicsAPI)
 {
     mGraphicsAPI = inGraphicsAPI;
+
+    switch (inGraphicsAPI) {
+    case GraphicsAPI::OpenGL:
+    {
+        mDevice = std::make_shared<DeviceGL>();
+        break;
+    }
+    default:
+    {
+        return false;
+    }
+    }
     mConsole = spdlog::stdout_color_mt(SIGMA_LOG_NAME);
+
+    return true;
 }
 
 std::shared_ptr<Window> Engine::createWindow(const std::string &inTitle, std::size_t inWidth, std::size_t inHeight)
@@ -28,13 +44,17 @@ std::shared_ptr<Window> Engine::createWindow(const std::string &inTitle, std::si
     switch (mGraphicsAPI) {
     case GraphicsAPI::OpenGL:
     {
-        SDLWindow::initializeSDL(shared_from_this());
-        window = std::make_shared<SDLWindow>(shared_from_this(), inTitle, inWidth, inHeight);
-        window->initialize();
-        if (mContext == nullptr)
+        WindowSDL::initializeSDL(shared_from_this());
+        window = std::make_shared<WindowSDL>(shared_from_this(), inTitle, inWidth, inHeight);
+        if (!mDeviceInitialized)
         {
-            mContext = window->graphicsContext();
-            mContext->initialize();
+            mDevice->initialize();
+            mDeviceInitialized = true;
+        }
+
+        if (!window->initialize())
+        {
+            window = nullptr;
         }
 
         break;
@@ -45,6 +65,7 @@ std::shared_ptr<Window> Engine::createWindow(const std::string &inTitle, std::si
         break;
     }
     }
+
 
     if (window)
         mEventListeners.push_back(window);
@@ -75,9 +96,9 @@ void Engine::removeListener(std::weak_ptr<EventListener> inListener)
     mEventListeners.erase(it, mEventListeners.end());
 }
 
-std::shared_ptr<Context> Engine::graphicsContext()
+std::shared_ptr<Device> Engine::graphicsDevice()
 {
-    return mContext;
+    return mDevice;
 }
 
 bool Engine::process()

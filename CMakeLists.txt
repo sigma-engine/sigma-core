@@ -5,15 +5,18 @@ find_package(spdlog REQUIRED)
 find_package(glm REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(glad REQUIRED)
+find_package(Vulkan REQUIRED)
 
 add_library(sigma-core
 	include/sigma/Event.hpp
 	include/sigma/EventEmitter.hpp
 	include/sigma/EventListener.hpp
+	
+	include/sigma/Device.hpp
+	src/sigma/Device.cpp
 
-
-	include/sigma/Context.hpp
-	src/sigma/Context.cpp
+	include/sigma/Surface.hpp
+	src/sigma/Surface.cpp
 
 	include/sigma/Shader.hpp
 	src/sigma/Shader.cpp
@@ -25,32 +28,37 @@ add_library(sigma-core
 
 	include/sigma/Program.hpp
 
+	include/sigma/Log.hpp
+	
 	include/sigma/Engine.hpp
 	src/sigma/Engine.cpp
 
 	include/sigma/Window.hpp
 	src/sigma/Window.cpp
 
-	include/sigma/SDL/SDLWindow.hpp
-	src/sigma/SDL/SDLWindow.cpp
+	include/sigma/SDL/WindowSDL.hpp
+	src/sigma/SDL/WindowSDL.cpp
 
-	include/sigma/OpenGL/GLContext.hpp
-	src/sigma/OpenGL/GLContext.cpp
+	include/sigma/OpenGL/DeviceGL.hpp
+	src/sigma/OpenGL/DeviceGL.cpp
 
-	include/sigma/OpenGL/GLDataTypes.hpp
-	src/sigma/OpenGL/GLDataTypes.cpp
+	include/sigma/OpenGL/SurfaceGL.hpp
+	src/sigma/OpenGL/SurfaceGL.cpp
 
-	include/sigma/OpenGL/GLShader.hpp
-	src/sigma/OpenGL/GLShader.cpp
+	include/sigma/OpenGL/DataTypesGL.hpp
+	src/sigma/OpenGL/DataTypesGL.cpp
 
-	include/sigma/OpenGL/GLProgram.hpp
-	src/sigma/OpenGL/GLProgram.cpp
+	include/sigma/OpenGL/ShaderGL.hpp
+	src/sigma/OpenGL/ShaderGL.cpp
 
-	include/sigma/OpenGL/GLVertexBuffer.hpp
-	src/sigma/OpenGL/GLVertexBuffer.cpp
+	include/sigma/OpenGL/ProgramGL.hpp
+	src/sigma/OpenGL/ProgramGL.cpp
 
-	include/sigma/OpenGL/GLIndexBuffer.hpp
-	src/sigma/OpenGL/GLIndexBuffer.cpp
+	include/sigma/OpenGL/VertexBufferGL.hpp
+	src/sigma/OpenGL/VertexBufferGL.cpp
+
+	include/sigma/OpenGL/IndexBufferGL.hpp
+	src/sigma/OpenGL/IndexBufferGL.cpp
 )
 
 target_include_directories(sigma-core
@@ -64,6 +72,7 @@ PUBLIC
     spdlog::spdlog
     SDL2::SDL2
     glad::glad
+    Vulkan::Vulkan
     glm
     stdc++fs
 )

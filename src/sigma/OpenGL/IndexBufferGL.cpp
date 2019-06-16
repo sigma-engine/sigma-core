@@ -1,5 +1,6 @@
-#include <sigma/OpenGL/GLIndexBuffer.hpp>
-#include <sigma/OpenGL/GLDataTypes.hpp>
+#include <sigma/OpenGL/IndexBufferGL.hpp>
+
+#include <sigma/OpenGL/DataTypesGL.hpp>
 
 #include <glad/glad.h>
 
@@ -7,9 +8,9 @@
 
 std::size_t primitiveComponentCount(PrimitiveType inType)
 {
-    switch (inType)
-    {
-    case PrimitiveType::Triangle: return 3;
+    switch (inType) {
+    case PrimitiveType::Triangle:
+        return 3;
     }
     assert(false && "Unknown PrimitiveType!");
     return 0;
@@ -17,15 +18,16 @@ std::size_t primitiveComponentCount(PrimitiveType inType)
 
 GLenum glEnumForPrimitive(PrimitiveType inType)
 {
-    switch (inType)
-    {
-    case PrimitiveType::Triangle: return GL_TRIANGLES;
+    switch (inType) {
+    case PrimitiveType::Triangle:
+        return GL_TRIANGLES;
     }
     assert(false && "Unknown PrimitiveType!");
     return GL_INVALID_ENUM;
 }
 
-GLIndexBuffer::GLIndexBuffer(PrimitiveType inPrimitiveType, DataType inDataType)
+IndexBufferGL::IndexBufferGL(PrimitiveType inPrimitiveType, DataType inDataType)
+
     : mPrimitiveType(inPrimitiveType)
     , mDataType(inDataType)
     , mCount(0)
@@ -33,22 +35,22 @@ GLIndexBuffer::GLIndexBuffer(PrimitiveType inPrimitiveType, DataType inDataType)
     glCreateBuffers(1, &mHandle);
 }
 
-GLIndexBuffer::~GLIndexBuffer()
+IndexBufferGL::~IndexBufferGL()
 {
     glDeleteBuffers(1, &mHandle);
 }
 
-DataType GLIndexBuffer::dataType() const
+DataType IndexBufferGL::dataType() const
 {
     return mDataType;
 }
 
-PrimitiveType GLIndexBuffer::primitiveType() const
+PrimitiveType IndexBufferGL::primitiveType() const
 {
     return mPrimitiveType;
 }
 
-void GLIndexBuffer::setData(const void *inData, std::size_t inSize)
+void IndexBufferGL::setData(const void* inData, std::size_t inSize)
 {
     assert(inSize % (primitiveComponentCount(mPrimitiveType) * sizeOfDataType(mDataType)) == 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mHandle);
@@ -56,10 +58,9 @@ void GLIndexBuffer::setData(const void *inData, std::size_t inSize)
     mCount = inSize / sizeOfDataType(mDataType);
 }
 
-void GLIndexBuffer::draw()
+void IndexBufferGL::draw()
 {
-    if (mCount)
-    {
+    if (mCount) {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mHandle);
         glDrawElements(glEnumForPrimitive(mPrimitiveType), static_cast<GLsizei>(mCount), baseTypeOfDataType(mDataType), nullptr);
     }

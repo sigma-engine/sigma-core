@@ -5,16 +5,16 @@
 #include <cstdint>
 #include <string>
 
-class GLShader : public Shader
-{
+class ShaderGL : public Shader {
 public:
-    GLShader(ShaderType inType);
+    ShaderGL(ShaderType inType);
 
-	virtual ~GLShader();
+    virtual ~ShaderGL();
 
     uint32_t handle() const;
 
-    bool compile(const std::string &inCode);
+    bool compile(const std::string& inCode);
+
 private:
     uint32_t mHandle = 0;
 };
