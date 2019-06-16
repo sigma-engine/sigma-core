@@ -46,17 +46,6 @@ std::shared_ptr<Window> Engine::createWindow(const std::string &inTitle, std::si
     {
         WindowSDL::initializeSDL(shared_from_this());
         window = std::make_shared<WindowSDL>(shared_from_this(), inTitle, inWidth, inHeight);
-        if (!mDeviceInitialized)
-        {
-            mDevice->initialize();
-            mDeviceInitialized = true;
-        }
-
-        if (!window->initialize())
-        {
-            window = nullptr;
-        }
-
         break;
     }
     case GraphicsAPI::None:
@@ -64,11 +53,28 @@ std::shared_ptr<Window> Engine::createWindow(const std::string &inTitle, std::si
         window = nullptr;
         break;
     }
+    default:
+    {
+        SIGMA_ASSERT(false, "Unknown Graphics API");
+        break;
+    }
     }
 
+    if (!mDeviceInitialized)
+    {
+        auto exts = window->requiredExtensions(mGraphicsAPI);
+        mRequiredExtensions[mGraphicsAPI].insert(exts.begin(), exts.end());
 
-    if (window)
+        if (mDevice->initialize(mRequiredExtensions[mGraphicsAPI]))
+            mDeviceInitialized = true;
+        else
+            window = nullptr;
+    }
+
+    if (window && window->initialize())
         mEventListeners.push_back(window);
+    else
+        window = nullptr;
 
     return window;
 }

@@ -29,7 +29,7 @@ void glDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLs
     }
 }
 
-void DeviceGL::initialize()
+bool DeviceGL::initialize(const std::set<std::string> &inRequiredExtensions)
 {
     gladLoadGL();
 
@@ -44,13 +44,25 @@ void DeviceGL::initialize()
     glGetIntegerv(GL_NUM_EXTENSIONS, &extensionCount);
     for (GLint i = 0; i < extensionCount; ++i) {
         const char* ext = reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, static_cast<GLuint>(i)));
-        mExtensions.push_back(ext);
+        mExtensions.insert(ext);
     }
 
     SIGMA_INFO("Vendor: {}", glGetString(GL_VENDOR));
     SIGMA_INFO("Model: {}", glGetString(GL_RENDERER));
     SIGMA_INFO("Version: {}", glGetString(GL_VERSION));
     // TODO: Get total video memory http://nasutechtips.blogspot.com/2011/02/how-to-get-gpu-memory-size-and-usage-in.html
+
+    for(auto reqExt: inRequiredExtensions)
+    {
+        if(!mExtensions.count(reqExt))
+        {
+            SIGMA_ERROR("Missing Required OpenGL Extension: {}", reqExt);
+            SIGMA_INFO("Supported OpenGL Extensions: {}", fmt::join(mExtensions.begin(), mExtensions.end(), ","));
+            return false;
+        }
+    }
+
+    return true;
 }
 
 std::shared_ptr<Shader> DeviceGL::createShader(ShaderType inType, const std::string& inCode)

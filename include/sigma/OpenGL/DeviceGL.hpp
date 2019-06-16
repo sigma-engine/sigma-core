@@ -4,7 +4,7 @@
 
 class DeviceGL : public Device {
 public:
-    virtual void initialize() override;
+    virtual bool initialize(const std::set<std::string> &inRequiredExtensions) override;
 
     virtual std::shared_ptr<Shader> createShader(ShaderType inType, const std::string& inCode) override;
 
@@ -17,5 +17,5 @@ public:
     virtual void draw(std::shared_ptr<Program> inProgram, std::shared_ptr<VertexBuffer> inVertexBuffer, std::shared_ptr<IndexBuffer> inIndexBuffer) override;
 
 private:
-    std::vector<std::string> mExtensions;
+    std::set<std::string> mExtensions;
 };

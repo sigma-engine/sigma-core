@@ -30,6 +30,8 @@ public:
 
     virtual ~WindowSDL();
 
+    virtual std::set<std::string> requiredExtensions(GraphicsAPI inGraphicsAPI) const override;
+
     virtual bool initialize() override;
 
     virtual void swapBuffer() override;

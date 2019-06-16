@@ -2,6 +2,9 @@
 
 #include <memory>
 #include <vector>
+#include <map>
+#include <set>
+#include <string>
 
 namespace spdlog
 {
@@ -11,7 +14,8 @@ namespace spdlog
 enum class GraphicsAPI
 {
     None,
-    OpenGL
+    OpenGL,
+    Vulkan
 };
 
 class Window;
@@ -46,6 +50,7 @@ public:
 private:
     GraphicsAPI mGraphicsAPI = GraphicsAPI::None;
     bool mDeviceInitialized = false;
+    std::map<GraphicsAPI, std::set<std::string>> mRequiredExtensions;
     std::shared_ptr<Device> mDevice = nullptr;
     std::shared_ptr<spdlog::logger> mConsole = nullptr;
     std::vector<std::weak_ptr<EventEmitter>> mEventEmitters;

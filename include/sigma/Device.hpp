@@ -1,6 +1,8 @@
 #pragma once
 
 #include <memory>
+#include <string>
+#include <set>
 #include <vector>
 
 class Window;
@@ -22,7 +24,7 @@ class Device {
 public:
     virtual ~Device() = default;
 
-    virtual void initialize() = 0;
+    virtual bool initialize(const std::set<std::string> &inRequiredExtensions) = 0;
 
     virtual std::shared_ptr<Shader> createShader(ShaderType inType, const std::string& inCode) = 0;
 

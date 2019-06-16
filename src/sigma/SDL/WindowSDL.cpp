@@ -94,6 +94,40 @@ WindowSDL::~WindowSDL()
         SDL_DestroyWindow(mWindow);
 }
 
+std::set<std::string> WindowSDL::requiredExtensions(GraphicsAPI inGraphicsAPI) const
+{
+    std::set<std::string> extsSet;
+
+    switch (inGraphicsAPI) {
+    case GraphicsAPI::Vulkan:
+    {
+        uint32_t count;
+        std::vector<const char *> exts;
+
+        if (!SDL_Vulkan_GetInstanceExtensions(mWindow, &count, nullptr))
+        {
+            SIGMA_ERROR(SDL_GetError());
+        }
+
+        exts.resize(count);
+
+        if (!SDL_Vulkan_GetInstanceExtensions(mWindow, &count, exts.data()))
+        {
+            SIGMA_ERROR(SDL_GetError());
+        }
+        extsSet.insert(exts.begin(), exts.end());
+        break;
+    }
+    default:
+    {
+        break;
+    }
+    }
+
+    return extsSet;
+}
+
+
 bool WindowSDL::initialize()
 {
     mOpen = true;

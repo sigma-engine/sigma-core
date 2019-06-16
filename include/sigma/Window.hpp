@@ -4,9 +4,12 @@
 #include <sigma/EventListener.hpp>
 
 #include <memory>
+#include <set>
+#include <string>
 
 class Engine;
 class Window;
+enum class GraphicsAPI;
 
 class WindowEvent : public Event {
 public:
@@ -25,6 +28,8 @@ public:
     Window() = default;
 
     bool open() const { return mOpen; }
+
+    virtual std::set<std::string> requiredExtensions(GraphicsAPI inGraphicsAPI) const = 0;
 
     virtual bool initialize() = 0;
 
