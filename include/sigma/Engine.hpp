@@ -13,7 +13,6 @@ namespace spdlog
 
 enum class GraphicsAPI
 {
-    None,
     OpenGL,
     Vulkan
 };
@@ -48,7 +47,7 @@ public:
 
     static std::shared_ptr<Engine> create();
 private:
-    GraphicsAPI mGraphicsAPI = GraphicsAPI::None;
+    GraphicsAPI mGraphicsAPI;
     bool mDeviceInitialized = false;
     std::map<GraphicsAPI, std::set<std::string>> mRequiredExtensions;
     std::shared_ptr<Device> mDevice = nullptr;

@@ -2,6 +2,7 @@
 
 #include <sigma/Device.hpp>
 #include <sigma/OpenGL/DeviceGL.hpp>
+#include <sigma/Vulkan/DeviceVK.hpp>
 #include <sigma/SDL/WindowSDL.hpp>
 #include <sigma/EventEmitter.hpp>
 #include <sigma/Log.hpp>
@@ -28,6 +29,11 @@ bool Engine::initialize(GraphicsAPI inGraphicsAPI)
         mDevice = std::make_shared<DeviceGL>();
         break;
     }
+    case GraphicsAPI::Vulkan:
+    {
+        mDevice = std::make_shared<DeviceVK>();
+        break;
+    }
     default:
     {
         return false;
@@ -42,15 +48,11 @@ std::shared_ptr<Window> Engine::createWindow(const std::string &inTitle, std::si
 {
     std::shared_ptr<Window> window = nullptr;
     switch (mGraphicsAPI) {
+    case GraphicsAPI::Vulkan:
     case GraphicsAPI::OpenGL:
     {
         WindowSDL::initializeSDL(shared_from_this());
         window = std::make_shared<WindowSDL>(shared_from_this(), inTitle, inWidth, inHeight);
-        break;
-    }
-    case GraphicsAPI::None:
-    {
-        window = nullptr;
         break;
     }
     default:

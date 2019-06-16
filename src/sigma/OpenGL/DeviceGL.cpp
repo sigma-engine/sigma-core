@@ -52,14 +52,19 @@ bool DeviceGL::initialize(const std::set<std::string> &inRequiredExtensions)
     SIGMA_INFO("Version: {}", glGetString(GL_VERSION));
     // TODO: Get total video memory http://nasutechtips.blogspot.com/2011/02/how-to-get-gpu-memory-size-and-usage-in.html
 
+    bool hasMissingExtensions = false;
     for(auto reqExt: inRequiredExtensions)
     {
         if(!mExtensions.count(reqExt))
         {
+            hasMissingExtensions = true;
             SIGMA_ERROR("Missing Required OpenGL Extension: {}", reqExt);
-            SIGMA_INFO("Supported OpenGL Extensions: {}", fmt::join(mExtensions.begin(), mExtensions.end(), ","));
-            return false;
         }
+    }
+
+    if (hasMissingExtensions)
+    {
+        SIGMA_INFO("Supported OpenGL Extensions: {}", fmt::join(mExtensions.begin(), mExtensions.end(), ","));
     }
 
     return true;

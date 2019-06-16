@@ -59,6 +59,14 @@ add_library(sigma-core
 
 	include/sigma/OpenGL/IndexBufferGL.hpp
 	src/sigma/OpenGL/IndexBufferGL.cpp
+
+	include/sigma/Vulkan/DeviceVK.hpp
+	src/sigma/Vulkan/DeviceVK.cpp
+
+	include/sigma/Vulkan/SurfaceVK.hpp
+	src/sigma/Vulkan/SurfaceVK.cpp
+
+	src/sigma/Vulkan/ExtensionsVK.cpp
 )
 
 target_include_directories(sigma-core

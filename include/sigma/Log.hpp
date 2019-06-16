@@ -14,5 +14,5 @@
 #ifdef NDEBUG
 #define SIGMA_ASSERT(condition, ...)
 #else
-#define SIGMA_ASSERT(condition, ...) if(!(condition)) { spdlog::get(SIGMA_LOG_NAME)->critical(__VA_ARGS__); std::abort(); }
+#define SIGMA_ASSERT(condition, ...) if(!(condition)) { spdlog::get(SIGMA_LOG_NAME)->critical("{0}:{1}: In {2}\n                                             {0}:{1}: {3}", __FILE__, __LINE__, __PRETTY_FUNCTION__, fmt::format(__VA_ARGS__)); std::abort(); }
 #endif

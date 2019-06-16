@@ -2,6 +2,7 @@
 
 #include <sigma/Engine.hpp>
 #include <sigma/Log.hpp>
+#include <sigma/Vulkan/DeviceVK.hpp>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_vulkan.h>
@@ -63,6 +64,11 @@ WindowSDL::WindowSDL(std::shared_ptr<Engine> inEngine, const std::string& inTitl
         flags |= SDL_WINDOW_OPENGL;
         break;
     }
+    case GraphicsAPI::Vulkan:
+    {
+        flags |= SDL_WINDOW_VULKAN;
+        break;
+    }
     default: {
         SIGMA_ASSERT(false, "Unknown Graphics API!");
         break;
@@ -79,6 +85,11 @@ WindowSDL::WindowSDL(std::shared_ptr<Engine> inEngine, const std::string& inTitl
     case GraphicsAPI::OpenGL:
     {
         mSurface = std::make_shared<SurfaceSDLGL>(mWindow);
+        break;
+    }
+    case GraphicsAPI::Vulkan:
+    {
+        mSurface = std::make_shared<SurfaceSDLVK>(mWindow);
         break;
     }
     default:
@@ -130,6 +141,10 @@ std::set<std::string> WindowSDL::requiredExtensions(GraphicsAPI inGraphicsAPI) c
 
 bool WindowSDL::initialize()
 {
+    if (!mSurface->initialize(mEngine->graphicsDevice()))
+    {
+        return false;
+    }
     mOpen = true;
     return true;
 }
@@ -185,4 +200,22 @@ SurfaceSDLGL::~SurfaceSDLGL()
 {
     if (mHandle)
         SDL_GL_DeleteContext(mHandle);
+}
+
+SurfaceSDLVK::SurfaceSDLVK(SDL_Window *inWindow)
+    : mWindow(inWindow)
+{
+}
+
+bool SurfaceSDLVK::initialize(std::shared_ptr<Device> inDevice)
+{
+    SIGMA_ASSERT(std::dynamic_pointer_cast<DeviceVK>(inDevice) != nullptr, "Incorrect Device type");
+    mInstance = std::static_pointer_cast<DeviceVK>(inDevice);
+    if(!SDL_Vulkan_CreateSurface(mWindow, mInstance->handle(), &mSurface))
+    {
+        SIGMA_ERROR(SDL_GetError());
+        return false;
+    }
+
+    return true;
 }
