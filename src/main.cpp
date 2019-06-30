@@ -1,9 +1,11 @@
 #include <sigma/Engine.hpp>
 #include <sigma/Window.hpp>
 #include <sigma/Device.hpp>
+#include <sigma/DeviceManager.hpp>
 #include <sigma/Shader.hpp>
 #include <sigma/VertexBuffer.hpp>
 #include <sigma/IndexBuffer.hpp>
+#include <sigma/Surface.hpp>
 #include <glm/vec3.hpp>
 #include <sigma/Log.hpp>
 
@@ -24,15 +26,24 @@ int main(int argc, char const *argv[])
     (void)argc;
     (void)argv;
     auto engine = Engine::create();
-    if (!engine->initialize(GraphicsAPI::Vulkan))
+    if (!engine->initialize(GraphicsAPI::OpenGL))
+        return -1;
+
+    auto deviceManager = engine->deviceManager();
+    if (deviceManager == nullptr)
         return -1;
 
     auto window = engine->createWindow("Simple Game", 1920 / 2, 1080 / 2);
     if (window == nullptr)
         return -1;
-    
-    auto device = engine->graphicsDevice();
-    if (device == nullptr)
+
+    std::vector<std::shared_ptr<Device>> surfaceDevices;
+    deviceManager->enumerateSurfaceDevices(window->surface(), surfaceDevices);
+    if (surfaceDevices.empty())
+        return -1;
+
+    auto device = surfaceDevices[0];
+    if (!device->initialize({window->surface()}))
         return -1;
 
 //    auto vertexShader = device->createShader(ShaderType::VertexShader, R"(

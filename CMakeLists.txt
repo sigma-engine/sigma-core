@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.7)
 project(sigma-engine)
 
+set(CMAKE_CXX_STANDARD 17)
+
 find_package(spdlog REQUIRED)
 find_package(glm REQUIRED)
 find_package(SDL2 REQUIRED)
@@ -12,6 +14,9 @@ add_library(sigma-core
 	include/sigma/EventEmitter.hpp
 	include/sigma/EventListener.hpp
 	
+	include/sigma/DeviceManager.hpp
+	src/sigma/DeviceManager.cpp
+
 	include/sigma/Device.hpp
 	src/sigma/Device.cpp
 
@@ -39,6 +44,9 @@ add_library(sigma-core
 	include/sigma/SDL/WindowSDL.hpp
 	src/sigma/SDL/WindowSDL.cpp
 
+	include/sigma/OpenGL/DeviceManagerGL.hpp
+	src/sigma/OpenGL/DeviceManagerGL.cpp
+
 	include/sigma/OpenGL/DeviceGL.hpp
 	src/sigma/OpenGL/DeviceGL.cpp
 
@@ -60,6 +68,9 @@ add_library(sigma-core
 	include/sigma/OpenGL/IndexBufferGL.hpp
 	src/sigma/OpenGL/IndexBufferGL.cpp
 
+	include/sigma/Vulkan/DeviceManagerVK.hpp
+	src/sigma/Vulkan/DeviceManagerVK.cpp
+
 	include/sigma/Vulkan/DeviceVK.hpp
 	src/sigma/Vulkan/DeviceVK.cpp
 
@@ -67,6 +78,9 @@ add_library(sigma-core
 	src/sigma/Vulkan/SurfaceVK.cpp
 
 	src/sigma/Vulkan/ExtensionsVK.cpp
+
+	include/sigma/Vulkan/UtilVK.hpp
+	src/sigma/Vulkan/UtilVK.cpp
 )
 
 target_include_directories(sigma-core

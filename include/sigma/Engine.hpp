@@ -1,29 +1,26 @@
 #pragma once
 
-#include <memory>
-#include <vector>
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
+#include <vector>
 
-namespace spdlog
-{
-    class logger;
+namespace spdlog {
+class logger;
 }
 
-enum class GraphicsAPI
-{
+enum class GraphicsAPI {
     OpenGL,
     Vulkan
 };
 
 class Window;
-class Device;
+class DeviceManager;
 class EventListener;
 class EventEmitter;
 
-class Engine : public std::enable_shared_from_this<Engine>
-{
+class Engine : public std::enable_shared_from_this<Engine> {
 public:
     virtual ~Engine() = default;
 
@@ -31,7 +28,7 @@ public:
 
     virtual bool initialize(GraphicsAPI inGraphicsAPI);
 
-    std::shared_ptr<Window> createWindow(const std::string &inTitle, std::size_t inWidth, std::size_t inHeight);
+    std::shared_ptr<Window> createWindow(const std::string& inTitle, std::size_t inWidth, std::size_t inHeight);
 
     void addEmitter(std::weak_ptr<EventEmitter> inEmitter);
 
@@ -41,16 +38,17 @@ public:
 
     void removeListener(std::weak_ptr<EventListener> inListener);
 
-    std::shared_ptr<Device> graphicsDevice();
+    std::shared_ptr<DeviceManager> deviceManager();
 
     bool process();
 
     static std::shared_ptr<Engine> create();
+
 private:
     GraphicsAPI mGraphicsAPI;
     bool mDeviceInitialized = false;
     std::map<GraphicsAPI, std::set<std::string>> mRequiredExtensions;
-    std::shared_ptr<Device> mDevice = nullptr;
+    std::shared_ptr<DeviceManager> mDeviceManger = nullptr;
     std::shared_ptr<spdlog::logger> mConsole = nullptr;
     std::vector<std::weak_ptr<EventEmitter>> mEventEmitters;
     std::vector<std::weak_ptr<EventListener>> mEventListeners;

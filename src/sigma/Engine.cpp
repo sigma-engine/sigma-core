@@ -1,11 +1,11 @@
 #include <sigma/Engine.hpp>
 
 #include <sigma/Device.hpp>
-#include <sigma/OpenGL/DeviceGL.hpp>
-#include <sigma/Vulkan/DeviceVK.hpp>
-#include <sigma/SDL/WindowSDL.hpp>
 #include <sigma/EventEmitter.hpp>
 #include <sigma/Log.hpp>
+#include <sigma/OpenGL/DeviceManagerGL.hpp>
+#include <sigma/SDL/WindowSDL.hpp>
+#include <sigma/Vulkan/DeviceManagerVK.hpp>
 
 #include <algorithm>
 
@@ -24,18 +24,15 @@ bool Engine::initialize(GraphicsAPI inGraphicsAPI)
     mGraphicsAPI = inGraphicsAPI;
 
     switch (inGraphicsAPI) {
-    case GraphicsAPI::OpenGL:
-    {
-        mDevice = std::make_shared<DeviceGL>();
+    case GraphicsAPI::OpenGL: {
+        mDeviceManger = std::make_shared<DeviceManagerGL>();
         break;
     }
-    case GraphicsAPI::Vulkan:
-    {
-        mDevice = std::make_shared<DeviceVK>();
+    case GraphicsAPI::Vulkan: {
+        mDeviceManger = std::make_shared<DeviceManagerVK>();
         break;
     }
-    default:
-    {
+    default: {
         return false;
     }
     }
@@ -44,30 +41,27 @@ bool Engine::initialize(GraphicsAPI inGraphicsAPI)
     return true;
 }
 
-std::shared_ptr<Window> Engine::createWindow(const std::string &inTitle, std::size_t inWidth, std::size_t inHeight)
+std::shared_ptr<Window> Engine::createWindow(const std::string& inTitle, std::size_t inWidth, std::size_t inHeight)
 {
     std::shared_ptr<Window> window = nullptr;
     switch (mGraphicsAPI) {
     case GraphicsAPI::Vulkan:
-    case GraphicsAPI::OpenGL:
-    {
+    case GraphicsAPI::OpenGL: {
         WindowSDL::initializeSDL(shared_from_this());
         window = std::make_shared<WindowSDL>(shared_from_this(), inTitle, inWidth, inHeight);
         break;
     }
-    default:
-    {
+    default: {
         SIGMA_ASSERT(false, "Unknown Graphics API");
         break;
     }
     }
 
-    if (!mDeviceInitialized)
-    {
+    if (!mDeviceInitialized) {
         auto exts = window->requiredExtensions(mGraphicsAPI);
         mRequiredExtensions[mGraphicsAPI].insert(exts.begin(), exts.end());
 
-        if (mDevice->initialize(mRequiredExtensions[mGraphicsAPI]))
+        if (mDeviceManger->initialize(mRequiredExtensions[mGraphicsAPI]))
             mDeviceInitialized = true;
         else
             window = nullptr;
@@ -80,7 +74,6 @@ std::shared_ptr<Window> Engine::createWindow(const std::string &inTitle, std::si
 
     return window;
 }
-
 
 void Engine::addEmitter(std::weak_ptr<EventEmitter> inEmitter)
 {
@@ -104,9 +97,9 @@ void Engine::removeListener(std::weak_ptr<EventListener> inListener)
     mEventListeners.erase(it, mEventListeners.end());
 }
 
-std::shared_ptr<Device> Engine::graphicsDevice()
+std::shared_ptr<DeviceManager> Engine::deviceManager()
 {
-    return mDevice;
+    return mDeviceManger;
 }
 
 bool Engine::process()
@@ -114,7 +107,7 @@ bool Engine::process()
     auto listIt = std::remove_if(mEventListeners.begin(), mEventListeners.end(), [](auto a) { return a.lock() == nullptr; });
     mEventListeners.erase(listIt, mEventListeners.end());
 
-    auto emitIt = std::remove_if(mEventEmitters.begin(), mEventEmitters.end(), [&](auto e){
+    auto emitIt = std::remove_if(mEventEmitters.begin(), mEventEmitters.end(), [&](auto e) {
         auto ptr = e.lock();
         if (ptr)
             return !ptr->process(mEventListeners);

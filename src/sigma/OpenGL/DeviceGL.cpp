@@ -12,61 +12,28 @@
 #include <cassert>
 #include <iostream>
 
-void glDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
+DeviceType DeviceGL::type() const
 {
-    switch (severity) {
-    case GL_DEBUG_SEVERITY_LOW:
-        SIGMA_ERROR("0x{:x}: {}", id, message);
-        break;
-    case GL_DEBUG_SEVERITY_MEDIUM:
-        SIGMA_ERROR("0x{:x}: {}", id, message);
-        break;
-    case GL_DEBUG_SEVERITY_HIGH:
-        SIGMA_CRITICAL("0x{:x}: {}", id, message);
-        break;
-    default:
-        return;
-    }
+    return DeviceType::Unknown; // TODO: there has to be a way to get the gpu type
 }
 
-bool DeviceGL::initialize(const std::set<std::string> &inRequiredExtensions)
+uint32_t DeviceGL::maxGraphicsQueues() const
 {
-    gladLoadGL();
+    return 1;
+}
 
-    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-    glDebugMessageCallback(glDebugCallback, nullptr);
-    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_LOW, 0, nullptr, true);
-    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_MEDIUM, 0, nullptr, true);
-    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_HIGH, 0, nullptr, true);
-    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, false);
+uint32_t DeviceGL::maxComputeQueues() const
+{
+    return 1; // TODO: return 0 if compute is not supported
+}
 
-    GLint extensionCount;
-    glGetIntegerv(GL_NUM_EXTENSIONS, &extensionCount);
-    for (GLint i = 0; i < extensionCount; ++i) {
-        const char* ext = reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, static_cast<GLuint>(i)));
-        mExtensions.insert(ext);
-    }
+bool DeviceGL::supportsSurface(std::shared_ptr<Surface> inSurface) const
+{
+    return true;
+}
 
-    SIGMA_INFO("Vendor: {}", glGetString(GL_VENDOR));
-    SIGMA_INFO("Model: {}", glGetString(GL_RENDERER));
-    SIGMA_INFO("Version: {}", glGetString(GL_VERSION));
-    // TODO: Get total video memory http://nasutechtips.blogspot.com/2011/02/how-to-get-gpu-memory-size-and-usage-in.html
-
-    bool hasMissingExtensions = false;
-    for(auto reqExt: inRequiredExtensions)
-    {
-        if(!mExtensions.count(reqExt))
-        {
-            hasMissingExtensions = true;
-            SIGMA_ERROR("Missing Required OpenGL Extension: {}", reqExt);
-        }
-    }
-
-    if (hasMissingExtensions)
-    {
-        SIGMA_INFO("Supported OpenGL Extensions: {}", fmt::join(mExtensions.begin(), mExtensions.end(), ","));
-    }
-
+bool DeviceGL::initialize(const std::vector<std::shared_ptr<Surface>>& inSurfaces)
+{
     return true;
 }
 

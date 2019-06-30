@@ -23,7 +23,7 @@ class SurfaceSDLVK : public SurfaceVK {
 public:
     SurfaceSDLVK(SDL_Window *inWindow);
 
-    bool initialize(std::shared_ptr<Device> inDevice) override;
+    bool initialize(std::shared_ptr<DeviceManager> inDevice, uint32_t inWidth, uint32_t inHeight) override;
 private:
     SDL_Window *mWindow = nullptr;
 };
@@ -46,6 +46,8 @@ public:
     virtual bool initialize() override;
 
     virtual void swapBuffer() override;
+
+    virtual std::shared_ptr<Surface> surface() override;
 
     SDL_Window* handle();
 

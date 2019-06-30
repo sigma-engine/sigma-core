@@ -5,7 +5,7 @@
 #include <set>
 #include <vector>
 
-class Window;
+class Surface;
 
 enum class DataType;
 
@@ -20,11 +20,33 @@ struct VertexMemberDescription;
 class IndexBuffer;
 enum class PrimitiveType;
 
+enum class DeviceType
+{
+    DiscreteGPU,
+    IntegratedGPU,
+    Unknown
+};
+
+struct DeviceUsageParams
+{
+    uint32_t graphicsQueueCount;
+    uint32_t computeQueueCount;
+    std::shared_ptr<Surface> presentSurface;
+};
+
 class Device {
 public:
     virtual ~Device() = default;
 
-    virtual bool initialize(const std::set<std::string> &inRequiredExtensions) = 0;
+    virtual DeviceType type() const = 0;
+
+    virtual uint32_t maxGraphicsQueues() const = 0;
+
+    virtual uint32_t maxComputeQueues() const = 0;
+
+    virtual bool supportsSurface(std::shared_ptr<Surface> inSurface) const = 0;
+
+    virtual bool initialize(const std::vector<std::shared_ptr<Surface>>& inSurfaces) = 0;
 
     virtual std::shared_ptr<Shader> createShader(ShaderType inType, const std::string& inCode) = 0;
 

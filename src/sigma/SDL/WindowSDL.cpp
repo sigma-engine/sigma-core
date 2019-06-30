@@ -2,7 +2,7 @@
 
 #include <sigma/Engine.hpp>
 #include <sigma/Log.hpp>
-#include <sigma/Vulkan/DeviceVK.hpp>
+#include <sigma/Vulkan/DeviceManagerVK.hpp>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_vulkan.h>
@@ -141,7 +141,7 @@ std::set<std::string> WindowSDL::requiredExtensions(GraphicsAPI inGraphicsAPI) c
 
 bool WindowSDL::initialize()
 {
-    if (!mSurface->initialize(mEngine->graphicsDevice()))
+    if (!mSurface->initialize(mEngine->deviceManager(), mWidth, mHeight))
     {
         return false;
     }
@@ -152,6 +152,11 @@ bool WindowSDL::initialize()
 void WindowSDL::swapBuffer()
 {
     SDL_GL_SwapWindow(mWindow);
+}
+
+std::shared_ptr<Surface> WindowSDL::surface()
+{
+    return mSurface;
 }
 
 SDL_Window* WindowSDL::handle()
@@ -207,10 +212,12 @@ SurfaceSDLVK::SurfaceSDLVK(SDL_Window *inWindow)
 {
 }
 
-bool SurfaceSDLVK::initialize(std::shared_ptr<Device> inDevice)
+bool SurfaceSDLVK::initialize(std::shared_ptr<DeviceManager> inDevice, uint32_t inWidth, uint32_t inHeight)
 {
-    SIGMA_ASSERT(std::dynamic_pointer_cast<DeviceVK>(inDevice) != nullptr, "Incorrect Device type");
-    mInstance = std::static_pointer_cast<DeviceVK>(inDevice);
+    SIGMA_ASSERT(std::dynamic_pointer_cast<DeviceManagerVK>(inDevice) != nullptr, "Incorrect Device type");
+    mInstance = std::static_pointer_cast<DeviceManagerVK>(inDevice);
+    mWidth = inWidth;
+    mHeight = inHeight;
     if(!SDL_Vulkan_CreateSurface(mWindow, mInstance->handle(), &mSurface))
     {
         SIGMA_ERROR(SDL_GetError());

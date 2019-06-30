@@ -4,7 +4,15 @@
 
 class DeviceGL : public Device {
 public:
-    virtual bool initialize(const std::set<std::string> &inRequiredExtensions) override;
+    virtual DeviceType type() const override;
+
+    virtual uint32_t maxGraphicsQueues() const override;
+
+    virtual uint32_t maxComputeQueues() const override;
+
+    virtual bool supportsSurface(std::shared_ptr<Surface> inSurface) const override;
+
+    virtual bool initialize(const std::vector<std::shared_ptr<Surface> > &inSurfaces) override;
 
     virtual std::shared_ptr<Shader> createShader(ShaderType inType, const std::string& inCode) override;
 
@@ -15,7 +23,4 @@ public:
     virtual std::shared_ptr<IndexBuffer> createIndexBuffer(PrimitiveType inPrimitive, DataType inDataType) override;
 
     virtual void draw(std::shared_ptr<Program> inProgram, std::shared_ptr<VertexBuffer> inVertexBuffer, std::shared_ptr<IndexBuffer> inIndexBuffer) override;
-
-private:
-    std::set<std::string> mExtensions;
 };

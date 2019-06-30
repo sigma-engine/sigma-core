@@ -2,11 +2,11 @@
 
 #include <memory>
 
-class Device;
+class DeviceManager;
 
 class Surface {
 public:
     virtual ~Surface() = default;
 
-    virtual bool initialize(std::shared_ptr<Device> inDevice) = 0;
+    virtual bool initialize(std::shared_ptr<DeviceManager> inDevice, uint32_t inWidth, uint32_t inHeight) = 0;
 };
