@@ -9,7 +9,10 @@ find_package(SDL2 REQUIRED)
 find_package(glad REQUIRED)
 find_package(Vulkan REQUIRED)
 
+include(cmake/GLSL.cmake)
+
 add_library(sigma-core
+	include/sigma/Rect.hpp
 	include/sigma/Event.hpp
 	include/sigma/EventEmitter.hpp
 	include/sigma/EventListener.hpp
@@ -25,6 +28,12 @@ add_library(sigma-core
 
 	include/sigma/Shader.hpp
 	src/sigma/Shader.cpp
+
+	include/sigma/RenderPass.hpp
+	src/sigma/RenderPass.cpp
+
+	include/sigma/Pipeline.hpp
+	src/sigma/Pipeline.cpp
 
 	include/sigma/VertexBuffer.hpp
 	src/sigma/VertexBuffer.cpp
@@ -59,6 +68,12 @@ add_library(sigma-core
 	include/sigma/OpenGL/ShaderGL.hpp
 	src/sigma/OpenGL/ShaderGL.cpp
 
+	include/sigma/OpenGL/RenderPassGL.hpp
+	src/sigma/OpenGL/RenderPassGL.cpp
+
+	include/sigma/OpenGL/PipelineGL.hpp
+	src/sigma/OpenGL/PipelineGL.cpp
+
 	include/sigma/OpenGL/ProgramGL.hpp
 	src/sigma/OpenGL/ProgramGL.cpp
 
@@ -76,6 +91,15 @@ add_library(sigma-core
 
 	include/sigma/Vulkan/SurfaceVK.hpp
 	src/sigma/Vulkan/SurfaceVK.cpp
+
+	include/sigma/Vulkan/ShaderVK.hpp
+	src/sigma/Vulkan/ShaderVK.cpp
+
+	include/sigma/Vulkan/RenderPassVK.hpp
+	src/sigma/Vulkan/RenderPassVK.cpp
+
+	include/sigma/Vulkan/PipelineVK.hpp
+	src/sigma/Vulkan/PipelineVK.cpp
 
 	src/sigma/Vulkan/ExtensionsVK.cpp
 
@@ -106,8 +130,12 @@ PUBLIC
 )
 
 add_executable(simple-game
+	shaders/simple.vert
+	shaders/simple.frag	
+
 	src/main.cpp
 )
+compile_glsl_sources(simple-game)
 
 target_link_libraries(simple-game
 PUBLIC

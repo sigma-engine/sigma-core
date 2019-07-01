@@ -5,6 +5,8 @@
 #include <sigma/Shader.hpp>
 #include <sigma/VertexBuffer.hpp>
 #include <sigma/IndexBuffer.hpp>
+#include <sigma/Pipeline.hpp>
+#include <sigma/RenderPass.hpp>
 #include <sigma/Surface.hpp>
 #include <glm/vec3.hpp>
 #include <sigma/Log.hpp>
@@ -26,7 +28,7 @@ int main(int argc, char const *argv[])
     (void)argc;
     (void)argv;
     auto engine = Engine::create();
-    if (!engine->initialize(GraphicsAPI::OpenGL))
+    if (!engine->initialize(GraphicsAPI::Vulkan))
         return -1;
 
     auto deviceManager = engine->deviceManager();
@@ -46,34 +48,29 @@ int main(int argc, char const *argv[])
     if (!device->initialize({window->surface()}))
         return -1;
 
-//    auto vertexShader = device->createShader(ShaderType::VertexShader, R"(
-//        #version 450
-//        layout(location = 0) in vec3 position;
-//        layout(location = 1) in vec3 color;
-//        layout(location = 0) uniform sampler2D texture;
+    auto vertexShader = device->createShader(ShaderType::VertexShader, "shaders/simple.vert");
+    if (!vertexShader)
+        return -1;
 
-//        out vec3 vColor;
+    auto fragmentShader = device->createShader(ShaderType::FragmentShader, "shaders/simple.frag");
+    if (!fragmentShader)
+        return -1;
 
-//        void main()
-//        {
-//            vColor = color;
-//            gl_Position = vec4(position, 1);
-//        }
-//    )");
-    
-//    auto fragmentShader = device->createShader(ShaderType::FragmentShader, R"(
-//        #version 450
+    RenderPassCreateParams renderPassParams = {
+        {{AttachmentType::ColorAttachment, window->surface()->format()}}
+    };
+    auto renderPass = device->createRenderPass(renderPassParams);
+    if (!renderPass)
+        return -1;
 
-//        layout(location = 0) out vec4 color;
-//        layout(location = 0) uniform sampler2D texture;
-
-//        in vec3 vColor;
-
-//        void main()
-//        {
-//            color = vec4(vColor, 1);
-//        }
-//    )");
+    PipelineCreateParams pipelineParams = {
+        {{0,0}, window->surface()->size()},
+        renderPass,
+        {vertexShader, fragmentShader}
+    };
+    auto pipeline = device->createPipeline(pipelineParams);
+    if (!pipeline)
+        return -1;
     
 //    auto program = device->createProgram({vertexShader, fragmentShader});
 

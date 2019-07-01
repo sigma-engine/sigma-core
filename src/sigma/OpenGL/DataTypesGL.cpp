@@ -1,5 +1,7 @@
 #include <sigma/OpenGL/DataTypesGL.hpp>
 
+#include <sigma/RenderPass.hpp>
+
 #include <cassert>
 
 std::size_t sizeOfDataType(DataType inType)
@@ -45,4 +47,9 @@ GLenum baseTypeOfDataType(DataType inType)
     }
     assert(false && "Unknown DataType");
     return 0;
+}
+
+ImageFormat convertImageFormatGL(GLenum inFormat)
+{
+    return ImageFormat::Unknown;
 }

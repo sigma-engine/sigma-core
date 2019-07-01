@@ -14,6 +14,10 @@ class SurfaceVK : public Surface {
 public:
     virtual ~SurfaceVK();
 
+    virtual glm::uvec2 size() const override;
+
+    virtual ImageFormat format() const;
+
     VkSurfaceKHR handle() { return mSurface; }
 
     bool createSwapChain(std::shared_ptr<DeviceVK> inDevice, const SurfaceSwapChainInfoVK &inInfo);

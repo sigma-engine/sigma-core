@@ -207,6 +207,12 @@ SurfaceSDLGL::~SurfaceSDLGL()
         SDL_GL_DeleteContext(mHandle);
 }
 
+bool SurfaceSDLGL::initialize(std::shared_ptr<DeviceManager> inDevice, uint32_t inWidth, uint32_t inHeight)
+{
+    // TODO: Pixel format
+    return SurfaceGL::initialize(inDevice, inWidth, inHeight);
+}
+
 SurfaceSDLVK::SurfaceSDLVK(SDL_Window *inWindow)
     : mWindow(inWindow)
 {

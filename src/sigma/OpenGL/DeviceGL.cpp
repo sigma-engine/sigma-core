@@ -5,12 +5,14 @@
 #include <sigma/OpenGL/ProgramGL.hpp>
 #include <sigma/OpenGL/ShaderGL.hpp>
 #include <sigma/OpenGL/VertexBufferGL.hpp>
+#include <sigma/OpenGL/PipelineGL.hpp>
+#include <sigma/OpenGL/RenderPassGL.hpp>
 
 #include <glad/glad.h>
 
 #include <algorithm>
 #include <cassert>
-#include <iostream>
+#include <fstream>
 
 DeviceType DeviceGL::type() const
 {
@@ -37,13 +39,31 @@ bool DeviceGL::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
     return true;
 }
 
-std::shared_ptr<Shader> DeviceGL::createShader(ShaderType inType, const std::string& inCode)
+std::shared_ptr<Shader> DeviceGL::createShader(ShaderType inType, const std::string& inSourcePath)
 {
+    std::ifstream file("opengl/" + inSourcePath, std::ios::ate | std::ios::binary);
+    if (!file.is_open())
+        return nullptr;
+    size_t fsize = file.tellg();
+    std::string code(fsize, '\n');
+    file.seekg(0);
+    file.read(code.data(), fsize);
+
     auto shader = std::make_shared<ShaderGL>(inType);
-    if (shader->compile(inCode)) {
+    if (shader->compile(code)) {
         return std::move(shader);
     }
     return nullptr;
+}
+
+std::shared_ptr<RenderPass> DeviceGL::createRenderPass(const RenderPassCreateParams &inParams)
+{
+    return std::make_shared<RenderPassGL>();
+}
+
+std::shared_ptr<Pipeline> DeviceGL::createPipeline(const PipelineCreateParams &inParams)
+{
+    return std::make_shared<PipelineGL>();
 }
 
 std::shared_ptr<Program> DeviceGL::createProgram(const std::vector<std::shared_ptr<Shader>>& inShaders)

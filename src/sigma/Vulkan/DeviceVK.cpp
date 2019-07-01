@@ -2,9 +2,13 @@
 
 #include <sigma/Vulkan/SurfaceVK.hpp>
 #include <sigma/Vulkan/UtilVK.hpp>
+#include <sigma/Vulkan/ShaderVK.hpp>
+#include <sigma/Vulkan/PipelineVK.hpp>
+#include <sigma/Vulkan/RenderPassVK.hpp>
 
 #include <sigma/Log.hpp>
 
+#include <fstream>
 
 DeviceVK::DeviceVK(VkInstance inInstance, VkPhysicalDevice inDevice, const std::vector<std::string> &inEnabledLayers)
     : mInstance(inInstance)
@@ -222,10 +226,40 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
     return true;
 }
 
-std::shared_ptr<Shader> DeviceVK::createShader(ShaderType inType, const std::string& inCode)
+std::shared_ptr<Shader> DeviceVK::createShader(ShaderType inType, const std::string& inSourcePath)
 {
-    SIGMA_ASSERT(false, "Not Implemented!");
-    return nullptr;
+    std::ifstream file("vulkan/" + inSourcePath, std::ios::ate | std::ios::binary);
+    if (!file.is_open())
+        return nullptr;
+    size_t fsize = file.tellg();
+    std::vector<uint32_t> data(fsize / sizeof(uint32_t));
+    file.seekg(0);
+    file.read(reinterpret_cast<char*>(data.data()), fsize);
+
+    std::shared_ptr<ShaderVK> shader = std::make_shared<ShaderVK>(inType, shared_from_this());
+    if (!shader->initialize(data))
+    {
+        return nullptr;
+    }
+    return shader;
+}
+
+std::shared_ptr<RenderPass> DeviceVK::createRenderPass(const RenderPassCreateParams &inParams)
+{
+    auto renderPass = std::make_shared<RenderPassVK>(shared_from_this());
+    if (!renderPass->initialize(inParams))
+        return nullptr;
+    return renderPass;
+}
+
+std::shared_ptr<Pipeline> DeviceVK::createPipeline(const PipelineCreateParams &inParams)
+{
+    std::shared_ptr<PipelineVK> pipeline = std::make_shared<PipelineVK>(shared_from_this());
+    if (!pipeline->initialize(inParams))
+    {
+        return nullptr;
+    }
+    return pipeline;
 }
 
 std::shared_ptr<Program> DeviceVK::createProgram(const std::vector<std::shared_ptr<Shader>>& inShaders)

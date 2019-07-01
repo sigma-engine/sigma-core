@@ -3,6 +3,7 @@
 #include <sigma/Log.hpp>
 #include <sigma/Vulkan/DeviceManagerVK.hpp>
 #include <sigma/Vulkan/DeviceVK.hpp>
+#include <sigma/Vulkan/UtilVK.hpp>
 
 SurfaceVK::~SurfaceVK()
 {
@@ -22,6 +23,16 @@ SurfaceVK::~SurfaceVK()
     if (mSurface && mInstance) {
         vkDestroySurfaceKHR(mInstance->handle(), mSurface, nullptr);
     }
+}
+
+glm::uvec2 SurfaceVK::size() const
+{
+    return {mWidth, mHeight};
+}
+
+ImageFormat SurfaceVK::format() const
+{
+    return convertImageFormatVK(mSurfaceFormat.format);
 }
 
 bool SurfaceVK::createSwapChain(std::shared_ptr<DeviceVK> inDevice, const SurfaceSwapChainInfoVK &inInfo)
@@ -97,7 +108,7 @@ bool SurfaceVK::createSwapChain(std::shared_ptr<DeviceVK> inDevice, const Surfac
         createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
         createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
         createInfo.subresourceRange.baseMipLevel = 0;
-        createInfo.subresourceRange.layerCount = 1;
+        createInfo.subresourceRange.levelCount = 1;
         createInfo.subresourceRange.baseArrayLayer = 0;
         createInfo.subresourceRange.layerCount = 1;
         if (vkCreateImageView(mDevice->handle(), &createInfo, nullptr, &mImageViews[i]) != VK_SUCCESS)

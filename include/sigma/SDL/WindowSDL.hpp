@@ -14,6 +14,8 @@ public:
     SurfaceSDLGL(SDL_Window* inWindow);
 
     virtual ~SurfaceSDLGL();
+
+    bool initialize(std::shared_ptr<DeviceManager> inDevice, uint32_t inWidth, uint32_t inHeight) override;
 private:
     SDL_Window *mWindow = nullptr;
     void* mHandle = nullptr;

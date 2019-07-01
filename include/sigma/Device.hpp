@@ -1,8 +1,10 @@
 #pragma once
 
+#include <sigma/Rect.hpp>
+
 #include <memory>
-#include <string>
 #include <set>
+#include <string>
 #include <vector>
 
 class Surface;
@@ -12,6 +14,12 @@ enum class DataType;
 class Shader;
 enum class ShaderType;
 
+class RenderPassCreateParams;
+class RenderPass;
+
+struct PipelineCreateParams;
+class Pipeline;
+
 class Program;
 
 class VertexBuffer;
@@ -20,18 +28,10 @@ struct VertexMemberDescription;
 class IndexBuffer;
 enum class PrimitiveType;
 
-enum class DeviceType
-{
+enum class DeviceType {
     DiscreteGPU,
     IntegratedGPU,
     Unknown
-};
-
-struct DeviceUsageParams
-{
-    uint32_t graphicsQueueCount;
-    uint32_t computeQueueCount;
-    std::shared_ptr<Surface> presentSurface;
 };
 
 class Device {
@@ -48,7 +48,11 @@ public:
 
     virtual bool initialize(const std::vector<std::shared_ptr<Surface>>& inSurfaces) = 0;
 
-    virtual std::shared_ptr<Shader> createShader(ShaderType inType, const std::string& inCode) = 0;
+    virtual std::shared_ptr<Shader> createShader(ShaderType inType, const std::string& inSourcePath) = 0;
+
+    virtual std::shared_ptr<RenderPass> createRenderPass(const RenderPassCreateParams &inParams) = 0;
+
+    virtual std::shared_ptr<Pipeline> createPipeline(const PipelineCreateParams &inParams) = 0;
 
     virtual std::shared_ptr<Program> createProgram(const std::vector<std::shared_ptr<Shader>>& inShaders) = 0;
 
