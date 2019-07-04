@@ -2,10 +2,9 @@
 
 class Event;
 
-class EventListener
-{
+class EventListener {
 public:
-	virtual ~EventListener() = default;
+    virtual ~EventListener() = default;
 
-	virtual void processEvent(Event *inEvent) = 0;
+    virtual void processEvent(Event* inEvent) = 0;
 };

@@ -6,6 +6,8 @@
 
 class DeviceManager;
 enum class ImageFormat;
+class RenderPass;
+class CommandBuffer;
 
 class Surface {
 public:
@@ -16,4 +18,10 @@ public:
     virtual glm::uvec2 size() const = 0;
 
     virtual ImageFormat format() const = 0;
+
+    virtual std::shared_ptr<RenderPass> renderPass() const = 0;
+
+    virtual std::shared_ptr<CommandBuffer> beginFrame() = 0;
+
+    virtual void endFrame() = 0;
 };

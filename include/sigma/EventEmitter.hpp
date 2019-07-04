@@ -1,15 +1,15 @@
 #pragma once
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 class EventListener;
 
-class EventEmitter
-{
+class EventEmitter {
 public:
-	virtual ~EventEmitter() = default;
-	
-    virtual bool process(const std::vector<std::weak_ptr<EventListener>> &inListeners) = 0;
+    virtual ~EventEmitter() = default;
+
+    virtual bool process(const std::vector<std::weak_ptr<EventListener>>& inListeners) = 0;
+
 private:
 };

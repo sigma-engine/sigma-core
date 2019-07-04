@@ -23,6 +23,12 @@ add_library(sigma-core
 	include/sigma/Device.hpp
 	src/sigma/Device.cpp
 
+	include/sigma/CommandBuffer.hpp
+	src/sigma/CommandBuffer.cpp
+
+	include/sigma/Framebuffer.hpp
+	src/sigma/Framebuffer.cpp
+
 	include/sigma/Surface.hpp
 	src/sigma/Surface.cpp
 
@@ -59,6 +65,12 @@ add_library(sigma-core
 	include/sigma/OpenGL/DeviceGL.hpp
 	src/sigma/OpenGL/DeviceGL.cpp
 
+	include/sigma/OpenGL/CommandBufferGL.hpp
+	src/sigma/OpenGL/CommandBufferGL.cpp
+
+	include/sigma/OpenGL/FramebufferGL.hpp
+	src/sigma/OpenGL/FramebufferGL.cpp
+
 	include/sigma/OpenGL/SurfaceGL.hpp
 	src/sigma/OpenGL/SurfaceGL.cpp
 
@@ -88,6 +100,12 @@ add_library(sigma-core
 
 	include/sigma/Vulkan/DeviceVK.hpp
 	src/sigma/Vulkan/DeviceVK.cpp
+
+	include/sigma/Vulkan/CommandBufferVK.hpp
+	src/sigma/Vulkan/CommandBufferVK.cpp
+
+	include/sigma/Vulkan/FramebufferVK.hpp
+	src/sigma/Vulkan/FramebufferVK.cpp
 
 	include/sigma/Vulkan/SurfaceVK.hpp
 	src/sigma/Vulkan/SurfaceVK.cpp

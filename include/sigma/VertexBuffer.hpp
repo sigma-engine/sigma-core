@@ -6,15 +6,13 @@
 #include <string>
 #include <vector>
 
-struct VertexMemberDescription
-{
+struct VertexMemberDescription {
     DataType type;
     std::string name;
     bool normalized = false;
 };
 
-struct VertexMember
-{
+struct VertexMember {
     std::size_t offset;
     std::size_t size;
     DataType type;
@@ -22,27 +20,26 @@ struct VertexMember
     bool normalized;
 };
 
-class VertexLayout
-{
+class VertexLayout {
 public:
-    VertexLayout(const std::vector<VertexMember> &inMembers, std::size_t inStride);
+    VertexLayout(const std::vector<VertexMember>& inMembers, std::size_t inStride);
 
     std::size_t stride() const;
 
     std::vector<VertexMember>::const_iterator begin() const;
 
     std::vector<VertexMember>::const_iterator end() const;
+
 private:
     std::size_t mStride;
     std::vector<VertexMember> mMembers;
 };
 
-class VertexBuffer
-{
+class VertexBuffer {
 public:
-	virtual ~VertexBuffer() = default;
+    virtual ~VertexBuffer() = default;
 
-    virtual const VertexLayout &layout() const = 0;
+    virtual const VertexLayout& layout() const = 0;
 
-    virtual void setData(const void *inData, std::size_t inSize) = 0;
+    virtual void setData(const void* inData, std::size_t inSize) = 0;
 };

@@ -8,8 +8,7 @@
 class Shader;
 class RenderPass;
 
-struct PipelineCreateParams
-{
+struct PipelineCreateParams {
     Rect<uint32_t> viewportRect;
     std::shared_ptr<RenderPass> renderPass;
     std::vector<std::shared_ptr<Shader>> shaders;

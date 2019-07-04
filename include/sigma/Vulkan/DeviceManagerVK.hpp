@@ -12,11 +12,12 @@ class DeviceManagerVK : public std::enable_shared_from_this<DeviceManagerVK>, pu
 public:
     virtual ~DeviceManagerVK();
 
-    virtual bool initialize(const std::set<std::string> &inRequiredExtensions) override;
+    virtual bool initialize(const std::set<std::string>& inRequiredExtensions) override;
 
-    virtual void enumerateSurfaceDevices(std::shared_ptr<Surface> inSurface, std::vector<std::shared_ptr<Device>> &outDevices) override;
+    virtual void enumerateSurfaceDevices(std::shared_ptr<Surface> inSurface, std::vector<std::shared_ptr<Device>>& outDevices) override;
 
     VkInstance handle() { return mHandle; }
+
 protected:
 #ifndef NDEBUG
     VkDebugUtilsMessengerEXT mDebugMessenger = nullptr;

@@ -14,15 +14,13 @@ RenderPassVK::~RenderPassVK()
         vkDestroyRenderPass(mDevice->handle(), mRenderPass, nullptr);
 }
 
-bool RenderPassVK::initialize(const RenderPassCreateParams &inParams)
+bool RenderPassVK::initialize(const RenderPassCreateParams& inParams)
 {
     std::vector<VkAttachmentDescription> colorAttachments;
     std::vector<VkAttachmentReference> colorAttachmentRefs;
-    for(const auto &attch: inParams.attachments)
-    {
+    for (const auto& attch : inParams.attachments) {
         switch (attch.type) {
-        case AttachmentType::ColorAttachment:
-        {
+        case AttachmentType::ColorAttachment: {
             VkAttachmentDescription colorAtt = {};
             colorAtt.format = convertImageFormatVK(attch.format);
             colorAtt.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -55,15 +53,24 @@ bool RenderPassVK::initialize(const RenderPassCreateParams &inParams)
     subpass.preserveAttachmentCount = 0;
     subpass.pPreserveAttachments = nullptr;
 
+    VkSubpassDependency dependency = {};
+    dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+    dependency.dstSubpass = 0;
+    dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependency.srcAccessMask = 0;
+    dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
     VkRenderPassCreateInfo renderPassInfo = {};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
     renderPassInfo.attachmentCount = colorAttachments.size();
     renderPassInfo.pAttachments = colorAttachments.data();
     renderPassInfo.subpassCount = 1;
     renderPassInfo.pSubpasses = &subpass;
+    renderPassInfo.dependencyCount = 1;
+    renderPassInfo.pDependencies = &dependency;
 
-    if (vkCreateRenderPass(mDevice->handle(), &renderPassInfo, nullptr, &mRenderPass) != VK_SUCCESS)
-    {
+    if (vkCreateRenderPass(mDevice->handle(), &renderPassInfo, nullptr, &mRenderPass) != VK_SUCCESS) {
         return false;
     }
 

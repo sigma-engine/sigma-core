@@ -2,9 +2,9 @@
 
 #include <sigma/EventEmitter.hpp>
 #include <sigma/EventListener.hpp>
-#include <sigma/Window.hpp>
 #include <sigma/OpenGL/SurfaceGL.hpp>
 #include <sigma/Vulkan/SurfaceVK.hpp>
+#include <sigma/Window.hpp>
 
 struct SDL_Window;
 class Device;
@@ -16,18 +16,20 @@ public:
     virtual ~SurfaceSDLGL();
 
     bool initialize(std::shared_ptr<DeviceManager> inDevice, uint32_t inWidth, uint32_t inHeight) override;
+
 private:
-    SDL_Window *mWindow = nullptr;
+    SDL_Window* mWindow = nullptr;
     void* mHandle = nullptr;
 };
 
 class SurfaceSDLVK : public SurfaceVK {
 public:
-    SurfaceSDLVK(SDL_Window *inWindow);
+    SurfaceSDLVK(SDL_Window* inWindow);
 
     bool initialize(std::shared_ptr<DeviceManager> inDevice, uint32_t inWidth, uint32_t inHeight) override;
+
 private:
-    SDL_Window *mWindow = nullptr;
+    SDL_Window* mWindow = nullptr;
 };
 
 class EventEmitterSDL : public EventEmitter {

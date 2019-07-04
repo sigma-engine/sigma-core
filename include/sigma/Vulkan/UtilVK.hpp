@@ -9,7 +9,6 @@
 struct VkExtensionProperties;
 struct VkLayerProperties;
 
-
 enum class ImageFormat;
 enum class ShaderType;
 

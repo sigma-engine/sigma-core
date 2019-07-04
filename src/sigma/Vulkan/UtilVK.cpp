@@ -1,12 +1,10 @@
 #include <sigma/Vulkan/UtilVK.hpp>
 
-#include <sigma/RenderPass.hpp>
 #include <sigma/Log.hpp>
+#include <sigma/RenderPass.hpp>
 #include <sigma/Shader.hpp>
 
 #include <vulkan/vulkan.h>
-
-
 
 std::ostream& operator<<(std::ostream& os, const VkExtensionProperties& prop)
 {

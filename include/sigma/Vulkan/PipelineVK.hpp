@@ -16,7 +16,9 @@ public:
 
     virtual ~PipelineVK();
 
-    bool initialize(const PipelineCreateParams &inParams);
+    VkPipeline handle() const { return mPipeline; }
+
+    bool initialize(const PipelineCreateParams& inParams);
 
 public:
     std::shared_ptr<DeviceVK> mDevice = nullptr;

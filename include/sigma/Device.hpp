@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 
+class CommandBuffer;
+
 class Surface;
 
 enum class DataType;
@@ -48,11 +50,13 @@ public:
 
     virtual bool initialize(const std::vector<std::shared_ptr<Surface>>& inSurfaces) = 0;
 
+    virtual std::shared_ptr<CommandBuffer> createCommandBuffer() = 0;
+
     virtual std::shared_ptr<Shader> createShader(ShaderType inType, const std::string& inSourcePath) = 0;
 
-    virtual std::shared_ptr<RenderPass> createRenderPass(const RenderPassCreateParams &inParams) = 0;
+    virtual std::shared_ptr<RenderPass> createRenderPass(const RenderPassCreateParams& inParams) = 0;
 
-    virtual std::shared_ptr<Pipeline> createPipeline(const PipelineCreateParams &inParams) = 0;
+    virtual std::shared_ptr<Pipeline> createPipeline(const PipelineCreateParams& inParams) = 0;
 
     virtual std::shared_ptr<Program> createProgram(const std::vector<std::shared_ptr<Shader>>& inShaders) = 0;
 

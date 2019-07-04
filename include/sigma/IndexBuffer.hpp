@@ -4,19 +4,17 @@
 
 #include <cstdint>
 
-enum class PrimitiveType
-{
-	Triangle
+enum class PrimitiveType {
+    Triangle
 };
 
-class IndexBuffer
-{
+class IndexBuffer {
 public:
-	virtual ~IndexBuffer() = default;
+    virtual ~IndexBuffer() = default;
 
     virtual DataType dataType() const = 0;
 
     virtual PrimitiveType primitiveType() const = 0;
 
-	virtual void setData(const void *inData, std::size_t inSize) = 0;
+    virtual void setData(const void* inData, std::size_t inSize) = 0;
 };

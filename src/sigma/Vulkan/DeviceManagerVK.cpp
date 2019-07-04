@@ -5,9 +5,9 @@
 #include <sigma/Vulkan/UtilVK.hpp>
 
 #include <algorithm>
-#include <vector>
 #include <ostream>
 #include <string>
+#include <vector>
 
 #ifndef NDEBUG
 static VKAPI_ATTR VkBool32 VKAPI_CALL vkDebugCallback(
@@ -17,28 +17,23 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL vkDebugCallback(
     void* pUserData)
 {
     switch (inSeverity) {
-    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
-    {
+    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT: {
         SIGMA_TRACE(inCallbackData->pMessage);
         break;
     }
-    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
-    {
+    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT: {
         SIGMA_INFO(inCallbackData->pMessage);
         break;
     }
-    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
-    {
+    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT: {
         SIGMA_WARN(inCallbackData->pMessage);
         break;
     }
-    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
-    {
+    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT: {
         SIGMA_ERROR(inCallbackData->pMessage);
         break;
     }
-    default:
-    {
+    default: {
         break;
     }
     }
@@ -60,7 +55,7 @@ DeviceManagerVK::~DeviceManagerVK()
         vkDestroyInstance(mHandle, nullptr);
 }
 
-bool DeviceManagerVK::initialize(const std::set<std::string> &s)
+bool DeviceManagerVK::initialize(const std::set<std::string>& s)
 {
     mRequiredExtensions.insert(mRequiredExtensions.end(), s.begin(), s.end());
 
@@ -127,8 +122,7 @@ bool DeviceManagerVK::initialize(const std::set<std::string> &s)
         SIGMA_WARN("Skipping Missing Vulkan Layer: {}", *it);
     }
 
-    if (layerIt != mEnabledLayers.end())
-    {
+    if (layerIt != mEnabledLayers.end()) {
         SIGMA_INFO("Supported Vulkan Layers: {}", fmt::join(layerProperties.begin(), layerProperties.end(), ","));
         mEnabledLayers.erase(layerIt, mEnabledLayers.end());
     }
@@ -173,8 +167,7 @@ bool DeviceManagerVK::initialize(const std::set<std::string> &s)
         createInfo.pfnUserCallback = vkDebugCallback;
         createInfo.pUserData = nullptr;
 
-        if (vkCreateDebugUtilsMessengerEXT(mHandle, &createInfo, nullptr, &mDebugMessenger) != VK_SUCCESS)
-        {
+        if (vkCreateDebugUtilsMessengerEXT(mHandle, &createInfo, nullptr, &mDebugMessenger) != VK_SUCCESS) {
             SIGMA_ERROR("Could not create Debug Utils Messenger!");
             return false;
         }
@@ -183,14 +176,12 @@ bool DeviceManagerVK::initialize(const std::set<std::string> &s)
 
     std::vector<VkPhysicalDevice> physicalDevices;
     uint32_t physicalDeviceCount = 0;
-    if (vkEnumeratePhysicalDevices(mHandle, &physicalDeviceCount, nullptr) != VK_SUCCESS)
-    {
+    if (vkEnumeratePhysicalDevices(mHandle, &physicalDeviceCount, nullptr) != VK_SUCCESS) {
         SIGMA_ERROR("Could not create enumerate physical devices!");
         return false;
     }
     physicalDevices.resize(physicalDeviceCount);
-    if (vkEnumeratePhysicalDevices(mHandle, &physicalDeviceCount, physicalDevices.data()) != VK_SUCCESS)
-    {
+    if (vkEnumeratePhysicalDevices(mHandle, &physicalDeviceCount, physicalDevices.data()) != VK_SUCCESS) {
         SIGMA_ERROR("Could not create enumerate physical devices!");
         return false;
     }
@@ -203,13 +194,11 @@ bool DeviceManagerVK::initialize(const std::set<std::string> &s)
     return true;
 }
 
-void DeviceManagerVK::enumerateSurfaceDevices(std::shared_ptr<Surface> inSurface, std::vector<std::shared_ptr<Device> > &outDevices)
+void DeviceManagerVK::enumerateSurfaceDevices(std::shared_ptr<Surface> inSurface, std::vector<std::shared_ptr<Device>>& outDevices)
 {
     outDevices.clear();
-    for(auto device: mDevices)
-    {
-        if(device->supportsSurface(inSurface))
-        {
+    for (auto device : mDevices) {
+        if (device->supportsSurface(inSurface)) {
             outDevices.push_back(device);
         }
     }

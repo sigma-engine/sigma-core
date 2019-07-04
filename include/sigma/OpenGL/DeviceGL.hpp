@@ -2,7 +2,7 @@
 
 #include <sigma/Device.hpp>
 
-class DeviceGL : public Device {
+class DeviceGL : public Device, public std::enable_shared_from_this<DeviceGL> {
 public:
     virtual DeviceType type() const override;
 
@@ -14,11 +14,13 @@ public:
 
     virtual bool initialize(const std::vector<std::shared_ptr<Surface>>& inSurfaces) override;
 
+    virtual std::shared_ptr<CommandBuffer> createCommandBuffer() override;
+
     virtual std::shared_ptr<Shader> createShader(ShaderType inType, const std::string& inSourcePath) override;
 
-    virtual std::shared_ptr<RenderPass> createRenderPass(const RenderPassCreateParams &inParams) override;
+    virtual std::shared_ptr<RenderPass> createRenderPass(const RenderPassCreateParams& inParams) override;
 
-    virtual std::shared_ptr<Pipeline> createPipeline(const PipelineCreateParams &inParams) override;
+    virtual std::shared_ptr<Pipeline> createPipeline(const PipelineCreateParams& inParams) override;
 
     virtual std::shared_ptr<Program> createProgram(const std::vector<std::shared_ptr<Shader>>& inShaders) override;
 

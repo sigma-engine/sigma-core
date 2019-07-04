@@ -10,18 +10,16 @@
 
 class SurfaceVK;
 
-struct SurfaceSwapChainInfoVK
-{
+struct SurfaceSwapChainInfoVK {
     VkSurfaceCapabilitiesKHR capabilities;
     std::vector<VkSurfaceFormatKHR> formats;
     std::vector<VkPresentModeKHR> modes;
     std::optional<uint32_t> presentFamily;
 };
 
-
 class DeviceVK : public Device, public std::enable_shared_from_this<DeviceVK> {
 public:
-    DeviceVK(VkInstance inInstance, VkPhysicalDevice inDevice, const std::vector<std::string> &inEnabledLayers);
+    DeviceVK(VkInstance inInstance, VkPhysicalDevice inDevice, const std::vector<std::string>& inEnabledLayers);
 
     virtual ~DeviceVK();
 
@@ -35,15 +33,17 @@ public:
 
     virtual bool initialize(const std::vector<std::shared_ptr<Surface>>& inSurfaces) override;
 
-    virtual std::shared_ptr<Shader> createShader(ShaderType inType, const std::string &inSourcePath) override;
+    virtual std::shared_ptr<CommandBuffer> createCommandBuffer() override;
 
-    virtual std::shared_ptr<RenderPass> createRenderPass(const RenderPassCreateParams &inParams) override;
+    virtual std::shared_ptr<Shader> createShader(ShaderType inType, const std::string& inSourcePath) override;
 
-    virtual std::shared_ptr<Pipeline> createPipeline(const PipelineCreateParams &inParams) override;
+    virtual std::shared_ptr<RenderPass> createRenderPass(const RenderPassCreateParams& inParams) override;
 
-    virtual std::shared_ptr<Program> createProgram(const std::vector<std::shared_ptr<Shader>> &inShaders) override;
+    virtual std::shared_ptr<Pipeline> createPipeline(const PipelineCreateParams& inParams) override;
 
-    virtual std::shared_ptr<VertexBuffer> createVertexBuffer(const std::initializer_list<VertexMemberDescription> &inLayout) override;
+    virtual std::shared_ptr<Program> createProgram(const std::vector<std::shared_ptr<Shader>>& inShaders) override;
+
+    virtual std::shared_ptr<VertexBuffer> createVertexBuffer(const std::initializer_list<VertexMemberDescription>& inLayout) override;
 
     virtual std::shared_ptr<IndexBuffer> createIndexBuffer(PrimitiveType inPrimitive, DataType inDataType) override;
 
@@ -52,6 +52,11 @@ public:
     uint32_t graphicsQueueFamily() const;
 
     VkDevice handle() const { return mDevice; }
+
+    VkQueue getQueue(uint32_t inFamily) const;
+
+    VkQueue graphicsQueue() const;
+
 private:
     VkInstance mInstance = nullptr;
     VkPhysicalDevice mPhysicalDevice = nullptr;
@@ -64,6 +69,9 @@ private:
     VkPhysicalDeviceFeatures mPhysicalDeviceFeatures;
     std::optional<uint32_t> mGraphicsFamily;
     std::optional<uint32_t> mComputeFamily;
+
+    VkCommandPool mGraphicsCommandPool = nullptr;
+    std::vector<VkCommandBuffer> mFreeGraphicsBuffers;
 
     std::optional<SurfaceSwapChainInfoVK> getSwapChainInfo(std::shared_ptr<SurfaceVK> inSurface) const;
 };

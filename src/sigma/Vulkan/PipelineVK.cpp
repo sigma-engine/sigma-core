@@ -1,21 +1,19 @@
 #include <sigma/Vulkan/PipelineVK.hpp>
 
+#include <sigma/Log.hpp>
 #include <sigma/Vulkan/DeviceVK.hpp>
+#include <sigma/Vulkan/RenderPassVK.hpp>
 #include <sigma/Vulkan/ShaderVK.hpp>
 #include <sigma/Vulkan/UtilVK.hpp>
-#include <sigma/Vulkan/RenderPassVK.hpp>
-#include <sigma/Log.hpp>
 
 PipelineVK::PipelineVK(std::shared_ptr<DeviceVK> inDevice)
     : mDevice(inDevice)
 {
-
 }
 
 PipelineVK::~PipelineVK()
 {
-    if (mDevice)
-    {
+    if (mDevice) {
         if (mPipeline)
             vkDestroyPipeline(mDevice->handle(), mPipeline, nullptr);
         if (mLayout)
@@ -23,7 +21,7 @@ PipelineVK::~PipelineVK()
     }
 }
 
-bool PipelineVK::initialize(const PipelineCreateParams &inParams)
+bool PipelineVK::initialize(const PipelineCreateParams& inParams)
 {
     SIGMA_ASSERT(std::dynamic_pointer_cast<RenderPassVK>(inParams.renderPass), "Must use vulkan render pass with vulkan pipeline");
     mRenderPass = std::static_pointer_cast<RenderPassVK>(inParams.renderPass);
@@ -47,8 +45,8 @@ bool PipelineVK::initialize(const PipelineCreateParams &inParams)
     viewport.height = inParams.viewportRect.size.y;
 
     VkRect2D scissor = {};
-    scissor.offset = {0, 0};
-    scissor.extent = {inParams.viewportRect.size.x, inParams.viewportRect.size.y};
+    scissor.offset = { 0, 0 };
+    scissor.extent = { inParams.viewportRect.size.x, inParams.viewportRect.size.y };
 
     VkPipelineViewportStateCreateInfo viewportStateInfo = {};
     viewportStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -102,19 +100,18 @@ bool PipelineVK::initialize(const PipelineCreateParams &inParams)
     colorBlendInfo.blendConstants[2] = 0.0f;
     colorBlendInfo.blendConstants[3] = 0.0f;
 
-//    std::vector<VkDynamicState> dynamicStates = {
-//        VK_DYNAMIC_STATE_VIEWPORT,
-//        VK_DYNAMIC_STATE_LINE_WIDTH
-//    };
+    //    std::vector<VkDynamicState> dynamicStates = {
+    //        VK_DYNAMIC_STATE_VIEWPORT,
+    //        VK_DYNAMIC_STATE_LINE_WIDTH
+    //    };
 
-//    VkPipelineDynamicStateCreateInfo dynamicStateInfo = {};
-//    dynamicStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-//    dynamicStateInfo.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
-//    dynamicStateInfo.pDynamicStates = dynamicStates.data();
+    //    VkPipelineDynamicStateCreateInfo dynamicStateInfo = {};
+    //    dynamicStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+    //    dynamicStateInfo.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
+    //    dynamicStateInfo.pDynamicStates = dynamicStates.data();
 
     std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
-    for(const auto &shader: inParams.shaders)
-    {
+    for (const auto& shader : inParams.shaders) {
         SIGMA_ASSERT(std::dynamic_pointer_cast<ShaderVK>(shader), "Must use vulkan shader to create vulkan pipeline!");
         auto shaderVk = std::static_pointer_cast<ShaderVK>(shader);
         VkPipelineShaderStageCreateInfo shaderStageInfo = {};
@@ -132,8 +129,7 @@ bool PipelineVK::initialize(const PipelineCreateParams &inParams)
     pipelineLayoutInfo.pushConstantRangeCount = 0;
     pipelineLayoutInfo.pPushConstantRanges = nullptr;
 
-    if (vkCreatePipelineLayout(mDevice->handle(), &pipelineLayoutInfo, nullptr, &mLayout) != VK_SUCCESS)
-    {
+    if (vkCreatePipelineLayout(mDevice->handle(), &pipelineLayoutInfo, nullptr, &mLayout) != VK_SUCCESS) {
         return false;
     }
 
@@ -155,8 +151,7 @@ bool PipelineVK::initialize(const PipelineCreateParams &inParams)
     pipelineInfo.basePipelineHandle = nullptr;
     pipelineInfo.basePipelineIndex = -1;
 
-    if (vkCreateGraphicsPipelines(mDevice->handle(), nullptr, 1, &pipelineInfo, nullptr, &mPipeline) != VK_SUCCESS)
-    {
+    if (vkCreateGraphicsPipelines(mDevice->handle(), nullptr, 1, &pipelineInfo, nullptr, &mPipeline) != VK_SUCCESS) {
         return false;
     }
 

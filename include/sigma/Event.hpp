@@ -1,12 +1,10 @@
 #pragma once
 
-enum class EventType
-{
+enum class EventType {
     WindowClose
 };
 
-class Event
-{
+class Event {
 public:
     Event(EventType inType)
         : mType(inType)

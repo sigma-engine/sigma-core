@@ -1,10 +1,9 @@
 #include <sigma/OpenGL/DeviceManagerGL.hpp>
 
-#include <sigma/OpenGL/DeviceGL.hpp>
 #include <sigma/Log.hpp>
+#include <sigma/OpenGL/DeviceGL.hpp>
 
 #include <glad/glad.h>
-
 
 void glDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 {
@@ -28,7 +27,7 @@ DeviceManagerGL::DeviceManagerGL()
 {
 }
 
-bool DeviceManagerGL::initialize(const std::set<std::string> &inRequiredExtensions)
+bool DeviceManagerGL::initialize(const std::set<std::string>& inRequiredExtensions)
 {
     gladLoadGL();
 
@@ -52,24 +51,21 @@ bool DeviceManagerGL::initialize(const std::set<std::string> &inRequiredExtensio
     // TODO: Get total video memory http://nasutechtips.blogspot.com/2011/02/how-to-get-gpu-memory-size-and-usage-in.html
 
     bool hasMissingExtensions = false;
-    for(auto reqExt: inRequiredExtensions)
-    {
-        if(!mExtensions.count(reqExt))
-        {
+    for (auto reqExt : inRequiredExtensions) {
+        if (!mExtensions.count(reqExt)) {
             hasMissingExtensions = true;
             SIGMA_ERROR("Missing Required OpenGL Extension: {}", reqExt);
         }
     }
 
-    if (hasMissingExtensions)
-    {
+    if (hasMissingExtensions) {
         SIGMA_INFO("Supported OpenGL Extensions: {}", fmt::join(mExtensions.begin(), mExtensions.end(), ","));
     }
 
     return true;
 }
 
-void DeviceManagerGL::enumerateSurfaceDevices(std::shared_ptr<Surface> inSurface, std::vector<std::shared_ptr<Device> > &outDevices)
+void DeviceManagerGL::enumerateSurfaceDevices(std::shared_ptr<Surface> inSurface, std::vector<std::shared_ptr<Device>>& outDevices)
 {
     (void)inSurface;
     outDevices.clear();

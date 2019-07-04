@@ -1,20 +1,18 @@
 #pragma once
 
-enum class ShaderType
-{
+enum class ShaderType {
     VertexShader,
     FragmentShader
 };
 
-class Shader
-{
+class Shader {
 public:
     Shader(ShaderType inType)
         : mType(inType)
     {
     }
 
-	virtual ~Shader() = default;
+    virtual ~Shader() = default;
 
     virtual ShaderType type() const { return mType; }
 

@@ -17,7 +17,8 @@ public:
 
     VkShaderModule handle() const { return mModule; }
 
-    bool initialize(const std::vector<uint32_t> &inByteCode);
+    bool initialize(const std::vector<uint32_t>& inByteCode);
+
 private:
     std::shared_ptr<DeviceVK> mDevice = nullptr;
     VkShaderModule mModule = nullptr;

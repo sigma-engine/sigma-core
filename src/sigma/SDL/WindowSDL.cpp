@@ -64,8 +64,7 @@ WindowSDL::WindowSDL(std::shared_ptr<Engine> inEngine, const std::string& inTitl
         flags |= SDL_WINDOW_OPENGL;
         break;
     }
-    case GraphicsAPI::Vulkan:
-    {
+    case GraphicsAPI::Vulkan: {
         flags |= SDL_WINDOW_VULKAN;
         break;
     }
@@ -82,18 +81,15 @@ WindowSDL::WindowSDL(std::shared_ptr<Engine> inEngine, const std::string& inTitl
     SDL_SetWindowData(mWindow, "this", this);
 
     switch (mEngine->graphicsAPI()) {
-    case GraphicsAPI::OpenGL:
-    {
+    case GraphicsAPI::OpenGL: {
         mSurface = std::make_shared<SurfaceSDLGL>(mWindow);
         break;
     }
-    case GraphicsAPI::Vulkan:
-    {
+    case GraphicsAPI::Vulkan: {
         mSurface = std::make_shared<SurfaceSDLVK>(mWindow);
         break;
     }
-    default:
-    {
+    default: {
         break;
     }
     }
@@ -110,27 +106,23 @@ std::set<std::string> WindowSDL::requiredExtensions(GraphicsAPI inGraphicsAPI) c
     std::set<std::string> extsSet;
 
     switch (inGraphicsAPI) {
-    case GraphicsAPI::Vulkan:
-    {
+    case GraphicsAPI::Vulkan: {
         uint32_t count;
-        std::vector<const char *> exts;
+        std::vector<const char*> exts;
 
-        if (!SDL_Vulkan_GetInstanceExtensions(mWindow, &count, nullptr))
-        {
+        if (!SDL_Vulkan_GetInstanceExtensions(mWindow, &count, nullptr)) {
             SIGMA_ERROR(SDL_GetError());
         }
 
         exts.resize(count);
 
-        if (!SDL_Vulkan_GetInstanceExtensions(mWindow, &count, exts.data()))
-        {
+        if (!SDL_Vulkan_GetInstanceExtensions(mWindow, &count, exts.data())) {
             SIGMA_ERROR(SDL_GetError());
         }
         extsSet.insert(exts.begin(), exts.end());
         break;
     }
-    default:
-    {
+    default: {
         break;
     }
     }
@@ -138,11 +130,9 @@ std::set<std::string> WindowSDL::requiredExtensions(GraphicsAPI inGraphicsAPI) c
     return extsSet;
 }
 
-
 bool WindowSDL::initialize()
 {
-    if (!mSurface->initialize(mEngine->deviceManager(), mWidth, mHeight))
-    {
+    if (!mSurface->initialize(mEngine->deviceManager(), mWidth, mHeight)) {
         return false;
     }
     mOpen = true;
@@ -213,7 +203,7 @@ bool SurfaceSDLGL::initialize(std::shared_ptr<DeviceManager> inDevice, uint32_t 
     return SurfaceGL::initialize(inDevice, inWidth, inHeight);
 }
 
-SurfaceSDLVK::SurfaceSDLVK(SDL_Window *inWindow)
+SurfaceSDLVK::SurfaceSDLVK(SDL_Window* inWindow)
     : mWindow(inWindow)
 {
 }
@@ -224,8 +214,7 @@ bool SurfaceSDLVK::initialize(std::shared_ptr<DeviceManager> inDevice, uint32_t 
     mInstance = std::static_pointer_cast<DeviceManagerVK>(inDevice);
     mWidth = inWidth;
     mHeight = inHeight;
-    if(!SDL_Vulkan_CreateSurface(mWindow, mInstance->handle(), &mSurface))
-    {
+    if (!SDL_Vulkan_CreateSurface(mWindow, mInstance->handle(), &mSurface)) {
         SIGMA_ERROR(SDL_GetError());
         return false;
     }

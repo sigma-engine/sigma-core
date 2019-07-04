@@ -1,8 +1,6 @@
 #pragma once
 
-
-class Program
-{
+class Program {
 public:
-	virtual ~Program() = default;
+    virtual ~Program() = default;
 };

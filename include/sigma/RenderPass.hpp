@@ -2,25 +2,21 @@
 
 #include <vector>
 
-enum class ImageFormat
-{
+enum class ImageFormat {
     Unknown,
     UnormB8G8R8A8
 };
 
-enum class AttachmentType
-{
+enum class AttachmentType {
     ColorAttachment
 };
 
-struct RenderPassAttachment
-{
+struct RenderPassAttachment {
     AttachmentType type;
     ImageFormat format;
 };
 
-struct RenderPassCreateParams
-{
+struct RenderPassCreateParams {
     std::vector<RenderPassAttachment> attachments;
 };
 

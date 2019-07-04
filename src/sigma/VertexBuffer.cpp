@@ -1,6 +1,6 @@
 #include <sigma/VertexBuffer.hpp>
 
-VertexLayout::VertexLayout(const std::vector<VertexMember> &inMembers, std::size_t inStride)
+VertexLayout::VertexLayout(const std::vector<VertexMember>& inMembers, std::size_t inStride)
     : mStride(inStride)
     , mMembers(inMembers)
 {

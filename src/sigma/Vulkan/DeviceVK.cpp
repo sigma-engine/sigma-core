@@ -1,16 +1,17 @@
 #include <sigma/Vulkan/DeviceVK.hpp>
 
-#include <sigma/Vulkan/SurfaceVK.hpp>
-#include <sigma/Vulkan/UtilVK.hpp>
-#include <sigma/Vulkan/ShaderVK.hpp>
+#include <sigma/Vulkan/CommandBufferVK.hpp>
 #include <sigma/Vulkan/PipelineVK.hpp>
 #include <sigma/Vulkan/RenderPassVK.hpp>
+#include <sigma/Vulkan/ShaderVK.hpp>
+#include <sigma/Vulkan/SurfaceVK.hpp>
+#include <sigma/Vulkan/UtilVK.hpp>
 
 #include <sigma/Log.hpp>
 
 #include <fstream>
 
-DeviceVK::DeviceVK(VkInstance inInstance, VkPhysicalDevice inDevice, const std::vector<std::string> &inEnabledLayers)
+DeviceVK::DeviceVK(VkInstance inInstance, VkPhysicalDevice inDevice, const std::vector<std::string>& inEnabledLayers)
     : mInstance(inInstance)
     , mPhysicalDevice(inDevice)
     , mEnabledLayers(inEnabledLayers)
@@ -23,40 +24,40 @@ DeviceVK::DeviceVK(VkInstance inInstance, VkPhysicalDevice inDevice, const std::
     mQueueFamilyProperties.resize(queueFamilyCount);
     vkGetPhysicalDeviceQueueFamilyProperties(mPhysicalDevice, &queueFamilyCount, mQueueFamilyProperties.data());
 
-    auto graphicsIt = std::find_if(mQueueFamilyProperties.begin(), mQueueFamilyProperties.end(), [](const auto &prop){
+    auto graphicsIt = std::find_if(mQueueFamilyProperties.begin(), mQueueFamilyProperties.end(), [](const auto& prop) {
         return prop.queueCount > 0 && ((prop.queueFlags & VK_QUEUE_GRAPHICS_BIT) == VK_QUEUE_GRAPHICS_BIT);
     });
-    if(graphicsIt != mQueueFamilyProperties.end())
+    if (graphicsIt != mQueueFamilyProperties.end())
         mGraphicsFamily = std::distance(mQueueFamilyProperties.begin(), graphicsIt);
 
-    auto computeIt = std::find_if(mQueueFamilyProperties.begin(), mQueueFamilyProperties.end(), [](const auto &prop){
+    auto computeIt = std::find_if(mQueueFamilyProperties.begin(), mQueueFamilyProperties.end(), [](const auto& prop) {
         return prop.queueCount > 0 && ((prop.queueFlags & VK_QUEUE_COMPUTE_BIT) == VK_QUEUE_COMPUTE_BIT);
     });
     if (computeIt != mQueueFamilyProperties.end())
-        mComputeFamily =  std::distance(mQueueFamilyProperties.begin(), computeIt);
+        mComputeFamily = std::distance(mQueueFamilyProperties.begin(), computeIt);
 }
 
 DeviceVK::~DeviceVK()
 {
-    if (mDevice) vkDestroyDevice(mDevice, nullptr);
+    if (mDevice && mGraphicsCommandPool)
+        vkDestroyCommandPool(mDevice, mGraphicsCommandPool, nullptr);
+    if (mDevice)
+        vkDestroyDevice(mDevice, nullptr);
 }
 
 DeviceType DeviceVK::type() const
 {
     DeviceType type = DeviceType::Unknown;
     switch (mPhysicalDeviceProperties.deviceType) {
-    case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
-    {
+    case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU: {
         type = DeviceType::DiscreteGPU;
         break;
     }
-    case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
-    {
+    case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU: {
         type = DeviceType::IntegratedGPU;
         break;
     }
-    default:
-    {
+    default: {
         break;
     }
     }
@@ -143,8 +144,7 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
         SIGMA_WARN("Skipping Missing Vulkan Layer: {}", *it);
     }
 
-    if (layerIt != mEnabledLayers.end())
-    {
+    if (layerIt != mEnabledLayers.end()) {
         SIGMA_INFO("Supported Vulkan Layers: {}", fmt::join(layerProperties.begin(), layerProperties.end(), ","));
         mEnabledLayers.erase(layerIt, mEnabledLayers.end());
     }
@@ -153,13 +153,11 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
     std::set<uint32_t> queueFamilies;
 
     std::vector<SurfaceSwapChainInfoVK> surfaceSwapChainInfos;
-    for(auto surface: inSurfaces)
-    {
+    for (auto surface : inSurfaces) {
         SIGMA_ASSERT(std::dynamic_pointer_cast<SurfaceVK>(surface), "Incorrect surface type!");
         auto vksurface = std::static_pointer_cast<SurfaceVK>(surface);
         auto swapChainInfo = getSwapChainInfo(vksurface);
-        if (!swapChainInfo.has_value() || !swapChainInfo->presentFamily.has_value())
-        {
+        if (!swapChainInfo.has_value() || !swapChainInfo->presentFamily.has_value()) {
             SIGMA_ERROR("Devices does not support surface presentation!");
             return false;
         }
@@ -176,8 +174,7 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
 
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
     float queuePriority = 1;
-    for(auto family: queueFamilies)
-    {
+    for (auto family : queueFamilies) {
         queueCreateInfos.push_back({});
         queueCreateInfos.back().sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
         queueCreateInfos.back().queueCount = 1;
@@ -207,23 +204,44 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
     createInfo.ppEnabledExtensionNames = enabledExtensions.data();
     createInfo.enabledExtensionCount = static_cast<uint32_t>(enabledExtensions.size());
 
-    if (vkCreateDevice(mPhysicalDevice, &createInfo, nullptr, &mDevice) != VK_SUCCESS)
-    {
+    if (vkCreateDevice(mPhysicalDevice, &createInfo, nullptr, &mDevice) != VK_SUCCESS) {
         SIGMA_ERROR("Could not create Vulkan logical device!");
         return false;
     }
 
-    for (std::size_t i = 0; i < inSurfaces.size(); ++i)
-    {
+    if (mGraphicsFamily.has_value()) {
+        VkCommandPoolCreateInfo graphicsPoolInfo = {};
+        graphicsPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+        graphicsPoolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT; //VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
+        graphicsPoolInfo.queueFamilyIndex = mGraphicsFamily.value();
+
+        if (vkCreateCommandPool(mDevice, &graphicsPoolInfo, nullptr, &mGraphicsCommandPool) != VK_SUCCESS) {
+            SIGMA_ERROR("Could not create graphics command pool!");
+            return false;
+        }
+    }
+
+    for (std::size_t i = 0; i < inSurfaces.size(); ++i) {
         auto surface = std::static_pointer_cast<SurfaceVK>(inSurfaces[i]);
-        if (!surface->createSwapChain(shared_from_this(), surfaceSwapChainInfos[i]))
-        {
+        if (!surface->createSwapChain(shared_from_this(), surfaceSwapChainInfos[i])) {
             SIGMA_ERROR("Could not create surface swapchain!");
             return false;
         }
     }
 
     return true;
+}
+
+std::shared_ptr<CommandBuffer> DeviceVK::createCommandBuffer()
+{
+    if (mGraphicsCommandPool == nullptr)
+        return nullptr;
+
+    auto commandBuffer = std::make_shared<CommandBufferVK>(shared_from_this(), mGraphicsCommandPool);
+    if (!commandBuffer->initialize()) {
+        return nullptr;
+    }
+    return commandBuffer;
 }
 
 std::shared_ptr<Shader> DeviceVK::createShader(ShaderType inType, const std::string& inSourcePath)
@@ -237,14 +255,13 @@ std::shared_ptr<Shader> DeviceVK::createShader(ShaderType inType, const std::str
     file.read(reinterpret_cast<char*>(data.data()), fsize);
 
     std::shared_ptr<ShaderVK> shader = std::make_shared<ShaderVK>(inType, shared_from_this());
-    if (!shader->initialize(data))
-    {
+    if (!shader->initialize(data)) {
         return nullptr;
     }
     return shader;
 }
 
-std::shared_ptr<RenderPass> DeviceVK::createRenderPass(const RenderPassCreateParams &inParams)
+std::shared_ptr<RenderPass> DeviceVK::createRenderPass(const RenderPassCreateParams& inParams)
 {
     auto renderPass = std::make_shared<RenderPassVK>(shared_from_this());
     if (!renderPass->initialize(inParams))
@@ -252,11 +269,10 @@ std::shared_ptr<RenderPass> DeviceVK::createRenderPass(const RenderPassCreatePar
     return renderPass;
 }
 
-std::shared_ptr<Pipeline> DeviceVK::createPipeline(const PipelineCreateParams &inParams)
+std::shared_ptr<Pipeline> DeviceVK::createPipeline(const PipelineCreateParams& inParams)
 {
     std::shared_ptr<PipelineVK> pipeline = std::make_shared<PipelineVK>(shared_from_this());
-    if (!pipeline->initialize(inParams))
-    {
+    if (!pipeline->initialize(inParams)) {
         return nullptr;
     }
     return pipeline;
@@ -290,6 +306,20 @@ uint32_t DeviceVK::graphicsQueueFamily() const
     return mGraphicsFamily.value();
 }
 
+VkQueue DeviceVK::getQueue(uint32_t inFamily) const
+{
+    VkQueue queue = nullptr;
+    vkGetDeviceQueue(mDevice, inFamily, 0, &queue);
+    return queue;
+}
+
+VkQueue DeviceVK::graphicsQueue() const
+{
+    VkQueue queue = nullptr;
+    vkGetDeviceQueue(mDevice, graphicsQueueFamily(), 0, &queue);
+    return queue;
+}
+
 std::optional<SurfaceSwapChainInfoVK> DeviceVK::getSwapChainInfo(std::shared_ptr<SurfaceVK> inSurface) const
 {
     SurfaceSwapChainInfoVK info;
@@ -305,7 +335,6 @@ std::optional<SurfaceSwapChainInfoVK> DeviceVK::getSwapChainInfo(std::shared_ptr
     if (vkGetPhysicalDeviceSurfaceFormatsKHR(mPhysicalDevice, inSurface->handle(), &formatCount, info.formats.data()) != VK_SUCCESS)
         return {};
 
-
     uint32_t modeCount;
     if (vkGetPhysicalDeviceSurfacePresentModesKHR(mPhysicalDevice, inSurface->handle(), &modeCount, nullptr) != VK_SUCCESS || modeCount == 0)
         return {};
@@ -314,12 +343,10 @@ std::optional<SurfaceSwapChainInfoVK> DeviceVK::getSwapChainInfo(std::shared_ptr
     if (vkGetPhysicalDeviceSurfacePresentModesKHR(mPhysicalDevice, inSurface->handle(), &modeCount, info.modes.data()) != VK_SUCCESS)
         return {};
 
-    for(uint32_t i = 0; i < mQueueFamilyProperties.size(); ++i)
-    {
+    for (uint32_t i = 0; i < mQueueFamilyProperties.size(); ++i) {
         VkBool32 support = VK_FALSE;
         vkGetPhysicalDeviceSurfaceSupportKHR(mPhysicalDevice, i, inSurface->handle(), &support);
-        if (support == VK_TRUE)
-        {
+        if (support == VK_TRUE) {
             info.presentFamily = i;
             break;
         }
