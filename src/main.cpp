@@ -28,7 +28,7 @@ int main(int argc, char const* argv[])
     (void)argc;
     (void)argv;
     auto engine = Engine::create();
-    if (!engine->initialize(GraphicsAPI::Vulkan))
+    if (!engine->initialize(GraphicsAPI::OpenGL))
         return -1;
 
     auto deviceManager = engine->deviceManager();
@@ -48,21 +48,39 @@ int main(int argc, char const* argv[])
     if (!device->initialize({ window->surface() }))
         return -1;
 
-    //    auto program = device->createProgram({vertexShader, fragmentShader});
+	auto vertexShader = device->createShader(ShaderType::VertexShader, "shaders/simple.vert");
+	if (vertexShader == nullptr)
+		return -1;
 
-    //    auto vertexBuffer = device->createVertexBuffer({
-    //        {DataType::Vec3, "position"},
-    //        {DataType::Vec3, "color"}
-    //    });
-    //    vertexBuffer->setData(vertices.data(), sizeof(Vertex) * vertices.size());
+	auto fragmentShader = device->createShader(ShaderType::FragmentShader, "shaders/simple.frag");
+	if (fragmentShader == nullptr)
+		return -1;
 
-    //    auto indexBuffer = device->createIndexBuffer(PrimitiveType::Triangle, DataType::UShort);
-    //    indexBuffer->setData(indices.data(), sizeof(uint16_t) * 3);
+	PipelineCreateParams pipelineParams = {
+		{{0, 0}, window->surface()->size()},
+		window->surface()->renderPass(),
+		{ vertexShader, fragmentShader }
+	};
+	auto pipeline = device->createPipeline(pipelineParams);
+	if (pipeline == nullptr)
+		return -1;
+
+   auto vertexBuffer = device->createVertexBuffer({
+       {DataType::Vec3, "position"},
+       {DataType::Vec3, "color"}
+   });
+   vertexBuffer->setData(vertices.data(), sizeof(Vertex) * vertices.size());
+
+   auto indexBuffer = device->createIndexBuffer(PrimitiveType::Triangle, DataType::UShort);
+   indexBuffer->setData(indices.data(), sizeof(uint16_t) * 3);
 
     while (window->open() && engine->process()) {
-        auto commandBuffer = window->surface()->beginFrame();
-        window->surface()->endFrame();
-        //        device->draw(program, vertexBuffer, indexBuffer);
-        //        window->swapBuffer();
+		SurfaceImageData frameData;
+		window->surface()->beginFrame(frameData);
+		
+		frameData.commandBuffer->bindPipeline(pipeline);
+		frameData.commandBuffer->draw(3, 1, 0, 0);
+
+        window->surface()->endFrame(frameData);
     }
 }

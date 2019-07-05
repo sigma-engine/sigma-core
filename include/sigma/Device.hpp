@@ -16,13 +16,11 @@ enum class DataType;
 class Shader;
 enum class ShaderType;
 
-class RenderPassCreateParams;
+struct RenderPassCreateParams;
 class RenderPass;
 
 struct PipelineCreateParams;
 class Pipeline;
-
-class Program;
 
 class VertexBuffer;
 struct VertexMemberDescription;
@@ -58,11 +56,7 @@ public:
 
     virtual std::shared_ptr<Pipeline> createPipeline(const PipelineCreateParams& inParams) = 0;
 
-    virtual std::shared_ptr<Program> createProgram(const std::vector<std::shared_ptr<Shader>>& inShaders) = 0;
-
     virtual std::shared_ptr<VertexBuffer> createVertexBuffer(const std::initializer_list<VertexMemberDescription>& inLayout) = 0;
 
     virtual std::shared_ptr<IndexBuffer> createIndexBuffer(PrimitiveType inPrimitive, DataType inDataType) = 0;
-
-    virtual void draw(std::shared_ptr<Program> inProgram, std::shared_ptr<VertexBuffer> inVertexBuffer, std::shared_ptr<IndexBuffer> inIndexBuffer) = 0;
 };

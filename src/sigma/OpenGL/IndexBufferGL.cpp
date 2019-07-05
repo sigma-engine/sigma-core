@@ -6,7 +6,7 @@
 
 #include <cassert>
 
-std::size_t primitiveComponentCount(PrimitiveType inType)
+size_t primitiveComponentCount(PrimitiveType inType)
 {
     switch (inType) {
     case PrimitiveType::Triangle:
@@ -50,7 +50,7 @@ PrimitiveType IndexBufferGL::primitiveType() const
     return mPrimitiveType;
 }
 
-void IndexBufferGL::setData(const void* inData, std::size_t inSize)
+void IndexBufferGL::setData(const void* inData, size_t inSize)
 {
     assert(inSize % (primitiveComponentCount(mPrimitiveType) * sizeOfDataType(mDataType)) == 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mHandle);

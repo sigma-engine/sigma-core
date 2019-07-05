@@ -6,6 +6,7 @@
 
 class DeviceGL;
 class RenderPassGL;
+class CommandBufferGL;
 
 class SurfaceGL : public Surface {
 public:
@@ -17,11 +18,9 @@ public:
 
     virtual std::shared_ptr<RenderPass> renderPass() const override;
 
-    virtual std::shared_ptr<CommandBuffer> beginFrame() override;
+    virtual void beginFrame(SurfaceImageData &outData) override;
 
-    virtual void endFrame() override;
-
-    bool createRenderPass(std::shared_ptr<DeviceGL> inDevice);
+    bool createSwapChain(std::shared_ptr<DeviceGL> inDevice);
 
 protected:
     uint32_t mWidth;
@@ -29,4 +28,5 @@ protected:
     GLenum mFormat;
 
     std::shared_ptr<RenderPassGL> mRenderPass = nullptr;
+	std::shared_ptr<CommandBufferGL> mCommandBuffer = nullptr;
 };

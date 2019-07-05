@@ -39,10 +39,10 @@ bool PipelineVK::initialize(const PipelineCreateParams& inParams)
     inputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
 
     VkViewport viewport = {};
-    viewport.x = inParams.viewportRect.origin.x;
-    viewport.x = inParams.viewportRect.origin.y;
-    viewport.width = inParams.viewportRect.size.x;
-    viewport.height = inParams.viewportRect.size.y;
+    viewport.x = float(inParams.viewportRect.origin.x);
+    viewport.y = float(inParams.viewportRect.origin.y) + float(inParams.viewportRect.size.y);
+    viewport.width = float(inParams.viewportRect.size.x);
+    viewport.height = -float(inParams.viewportRect.size.y);
 
     VkRect2D scissor = {};
     scissor.offset = { 0, 0 };
@@ -62,7 +62,7 @@ bool PipelineVK::initialize(const PipelineCreateParams& inParams)
     rasterizerInfo.polygonMode = VK_POLYGON_MODE_FILL;
     rasterizerInfo.lineWidth = 1.0f;
     rasterizerInfo.cullMode = VK_CULL_MODE_BACK_BIT;
-    rasterizerInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;
+    rasterizerInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
     rasterizerInfo.depthBiasEnable = VK_FALSE;
     rasterizerInfo.depthBiasConstantFactor = 0.0f;
     rasterizerInfo.depthBiasClamp = 0.0f;

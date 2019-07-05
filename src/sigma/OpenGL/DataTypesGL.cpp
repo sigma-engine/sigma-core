@@ -4,7 +4,7 @@
 
 #include <cassert>
 
-std::size_t sizeOfDataType(DataType inType)
+size_t sizeOfDataType(DataType inType)
 {
     switch (inType) {
     case DataType::Float:

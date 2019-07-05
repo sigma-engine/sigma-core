@@ -12,13 +12,13 @@ public:
 
     virtual PrimitiveType primitiveType() const override;
 
-    virtual void setData(const void* inData, std::size_t inSize) override;
+    virtual void setData(const void* inData, size_t inSize) override;
 
     void draw();
 
 private:
     PrimitiveType mPrimitiveType;
     DataType mDataType;
-    std::size_t mCount;
+    size_t mCount;
     uint32_t mHandle;
 };

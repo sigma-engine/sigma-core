@@ -8,7 +8,7 @@
 
 enum class ImageFormat;
 
-std::size_t sizeOfDataType(DataType inType);
+size_t sizeOfDataType(DataType inType);
 
 GLsizei componentCountOfDataType(DataType inType);
 

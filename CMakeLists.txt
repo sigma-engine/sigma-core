@@ -11,7 +11,7 @@ find_package(Vulkan REQUIRED)
 
 include(cmake/GLSL.cmake)
 
-add_library(sigma-core
+add_library(sigma-core STATIC
 	include/sigma/Rect.hpp
 	include/sigma/Event.hpp
 	include/sigma/EventEmitter.hpp
@@ -45,8 +45,6 @@ add_library(sigma-core
 	src/sigma/VertexBuffer.cpp
 
 	include/sigma/IndexBuffer.hpp
-
-	include/sigma/Program.hpp
 
 	include/sigma/Log.hpp
 	
@@ -85,9 +83,6 @@ add_library(sigma-core
 
 	include/sigma/OpenGL/PipelineGL.hpp
 	src/sigma/OpenGL/PipelineGL.cpp
-
-	include/sigma/OpenGL/ProgramGL.hpp
-	src/sigma/OpenGL/ProgramGL.cpp
 
 	include/sigma/OpenGL/VertexBufferGL.hpp
 	src/sigma/OpenGL/VertexBufferGL.cpp
@@ -134,12 +129,18 @@ target_link_libraries(sigma-core
 PUBLIC
     ${CMAKE_DL_LIBS}
     spdlog::spdlog
-    SDL2::SDL2
+    SDL2::SDL2-static
     glad::glad
     Vulkan::Vulkan
     glm
-    stdc++fs
 )
+
+if(NOT WIN32)
+	target_link_libraries(sigma-core
+	PUBLIC
+		stdc++fs
+	)
+endif()
 
 target_compile_definitions(sigma-core
 PUBLIC

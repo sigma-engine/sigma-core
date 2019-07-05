@@ -278,12 +278,6 @@ std::shared_ptr<Pipeline> DeviceVK::createPipeline(const PipelineCreateParams& i
     return pipeline;
 }
 
-std::shared_ptr<Program> DeviceVK::createProgram(const std::vector<std::shared_ptr<Shader>>& inShaders)
-{
-    SIGMA_ASSERT(false, "Not Implemented!");
-    return nullptr;
-}
-
 std::shared_ptr<VertexBuffer> DeviceVK::createVertexBuffer(const std::initializer_list<VertexMemberDescription>& inLayout)
 {
     SIGMA_ASSERT(false, "Not Implemented!");
@@ -294,11 +288,6 @@ std::shared_ptr<IndexBuffer> DeviceVK::createIndexBuffer(PrimitiveType inPrimiti
 {
     SIGMA_ASSERT(false, "Not Implemented!");
     return nullptr;
-}
-
-void DeviceVK::draw(std::shared_ptr<Program> inProgram, std::shared_ptr<VertexBuffer> inVertexBuffer, std::shared_ptr<IndexBuffer> inIndexBuffer)
-{
-    SIGMA_ASSERT(false, "Not Implemented!");
 }
 
 uint32_t DeviceVK::graphicsQueueFamily() const

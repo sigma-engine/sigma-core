@@ -9,6 +9,12 @@ enum class ImageFormat;
 class RenderPass;
 class CommandBuffer;
 
+struct SurfaceImageData {
+	uint32_t imageIndex;
+	uint32_t frameIndex;
+	std::shared_ptr<CommandBuffer> commandBuffer;
+};
+
 class Surface {
 public:
     virtual ~Surface() = default;
@@ -21,7 +27,7 @@ public:
 
     virtual std::shared_ptr<RenderPass> renderPass() const = 0;
 
-    virtual std::shared_ptr<CommandBuffer> beginFrame() = 0;
+    virtual void beginFrame(SurfaceImageData &outData) = 0;
 
-    virtual void endFrame() = 0;
+    virtual void endFrame(const SurfaceImageData &inData) = 0;
 };

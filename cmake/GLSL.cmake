@@ -25,12 +25,12 @@ function(compile_glsl_sources TARGET_NAME)
 			set(OPENGL_OUTPUT "${OPENGL_OUTPUT_LOCATION}/${OUTPUT_PATH}")
 
 			add_custom_command(OUTPUT "${VULKAN_OUTPUT}"
-				COMMAND glslc "${SOURCE}" -o "${VULKAN_OUTPUT}" --target-env="vulkan1.1"
+				COMMAND glslc "${SOURCE}" -o "${VULKAN_OUTPUT}" --target-env="vulkan1.1" -DSIGMA_VULKAN
                 DEPENDS "${SOURCE}"
 			)
 
 			add_custom_command(OUTPUT "${OPENGL_OUTPUT}"
-				COMMAND glslc "${SOURCE}" -o "${OPENGL_OUTPUT}" -E
+				COMMAND glslc "${SOURCE}" -o "${OPENGL_OUTPUT}" -E -DSIGMA_OPENGL
                 DEPENDS "${SOURCE}"
 			)
 			

@@ -4,6 +4,7 @@
 #include <sigma/Vulkan/DeviceVK.hpp>
 #include <sigma/Vulkan/FramebufferVK.hpp>
 #include <sigma/Vulkan/RenderPassVK.hpp>
+#include <sigma/Vulkan/PipelineVK.hpp>
 
 #include <limits>
 
@@ -16,11 +17,6 @@ CommandBufferVK::CommandBufferVK(std::shared_ptr<DeviceVK> inDevice, VkCommandPo
 CommandBufferVK::~CommandBufferVK()
 {
     if (mDevice && mCommandPool && mBuffer) {
-        if (mFence) {
-            if (mInit)
-                vkWaitForFences(mDevice->handle(), 1, &mFence, VK_TRUE, std::numeric_limits<uint64_t>::max());
-            vkDestroyFence(mDevice->handle(), mFence, nullptr);
-        }
         vkFreeCommandBuffers(mDevice->handle(), mCommandPool, 1, &mBuffer);
     }
 }
@@ -37,24 +33,11 @@ bool CommandBufferVK::initialize()
         return false;
     }
 
-    VkFenceCreateInfo fenceInfo = {};
-    fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-    if (vkCreateFence(mDevice->handle(), &fenceInfo, nullptr, &mFence) != VK_SUCCESS) {
-        return false;
-    }
-
     return true;
 }
 
 void CommandBufferVK::begin()
 {
-    if (mInit) {
-        vkWaitForFences(mDevice->handle(), 1, &mFence, VK_TRUE, std::numeric_limits<uint64_t>::max());
-        vkResetFences(mDevice->handle(), 1, &mFence);
-    } else {
-        mInit = true;
-    }
-
     VkCommandBufferBeginInfo beginInfo = {};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT; //VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
@@ -81,6 +64,18 @@ void CommandBufferVK::beginRenderPass(const RenderPassBeginParams& inParams)
     renderPassInfo.pClearValues = &clearColor;
 
     vkCmdBeginRenderPass(mBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+}
+
+void CommandBufferVK::bindPipeline(std::shared_ptr<Pipeline> inPipeline)
+{
+	SIGMA_ASSERT(std::dynamic_pointer_cast<PipelineVK>(inPipeline), "Must use vulkan pipeline iwth vulkan command buffer!");
+	mCurrentPipeline = std::static_pointer_cast<PipelineVK>(inPipeline);
+	vkCmdBindPipeline(mBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mCurrentPipeline->handle());
+}
+
+void CommandBufferVK::draw(uint32_t inVertexCount, uint32_t inInstanceCount, uint32_t inFirstVertex, uint32_t inFirstInstance)
+{
+	vkCmdDraw(mBuffer, inVertexCount, inInstanceCount, inFirstVertex, inFirstInstance);
 }
 
 void CommandBufferVK::endRenderPass()

@@ -7,6 +7,29 @@
 			"http://hg.libsdl.org/"
 		]
 	},
+	"environments": {
+		"linux-x64" : {
+			"cmake" : {
+				"cmake_args": [
+					"-GNinja"
+				]
+			}
+		},
+		"visual-studio-17-x64" : {
+			"cmake" :{
+				"cmake_args" : [
+					"-GVisual Studio 15 2017 Win64"
+				]
+			}
+		},
+		"visual-studio-19-x64" : {
+			"cmake" :{
+				"cmake_args" : [
+					"-GVisual Studio 16 2019 Win64"
+				]
+			}
+		}
+	},
 	"dependencies": [
 		{
 			"name": "git:gabime/spdlog",
@@ -31,6 +54,10 @@
 			"cmake_args": [
 				"-DGLAD_INSTALL=ON"
 			]
+		},
+		{
+			"name" : "hg:SDL",
+			"build_system" : "cmake"
 		}
 	],
 	"dependencies2": [

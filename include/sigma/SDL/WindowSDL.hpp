@@ -1,4 +1,4 @@
-#pragma onnce
+#pragma once
 
 #include <sigma/EventEmitter.hpp>
 #include <sigma/EventListener.hpp>
@@ -17,6 +17,7 @@ public:
 
     bool initialize(std::shared_ptr<DeviceManager> inDevice, uint32_t inWidth, uint32_t inHeight) override;
 
+	void endFrame(const SurfaceImageData &inData) override;
 private:
     SDL_Window* mWindow = nullptr;
     void* mHandle = nullptr;
@@ -48,8 +49,6 @@ public:
     virtual std::set<std::string> requiredExtensions(GraphicsAPI inGraphicsAPI) const override;
 
     virtual bool initialize() override;
-
-    virtual void swapBuffer() override;
 
     virtual std::shared_ptr<Surface> surface() override;
 

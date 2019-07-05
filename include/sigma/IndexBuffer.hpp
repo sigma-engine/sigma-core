@@ -16,5 +16,5 @@ public:
 
     virtual PrimitiveType primitiveType() const = 0;
 
-    virtual void setData(const void* inData, std::size_t inSize) = 0;
+    virtual void setData(const void* inData, size_t inSize) = 0;
 };

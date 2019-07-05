@@ -139,11 +139,6 @@ bool WindowSDL::initialize()
     return true;
 }
 
-void WindowSDL::swapBuffer()
-{
-    SDL_GL_SwapWindow(mWindow);
-}
-
 std::shared_ptr<Surface> WindowSDL::surface()
 {
     return mSurface;
@@ -201,6 +196,11 @@ bool SurfaceSDLGL::initialize(std::shared_ptr<DeviceManager> inDevice, uint32_t 
 {
     // TODO: Pixel format
     return SurfaceGL::initialize(inDevice, inWidth, inHeight);
+}
+
+void SurfaceSDLGL::endFrame(const SurfaceImageData &inData)
+{
+	SDL_GL_SwapWindow(mWindow);
 }
 
 SurfaceSDLVK::SurfaceSDLVK(SDL_Window* inWindow)

@@ -34,8 +34,6 @@ public:
 
     virtual bool initialize() = 0;
 
-    virtual void swapBuffer() = 0;
-
     virtual std::shared_ptr<Surface> surface() = 0;
 
     virtual void processEvent(Event* inEvent) override;

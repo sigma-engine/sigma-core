@@ -4,7 +4,6 @@
 #include <sigma/OpenGL/CommandBufferGL.hpp>
 #include <sigma/OpenGL/IndexBufferGL.hpp>
 #include <sigma/OpenGL/PipelineGL.hpp>
-#include <sigma/OpenGL/ProgramGL.hpp>
 #include <sigma/OpenGL/RenderPassGL.hpp>
 #include <sigma/OpenGL/ShaderGL.hpp>
 #include <sigma/OpenGL/SurfaceGL.hpp>
@@ -41,7 +40,7 @@ bool DeviceGL::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
     for (std::size_t i = 0; i < inSurfaces.size(); ++i) {
         SIGMA_ASSERT(std::dynamic_pointer_cast<SurfaceGL>(inSurfaces[i]), "Must use opengl surfaces with opengl device!");
         auto surface = std::static_pointer_cast<SurfaceGL>(inSurfaces[i]);
-        if (!surface->createRenderPass(shared_from_this())) {
+        if (!surface->createSwapChain(shared_from_this())) {
             SIGMA_ERROR("Could not create render pass!");
             return false;
         }
@@ -78,18 +77,10 @@ std::shared_ptr<RenderPass> DeviceGL::createRenderPass(const RenderPassCreatePar
 
 std::shared_ptr<Pipeline> DeviceGL::createPipeline(const PipelineCreateParams& inParams)
 {
-    return std::make_shared<PipelineGL>();
-}
-
-std::shared_ptr<Program> DeviceGL::createProgram(const std::vector<std::shared_ptr<Shader>>& inShaders)
-{
-    auto program = std::make_shared<ProgramGL>();
-    std::for_each(inShaders.begin(), inShaders.end(), [&](auto s) { program->attach(s); });
-    if (program->link()) {
-        return std::move(program);
-    }
-
-    return nullptr;
+    auto pipeline = std::make_shared<PipelineGL>();
+    if (!pipeline->initialize(inParams))
+        return nullptr;
+    return pipeline;
 }
 
 std::shared_ptr<VertexBuffer> DeviceGL::createVertexBuffer(const std::initializer_list<VertexMemberDescription>& inLayout)
@@ -101,16 +92,4 @@ std::shared_ptr<IndexBuffer> DeviceGL::createIndexBuffer(PrimitiveType inPrimiti
 {
     assert((inDataType == DataType::UInt || inDataType == DataType::UShort) && "Invlaid data type");
     return std::make_shared<IndexBufferGL>(inPrimitive, inDataType);
-}
-
-void DeviceGL::draw(std::shared_ptr<Program> inProgram, std::shared_ptr<VertexBuffer> inVertexBuffer, std::shared_ptr<IndexBuffer> inIndexBuffer)
-{
-    assert(std::dynamic_pointer_cast<ProgramGL>(inProgram) && std::dynamic_pointer_cast<VertexBufferGL>(inVertexBuffer) && std::dynamic_pointer_cast<IndexBufferGL>(inIndexBuffer) && "Must use OpenGL programs, vertex buffers, and index buffers.");
-    auto program = std::static_pointer_cast<ProgramGL>(inProgram);
-    auto vertexBuffer = std::static_pointer_cast<VertexBufferGL>(inVertexBuffer);
-    auto indexBuffer = std::static_pointer_cast<IndexBufferGL>(inIndexBuffer);
-
-    program->bind();
-    vertexBuffer->bind();
-    indexBuffer->draw();
 }
