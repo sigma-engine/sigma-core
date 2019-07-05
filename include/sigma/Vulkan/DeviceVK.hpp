@@ -41,7 +41,7 @@ public:
 
     virtual std::shared_ptr<Pipeline> createPipeline(const PipelineCreateParams& inParams) override;
 
-    virtual std::shared_ptr<VertexBuffer> createVertexBuffer(const std::initializer_list<VertexMemberDescription>& inLayout) override;
+    virtual std::shared_ptr<VertexBuffer> createVertexBuffer(const VertexLayout &inLayout, uint64_t inSize) override;
 
     virtual std::shared_ptr<IndexBuffer> createIndexBuffer(PrimitiveType inPrimitive, DataType inDataType) override;
 
@@ -60,6 +60,7 @@ private:
     std::vector<std::string> mRequiredExtensions;
     std::vector<std::string> mEnabledLayers;
     VkPhysicalDeviceProperties mPhysicalDeviceProperties;
+	VkPhysicalDeviceMemoryProperties mMemoryProperties;
     std::vector<VkExtensionProperties> mExtensionProperties;
     std::vector<VkQueueFamilyProperties> mQueueFamilyProperties;
     VkPhysicalDeviceFeatures mPhysicalDeviceFeatures;

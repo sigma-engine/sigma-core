@@ -7,6 +7,7 @@
 class RenderPass;
 class Framebuffer;
 class Pipeline;
+class VertexBuffer;
 
 struct RenderPassBeginParams {
     std::shared_ptr<RenderPass> renderPass;
@@ -23,6 +24,8 @@ public:
     virtual void beginRenderPass(const RenderPassBeginParams& inParams) = 0;
 
 	virtual void bindPipeline(std::shared_ptr<Pipeline> inPipeline) = 0;
+
+	virtual void bindVertexBuffer(std::shared_ptr<VertexBuffer> inBuffer) = 0;
 
 	virtual void draw(uint32_t inVertexCount, uint32_t inInstanceCount, uint32_t inFirstVertex, uint32_t inFirstInstance) = 0;
 

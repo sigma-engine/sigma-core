@@ -8,10 +8,6 @@
 
 enum class ImageFormat;
 
-size_t sizeOfDataType(DataType inType);
-
-GLsizei componentCountOfDataType(DataType inType);
-
 GLenum baseTypeOfDataType(DataType inType);
 
 ImageFormat convertImageFormatGL(GLenum inFormat);

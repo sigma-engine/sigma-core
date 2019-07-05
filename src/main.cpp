@@ -28,7 +28,7 @@ int main(int argc, char const* argv[])
     (void)argc;
     (void)argv;
     auto engine = Engine::create();
-    if (!engine->initialize(GraphicsAPI::OpenGL))
+    if (!engine->initialize(argc > 1 ? GraphicsAPI::OpenGL : GraphicsAPI::Vulkan))
         return -1;
 
     auto deviceManager = engine->deviceManager();
@@ -56,29 +56,34 @@ int main(int argc, char const* argv[])
 	if (fragmentShader == nullptr)
 		return -1;
 
+	VertexLayout vertexLayout = {
+		{DataType::Vec3, "position"}, 
+		{DataType::Vec3, "color"}
+	};
 	PipelineCreateParams pipelineParams = {
 		{{0, 0}, window->surface()->size()},
 		window->surface()->renderPass(),
+		vertexLayout,
 		{ vertexShader, fragmentShader }
 	};
 	auto pipeline = device->createPipeline(pipelineParams);
 	if (pipeline == nullptr)
 		return -1;
 
-   auto vertexBuffer = device->createVertexBuffer({
-       {DataType::Vec3, "position"},
-       {DataType::Vec3, "color"}
-   });
+   auto vertexBuffer = device->createVertexBuffer(vertexLayout, sizeof(Vertex) * vertices.size());
+   if (vertexBuffer == nullptr)
+	   return -1;
    vertexBuffer->setData(vertices.data(), sizeof(Vertex) * vertices.size());
 
-   auto indexBuffer = device->createIndexBuffer(PrimitiveType::Triangle, DataType::UShort);
-   indexBuffer->setData(indices.data(), sizeof(uint16_t) * 3);
+   // auto indexBuffer = device->createIndexBuffer(PrimitiveType::Triangle, DataType::UShort);
+   // indexBuffer->setData(indices.data(), sizeof(uint16_t) * 3);
 
     while (window->open() && engine->process()) {
 		SurfaceImageData frameData;
 		window->surface()->beginFrame(frameData);
 		
 		frameData.commandBuffer->bindPipeline(pipeline);
+		frameData.commandBuffer->bindVertexBuffer(vertexBuffer);
 		frameData.commandBuffer->draw(3, 1, 0, 0);
 
         window->surface()->endFrame(frameData);

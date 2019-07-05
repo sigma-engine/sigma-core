@@ -1,6 +1,7 @@
 #pragma once
 
 #include <sigma/Rect.hpp>
+#include <sigma/VertexLayout.hpp>
 
 #include <memory>
 #include <vector>
@@ -11,6 +12,7 @@ class RenderPass;
 struct PipelineCreateParams {
     Rect<uint32_t> viewportRect;
     std::shared_ptr<RenderPass> renderPass;
+	VertexLayout vertexLayout;
     std::vector<std::shared_ptr<Shader>> shaders;
 };
 

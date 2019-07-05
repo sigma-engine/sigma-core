@@ -32,7 +32,7 @@ bool RenderPassVK::initialize(const RenderPassCreateParams& inParams)
             colorAtt.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
             VkAttachmentReference attchRef = {};
-            attchRef.attachment = colorAttachments.size();
+            attchRef.attachment = static_cast<uint32_t>(colorAttachments.size());
             attchRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
             colorAttachments.push_back(colorAtt);
@@ -46,7 +46,7 @@ bool RenderPassVK::initialize(const RenderPassCreateParams& inParams)
     subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
     subpass.inputAttachmentCount = 0;
     subpass.pInputAttachments = nullptr;
-    subpass.colorAttachmentCount = colorAttachmentRefs.size();
+    subpass.colorAttachmentCount = static_cast<uint32_t>(colorAttachmentRefs.size());
     subpass.pColorAttachments = colorAttachmentRefs.data();
     subpass.pResolveAttachments = nullptr;
     subpass.pDepthStencilAttachment = nullptr;
@@ -63,7 +63,7 @@ bool RenderPassVK::initialize(const RenderPassCreateParams& inParams)
 
     VkRenderPassCreateInfo renderPassInfo = {};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-    renderPassInfo.attachmentCount = colorAttachments.size();
+    renderPassInfo.attachmentCount = static_cast<uint32_t>(colorAttachments.size());
     renderPassInfo.pAttachments = colorAttachments.data();
     renderPassInfo.subpassCount = 1;
     renderPassInfo.pSubpasses = &subpass;

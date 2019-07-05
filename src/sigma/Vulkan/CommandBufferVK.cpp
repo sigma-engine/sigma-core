@@ -5,6 +5,7 @@
 #include <sigma/Vulkan/FramebufferVK.hpp>
 #include <sigma/Vulkan/RenderPassVK.hpp>
 #include <sigma/Vulkan/PipelineVK.hpp>
+#include <sigma/Vulkan/VertexBufferVK.hpp>
 
 #include <limits>
 
@@ -68,9 +69,18 @@ void CommandBufferVK::beginRenderPass(const RenderPassBeginParams& inParams)
 
 void CommandBufferVK::bindPipeline(std::shared_ptr<Pipeline> inPipeline)
 {
-	SIGMA_ASSERT(std::dynamic_pointer_cast<PipelineVK>(inPipeline), "Must use vulkan pipeline iwth vulkan command buffer!");
+	SIGMA_ASSERT(std::dynamic_pointer_cast<PipelineVK>(inPipeline), "Must use vulkan pipeline with vulkan command buffer!");
 	mCurrentPipeline = std::static_pointer_cast<PipelineVK>(inPipeline);
 	vkCmdBindPipeline(mBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mCurrentPipeline->handle());
+}
+
+void CommandBufferVK::bindVertexBuffer(std::shared_ptr<VertexBuffer> inBuffer)
+{
+	SIGMA_ASSERT(std::dynamic_pointer_cast<VertexBufferVK>(inBuffer), "Must use vulkan vertex buffer with vulkan command buffer!");
+	mCurrentVertexBuffer = std::static_pointer_cast<VertexBufferVK>(inBuffer);
+	VkDeviceSize offset = 0;
+	VkBuffer vertexBuffer = mCurrentVertexBuffer->handle();
+	vkCmdBindVertexBuffers(mBuffer, 0, 1, &vertexBuffer, &offset);
 }
 
 void CommandBufferVK::draw(uint32_t inVertexCount, uint32_t inInstanceCount, uint32_t inFirstVertex, uint32_t inFirstInstance)

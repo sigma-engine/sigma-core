@@ -16,6 +16,9 @@ add_library(sigma-core STATIC
 	include/sigma/Event.hpp
 	include/sigma/EventEmitter.hpp
 	include/sigma/EventListener.hpp
+
+	include/sigma/DataTypes.hpp
+	src/sigma/DataTypes.cpp
 	
 	include/sigma/DeviceManager.hpp
 	src/sigma/DeviceManager.cpp
@@ -37,6 +40,9 @@ add_library(sigma-core STATIC
 
 	include/sigma/RenderPass.hpp
 	src/sigma/RenderPass.cpp
+
+	include/sigma/VertexLayout.hpp
+	src/sigma/VertexLayout.cpp
 
 	include/sigma/Pipeline.hpp
 	src/sigma/Pipeline.cpp
@@ -113,6 +119,9 @@ add_library(sigma-core STATIC
 
 	include/sigma/Vulkan/PipelineVK.hpp
 	src/sigma/Vulkan/PipelineVK.cpp
+
+	include/sigma/Vulkan/VertexBufferVK.hpp
+	src/sigma/Vulkan/VertexBufferVK.cpp
 
 	src/sigma/Vulkan/ExtensionsVK.cpp
 

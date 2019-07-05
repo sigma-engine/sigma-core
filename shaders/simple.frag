@@ -1,10 +1,10 @@
 #version 450
 
-layout(location = 0) in vec3 vColor;
+layout(location = 0) in vec3 inColor;
 
-layout(location = 0) out vec4 color;
+layout(location = 0) out vec4 outColor;
 
 void main()
 {
-    color = vec4(vColor, 1);
+    outColor = vec4(inColor, 1);
 }

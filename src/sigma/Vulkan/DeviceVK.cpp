@@ -6,6 +6,8 @@
 #include <sigma/Vulkan/ShaderVK.hpp>
 #include <sigma/Vulkan/SurfaceVK.hpp>
 #include <sigma/Vulkan/UtilVK.hpp>
+#include <sigma/Vulkan/VertexBufferVK.hpp>
+#include <sigma/Log.hpp>
 
 #include <sigma/Log.hpp>
 
@@ -18,6 +20,7 @@ DeviceVK::DeviceVK(VkInstance inInstance, VkPhysicalDevice inDevice, const std::
 {
     vkGetPhysicalDeviceProperties(inDevice, &mPhysicalDeviceProperties);
     vkGetPhysicalDeviceFeatures(inDevice, &mPhysicalDeviceFeatures);
+	vkGetPhysicalDeviceMemoryProperties(inDevice, &mMemoryProperties);
 
     uint32_t queueFamilyCount = 0;
     vkGetPhysicalDeviceQueueFamilyProperties(mPhysicalDevice, &queueFamilyCount, nullptr);
@@ -83,6 +86,20 @@ bool DeviceVK::supportsSurface(std::shared_ptr<Surface> inSurface) const
 
 bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurfaces)
 {
+	static std::unordered_map<uint32_t, std::string> vendorNames = {
+		{ 0x1002, "AMD" },
+		{ 0x1010, "ImgTec" },
+		{ 0x10DE, "NVIDIA" },
+		{ 0x13B5, "ARM" },
+		{ 0x5143, "Qualcomm" },
+		{ 0x8086, "INTEL" }
+	};
+	SIGMA_INFO("Graphics API: Vulkan");
+	SIGMA_INFO("Vender: {}", vendorNames.count(mPhysicalDeviceProperties.vendorID) ? vendorNames[mPhysicalDeviceProperties.vendorID] : "Unknown");
+	SIGMA_INFO("Model: {}", mPhysicalDeviceProperties.deviceName);
+	SIGMA_INFO("API Version: {}.{}.{}", (mPhysicalDeviceProperties.apiVersion >> 22) & 0x3FF, (mPhysicalDeviceProperties.apiVersion >> 12) & 0x3FF, mPhysicalDeviceProperties.apiVersion & 0xFFF);
+	SIGMA_INFO("Driver Version: {}.{}.{}", (mPhysicalDeviceProperties.driverVersion >> 22) & 0x3FF, (mPhysicalDeviceProperties.driverVersion >> 12) & 0x3FF, mPhysicalDeviceProperties.driverVersion & 0xFFF);
+
     // TODO add a way to specifiy required device extensions
     if (inSurfaces.size())
         mRequiredExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
@@ -278,10 +295,14 @@ std::shared_ptr<Pipeline> DeviceVK::createPipeline(const PipelineCreateParams& i
     return pipeline;
 }
 
-std::shared_ptr<VertexBuffer> DeviceVK::createVertexBuffer(const std::initializer_list<VertexMemberDescription>& inLayout)
+std::shared_ptr<VertexBuffer> DeviceVK::createVertexBuffer(const VertexLayout &inLayout, uint64_t inSize)
 {
-    SIGMA_ASSERT(false, "Not Implemented!");
-    return nullptr;
+	auto vertexBuffer = std::make_shared<VertexBufferVK>(shared_from_this(), inLayout);
+	if (!vertexBuffer->initialize(mMemoryProperties, inSize))
+	{
+		return nullptr;
+	}
+    return vertexBuffer;
 }
 
 std::shared_ptr<IndexBuffer> DeviceVK::createIndexBuffer(PrimitiveType inPrimitive, DataType inDataType)

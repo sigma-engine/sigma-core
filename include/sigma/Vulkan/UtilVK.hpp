@@ -1,5 +1,7 @@
 #pragma once
 
+#include <sigma/DataTypes.hpp>
+
 #include <spdlog/fmt/bundled/ostream.h>
 
 #include <vulkan/vulkan.h>
@@ -21,3 +23,5 @@ VkFormat convertImageFormatVK(ImageFormat inFormat);
 ImageFormat convertImageFormatVK(VkFormat inFormat);
 
 VkShaderStageFlagBits convertShaderTypeVK(ShaderType inType);
+
+VkFormat formatForDataTypeVK(DataType inType);

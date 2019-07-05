@@ -28,6 +28,8 @@ struct VertexMemberDescription;
 class IndexBuffer;
 enum class PrimitiveType;
 
+class VertexLayout;
+
 enum class DeviceType {
     DiscreteGPU,
     IntegratedGPU,
@@ -56,7 +58,7 @@ public:
 
     virtual std::shared_ptr<Pipeline> createPipeline(const PipelineCreateParams& inParams) = 0;
 
-    virtual std::shared_ptr<VertexBuffer> createVertexBuffer(const std::initializer_list<VertexMemberDescription>& inLayout) = 0;
+    virtual std::shared_ptr<VertexBuffer> createVertexBuffer(const VertexLayout &inLayout, uint64_t inSize) = 0;
 
     virtual std::shared_ptr<IndexBuffer> createIndexBuffer(PrimitiveType inPrimitive, DataType inDataType) = 0;
 };

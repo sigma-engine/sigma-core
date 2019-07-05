@@ -45,11 +45,6 @@ bool DeviceManagerGL::initialize(const std::set<std::string>& inRequiredExtensio
         mExtensions.insert(ext);
     }
 
-    SIGMA_INFO("Vendor: {}", glGetString(GL_VENDOR));
-    SIGMA_INFO("Model: {}", glGetString(GL_RENDERER));
-    SIGMA_INFO("Version: {}", glGetString(GL_VERSION));
-    // TODO: Get total video memory http://nasutechtips.blogspot.com/2011/02/how-to-get-gpu-memory-size-and-usage-in.html
-
     bool hasMissingExtensions = false;
     for (auto reqExt : inRequiredExtensions) {
         if (!mExtensions.count(reqExt)) {

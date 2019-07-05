@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 enum class DataType {
     Float,
     Vec2,
@@ -8,3 +10,7 @@ enum class DataType {
     UInt,
     UShort
 };
+
+uint32_t sizeOfDataType(DataType inType);
+
+uint32_t componentCountOfDataType(DataType inType);

@@ -6,24 +6,8 @@
 
 #include <cassert>
 
-VertexLayout calculateLayout(const std::initializer_list<VertexMemberDescription>& inLayout)
-{
-    std::vector<VertexMember> members;
-    std::size_t offset = 0;
-    for (const auto& des : inLayout) {
-        members.push_back({ offset,
-            sizeOfDataType(des.type),
-            des.type,
-            des.name,
-            des.normalized });
-        offset += members.back().size;
-    }
-
-    return { members, offset };
-}
-
-VertexBufferGL::VertexBufferGL(const std::initializer_list<VertexMemberDescription>& inLayout)
-    : mLayout(calculateLayout(inLayout))
+VertexBufferGL::VertexBufferGL(const VertexLayout& inLayout)
+    : mLayout(inLayout)
 {
     glCreateVertexArrays(1, &mVAOHandle);
     glCreateBuffers(1, &mBufferHandle);
@@ -39,7 +23,7 @@ VertexBufferGL::VertexBufferGL(const std::initializer_list<VertexMemberDescripti
             baseTypeOfDataType(member.type),
             member.normalized ? GL_TRUE : GL_FALSE,
             static_cast<GLsizei>(mLayout.stride()),
-            reinterpret_cast<const void*>(member.offset));
+            reinterpret_cast<const void*>(static_cast<uint64_t>(member.offset)));
         i++;
     }
 }

@@ -37,6 +37,17 @@ bool DeviceGL::supportsSurface(std::shared_ptr<Surface> inSurface) const
 
 bool DeviceGL::initialize(const std::vector<std::shared_ptr<Surface>>& inSurfaces)
 {
+	GLint majorVersion, minorVersion;
+	glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
+	glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
+
+	SIGMA_INFO("Graphics API: OpenGL");
+	SIGMA_INFO("Vendor: {}", glGetString(GL_VENDOR));
+	SIGMA_INFO("Model: {}", glGetString(GL_RENDERER));
+	SIGMA_INFO("API Version: {}.{}", majorVersion, minorVersion);
+	SIGMA_INFO("Driver Version: {}", glGetString(GL_VERSION));
+	// TODO: Get total video memory http://nasutechtips.blogspot.com/2011/02/how-to-get-gpu-memory-size-and-usage-in.html
+
     for (std::size_t i = 0; i < inSurfaces.size(); ++i) {
         SIGMA_ASSERT(std::dynamic_pointer_cast<SurfaceGL>(inSurfaces[i]), "Must use opengl surfaces with opengl device!");
         auto surface = std::static_pointer_cast<SurfaceGL>(inSurfaces[i]);
@@ -83,7 +94,7 @@ std::shared_ptr<Pipeline> DeviceGL::createPipeline(const PipelineCreateParams& i
     return pipeline;
 }
 
-std::shared_ptr<VertexBuffer> DeviceGL::createVertexBuffer(const std::initializer_list<VertexMemberDescription>& inLayout)
+std::shared_ptr<VertexBuffer> DeviceGL::createVertexBuffer(const VertexLayout &inLayout, uint64_t inSize)
 {
     return std::make_shared<VertexBufferGL>(inLayout);
 }
