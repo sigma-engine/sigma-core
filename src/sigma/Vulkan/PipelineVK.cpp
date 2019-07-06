@@ -26,21 +26,21 @@ bool PipelineVK::initialize(const PipelineCreateParams& inParams)
     SIGMA_ASSERT(std::dynamic_pointer_cast<RenderPassVK>(inParams.renderPass), "Must use vulkan render pass with vulkan pipeline");
     mRenderPass = std::static_pointer_cast<RenderPassVK>(inParams.renderPass);
 
-	VkVertexInputBindingDescription bindingDescription = {};
-	bindingDescription.binding = 0;
-	bindingDescription.stride = inParams.vertexLayout.stride();
-	bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+    VkVertexInputBindingDescription bindingDescription = {};
+    bindingDescription.binding = 0;
+    bindingDescription.stride = inParams.vertexLayout.stride();
+    bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
-	std::vector<VkVertexInputAttributeDescription> attributeDescriptions;
-	attributeDescriptions.resize(inParams.vertexLayout.attributeCount());
-	uint32_t i = 0;
-	for (const auto& member : inParams.vertexLayout) {
-		attributeDescriptions[i].binding = 0;
-		attributeDescriptions[i].location = i;
-		attributeDescriptions[i].format = formatForDataTypeVK(member.type);
-		attributeDescriptions[i].offset = member.offset;
-		i++;
-	}
+    std::vector<VkVertexInputAttributeDescription> attributeDescriptions;
+    attributeDescriptions.resize(inParams.vertexLayout.attributeCount());
+    uint32_t i = 0;
+    for (const auto& member : inParams.vertexLayout) {
+        attributeDescriptions[i].binding = 0;
+        attributeDescriptions[i].location = i;
+        attributeDescriptions[i].format = formatForDataTypeVK(member.type);
+        attributeDescriptions[i].offset = member.offset;
+        i++;
+    }
 
     VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;

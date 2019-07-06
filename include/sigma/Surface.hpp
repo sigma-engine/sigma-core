@@ -10,9 +10,9 @@ class RenderPass;
 class CommandBuffer;
 
 struct SurfaceFrameData {
-	uint32_t imageIndex;
-	uint32_t frameIndex;
-	std::shared_ptr<CommandBuffer> commandBuffer;
+    uint32_t imageIndex;
+    uint32_t frameIndex;
+    std::shared_ptr<CommandBuffer> commandBuffer;
 };
 
 class Surface {
@@ -27,7 +27,7 @@ public:
 
     virtual std::shared_ptr<RenderPass> renderPass() const = 0;
 
-    virtual void beginFrame(SurfaceFrameData &outData) = 0;
+    virtual void beginFrame(SurfaceFrameData& outData) = 0;
 
-    virtual void endFrame(const SurfaceFrameData &inData) = 0;
+    virtual void endFrame(const SurfaceFrameData& inData) = 0;
 };

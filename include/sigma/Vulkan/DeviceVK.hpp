@@ -43,7 +43,7 @@ public:
 
     virtual std::shared_ptr<Pipeline> createPipeline(const PipelineCreateParams& inParams) override;
 
-    virtual std::shared_ptr<VertexBuffer> createVertexBuffer(const VertexLayout &inLayout, uint64_t inSize) override;
+    virtual std::shared_ptr<VertexBuffer> createVertexBuffer(const VertexLayout& inLayout, uint64_t inSize) override;
 
     virtual std::shared_ptr<IndexBuffer> createIndexBuffer(PrimitiveType inPrimitive, DataType inDataType, uint64_t inSize) override;
 
@@ -55,9 +55,9 @@ public:
 
     VkQueue graphicsQueue() const;
 
-	VkResult createBuffer(VkBufferCreateInfo *inBufferCreateInfo, VkMemoryPropertyFlagBits inProperties, VkBuffer *outBuffer, VkDeviceMemory *outMemory);
+    VkResult createBuffer(VkBufferCreateInfo* inBufferCreateInfo, VkMemoryPropertyFlagBits inProperties, VkBuffer* outBuffer, VkDeviceMemory* outMemory);
 
-	VkResult copyBuffer(VkBuffer inDstBuffer, VkBuffer inSrcBuffer, uint64_t inSize);
+    VkResult copyBuffer(VkBuffer inDstBuffer, VkBuffer inSrcBuffer, uint64_t inSize);
 
 private:
     VkInstance mInstance = nullptr;
@@ -66,18 +66,18 @@ private:
     std::vector<std::string> mRequiredExtensions;
     std::vector<std::string> mEnabledLayers;
     VkPhysicalDeviceProperties mPhysicalDeviceProperties;
-	VkPhysicalDeviceMemoryProperties mMemoryProperties;
+    VkPhysicalDeviceMemoryProperties mMemoryProperties;
     std::vector<VkExtensionProperties> mExtensionProperties;
     std::vector<VkQueueFamilyProperties> mQueueFamilyProperties;
     VkPhysicalDeviceFeatures mPhysicalDeviceFeatures;
     std::optional<uint32_t> mGraphicsFamily;
     std::optional<uint32_t> mComputeFamily;
-	VkQueue mGraphicsQueue = nullptr;
+    VkQueue mGraphicsQueue = nullptr;
 
     VkCommandPool mGraphicsCommandPool = nullptr;
     std::vector<VkCommandBuffer> mFreeGraphicsBuffers;
 
     std::optional<SurfaceSwapChainInfoVK> getSwapChainInfo(std::shared_ptr<SurfaceVK> inSurface) const;
 
-	uint32_t findMemoryType(uint32_t inTypeFilter, VkMemoryPropertyFlagBits inProperties) const;
+    uint32_t findMemoryType(uint32_t inTypeFilter, VkMemoryPropertyFlagBits inProperties) const;
 };

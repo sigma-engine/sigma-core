@@ -15,15 +15,15 @@
 SurfaceVK::~SurfaceVK()
 {
     if (mDevice) {
-		vkWaitForFences(mDevice->handle(), static_cast<uint32_t>(mFrameFences.size()), mFrameFences.data(), VK_TRUE, std::numeric_limits<uint64_t>::max());
+        vkWaitForFences(mDevice->handle(), static_cast<uint32_t>(mFrameFences.size()), mFrameFences.data(), VK_TRUE, std::numeric_limits<uint64_t>::max());
 
-		for (auto fence : mFrameFences)
-			vkDestroyFence(mDevice->handle(), fence, nullptr);
+        for (auto fence : mFrameFences)
+            vkDestroyFence(mDevice->handle(), fence, nullptr);
 
-		for(auto semaphore : mImageAvailableSemaphores)
+        for (auto semaphore : mImageAvailableSemaphores)
             vkDestroySemaphore(mDevice->handle(), semaphore, nullptr);
 
-		for(auto semaphore : mRenderFinishedSemaphores)
+        for (auto semaphore : mRenderFinishedSemaphores)
             vkDestroySemaphore(mDevice->handle(), semaphore, nullptr);
 
         mCommandBuffers.clear();
@@ -59,15 +59,16 @@ std::shared_ptr<RenderPass> SurfaceVK::renderPass() const
     return mRenderPass;
 }
 
-void SurfaceVK::beginFrame(SurfaceFrameData &outData)
+void SurfaceVK::beginFrame(SurfaceFrameData& outData)
 {
-	vkWaitForFences(mDevice->handle(), 1, &mFrameFences[mCurrentFrameIndex], VK_TRUE, std::numeric_limits<uint64_t>::max());
-	vkResetFences(mDevice->handle(), 1, &mFrameFences[mCurrentFrameIndex]);
+    outData.frameIndex = mCurrentFrameIndex;
+    mCurrentFrameIndex = (mCurrentFrameIndex + 1) % mMaxPendingFrames;
 
-    vkAcquireNextImageKHR(mDevice->handle(), mSwapChain, std::numeric_limits<uint64_t>::max(), mImageAvailableSemaphores[mCurrentFrameIndex], VK_NULL_HANDLE, &outData.imageIndex);
-	outData.commandBuffer = mCommandBuffers[outData.imageIndex];
-	outData.frameIndex = mCurrentFrameIndex;
-	mCurrentFrameIndex = (mCurrentFrameIndex + 1) % mMaxPendingFrames;
+    vkWaitForFences(mDevice->handle(), 1, &mFrameFences[outData.frameIndex], VK_TRUE, std::numeric_limits<uint64_t>::max());
+    vkResetFences(mDevice->handle(), 1, &mFrameFences[outData.frameIndex]);
+
+    vkAcquireNextImageKHR(mDevice->handle(), mSwapChain, std::numeric_limits<uint64_t>::max(), mImageAvailableSemaphores[outData.frameIndex], VK_NULL_HANDLE, &outData.imageIndex);
+    outData.commandBuffer = mCommandBuffers[outData.imageIndex];
 
     RenderPassBeginParams beginRenderPass {
         mRenderPass,
@@ -79,10 +80,10 @@ void SurfaceVK::beginFrame(SurfaceFrameData &outData)
     mCommandBuffers[outData.imageIndex]->beginRenderPass(beginRenderPass);
 }
 
-void SurfaceVK::endFrame(const SurfaceFrameData &inData)
+void SurfaceVK::endFrame(const SurfaceFrameData& inData)
 {
-	mCommandBuffers[inData.imageIndex]->endRenderPass();
-	mCommandBuffers[inData.imageIndex]->end();
+    mCommandBuffers[inData.imageIndex]->endRenderPass();
+    mCommandBuffers[inData.imageIndex]->end();
 
     VkSubmitInfo submitInfo = {};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -123,7 +124,7 @@ bool SurfaceVK::createSwapChain(std::shared_ptr<DeviceVK> inDevice, const Surfac
     mPresentMode = choosePresentMode(inInfo.modes);
     mPresetQueue = mDevice->getQueue(inInfo.presentFamily.value());
     mGraphicsQueue = mDevice->graphicsQueue();
-    uint32_t imageCount = inInfo.capabilities.minImageCount + 1;
+    uint32_t imageCount = std::max(inInfo.capabilities.minImageCount, 2u);
     if (inInfo.capabilities.maxImageCount > 0)
         imageCount = std::min(imageCount, inInfo.capabilities.maxImageCount);
 
@@ -153,16 +154,16 @@ bool SurfaceVK::createSwapChain(std::shared_ptr<DeviceVK> inDevice, const Surfac
         createInfo.queueFamilyIndexCount = 0;
         createInfo.pQueueFamilyIndices = nullptr;
     }
-	
+
     createInfo.preTransform = inInfo.capabilities.currentTransform;
-	if (inInfo.capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR)
-		createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-	else if (inInfo.capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR)
-		createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR;
-	else if (inInfo.capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR)
-		createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR;
-	else
-		createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR;
+    if (inInfo.capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR)
+        createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+    else if (inInfo.capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR)
+        createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR;
+    else if (inInfo.capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR)
+        createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR;
+    else
+        createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR;
     createInfo.presentMode = mPresentMode;
     createInfo.clipped = VK_TRUE;
     createInfo.oldSwapchain = VK_NULL_HANDLE;
@@ -232,42 +233,40 @@ bool SurfaceVK::createSwapChain(std::shared_ptr<DeviceVK> inDevice, const Surfac
         }
     }
 
-	mImageAvailableSemaphores.resize(mMaxPendingFrames);
-	mRenderFinishedSemaphores.resize(mMaxPendingFrames);
-	mFrameFences.resize(mMaxPendingFrames);
-	for (uint32_t i = 0; i < mMaxPendingFrames; ++i)
-	{
-		VkSemaphoreCreateInfo semaphoreInfo = {};
-		semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+    mImageAvailableSemaphores.resize(mMaxPendingFrames);
+    mRenderFinishedSemaphores.resize(mMaxPendingFrames);
+    mFrameFences.resize(mMaxPendingFrames);
+    for (uint32_t i = 0; i < mMaxPendingFrames; ++i) {
+        VkSemaphoreCreateInfo semaphoreInfo = {};
+        semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
-		if (vkCreateSemaphore(mDevice->handle(), &semaphoreInfo, nullptr, &mImageAvailableSemaphores[i]) != VK_SUCCESS) {
-			SIGMA_ERROR("Could not create semaphore!");
-			return false;
-		}
+        if (vkCreateSemaphore(mDevice->handle(), &semaphoreInfo, nullptr, &mImageAvailableSemaphores[i]) != VK_SUCCESS) {
+            SIGMA_ERROR("Could not create semaphore!");
+            return false;
+        }
 
-		if (vkCreateSemaphore(mDevice->handle(), &semaphoreInfo, nullptr, &mRenderFinishedSemaphores[i]) != VK_SUCCESS) {
-			SIGMA_ERROR("Could not create semaphore!");
-			return false;
-		}
+        if (vkCreateSemaphore(mDevice->handle(), &semaphoreInfo, nullptr, &mRenderFinishedSemaphores[i]) != VK_SUCCESS) {
+            SIGMA_ERROR("Could not create semaphore!");
+            return false;
+        }
 
-		VkFenceCreateInfo fenceInfo = {};
-		fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-		fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-		if (vkCreateFence(mDevice->handle(), &fenceInfo, nullptr, &mFrameFences[i]) != VK_SUCCESS) {
-			SIGMA_ERROR("Could not create fence!");
-			return false;
-		}
-	}
+        VkFenceCreateInfo fenceInfo = {};
+        fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+        fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+        if (vkCreateFence(mDevice->handle(), &fenceInfo, nullptr, &mFrameFences[i]) != VK_SUCCESS) {
+            SIGMA_ERROR("Could not create fence!");
+            return false;
+        }
+    }
 
     return true;
 }
 
 VkSurfaceFormatKHR SurfaceVK::chooseSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& inFormats) const
 {
-	if (inFormats.size() == 1 && inFormats[1].format == VK_FORMAT_UNDEFINED)
-	{
-		return { VK_FORMAT_B8G8R8A8_UNORM, VK_COLORSPACE_SRGB_NONLINEAR_KHR };
-	}
+    if (inFormats.size() == 1 && inFormats[1].format == VK_FORMAT_UNDEFINED) {
+        return { VK_FORMAT_B8G8R8A8_UNORM, VK_COLORSPACE_SRGB_NONLINEAR_KHR };
+    }
 
     for (const auto& format : inFormats) {
         if (format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR && format.format == VK_FORMAT_B8G8R8A8_UNORM) {

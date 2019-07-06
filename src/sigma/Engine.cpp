@@ -22,7 +22,7 @@ GraphicsAPI Engine::graphicsAPI() const
 bool Engine::initialize(GraphicsAPI inGraphicsAPI)
 {
     mGraphicsAPI = inGraphicsAPI;
-	mConsole = spdlog::stdout_color_mt(SIGMA_LOG_NAME);
+    mConsole = spdlog::stdout_color_mt(SIGMA_LOG_NAME);
 
     switch (inGraphicsAPI) {
     case GraphicsAPI::OpenGL: {

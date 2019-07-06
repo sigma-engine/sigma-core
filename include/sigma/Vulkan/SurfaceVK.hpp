@@ -4,8 +4,8 @@
 
 #include <vulkan/vulkan.h>
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 class DeviceVK;
 class DeviceManagerVK;
@@ -27,9 +27,9 @@ public:
 
     virtual std::shared_ptr<RenderPass> renderPass() const override;
 
-    virtual void beginFrame(SurfaceFrameData &outData) override;
+    virtual void beginFrame(SurfaceFrameData& outData) override;
 
-    virtual void endFrame(const SurfaceFrameData &inData) override;
+    virtual void endFrame(const SurfaceFrameData& inData) override;
 
     VkSurfaceKHR handle() { return mSurface; }
 
@@ -55,11 +55,11 @@ protected:
     std::vector<std::shared_ptr<FramebufferVK>> mFramebuffers;
     std::vector<std::shared_ptr<CommandBufferVK>> mCommandBuffers;
 
-	uint32_t mMaxPendingFrames = 2;
-	uint32_t mCurrentFrameIndex = 0;
+    uint32_t mMaxPendingFrames = 2;
+    uint32_t mCurrentFrameIndex = 0;
     std::vector<VkSemaphore> mImageAvailableSemaphores;
     std::vector<VkSemaphore> mRenderFinishedSemaphores;
-	std::vector<VkFence> mFrameFences;
+    std::vector<VkFence> mFrameFences;
 
     VkSurfaceFormatKHR chooseSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& inFormats) const;
 

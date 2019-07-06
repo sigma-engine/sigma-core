@@ -12,7 +12,7 @@ class RenderPass;
 struct PipelineCreateParams {
     Rect<uint32_t> viewportRect;
     std::shared_ptr<RenderPass> renderPass;
-	VertexLayout vertexLayout;
+    VertexLayout vertexLayout;
     std::vector<std::shared_ptr<Shader>> shaders;
 };
 

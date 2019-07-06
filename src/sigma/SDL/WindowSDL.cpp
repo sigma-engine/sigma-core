@@ -34,7 +34,7 @@ WindowSDL::WindowSDL(std::shared_ptr<Engine> inEngine, const std::string& inTitl
     int flags = SDL_WINDOW_SHOWN;
     switch (mEngine->graphicsAPI()) {
     case GraphicsAPI::OpenGL: {
-		SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
+        SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
         //SDL_GL_SetAttribute(SDL_GL_RED_SIZE, context_attributes_.red);
         //SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, context_attributes_.green);
         //SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, context_attributes_.blue);
@@ -184,10 +184,10 @@ bool EventEmitterSDL::process(const std::vector<std::weak_ptr<EventListener>>& i
 SurfaceSDLGL::SurfaceSDLGL(SDL_Window* inWindow)
 {
     mWindow = inWindow;
-	if (sGLContext == nullptr)
-		sGLContext = SDL_GL_CreateContext(mWindow);
-	
-	mHandle = sGLContext;
+    if (sGLContext == nullptr)
+        sGLContext = SDL_GL_CreateContext(mWindow);
+
+    mHandle = sGLContext;
     SDL_GL_MakeCurrent(mWindow, mHandle);
 }
 
@@ -201,19 +201,20 @@ SurfaceSDLGL::~SurfaceSDLGL()
 bool SurfaceSDLGL::initialize(std::shared_ptr<DeviceManager> inDevice, uint32_t inWidth, uint32_t inHeight)
 {
     // TODO: Pixel format
+    SDL_GL_MakeCurrent(mWindow, mHandle);
     return SurfaceGL::initialize(inDevice, inWidth, inHeight);
 }
 
-void SurfaceSDLGL::beginFrame(SurfaceFrameData &outData)
+void SurfaceSDLGL::beginFrame(SurfaceFrameData& outData)
 {
-	SDL_GL_MakeCurrent(mWindow, mHandle);
-	SurfaceGL::beginFrame(outData);
+    SDL_GL_MakeCurrent(mWindow, mHandle);
+    SurfaceGL::beginFrame(outData);
 }
 
-void SurfaceSDLGL::endFrame(const SurfaceFrameData &inData)
+void SurfaceSDLGL::endFrame(const SurfaceFrameData& inData)
 {
-	SDL_GL_MakeCurrent(mWindow, mHandle);
-	SDL_GL_SwapWindow(mWindow);
+    SDL_GL_MakeCurrent(mWindow, mHandle);
+    SDL_GL_SwapWindow(mWindow);
 }
 
 SurfaceSDLVK::SurfaceSDLVK(SDL_Window* inWindow)

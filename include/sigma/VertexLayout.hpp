@@ -2,40 +2,40 @@
 
 #include <sigma/DataTypes.hpp>
 
-#include <vector>
+#include <cstdint>
 #include <initializer_list>
 #include <string>
-#include <cstdint>
+#include <vector>
 
 struct VertexMemberDescription {
-	DataType type;
-	std::string name;
-	bool normalized = false;
+    DataType type;
+    std::string name;
+    bool normalized = false;
 };
 
 struct VertexMember {
-	uint32_t offset;
-	uint32_t size;
-	DataType type;
-	std::string name;
-	bool normalized;
+    uint32_t offset;
+    uint32_t size;
+    DataType type;
+    std::string name;
+    bool normalized;
 };
 
 class VertexLayout {
 public:
-	VertexLayout(const std::initializer_list<VertexMemberDescription>& inLayout);
+    VertexLayout(const std::initializer_list<VertexMemberDescription>& inLayout);
 
-	VertexLayout(const std::vector<VertexMember>& inMembers, uint32_t inStride);
+    VertexLayout(const std::vector<VertexMember>& inMembers, uint32_t inStride);
 
-	uint32_t stride() const;
+    uint32_t stride() const;
 
-	uint32_t attributeCount() const { return static_cast<uint32_t>(mMembers.size()); };
+    uint32_t attributeCount() const { return static_cast<uint32_t>(mMembers.size()); };
 
-	std::vector<VertexMember>::const_iterator begin() const;
+    std::vector<VertexMember>::const_iterator begin() const;
 
-	std::vector<VertexMember>::const_iterator end() const;
+    std::vector<VertexMember>::const_iterator end() const;
 
 private:
-	uint32_t mStride;
-	std::vector<VertexMember> mMembers;
+    uint32_t mStride;
+    std::vector<VertexMember> mMembers;
 };

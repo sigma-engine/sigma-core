@@ -13,7 +13,7 @@ public:
 
     virtual ~PipelineGL();
 
-	bool initialize(const PipelineCreateParams &inParams);
+    bool initialize(const PipelineCreateParams& inParams);
 
     void attach(std::shared_ptr<Shader> inShader);
 

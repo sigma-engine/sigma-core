@@ -12,7 +12,7 @@ class VertexBuffer {
 public:
     virtual ~VertexBuffer() = default;
 
-	virtual const VertexLayout& layout() const = 0;
+    virtual const VertexLayout& layout() const = 0;
 
-	virtual void setData(const void* inData, uint64_t inSize) = 0;
+    virtual void setData(const void* inData, uint64_t inSize) = 0;
 };

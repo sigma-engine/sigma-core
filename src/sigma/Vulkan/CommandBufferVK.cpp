@@ -3,10 +3,10 @@
 #include <sigma/Log.hpp>
 #include <sigma/Vulkan/DeviceVK.hpp>
 #include <sigma/Vulkan/FramebufferVK.hpp>
-#include <sigma/Vulkan/RenderPassVK.hpp>
-#include <sigma/Vulkan/PipelineVK.hpp>
-#include <sigma/Vulkan/VertexBufferVK.hpp>
 #include <sigma/Vulkan/IndexBufferVK.hpp>
+#include <sigma/Vulkan/PipelineVK.hpp>
+#include <sigma/Vulkan/RenderPassVK.hpp>
+#include <sigma/Vulkan/VertexBufferVK.hpp>
 
 #include <limits>
 
@@ -70,36 +70,36 @@ void CommandBufferVK::beginRenderPass(const RenderPassBeginParams& inParams)
 
 void CommandBufferVK::bindPipeline(std::shared_ptr<Pipeline> inPipeline)
 {
-	SIGMA_ASSERT(std::dynamic_pointer_cast<PipelineVK>(inPipeline), "Must use vulkan pipeline with vulkan command buffer!");
-	mCurrentPipeline = std::static_pointer_cast<PipelineVK>(inPipeline);
-	vkCmdBindPipeline(mBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mCurrentPipeline->handle());
+    SIGMA_ASSERT(std::dynamic_pointer_cast<PipelineVK>(inPipeline), "Must use vulkan pipeline with vulkan command buffer!");
+    mCurrentPipeline = std::static_pointer_cast<PipelineVK>(inPipeline);
+    vkCmdBindPipeline(mBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mCurrentPipeline->handle());
 }
 
 void CommandBufferVK::bindVertexBuffer(std::shared_ptr<VertexBuffer> inBuffer)
 {
-	SIGMA_ASSERT(std::dynamic_pointer_cast<VertexBufferVK>(inBuffer), "Must use vulkan vertex buffer with vulkan command buffer!");
-	mCurrentVertexBuffer = std::static_pointer_cast<VertexBufferVK>(inBuffer);
-	VkDeviceSize offset = 0;
-	VkBuffer vertexBuffer = mCurrentVertexBuffer->handle();
-	vkCmdBindVertexBuffers(mBuffer, 0, 1, &vertexBuffer, &offset);
+    SIGMA_ASSERT(std::dynamic_pointer_cast<VertexBufferVK>(inBuffer), "Must use vulkan vertex buffer with vulkan command buffer!");
+    mCurrentVertexBuffer = std::static_pointer_cast<VertexBufferVK>(inBuffer);
+    VkDeviceSize offset = 0;
+    VkBuffer vertexBuffer = mCurrentVertexBuffer->handle();
+    vkCmdBindVertexBuffers(mBuffer, 0, 1, &vertexBuffer, &offset);
 }
 
 void CommandBufferVK::bindIndexBuffer(std::shared_ptr<IndexBuffer> inBuffer)
 {
-	SIGMA_ASSERT(std::dynamic_pointer_cast<IndexBufferVK>(inBuffer), "Must use vulkan index buffer with vulkan command buffer!");
-	mCurrentIndexBuffer = std::static_pointer_cast<IndexBufferVK>(inBuffer);
+    SIGMA_ASSERT(std::dynamic_pointer_cast<IndexBufferVK>(inBuffer), "Must use vulkan index buffer with vulkan command buffer!");
+    mCurrentIndexBuffer = std::static_pointer_cast<IndexBufferVK>(inBuffer);
 
-	vkCmdBindIndexBuffer(mBuffer, mCurrentIndexBuffer->handle(), 0, mCurrentIndexBuffer->dataType() == DataType::UInt ? VK_INDEX_TYPE_UINT32 : VK_INDEX_TYPE_UINT16);
+    vkCmdBindIndexBuffer(mBuffer, mCurrentIndexBuffer->handle(), 0, mCurrentIndexBuffer->dataType() == DataType::UInt ? VK_INDEX_TYPE_UINT32 : VK_INDEX_TYPE_UINT16);
 }
 
 void CommandBufferVK::draw(uint32_t inVertexCount, uint32_t inInstanceCount, uint32_t inFirstVertex, uint32_t inFirstInstance)
 {
-	vkCmdDraw(mBuffer, inVertexCount, inInstanceCount, inFirstVertex, inFirstInstance);
+    vkCmdDraw(mBuffer, inVertexCount, inInstanceCount, inFirstVertex, inFirstInstance);
 }
 
 void CommandBufferVK::drawIndexed(uint32_t inIndexCount, uint32_t inInstanceCount, uint32_t inFirstIndex, int32_t inVertexOffset, uint32_t inFirstInstance)
 {
-	vkCmdDrawIndexed(mBuffer, inIndexCount, inInstanceCount, inFirstIndex, inVertexOffset, inFirstInstance);
+    vkCmdDrawIndexed(mBuffer, inIndexCount, inInstanceCount, inFirstIndex, inVertexOffset, inFirstInstance);
 }
 
 void CommandBufferVK::endRenderPass()

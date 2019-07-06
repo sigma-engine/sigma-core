@@ -18,7 +18,7 @@ public:
 
     virtual std::shared_ptr<RenderPass> renderPass() const override;
 
-    virtual void beginFrame(SurfaceFrameData &outData) override;
+    virtual void beginFrame(SurfaceFrameData& outData) override;
 
     bool createSwapChain(std::shared_ptr<DeviceGL> inDevice);
 
@@ -28,5 +28,5 @@ protected:
     GLenum mFormat;
 
     std::shared_ptr<RenderPassGL> mRenderPass = nullptr;
-	std::shared_ptr<CommandBufferGL> mCommandBuffer = nullptr;
+    std::shared_ptr<CommandBufferGL> mCommandBuffer = nullptr;
 };

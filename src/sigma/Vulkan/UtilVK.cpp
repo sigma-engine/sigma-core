@@ -54,20 +54,20 @@ VkShaderStageFlagBits convertShaderTypeVK(ShaderType inType)
 
 VkFormat formatForDataTypeVK(DataType inType)
 {
-	switch (inType) {
-	case DataType::Float:
-		return VK_FORMAT_R32_SFLOAT;
-	case DataType::Vec2:
-		return VK_FORMAT_R32G32_SFLOAT;
-	case DataType::Vec3:
-		return VK_FORMAT_R32G32B32_SFLOAT;
-	case DataType::Vec4:
-		return VK_FORMAT_R32G32B32A32_SFLOAT;
-	case DataType::UInt:
-		return VK_FORMAT_R32_UINT;
-	case DataType::UShort:
-		return VK_FORMAT_R16_UINT;
-	}
-	SIGMA_ASSERT(false, "Unknown DataType");
-	return VK_FORMAT_UNDEFINED;
+    switch (inType) {
+    case DataType::Float:
+        return VK_FORMAT_R32_SFLOAT;
+    case DataType::Vec2:
+        return VK_FORMAT_R32G32_SFLOAT;
+    case DataType::Vec3:
+        return VK_FORMAT_R32G32B32_SFLOAT;
+    case DataType::Vec4:
+        return VK_FORMAT_R32G32B32A32_SFLOAT;
+    case DataType::UInt:
+        return VK_FORMAT_R32_UINT;
+    case DataType::UShort:
+        return VK_FORMAT_R16_UINT;
+    }
+    SIGMA_ASSERT(false, "Unknown DataType");
+    return VK_FORMAT_UNDEFINED;
 }

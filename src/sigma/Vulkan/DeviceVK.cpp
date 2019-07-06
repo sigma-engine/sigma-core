@@ -1,14 +1,14 @@
 #include <sigma/Vulkan/DeviceVK.hpp>
 
+#include <sigma/Log.hpp>
 #include <sigma/Vulkan/CommandBufferVK.hpp>
+#include <sigma/Vulkan/IndexBufferVK.hpp>
 #include <sigma/Vulkan/PipelineVK.hpp>
 #include <sigma/Vulkan/RenderPassVK.hpp>
 #include <sigma/Vulkan/ShaderVK.hpp>
 #include <sigma/Vulkan/SurfaceVK.hpp>
 #include <sigma/Vulkan/UtilVK.hpp>
 #include <sigma/Vulkan/VertexBufferVK.hpp>
-#include <sigma/Vulkan/IndexBufferVK.hpp>
-#include <sigma/Log.hpp>
 
 #include <sigma/Log.hpp>
 
@@ -21,7 +21,7 @@ DeviceVK::DeviceVK(VkInstance inInstance, VkPhysicalDevice inDevice, const std::
 {
     vkGetPhysicalDeviceProperties(inDevice, &mPhysicalDeviceProperties);
     vkGetPhysicalDeviceFeatures(inDevice, &mPhysicalDeviceFeatures);
-	vkGetPhysicalDeviceMemoryProperties(inDevice, &mMemoryProperties);
+    vkGetPhysicalDeviceMemoryProperties(inDevice, &mMemoryProperties);
 
     uint32_t queueFamilyCount = 0;
     vkGetPhysicalDeviceQueueFamilyProperties(mPhysicalDevice, &queueFamilyCount, nullptr);
@@ -87,19 +87,19 @@ bool DeviceVK::supportsSurface(std::shared_ptr<Surface> inSurface) const
 
 bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurfaces)
 {
-	static std::unordered_map<uint32_t, std::string> vendorNames = {
-		{ 0x1002, "AMD" },
-		{ 0x1010, "ImgTec" },
-		{ 0x10DE, "NVIDIA" },
-		{ 0x13B5, "ARM" },
-		{ 0x5143, "Qualcomm" },
-		{ 0x8086, "INTEL" }
-	};
-	SIGMA_INFO("Graphics API: Vulkan");
-	SIGMA_INFO("Vender: {}", vendorNames.count(mPhysicalDeviceProperties.vendorID) ? vendorNames[mPhysicalDeviceProperties.vendorID] : "Unknown");
-	SIGMA_INFO("Model: {}", mPhysicalDeviceProperties.deviceName);
-	SIGMA_INFO("API Version: {}.{}.{}", (mPhysicalDeviceProperties.apiVersion >> 22) & 0x3FF, (mPhysicalDeviceProperties.apiVersion >> 12) & 0x3FF, mPhysicalDeviceProperties.apiVersion & 0xFFF);
-	SIGMA_INFO("Driver Version: {}.{}.{}", (mPhysicalDeviceProperties.driverVersion >> 22) & 0x3FF, (mPhysicalDeviceProperties.driverVersion >> 12) & 0x3FF, mPhysicalDeviceProperties.driverVersion & 0xFFF);
+    static std::unordered_map<uint32_t, std::string> vendorNames = {
+        { 0x1002, "AMD" },
+        { 0x1010, "ImgTec" },
+        { 0x10DE, "NVIDIA" },
+        { 0x13B5, "ARM" },
+        { 0x5143, "Qualcomm" },
+        { 0x8086, "INTEL" }
+    };
+    SIGMA_INFO("Graphics API: Vulkan");
+    SIGMA_INFO("Vender: {}", vendorNames.count(mPhysicalDeviceProperties.vendorID) ? vendorNames[mPhysicalDeviceProperties.vendorID] : "Unknown");
+    SIGMA_INFO("Model: {}", mPhysicalDeviceProperties.deviceName);
+    SIGMA_INFO("API Version: {}.{}.{}", (mPhysicalDeviceProperties.apiVersion >> 22) & 0x3FF, (mPhysicalDeviceProperties.apiVersion >> 12) & 0x3FF, mPhysicalDeviceProperties.apiVersion & 0xFFF);
+    SIGMA_INFO("Driver Version: {}.{}.{}", (mPhysicalDeviceProperties.driverVersion >> 22) & 0x3FF, (mPhysicalDeviceProperties.driverVersion >> 12) & 0x3FF, mPhysicalDeviceProperties.driverVersion & 0xFFF);
 
     // TODO add a way to specifiy required device extensions
     if (inSurfaces.size())
@@ -237,8 +237,8 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
             SIGMA_ERROR("Could not create graphics command pool!");
             return false;
         }
-		
-		vkGetDeviceQueue(mDevice, mGraphicsFamily.value(), 0, &mGraphicsQueue);
+
+        vkGetDeviceQueue(mDevice, mGraphicsFamily.value(), 0, &mGraphicsQueue);
     }
 
     for (std::size_t i = 0; i < inSurfaces.size(); ++i) {
@@ -248,7 +248,7 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
             return false;
         }
     }
-	
+
     return true;
 }
 
@@ -298,24 +298,22 @@ std::shared_ptr<Pipeline> DeviceVK::createPipeline(const PipelineCreateParams& i
     return pipeline;
 }
 
-std::shared_ptr<VertexBuffer> DeviceVK::createVertexBuffer(const VertexLayout &inLayout, uint64_t inSize)
+std::shared_ptr<VertexBuffer> DeviceVK::createVertexBuffer(const VertexLayout& inLayout, uint64_t inSize)
 {
-	auto vertexBuffer = std::make_shared<VertexBufferVK>(shared_from_this(), inLayout);
-	if (!vertexBuffer->initialize(inSize))
-	{
-		return nullptr;
-	}
+    auto vertexBuffer = std::make_shared<VertexBufferVK>(shared_from_this(), inLayout);
+    if (!vertexBuffer->initialize(inSize)) {
+        return nullptr;
+    }
     return vertexBuffer;
 }
 
 std::shared_ptr<IndexBuffer> DeviceVK::createIndexBuffer(PrimitiveType inPrimitive, DataType inDataType, uint64_t inSize)
 {
-	auto indexBuffer = std::make_shared<IndexBufferVK>(shared_from_this(), inPrimitive, inDataType);
-	if (!indexBuffer->initialize(inSize))
-	{
-		return nullptr;
-	}
-	return indexBuffer;
+    auto indexBuffer = std::make_shared<IndexBufferVK>(shared_from_this(), inPrimitive, inDataType);
+    if (!indexBuffer->initialize(inSize)) {
+        return nullptr;
+    }
+    return indexBuffer;
 }
 
 uint32_t DeviceVK::graphicsQueueFamily() const
@@ -335,85 +333,88 @@ VkQueue DeviceVK::graphicsQueue() const
     return mGraphicsQueue;
 }
 
-VkResult DeviceVK::createBuffer(VkBufferCreateInfo *inBufferCreateInfo, VkMemoryPropertyFlagBits inProperties, VkBuffer *outBuffer, VkDeviceMemory *outMemory)
+VkResult DeviceVK::createBuffer(VkBufferCreateInfo* inBufferCreateInfo, VkMemoryPropertyFlagBits inProperties, VkBuffer* outBuffer, VkDeviceMemory* outMemory)
 {
-	VkMemoryRequirements requirements;
-	VkMemoryAllocateInfo allocInfo = {};
+    VkMemoryRequirements requirements;
+    VkMemoryAllocateInfo allocInfo = {};
 
-	VkResult result = vkCreateBuffer(mDevice, inBufferCreateInfo, nullptr, outBuffer);
-	if (result != VK_SUCCESS)
-		goto done;
-	
-	vkGetBufferMemoryRequirements(mDevice, *outBuffer, &requirements);
+    VkResult result = vkCreateBuffer(mDevice, inBufferCreateInfo, nullptr, outBuffer);
+    if (result != VK_SUCCESS)
+        goto done;
 
-	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	allocInfo.allocationSize = requirements.size;
-	allocInfo.memoryTypeIndex = findMemoryType(requirements.memoryTypeBits, inProperties);
+    vkGetBufferMemoryRequirements(mDevice, *outBuffer, &requirements);
 
-	result = vkAllocateMemory(mDevice, &allocInfo, nullptr, outMemory);
-	if (result != VK_SUCCESS)
-		goto done;
+    allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    allocInfo.allocationSize = requirements.size;
+    allocInfo.memoryTypeIndex = findMemoryType(requirements.memoryTypeBits, inProperties);
 
-	result = vkBindBufferMemory(mDevice, *outBuffer, *outMemory, 0);
-	if (result != VK_SUCCESS)
-		goto done;
+    result = vkAllocateMemory(mDevice, &allocInfo, nullptr, outMemory);
+    if (result != VK_SUCCESS)
+        goto done;
+
+    result = vkBindBufferMemory(mDevice, *outBuffer, *outMemory, 0);
+    if (result != VK_SUCCESS)
+        goto done;
 
 done:
-	if (result != VK_SUCCESS) {
-		if (*outMemory) vkFreeMemory(mDevice, *outMemory, nullptr);
-		if (*outBuffer) vkDestroyBuffer(mDevice, *outBuffer, nullptr);
-		*outBuffer = nullptr;
-		*outMemory = nullptr;
-	}
-	return result;
+    if (result != VK_SUCCESS) {
+        if (*outMemory)
+            vkFreeMemory(mDevice, *outMemory, nullptr);
+        if (*outBuffer)
+            vkDestroyBuffer(mDevice, *outBuffer, nullptr);
+        *outBuffer = nullptr;
+        *outMemory = nullptr;
+    }
+    return result;
 }
 
 VkResult DeviceVK::copyBuffer(VkBuffer inDstBuffer, VkBuffer inSrcBuffer, uint64_t inSize)
 {
-	VkResult result;
-	VkCommandBufferAllocateInfo allocInfo = {};
-	VkCommandBufferBeginInfo beginInfo = {};
-	VkSubmitInfo submitInfo = {};
-	VkCommandBuffer commandBuffer;
-	VkBufferCopy copyRegion = {0, 0, inSize};
+    VkResult result;
+    VkCommandBufferAllocateInfo allocInfo = {};
+    VkCommandBufferBeginInfo beginInfo = {};
+    VkSubmitInfo submitInfo = {};
+    VkCommandBuffer commandBuffer;
+    VkBufferCopy copyRegion = { 0, 0, inSize };
 
-	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-	allocInfo.commandPool = mGraphicsCommandPool;
-	allocInfo.commandBufferCount = 1;
+    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    allocInfo.commandPool = mGraphicsCommandPool;
+    allocInfo.commandBufferCount = 1;
 
-	result = vkAllocateCommandBuffers(mDevice, &allocInfo, &commandBuffer);
-	if (result != VK_SUCCESS)
-		goto done;
-	
-	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-	
-	result = vkBeginCommandBuffer(commandBuffer, &beginInfo);
-	if (result != VK_SUCCESS)
-		goto done;
+    result = vkAllocateCommandBuffers(mDevice, &allocInfo, &commandBuffer);
+    if (result != VK_SUCCESS)
+        goto done;
 
-	vkCmdCopyBuffer(commandBuffer, inSrcBuffer, inDstBuffer, 1, &copyRegion);
+    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
-	result = vkEndCommandBuffer(commandBuffer);
-	if (result != VK_SUCCESS)
-		goto done;
+    result = vkBeginCommandBuffer(commandBuffer, &beginInfo);
+    if (result != VK_SUCCESS)
+        goto done;
 
-	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	submitInfo.commandBufferCount = 1;
-	submitInfo.pCommandBuffers = &commandBuffer;
+    vkCmdCopyBuffer(commandBuffer, inSrcBuffer, inDstBuffer, 1, &copyRegion);
 
-	result = vkQueueSubmit(mGraphicsQueue, 1, &submitInfo, nullptr);
-	if (result != VK_SUCCESS)
-		goto done;
+    result = vkEndCommandBuffer(commandBuffer);
+    if (result != VK_SUCCESS)
+        goto done;
 
-	result = vkQueueWaitIdle(mGraphicsQueue);
-	
-	assert(result == VK_SUCCESS);
+    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    submitInfo.commandBufferCount = 1;
+    submitInfo.pCommandBuffers = &commandBuffer;
+
+    result = vkQueueSubmit(mGraphicsQueue, 1, &submitInfo, nullptr);
+    if (result != VK_SUCCESS)
+        goto done;
+
+    result = vkQueueWaitIdle(mGraphicsQueue);
+
+    assert(result == VK_SUCCESS);
 done:
-	if (commandBuffer) vkFreeCommandBuffers(mDevice, mGraphicsCommandPool, 1, &commandBuffer);
+    if (commandBuffer)
+        vkFreeCommandBuffers(mDevice, mGraphicsCommandPool, 1, &commandBuffer);
 
-	return result;
+    return result;
 }
 
 std::optional<SurfaceSwapChainInfoVK> DeviceVK::getSwapChainInfo(std::shared_ptr<SurfaceVK> inSurface) const
@@ -456,13 +457,11 @@ std::optional<SurfaceSwapChainInfoVK> DeviceVK::getSwapChainInfo(std::shared_ptr
 
 uint32_t DeviceVK::findMemoryType(uint32_t inTypeFilter, VkMemoryPropertyFlagBits inProperties) const
 {
-	for (uint32_t i = 0; i < mMemoryProperties.memoryTypeCount; ++i)
-	{
-		if ((inTypeFilter  & (1 << i)) && ((mMemoryProperties.memoryTypes[i].propertyFlags & inProperties) == inProperties))
-		{
-			return i;
-		}
-	}
+    for (uint32_t i = 0; i < mMemoryProperties.memoryTypeCount; ++i) {
+        if ((inTypeFilter & (1 << i)) && ((mMemoryProperties.memoryTypes[i].propertyFlags & inProperties) == inProperties)) {
+            return i;
+        }
+    }
 
-	return std::numeric_limits<uint32_t>::max();
+    return std::numeric_limits<uint32_t>::max();
 }

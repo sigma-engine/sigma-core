@@ -22,7 +22,7 @@ public:
 
     virtual std::shared_ptr<Pipeline> createPipeline(const PipelineCreateParams& inParams) override;
 
-    virtual std::shared_ptr<VertexBuffer> createVertexBuffer(const VertexLayout &inLayout, uint64_t inSize) override;
+    virtual std::shared_ptr<VertexBuffer> createVertexBuffer(const VertexLayout& inLayout, uint64_t inSize) override;
 
     virtual std::shared_ptr<IndexBuffer> createIndexBuffer(PrimitiveType inPrimitive, DataType inDataType, uint64_t inSize) override;
 };

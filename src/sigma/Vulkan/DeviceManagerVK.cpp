@@ -57,18 +57,16 @@ DeviceManagerVK::~DeviceManagerVK()
 
 bool DeviceManagerVK::initialize(const std::set<std::string>& s)
 {
-	uint32_t vulkanVersion;
-	if (vkEnumerateInstanceVersion(&vulkanVersion) != VK_SUCCESS)
-	{
-		SIGMA_ERROR("Could not enumerate vulkan instance version!");
-		return false;
-	}
+    uint32_t vulkanVersion;
+    if (vkEnumerateInstanceVersion(&vulkanVersion) != VK_SUCCESS) {
+        SIGMA_ERROR("Could not enumerate vulkan instance version!");
+        return false;
+    }
 
-	if (vulkanVersion < VK_MAKE_VERSION(1, 1, 0))
-	{
-		SIGMA_ERROR("Vulkan 1.1.0 required!");
-		return false;
-	}
+    if (vulkanVersion < VK_MAKE_VERSION(1, 1, 0)) {
+        SIGMA_ERROR("Vulkan 1.1.0 required!");
+        return false;
+    }
 
     mRequiredExtensions.insert(mRequiredExtensions.end(), s.begin(), s.end());
 

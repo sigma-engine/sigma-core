@@ -1,2 +1,1 @@
 #include <sigma/Pipeline.hpp>
-

@@ -6,7 +6,7 @@
 
 #include <cassert>
 
-size_t primitiveComponentCount(PrimitiveType inType)
+uint64_t primitiveComponentCount(PrimitiveType inType)
 {
     switch (inType) {
     case PrimitiveType::Triangle:
@@ -27,7 +27,6 @@ GLenum glEnumForPrimitive(PrimitiveType inType)
 }
 
 IndexBufferGL::IndexBufferGL(PrimitiveType inPrimitiveType, DataType inDataType)
-
     : mPrimitiveType(inPrimitiveType)
     , mDataType(inDataType)
     , mCount(0)
@@ -50,7 +49,7 @@ PrimitiveType IndexBufferGL::primitiveType() const
     return mPrimitiveType;
 }
 
-void IndexBufferGL::setData(const void* inData, size_t inSize)
+void IndexBufferGL::setData(const void* inData, uint64_t inSize)
 {
     assert(inSize % (primitiveComponentCount(mPrimitiveType) * sizeOfDataType(mDataType)) == 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mHandle);
@@ -60,5 +59,5 @@ void IndexBufferGL::setData(const void* inData, size_t inSize)
 
 void IndexBufferGL::bind()
 {
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mHandle);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mHandle);
 }

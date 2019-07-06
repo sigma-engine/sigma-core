@@ -18,14 +18,13 @@ PipelineGL::~PipelineGL()
     glDeleteProgram(mHandle);
 }
 
-bool PipelineGL::initialize(const PipelineCreateParams &inParams)
+bool PipelineGL::initialize(const PipelineCreateParams& inParams)
 {
-	for (auto shader : inParams.shaders)
-	{
-		attach(shader);
-	}
+    for (auto shader : inParams.shaders) {
+        attach(shader);
+    }
 
-	return link();
+    return link();
 }
 
 void PipelineGL::attach(std::shared_ptr<Shader> inShader)
