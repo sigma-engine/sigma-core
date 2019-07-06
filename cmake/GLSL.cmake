@@ -1,9 +1,3 @@
-if (${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAL "AMD64")
-	set(GLSL_VALIDATOR "$ENV{VULKAN_SDK}/Bin/glslangValidator.exe")
-else()
-	set(GLSL_VALIDATOR "$ENV{VULKAN_SDK}/Bin32/glslangValidator.exe")
-endif()
-
 function(compile_glsl_sources TARGET_NAME)
 	set(VULKAN_OUTPUT_LOCATION "${CMAKE_BINARY_DIR}/vulkan")
 	set(OPENGL_OUTPUT_LOCATION "${CMAKE_BINARY_DIR}/opengl")
@@ -14,7 +8,11 @@ function(compile_glsl_sources TARGET_NAME)
     foreach(SOURCE ${TARGET_SOURES})
         get_filename_component(SOURCE_EXT "${SOURCE}" EXT)
 		get_filename_component(SOURCE_FILENAME "${SOURCE}" NAME_WE)
-        if ("${SOURCE_EXT}" STREQUAL ".vert" OR "${SOURCE_EXT}" STREQUAL ".tesc" OR "${SOURCE_EXT}" STREQUAL ".tese" OR "${SOURCE_EXT}" STREQUAL ".geom" OR "${SOURCE_EXT}" STREQUAL ".frag" OR "${SOURCE_EXT}" STREQUAL ".comp")
+
+		if (SOURCE_EXT MATCHES ".*\\.glsl")
+			string(REGEX REPLACE "\\.glsl" "" SHADER_STAGE "${SOURCE_EXT}")
+			string(REGEX REPLACE "\\." "" SHADER_STAGE "${SHADER_STAGE}")
+			
             if(NOT EXISTS "${SOURCE}")
                 set(SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE}")
 			endif()
@@ -25,12 +23,12 @@ function(compile_glsl_sources TARGET_NAME)
 			set(OPENGL_OUTPUT "${OPENGL_OUTPUT_LOCATION}/${OUTPUT_PATH}")
 
 			add_custom_command(OUTPUT "${VULKAN_OUTPUT}"
-				COMMAND glslc "${SOURCE}" -o "${VULKAN_OUTPUT}" --target-env="vulkan1.1" -DSIGMA_VULKAN
+				COMMAND glslc -fshader-stage="${SHADER_STAGE}" "${SOURCE}" -o "${VULKAN_OUTPUT}" --target-env="vulkan1.1" -DSIGMA_VULKAN 
                 DEPENDS "${SOURCE}"
 			)
 
 			add_custom_command(OUTPUT "${OPENGL_OUTPUT}"
-				COMMAND glslc "${SOURCE}" -o "${OPENGL_OUTPUT}" -E -DSIGMA_OPENGL
+				COMMAND glslc -fshader-stage="${SHADER_STAGE}" "${SOURCE}" -o "${OPENGL_OUTPUT}" -E -DSIGMA_OPENGL
                 DEPENDS "${SOURCE}"
 			)
 			

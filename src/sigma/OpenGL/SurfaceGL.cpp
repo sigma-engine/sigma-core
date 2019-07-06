@@ -27,7 +27,7 @@ std::shared_ptr<RenderPass> SurfaceGL::renderPass() const
     return mRenderPass;
 }
 
-void SurfaceGL::beginFrame(SurfaceImageData &outData)
+void SurfaceGL::beginFrame(SurfaceFrameData &outData)
 {
 	outData.commandBuffer = mCommandBuffer;
 	outData.frameIndex = 0;

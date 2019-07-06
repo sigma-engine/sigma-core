@@ -27,9 +27,9 @@ public:
 
     virtual std::shared_ptr<RenderPass> renderPass() const override;
 
-    virtual void beginFrame(SurfaceImageData &outData) override;
+    virtual void beginFrame(SurfaceFrameData &outData) override;
 
-    virtual void endFrame(const SurfaceImageData &inData) override;
+    virtual void endFrame(const SurfaceFrameData &inData) override;
 
     VkSurfaceKHR handle() { return mSurface; }
 

@@ -73,25 +73,25 @@ int main(int argc, char const* argv[])
 	if (pipeline == nullptr)
 		return -1;
 
-   auto vertexBuffer = device->createVertexBuffer(vertexLayout, sizeof(Vertex) * vertices.size());
-   if (vertexBuffer == nullptr)
-	   return -1;
-   vertexBuffer->setData(vertices.data(), sizeof(Vertex) * vertices.size());
+	auto vertexBuffer = device->createVertexBuffer(vertexLayout, sizeof(Vertex) * vertices.size());
+	if (vertexBuffer == nullptr)
+		return -1;
+	vertexBuffer->setData(vertices.data(), sizeof(Vertex) * vertices.size());
 
-   auto indexBuffer = device->createIndexBuffer(PrimitiveType::Triangle, DataType::UShort, indices.size() * sizeof(uint16_t));
-   if (indexBuffer == nullptr)
-	   return -1;
-   indexBuffer->setData(indices.data(), sizeof(uint16_t) * indices.size());
+	auto indexBuffer = device->createIndexBuffer(PrimitiveType::Triangle, DataType::UShort, indices.size() * sizeof(uint16_t));
+	if (indexBuffer == nullptr)
+		return -1;
+	indexBuffer->setData(indices.data(), sizeof(uint16_t) * indices.size());
 
-    while (window->open() && engine->process()) {
-		SurfaceImageData frameData;
+	while (window->open() && engine->process()) {
+		SurfaceFrameData frameData;
 		window->surface()->beginFrame(frameData);
-		
+
 		frameData.commandBuffer->bindPipeline(pipeline);
 		frameData.commandBuffer->bindVertexBuffer(vertexBuffer);
 		frameData.commandBuffer->bindIndexBuffer(indexBuffer);
 		frameData.commandBuffer->drawIndexed(indices.size(), 1, 0, 0, 0);
 
-        window->surface()->endFrame(frameData);
-    }
+		window->surface()->endFrame(frameData);
+	}
 }

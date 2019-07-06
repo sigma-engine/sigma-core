@@ -18,7 +18,7 @@ public:
 
     virtual std::shared_ptr<RenderPass> renderPass() const override;
 
-    virtual void beginFrame(SurfaceImageData &outData) override;
+    virtual void beginFrame(SurfaceFrameData &outData) override;
 
     bool createSwapChain(std::shared_ptr<DeviceGL> inDevice);
 

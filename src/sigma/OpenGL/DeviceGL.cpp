@@ -66,7 +66,7 @@ std::shared_ptr<CommandBuffer> DeviceGL::createCommandBuffer()
 
 std::shared_ptr<Shader> DeviceGL::createShader(ShaderType inType, const std::string& inSourcePath)
 {
-    std::ifstream file("opengl/" + inSourcePath, std::ios::ate | std::ios::binary);
+    std::ifstream file("opengl/" + inSourcePath + ".glsl", std::ios::ate | std::ios::binary);
     if (!file.is_open())
         return nullptr;
     size_t fsize = file.tellg();

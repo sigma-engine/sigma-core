@@ -59,7 +59,7 @@ std::shared_ptr<RenderPass> SurfaceVK::renderPass() const
     return mRenderPass;
 }
 
-void SurfaceVK::beginFrame(SurfaceImageData &outData)
+void SurfaceVK::beginFrame(SurfaceFrameData &outData)
 {
 	vkWaitForFences(mDevice->handle(), 1, &mFrameFences[mCurrentFrameIndex], VK_TRUE, std::numeric_limits<uint64_t>::max());
 	vkResetFences(mDevice->handle(), 1, &mFrameFences[mCurrentFrameIndex]);
@@ -79,7 +79,7 @@ void SurfaceVK::beginFrame(SurfaceImageData &outData)
     mCommandBuffers[outData.imageIndex]->beginRenderPass(beginRenderPass);
 }
 
-void SurfaceVK::endFrame(const SurfaceImageData &inData)
+void SurfaceVK::endFrame(const SurfaceFrameData &inData)
 {
 	mCommandBuffers[inData.imageIndex]->endRenderPass();
 	mCommandBuffers[inData.imageIndex]->end();

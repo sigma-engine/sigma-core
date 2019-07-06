@@ -161,8 +161,8 @@ PUBLIC
 )
 
 add_executable(simple-game
-	shaders/simple.vert
-	shaders/simple.frag	
+	shaders/simple.vert.glsl
+	shaders/simple.frag.glsl
 
 	src/main.cpp
 )

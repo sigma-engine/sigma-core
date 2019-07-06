@@ -266,7 +266,7 @@ std::shared_ptr<CommandBuffer> DeviceVK::createCommandBuffer()
 
 std::shared_ptr<Shader> DeviceVK::createShader(ShaderType inType, const std::string& inSourcePath)
 {
-    std::ifstream file("vulkan/" + inSourcePath, std::ios::ate | std::ios::binary);
+    std::ifstream file("vulkan/" + inSourcePath + ".glsl", std::ios::ate | std::ios::binary);
     if (!file.is_open())
         return nullptr;
     size_t fsize = file.tellg();
