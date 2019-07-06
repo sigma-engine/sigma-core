@@ -6,9 +6,9 @@
 
 class RenderPass;
 
-class Framebuffer {
+class FrameBuffer {
 public:
-    virtual ~Framebuffer() = default;
+    virtual ~FrameBuffer() = default;
 
 	virtual std::shared_ptr<RenderPass> renderPass() const = 0;
 

@@ -1,1 +1,1 @@
-#include <sigma/Framebuffer.hpp>
+#include <sigma/FrameBuffer.hpp>

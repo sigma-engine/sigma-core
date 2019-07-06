@@ -2,7 +2,7 @@
 
 #include <sigma/Log.hpp>
 #include <sigma/Vulkan/DeviceVK.hpp>
-#include <sigma/Vulkan/FramebufferVK.hpp>
+#include <sigma/Vulkan/FrameBufferVK.hpp>
 #include <sigma/Vulkan/IndexBufferVK.hpp>
 #include <sigma/Vulkan/PipelineVK.hpp>
 #include <sigma/Vulkan/RenderPassVK.hpp>
@@ -51,14 +51,14 @@ void CommandBufferVK::begin()
 
 void CommandBufferVK::beginRenderPass(const RenderPassBeginParams& inParams)
 {
-    SIGMA_ASSERT(std::dynamic_pointer_cast<FramebufferVK>(inParams.frameBuffer), "Must use vulkan framebuffer with vulkan command buffer!");
+    SIGMA_ASSERT(std::dynamic_pointer_cast<FrameBufferVK>(inParams.FrameBuffer), "Must use vulkan FrameBuffer with vulkan command buffer!");
 
     // TODO: correct clear colors!
     VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
     VkRenderPassBeginInfo renderPassInfo = {};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    renderPassInfo.renderPass = std::static_pointer_cast<RenderPassVK>(inParams.frameBuffer->renderPass())->handle();
-    renderPassInfo.framebuffer = std::static_pointer_cast<FramebufferVK>(inParams.frameBuffer)->handle();
+    renderPassInfo.renderPass = std::static_pointer_cast<RenderPassVK>(inParams.FrameBuffer->renderPass())->handle();
+    renderPassInfo.framebuffer = std::static_pointer_cast<FrameBufferVK>(inParams.FrameBuffer)->handle();
     renderPassInfo.renderArea.offset = { inParams.renderArea.origin.x, inParams.renderArea.origin.y };
     renderPassInfo.renderArea.extent = { inParams.renderArea.size.x, inParams.renderArea.size.y };
     renderPassInfo.clearValueCount = 1;

@@ -1,15 +1,15 @@
 #pragma once
 
-#include <sigma/Framebuffer.hpp>
+#include <sigma/FrameBuffer.hpp>
 
 #include <memory>
 
 class DeviceGL;
 class RenderPassGL;
 
-class FramebufferGL : public Framebuffer {
+class FrameBufferGL : public FrameBuffer {
 public:
-	FramebufferGL(std::shared_ptr<RenderPassGL> inRenderPass, Rect<int32_t> inExtent);
+	FrameBufferGL(std::shared_ptr<RenderPassGL> inRenderPass, Rect<int32_t> inExtent);
 
 	std::shared_ptr<RenderPass> renderPass() const override;
 

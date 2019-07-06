@@ -1,6 +1,6 @@
 #pragma once
 
-#include <sigma/Framebuffer.hpp>
+#include <sigma/FrameBuffer.hpp>
 
 #include <vulkan/vulkan.h>
 
@@ -9,21 +9,21 @@
 class DeviceVK;
 class RenderPassVK;
 
-class FramebufferVK : public Framebuffer {
+class FrameBufferVK : public FrameBuffer {
 public:
-    FramebufferVK(std::shared_ptr<DeviceVK> inDevice, VkFramebuffer inFramebuffer, std::shared_ptr<RenderPassVK> inRenderPass, Rect<int32_t> inExtent);
+    FrameBufferVK(std::shared_ptr<DeviceVK> inDevice, VkFramebuffer inFrameBuffer, std::shared_ptr<RenderPassVK> inRenderPass, Rect<int32_t> inExtent);
 
-    virtual ~FramebufferVK();
+    virtual ~FrameBufferVK();
 
-	virtual std::shared_ptr<RenderPass> renderPass() const override;
+    virtual std::shared_ptr<RenderPass> renderPass() const override;
 
-	virtual Rect<int32_t> extent() const override;
+    virtual Rect<int32_t> extent() const override;
 
-    VkFramebuffer handle() const { return mFramebuffer; }
+    VkFramebuffer handle() const { return mFrameBuffer; }
 
 private:
     std::shared_ptr<DeviceVK> mDevice = nullptr;
-	std::shared_ptr<RenderPassVK> mRenderPass = nullptr;
-    VkFramebuffer mFramebuffer = nullptr;
-	Rect<int32_t> mExtent;
+    std::shared_ptr<RenderPassVK> mRenderPass = nullptr;
+    VkFramebuffer mFrameBuffer = nullptr;
+    Rect<int32_t> mExtent;
 };

@@ -1,28 +1,28 @@
-#include <sigma/Vulkan/FramebufferVK.hpp>
+#include <sigma/Vulkan/FrameBufferVK.hpp>
 
 #include <sigma/Vulkan/DeviceVK.hpp>
 #include <sigma/Vulkan/RenderPassVK.hpp>
 
-FramebufferVK::FramebufferVK(std::shared_ptr<DeviceVK> inDevice, VkFramebuffer inFramebuffer, std::shared_ptr<RenderPassVK> inRenderPass, Rect<int32_t> inExtent)
+FrameBufferVK::FrameBufferVK(std::shared_ptr<DeviceVK> inDevice, VkFramebuffer inFrameBuffer, std::shared_ptr<RenderPassVK> inRenderPass, Rect<int32_t> inExtent)
     : mDevice(inDevice)
-    , mFramebuffer(inFramebuffer)
-	, mRenderPass(inRenderPass)
-	, mExtent(inExtent)
+    , mFrameBuffer(inFrameBuffer)
+    , mRenderPass(inRenderPass)
+    , mExtent(inExtent)
 {
 }
 
-FramebufferVK::~FramebufferVK()
+FrameBufferVK::~FrameBufferVK()
 {
-    if (mDevice && mFramebuffer)
-        vkDestroyFramebuffer(mDevice->handle(), mFramebuffer, nullptr);
+    if (mDevice && mFrameBuffer)
+        vkDestroyFramebuffer(mDevice->handle(), mFrameBuffer, nullptr);
 }
 
-std::shared_ptr<RenderPass> FramebufferVK::renderPass() const 
+std::shared_ptr<RenderPass> FrameBufferVK::renderPass() const
 {
-	return mRenderPass;
+    return mRenderPass;
 }
 
-Rect<int32_t> FramebufferVK::extent() const
+Rect<int32_t> FrameBufferVK::extent() const
 {
-	return mExtent;
+    return mExtent;
 }

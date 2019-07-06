@@ -5,13 +5,13 @@
 #include <memory>
 
 class RenderPass;
-class Framebuffer;
+class FrameBuffer;
 class Pipeline;
 class VertexBuffer;
 class IndexBuffer;
 
 struct RenderPassBeginParams {
-    std::shared_ptr<Framebuffer> frameBuffer;
+    std::shared_ptr<FrameBuffer> FrameBuffer;
     Rect<int32_t> renderArea;
 };
 

@@ -12,7 +12,7 @@ class DeviceManagerVK;
 struct SurfaceSwapChainInfoVK;
 class RenderPassVK;
 class CommandBufferVK;
-class FramebufferVK;
+class FrameBufferVK;
 class PipelineVK;
 
 class Pipeline;
@@ -25,25 +25,24 @@ public:
 
     virtual ImageFormat format() const override;
 
-	virtual uint32_t imageCount() const override;
+    virtual uint32_t imageCount() const override;
 
     virtual std::shared_ptr<RenderPass> renderPass() const override;
 
-    virtual void nextFrame(SurfaceFrameData*& outData) override;
+    virtual void nextImage(SurfaceImageData*& outData) override;
 
-    virtual void presentFrame(const SurfaceFrameData* inData) override;
+    virtual void presentImage(const SurfaceImageData* inData) override;
 
     VkSurfaceKHR handle() { return mSurface; }
 
     bool createSwapChain(std::shared_ptr<DeviceVK> inDevice, const SurfaceSwapChainInfoVK& inInfo);
 
 protected:
-	struct SurfaceFrameDataVK : public SurfaceFrameData
-	{
-		VkImage image = nullptr;
-		VkImageView imageView = nullptr;
-		std::vector<VkCommandBuffer> vkCommandBuffers;
-	};
+    struct SurfaceImageDataVK : public SurfaceImageData {
+        VkImage image = nullptr;
+        VkImageView imageView = nullptr;
+        std::vector<VkCommandBuffer> vkCommandBuffers;
+    };
 
     std::shared_ptr<DeviceManagerVK> mInstance = nullptr;
     std::shared_ptr<DeviceVK> mDevice = nullptr;
@@ -58,10 +57,10 @@ protected:
     VkPresentModeKHR mPresentMode;
 
     VkSwapchainKHR mSwapChain;
-	std::shared_ptr<RenderPassVK> mRenderPass = nullptr;
+    std::shared_ptr<RenderPassVK> mRenderPass = nullptr;
     std::vector<VkImage> mImages;
     std::vector<VkImageView> mImageViews;
-	std::vector<SurfaceFrameDataVK> mFrameData;
+    std::vector<SurfaceImageDataVK> mFrameData;
 
     uint32_t mMaxPendingFrames = 2;
     uint32_t mCurrentFrameIndex = 0;

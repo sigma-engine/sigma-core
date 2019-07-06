@@ -29,8 +29,8 @@ add_library(sigma-core STATIC
 	include/sigma/CommandBuffer.hpp
 	src/sigma/CommandBuffer.cpp
 
-	include/sigma/Framebuffer.hpp
-	src/sigma/Framebuffer.cpp
+	include/sigma/FrameBuffer.hpp
+	src/sigma/FrameBuffer.cpp
 
 	include/sigma/Surface.hpp
 	src/sigma/Surface.cpp
@@ -72,8 +72,8 @@ add_library(sigma-core STATIC
 	include/sigma/OpenGL/CommandBufferGL.hpp
 	src/sigma/OpenGL/CommandBufferGL.cpp
 
-	include/sigma/OpenGL/FramebufferGL.hpp
-	src/sigma/OpenGL/FramebufferGL.cpp
+	include/sigma/OpenGL/FrameBufferGL.hpp
+	src/sigma/OpenGL/FrameBufferGL.cpp
 
 	include/sigma/OpenGL/SurfaceGL.hpp
 	src/sigma/OpenGL/SurfaceGL.cpp
@@ -107,8 +107,8 @@ add_library(sigma-core STATIC
 	include/sigma/Vulkan/CommandBufferVK.hpp
 	src/sigma/Vulkan/CommandBufferVK.cpp
 
-	include/sigma/Vulkan/FramebufferVK.hpp
-	src/sigma/Vulkan/FramebufferVK.cpp
+	include/sigma/Vulkan/FrameBufferVK.hpp
+	src/sigma/Vulkan/FrameBufferVK.cpp
 
 	include/sigma/Vulkan/SurfaceVK.hpp
 	src/sigma/Vulkan/SurfaceVK.cpp

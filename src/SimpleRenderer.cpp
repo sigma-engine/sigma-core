@@ -4,12 +4,12 @@
 #include <sigma/DescriptorSet.hpp>
 #include <sigma/Device.hpp>
 #include <sigma/Engine.hpp>
+#include <sigma/FrameBuffer.hpp>
 #include <sigma/IndexBuffer.hpp>
 #include <sigma/Pipeline.hpp>
 #include <sigma/Shader.hpp>
 #include <sigma/Surface.hpp>
 #include <sigma/VertexBuffer.hpp>
-#include <sigma/Framebuffer.hpp>
 
 #include <glm/vec3.hpp>
 
@@ -34,13 +34,12 @@ SimpleRenderer::SimpleRenderer(std::shared_ptr<Engine> inEngine, std::shared_ptr
 
 bool SimpleRenderer::initialize()
 {
-	for (uint32_t i = 0; i < mSurface->imageCount(); ++i)
-	{
-		auto commandBuffer = mDevice->createCommandBuffer();
-		if (commandBuffer == nullptr)
-			return false;
-		mCommandBuffers.push_back(commandBuffer);
-	}
+    for (uint32_t i = 0; i < mSurface->imageCount(); ++i) {
+        auto commandBuffer = mDevice->createCommandBuffer();
+        if (commandBuffer == nullptr)
+            return false;
+        mCommandBuffers.push_back(commandBuffer);
+    }
 
     VertexLayout vertexLayout = {
         { DataType::Vec3, "position" },
@@ -86,25 +85,25 @@ bool SimpleRenderer::initialize()
 
 void SimpleRenderer::render()
 {
-    SurfaceFrameData* frameData = nullptr;
-    mSurface->nextFrame(frameData);
+    SurfaceImageData* frameData = nullptr;
+    mSurface->nextImage(frameData);
 
-	auto commandBuffer = mCommandBuffers[frameData->imageIndex];
+    auto commandBuffer = mCommandBuffers[frameData->imageIndex];
 
-	RenderPassBeginParams beginRenderPass{
-		frameData->framebuffer,
-		frameData->framebuffer->extent()
-	};
+    RenderPassBeginParams beginRenderPass{
+        frameData->frameBuffer,
+        frameData->frameBuffer->extent()
+    };
 
-	commandBuffer->begin();
-	commandBuffer->beginRenderPass(beginRenderPass);
-	commandBuffer->bindPipeline(mPipeline);
-	commandBuffer->bindVertexBuffer(mVertexBuffer);
-	commandBuffer->bindIndexBuffer(mIndexBuffer);
-	commandBuffer->drawIndexed(static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
-	commandBuffer->endRenderPass();
-	commandBuffer->end();
+    commandBuffer->begin();
+    commandBuffer->beginRenderPass(beginRenderPass);
+    commandBuffer->bindPipeline(mPipeline);
+    commandBuffer->bindVertexBuffer(mVertexBuffer);
+    commandBuffer->bindIndexBuffer(mIndexBuffer);
+    commandBuffer->drawIndexed(static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
+    commandBuffer->endRenderPass();
+    commandBuffer->end();
 
-	frameData->commandBuffers.push_back(commandBuffer);
-    mSurface->presentFrame(frameData);
+    frameData->commandBuffers.push_back(commandBuffer);
+    mSurface->presentImage(frameData);
 }

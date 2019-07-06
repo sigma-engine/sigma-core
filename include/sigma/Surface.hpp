@@ -9,12 +9,12 @@ class DeviceManager;
 enum class ImageFormat;
 class RenderPass;
 class CommandBuffer;
-class Framebuffer;
+class FrameBuffer;
 
-struct SurfaceFrameData {
+struct SurfaceImageData {
     uint32_t imageIndex;
     uint32_t frameIndex;
-	std::shared_ptr<Framebuffer> framebuffer;
+    std::shared_ptr<FrameBuffer> frameBuffer;
     std::vector<std::shared_ptr<CommandBuffer>> commandBuffers;
 };
 
@@ -28,11 +28,11 @@ public:
 
     virtual ImageFormat format() const = 0;
 
-	virtual uint32_t imageCount() const = 0;
+    virtual uint32_t imageCount() const = 0;
 
     virtual std::shared_ptr<RenderPass> renderPass() const = 0;
 
-    virtual void nextFrame(SurfaceFrameData*& outData) = 0;
+    virtual void nextImage(SurfaceImageData*& outData) = 0;
 
-    virtual void presentFrame(const SurfaceFrameData* inData) = 0;
+    virtual void presentImage(const SurfaceImageData* inData) = 0;
 };

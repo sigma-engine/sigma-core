@@ -16,11 +16,11 @@ public:
 
     virtual ImageFormat format() const override;
 
-	virtual uint32_t imageCount() const override;
+    virtual uint32_t imageCount() const override;
 
     virtual std::shared_ptr<RenderPass> renderPass() const override;
 
-    virtual void nextFrame(SurfaceFrameData*& outData) override;
+    virtual void nextImage(SurfaceImageData*& outData) override;
 
     bool createSwapChain(std::shared_ptr<DeviceGL> inDevice);
 
@@ -29,5 +29,5 @@ protected:
     uint32_t mHeight;
     GLenum mFormat;
 
-	SurfaceFrameData mFrameData;
+    SurfaceImageData mFrameData;
 };
