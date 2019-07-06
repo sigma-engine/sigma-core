@@ -18,11 +18,12 @@ struct Vertex {
     glm::vec3 color;
 };
 static std::vector<Vertex> vertices = {
-    { { -0.5f, -0.5f, 0.0f }, { 1.0f, 1.0f, 0.0f } },
-    { { 0.5f, -0.5f, 0.0f }, { 1.0f, 1.0f, 0.0f } },
-    { { 0.0f, 0.5f, 0.0f }, { 1.0f, 1.0f, 0.0f } }
+	{{-0.5f, 0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
+	{{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
+	{{0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
+	{{0.5f, 0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}}
 };
-static std::vector<std::uint16_t> indices = { 0, 1, 2 };
+static std::vector<std::uint16_t> indices = { 0, 1, 2, 0, 2, 3 };
 
 int main(int argc, char const* argv[])
 {
@@ -36,7 +37,8 @@ int main(int argc, char const* argv[])
     if (deviceManager == nullptr)
         return -1;
 
-    auto window = engine->createWindow("Simple Game", 1920 / 2, 1080 / 2);
+	
+    auto window = engine->createWindow(fmt::format("Simple Game - ({})", engine->graphicsAPI() == GraphicsAPI::OpenGL ? "OpenGL" : "Vulkan"), 1920 / 2, 1080 / 2);
     if (window == nullptr)
         return -1;
 
@@ -76,8 +78,10 @@ int main(int argc, char const* argv[])
 	   return -1;
    vertexBuffer->setData(vertices.data(), sizeof(Vertex) * vertices.size());
 
-   // auto indexBuffer = device->createIndexBuffer(PrimitiveType::Triangle, DataType::UShort);
-   // indexBuffer->setData(indices.data(), sizeof(uint16_t) * 3);
+   auto indexBuffer = device->createIndexBuffer(PrimitiveType::Triangle, DataType::UShort, indices.size() * sizeof(uint16_t));
+   if (indexBuffer == nullptr)
+	   return -1;
+   indexBuffer->setData(indices.data(), sizeof(uint16_t) * indices.size());
 
     while (window->open() && engine->process()) {
 		SurfaceImageData frameData;
@@ -85,7 +89,8 @@ int main(int argc, char const* argv[])
 		
 		frameData.commandBuffer->bindPipeline(pipeline);
 		frameData.commandBuffer->bindVertexBuffer(vertexBuffer);
-		frameData.commandBuffer->draw(3, 1, 0, 0);
+		frameData.commandBuffer->bindIndexBuffer(indexBuffer);
+		frameData.commandBuffer->drawIndexed(indices.size(), 1, 0, 0, 0);
 
         window->surface()->endFrame(frameData);
     }

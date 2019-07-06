@@ -58,10 +58,7 @@ void IndexBufferGL::setData(const void* inData, size_t inSize)
     mCount = inSize / sizeOfDataType(mDataType);
 }
 
-void IndexBufferGL::draw()
+void IndexBufferGL::bind()
 {
-    if (mCount) {
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mHandle);
-        glDrawElements(glEnumForPrimitive(mPrimitiveType), static_cast<GLsizei>(mCount), baseTypeOfDataType(mDataType), nullptr);
-    }
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mHandle);
 }

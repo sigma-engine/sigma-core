@@ -1,16 +1,17 @@
-#include <sigma/Vulkan/VertexBufferVK.hpp>
+#include <sigma/Vulkan/IndexBufferVK.hpp>
 
 #include <sigma/Vulkan/DeviceVK.hpp>
 #include <sigma/Vulkan/UtilVK.hpp>
 #include <sigma/Log.hpp>
 
-VertexBufferVK::VertexBufferVK(std::shared_ptr<DeviceVK> inDevice, const VertexLayout& inLayout)
-	: mDevice(inDevice)
-	, mLayout(inLayout)
+IndexBufferVK::IndexBufferVK(std::shared_ptr<DeviceVK> inDevice, PrimitiveType inPrimitiveType, DataType inDataType)
+	:  mDevice(inDevice)
+	, mPrimitiveType(inPrimitiveType)
+	, mDataType(inDataType)
 {
 }
 
-VertexBufferVK::~VertexBufferVK()
+IndexBufferVK::~IndexBufferVK()
 {
 	if (mDevice) 
 	{
@@ -21,12 +22,17 @@ VertexBufferVK::~VertexBufferVK()
 	}
 }
 
-const VertexLayout &VertexBufferVK::layout() const
+DataType IndexBufferVK::dataType() const
 {
-	return mLayout;
+	return mDataType;
 }
 
-void VertexBufferVK::setData(const void * inData, uint64_t inSize)
+PrimitiveType IndexBufferVK::primitiveType() const
+{
+	return mPrimitiveType;
+}
+
+void IndexBufferVK::setData(const void * inData, uint64_t inSize)
 {
 	// TODO: This is crap
 	VkResult result;
@@ -58,13 +64,13 @@ done:
 	if (stagingMemory) vkFreeMemory(mDevice->handle(), stagingMemory, nullptr);
 }
 
-bool VertexBufferVK::initialize(uint64_t inSize)
+bool IndexBufferVK::initialize(uint64_t inSize)
 {
 	mSize = inSize;
 	VkBufferCreateInfo bufferInfo = {};
 	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
 	bufferInfo.size = mSize;
-	bufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+	bufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
 	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
 	return mDevice->createBuffer(&bufferInfo, VkMemoryPropertyFlagBits(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT), &mHandle, &mMemory) == VK_SUCCESS;

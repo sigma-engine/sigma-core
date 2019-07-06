@@ -12,9 +12,9 @@ public:
 
     virtual PrimitiveType primitiveType() const override;
 
-    virtual void setData(const void* inData, size_t inSize) override;
+	virtual void setData(const void* inData, size_t inSize) override;
 
-    void draw();
+    void bind();
 
 private:
     PrimitiveType mPrimitiveType;

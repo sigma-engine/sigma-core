@@ -7,6 +7,7 @@
 #include <sigma/Vulkan/SurfaceVK.hpp>
 #include <sigma/Vulkan/UtilVK.hpp>
 #include <sigma/Vulkan/VertexBufferVK.hpp>
+#include <sigma/Vulkan/IndexBufferVK.hpp>
 #include <sigma/Log.hpp>
 
 #include <sigma/Log.hpp>
@@ -307,10 +308,14 @@ std::shared_ptr<VertexBuffer> DeviceVK::createVertexBuffer(const VertexLayout &i
     return vertexBuffer;
 }
 
-std::shared_ptr<IndexBuffer> DeviceVK::createIndexBuffer(PrimitiveType inPrimitive, DataType inDataType)
+std::shared_ptr<IndexBuffer> DeviceVK::createIndexBuffer(PrimitiveType inPrimitive, DataType inDataType, uint64_t inSize)
 {
-    SIGMA_ASSERT(false, "Not Implemented!");
-    return nullptr;
+	auto indexBuffer = std::make_shared<IndexBufferVK>(shared_from_this(), inPrimitive, inDataType);
+	if (!indexBuffer->initialize(inSize))
+	{
+		return nullptr;
+	}
+	return indexBuffer;
 }
 
 uint32_t DeviceVK::graphicsQueueFamily() const

@@ -123,6 +123,9 @@ add_library(sigma-core STATIC
 	include/sigma/Vulkan/VertexBufferVK.hpp
 	src/sigma/Vulkan/VertexBufferVK.cpp
 
+	include/sigma/Vulkan/IndexBufferVK.hpp
+	src/sigma/Vulkan/IndexBufferVK.cpp
+
 	src/sigma/Vulkan/ExtensionsVK.cpp
 
 	include/sigma/Vulkan/UtilVK.hpp

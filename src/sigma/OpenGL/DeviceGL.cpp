@@ -99,7 +99,7 @@ std::shared_ptr<VertexBuffer> DeviceGL::createVertexBuffer(const VertexLayout &i
     return std::make_shared<VertexBufferGL>(inLayout);
 }
 
-std::shared_ptr<IndexBuffer> DeviceGL::createIndexBuffer(PrimitiveType inPrimitive, DataType inDataType)
+std::shared_ptr<IndexBuffer> DeviceGL::createIndexBuffer(PrimitiveType inPrimitive, DataType inDataType, uint64_t inSize)
 {
     assert((inDataType == DataType::UInt || inDataType == DataType::UShort) && "Invlaid data type");
     return std::make_shared<IndexBufferGL>(inPrimitive, inDataType);

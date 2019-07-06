@@ -45,7 +45,7 @@ public:
 
     virtual std::shared_ptr<VertexBuffer> createVertexBuffer(const VertexLayout &inLayout, uint64_t inSize) override;
 
-    virtual std::shared_ptr<IndexBuffer> createIndexBuffer(PrimitiveType inPrimitive, DataType inDataType) override;
+    virtual std::shared_ptr<IndexBuffer> createIndexBuffer(PrimitiveType inPrimitive, DataType inDataType, uint64_t inSize) override;
 
     uint32_t graphicsQueueFamily() const;
 
