@@ -21,14 +21,11 @@ public:
 
 	VkBuffer handle() const { return mHandle; }
 
-	bool initialize(const VkPhysicalDeviceMemoryProperties &inMemoryProperties, uint64_t inSize);
+	bool initialize(uint64_t inSize);
 private:
 	std::shared_ptr<DeviceVK> mDevice = nullptr;
 	VertexLayout mLayout;
 	VkBuffer mHandle = nullptr;
 	VkDeviceMemory mMemory = nullptr;
 	uint64_t mSize = 0;
-
-	uint32_t findMemoryType(const VkPhysicalDeviceMemoryProperties &inMemoryProperties, uint32_t inTypeFilter, VkMemoryPropertyFlagBits inProperties) const;
-
 };

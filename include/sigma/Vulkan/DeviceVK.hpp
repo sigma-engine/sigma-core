@@ -4,6 +4,8 @@
 
 #include <sigma/Vulkan/DeviceManagerVK.hpp>
 
+#include <vulkan/vulkan.h>
+
 #include <optional>
 #include <set>
 #include <string>
@@ -53,6 +55,10 @@ public:
 
     VkQueue graphicsQueue() const;
 
+	VkResult createBuffer(VkBufferCreateInfo *inBufferCreateInfo, VkMemoryPropertyFlagBits inProperties, VkBuffer *outBuffer, VkDeviceMemory *outMemory);
+
+	VkResult copyBuffer(VkBuffer inDstBuffer, VkBuffer inSrcBuffer, uint64_t inSize);
+
 private:
     VkInstance mInstance = nullptr;
     VkPhysicalDevice mPhysicalDevice = nullptr;
@@ -66,9 +72,12 @@ private:
     VkPhysicalDeviceFeatures mPhysicalDeviceFeatures;
     std::optional<uint32_t> mGraphicsFamily;
     std::optional<uint32_t> mComputeFamily;
+	VkQueue mGraphicsQueue = nullptr;
 
     VkCommandPool mGraphicsCommandPool = nullptr;
     std::vector<VkCommandBuffer> mFreeGraphicsBuffers;
 
     std::optional<SurfaceSwapChainInfoVK> getSwapChainInfo(std::shared_ptr<SurfaceVK> inSurface) const;
+
+	uint32_t findMemoryType(uint32_t inTypeFilter, VkMemoryPropertyFlagBits inProperties) const;
 };

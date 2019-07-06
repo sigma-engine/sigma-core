@@ -1,4 +1,3 @@
-#include <glm/vec3.hpp>
 #include <sigma/CommandBuffer.hpp>
 #include <sigma/Device.hpp>
 #include <sigma/DeviceManager.hpp>
@@ -11,6 +10,8 @@
 #include <sigma/Surface.hpp>
 #include <sigma/VertexBuffer.hpp>
 #include <sigma/Window.hpp>
+
+#include <glm/vec3.hpp>
 
 struct Vertex {
     glm::vec3 position;

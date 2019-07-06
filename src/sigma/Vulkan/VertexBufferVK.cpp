@@ -21,39 +21,16 @@ VertexBufferVK::~VertexBufferVK()
 	}
 }
 
-bool VertexBufferVK::initialize(const VkPhysicalDeviceMemoryProperties &inMemoryProperties, uint64_t inSize)
+bool VertexBufferVK::initialize(uint64_t inSize)
 {
 	mSize = inSize;
 	VkBufferCreateInfo bufferInfo = {};
 	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
 	bufferInfo.size = mSize;
-	bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+	bufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
 	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-	if (vkCreateBuffer(mDevice->handle(), &bufferInfo, nullptr, &mHandle) != VK_SUCCESS)
-	{
-		return false;
-	}
-
-	VkMemoryRequirements requirements;
-	vkGetBufferMemoryRequirements(mDevice->handle(), mHandle, &requirements);
-
-	VkMemoryAllocateInfo allocInfo = {};
-	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	allocInfo.allocationSize = requirements.size;
-	allocInfo.memoryTypeIndex = findMemoryType(inMemoryProperties, requirements.memoryTypeBits, VkMemoryPropertyFlagBits(VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT));
-
-	if (vkAllocateMemory(mDevice->handle(), &allocInfo, nullptr, &mMemory) != VK_SUCCESS)
-	{
-		return false;
-	}
-
-	if (vkBindBufferMemory(mDevice->handle(), mHandle, mMemory, 0) != VK_SUCCESS)
-	{
-		return false;
-	}
-
-	return true;
+	return mDevice->createBuffer(&bufferInfo, VkMemoryPropertyFlagBits(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT), &mHandle, &mMemory) == VK_SUCCESS;
 }
 
 const VertexLayout &VertexBufferVK::layout() const
@@ -63,23 +40,33 @@ const VertexLayout &VertexBufferVK::layout() const
 
 void VertexBufferVK::setData(const void * inData, uint64_t inSize)
 {
+	// TODO: This is crap
+	VkResult result;
+	VkBuffer stagingBuffer = nullptr;
+	VkDeviceMemory stagingMemory = nullptr;
 	void *dstData = nullptr;
-	if (vkMapMemory(mDevice->handle(), mMemory, 0, mSize, 0, &dstData) != VK_SUCCESS)
-		return;
+	VkBufferCreateInfo bufferInfo = {};
 
-	memcpy(dstData, inData, std::min(inSize, mSize));
-	vkUnmapMemory(mDevice->handle(), mMemory);
+	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+	bufferInfo.size = std::min(inSize, mSize);
+	bufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+	result = mDevice->createBuffer(&bufferInfo, VkMemoryPropertyFlagBits(VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT), &stagingBuffer, &stagingMemory);
+	if (result != VK_SUCCESS)
+		goto done;
+		
+	result = vkMapMemory(mDevice->handle(), stagingMemory, 0, bufferInfo.size, 0, &dstData);
+	if (result != VK_SUCCESS)
+		goto done;
+
+	memcpy(dstData, inData, bufferInfo.size);
+	vkUnmapMemory(mDevice->handle(), stagingMemory);
+
+	mDevice->copyBuffer(mHandle, stagingBuffer, bufferInfo.size);
+
+done:
+	if (stagingBuffer) vkDestroyBuffer(mDevice->handle(), stagingBuffer, nullptr);
+	if (stagingMemory) vkFreeMemory(mDevice->handle(), stagingMemory, nullptr);
 }
 
-uint32_t VertexBufferVK::findMemoryType(const VkPhysicalDeviceMemoryProperties &inMemoryProperties, uint32_t inTypeFilter, VkMemoryPropertyFlagBits inProperties) const
-{
-	for (uint32_t i = 0; i < inMemoryProperties.memoryTypeCount; ++i)
-	{
-		if ((inTypeFilter  & (1 << i)) && ((inMemoryProperties.memoryTypes[i].propertyFlags & inProperties) == inProperties))
-		{
-			return i;
-		}
-	}
-
-	return std::numeric_limits<uint32_t>::max();
-}

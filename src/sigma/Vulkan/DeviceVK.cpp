@@ -236,6 +236,8 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
             SIGMA_ERROR("Could not create graphics command pool!");
             return false;
         }
+		
+		vkGetDeviceQueue(mDevice, mGraphicsFamily.value(), 0, &mGraphicsQueue);
     }
 
     for (std::size_t i = 0; i < inSurfaces.size(); ++i) {
@@ -245,7 +247,7 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
             return false;
         }
     }
-
+	
     return true;
 }
 
@@ -298,7 +300,7 @@ std::shared_ptr<Pipeline> DeviceVK::createPipeline(const PipelineCreateParams& i
 std::shared_ptr<VertexBuffer> DeviceVK::createVertexBuffer(const VertexLayout &inLayout, uint64_t inSize)
 {
 	auto vertexBuffer = std::make_shared<VertexBufferVK>(shared_from_this(), inLayout);
-	if (!vertexBuffer->initialize(mMemoryProperties, inSize))
+	if (!vertexBuffer->initialize(inSize))
 	{
 		return nullptr;
 	}
@@ -325,9 +327,88 @@ VkQueue DeviceVK::getQueue(uint32_t inFamily) const
 
 VkQueue DeviceVK::graphicsQueue() const
 {
-    VkQueue queue = nullptr;
-    vkGetDeviceQueue(mDevice, graphicsQueueFamily(), 0, &queue);
-    return queue;
+    return mGraphicsQueue;
+}
+
+VkResult DeviceVK::createBuffer(VkBufferCreateInfo *inBufferCreateInfo, VkMemoryPropertyFlagBits inProperties, VkBuffer *outBuffer, VkDeviceMemory *outMemory)
+{
+	VkMemoryRequirements requirements;
+	VkMemoryAllocateInfo allocInfo = {};
+
+	VkResult result = vkCreateBuffer(mDevice, inBufferCreateInfo, nullptr, outBuffer);
+	if (result != VK_SUCCESS)
+		goto done;
+	
+	vkGetBufferMemoryRequirements(mDevice, *outBuffer, &requirements);
+
+	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	allocInfo.allocationSize = requirements.size;
+	allocInfo.memoryTypeIndex = findMemoryType(requirements.memoryTypeBits, inProperties);
+
+	result = vkAllocateMemory(mDevice, &allocInfo, nullptr, outMemory);
+	if (result != VK_SUCCESS)
+		goto done;
+
+	result = vkBindBufferMemory(mDevice, *outBuffer, *outMemory, 0);
+	if (result != VK_SUCCESS)
+		goto done;
+
+done:
+	if (result != VK_SUCCESS) {
+		if (*outMemory) vkFreeMemory(mDevice, *outMemory, nullptr);
+		if (*outBuffer) vkDestroyBuffer(mDevice, *outBuffer, nullptr);
+		*outBuffer = nullptr;
+		*outMemory = nullptr;
+	}
+	return result;
+}
+
+VkResult DeviceVK::copyBuffer(VkBuffer inDstBuffer, VkBuffer inSrcBuffer, uint64_t inSize)
+{
+	VkResult result;
+	VkCommandBufferAllocateInfo allocInfo = {};
+	VkCommandBufferBeginInfo beginInfo = {};
+	VkSubmitInfo submitInfo = {};
+	VkCommandBuffer commandBuffer;
+	VkBufferCopy copyRegion = {0, 0, inSize};
+
+	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	allocInfo.commandPool = mGraphicsCommandPool;
+	allocInfo.commandBufferCount = 1;
+
+	result = vkAllocateCommandBuffers(mDevice, &allocInfo, &commandBuffer);
+	if (result != VK_SUCCESS)
+		goto done;
+	
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+	
+	result = vkBeginCommandBuffer(commandBuffer, &beginInfo);
+	if (result != VK_SUCCESS)
+		goto done;
+
+	vkCmdCopyBuffer(commandBuffer, inSrcBuffer, inDstBuffer, 1, &copyRegion);
+
+	result = vkEndCommandBuffer(commandBuffer);
+	if (result != VK_SUCCESS)
+		goto done;
+
+	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = &commandBuffer;
+
+	result = vkQueueSubmit(mGraphicsQueue, 1, &submitInfo, nullptr);
+	if (result != VK_SUCCESS)
+		goto done;
+
+	result = vkQueueWaitIdle(mGraphicsQueue);
+	
+	assert(result == VK_SUCCESS);
+done:
+	if (commandBuffer) vkFreeCommandBuffers(mDevice, mGraphicsCommandPool, 1, &commandBuffer);
+
+	return result;
 }
 
 std::optional<SurfaceSwapChainInfoVK> DeviceVK::getSwapChainInfo(std::shared_ptr<SurfaceVK> inSurface) const
@@ -366,4 +447,17 @@ std::optional<SurfaceSwapChainInfoVK> DeviceVK::getSwapChainInfo(std::shared_ptr
         return {};
 
     return std::move(info);
+}
+
+uint32_t DeviceVK::findMemoryType(uint32_t inTypeFilter, VkMemoryPropertyFlagBits inProperties) const
+{
+	for (uint32_t i = 0; i < mMemoryProperties.memoryTypeCount; ++i)
+	{
+		if ((inTypeFilter  & (1 << i)) && ((mMemoryProperties.memoryTypes[i].propertyFlags & inProperties) == inProperties))
+		{
+			return i;
+		}
+	}
+
+	return std::numeric_limits<uint32_t>::max();
 }
