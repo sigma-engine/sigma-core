@@ -85,14 +85,14 @@ bool SimpleRenderer::initialize()
 
 void SimpleRenderer::render()
 {
-    SurfaceImageData* frameData = nullptr;
-    mSurface->nextImage(frameData);
+    SurfaceImageData* imageData = nullptr;
+    mSurface->nextImage(imageData);
 
-    auto commandBuffer = mCommandBuffers[frameData->imageIndex];
+    auto commandBuffer = mCommandBuffers[imageData->imageIndex];
 
     RenderPassBeginParams beginRenderPass{
-        frameData->frameBuffer,
-        frameData->frameBuffer->extent()
+        imageData->frameBuffer,
+        imageData->frameBuffer->extent()
     };
 
     commandBuffer->begin();
@@ -104,6 +104,6 @@ void SimpleRenderer::render()
     commandBuffer->endRenderPass();
     commandBuffer->end();
 
-    frameData->commandBuffers.push_back(commandBuffer);
-    mSurface->presentImage(frameData);
+    imageData->commandBuffers.push_back(commandBuffer);
+    mSurface->presentImage(imageData);
 }

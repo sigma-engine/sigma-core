@@ -38,6 +38,7 @@ void SurfaceGL::nextImage(SurfaceImageData*& outData)
     outData = &mFrameData;
     outData->frameIndex = 0;
     outData->imageIndex = 0;
+	outData->commandBuffers.clear();
 }
 
 bool SurfaceGL::createSwapChain(std::shared_ptr<DeviceGL> inDevice)
