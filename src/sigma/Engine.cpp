@@ -41,7 +41,7 @@ bool Engine::initialize(GraphicsAPI inGraphicsAPI)
     return true;
 }
 
-std::shared_ptr<Window> Engine::createWindow(const std::string& inTitle, std::size_t inWidth, std::size_t inHeight)
+std::shared_ptr<Window> Engine::createWindow(const std::string& inTitle, uint32_t inWidth, uint32_t inHeight)
 {
     std::shared_ptr<Window> window = nullptr;
     switch (mGraphicsAPI) {

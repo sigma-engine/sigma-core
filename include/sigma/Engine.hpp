@@ -28,7 +28,7 @@ public:
 
     virtual bool initialize(GraphicsAPI inGraphicsAPI);
 
-    std::shared_ptr<Window> createWindow(const std::string& inTitle, std::size_t inWidth, std::size_t inHeight);
+    std::shared_ptr<Window> createWindow(const std::string& inTitle, uint32_t inWidth, uint32_t inHeight);
 
     void addEmitter(std::weak_ptr<EventEmitter> inEmitter);
 

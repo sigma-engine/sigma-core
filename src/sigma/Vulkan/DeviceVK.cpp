@@ -32,13 +32,13 @@ DeviceVK::DeviceVK(VkInstance inInstance, VkPhysicalDevice inDevice, const std::
         return prop.queueCount > 0 && ((prop.queueFlags & VK_QUEUE_GRAPHICS_BIT) == VK_QUEUE_GRAPHICS_BIT);
     });
     if (graphicsIt != mQueueFamilyProperties.end())
-        mGraphicsFamily = std::distance(mQueueFamilyProperties.begin(), graphicsIt);
+        mGraphicsFamily = static_cast<uint32_t>(std::distance(mQueueFamilyProperties.begin(), graphicsIt));
 
     auto computeIt = std::find_if(mQueueFamilyProperties.begin(), mQueueFamilyProperties.end(), [](const auto& prop) {
         return prop.queueCount > 0 && ((prop.queueFlags & VK_QUEUE_COMPUTE_BIT) == VK_QUEUE_COMPUTE_BIT);
     });
     if (computeIt != mQueueFamilyProperties.end())
-        mComputeFamily = std::distance(mQueueFamilyProperties.begin(), computeIt);
+        mComputeFamily = static_cast<uint32_t>(std::distance(mQueueFamilyProperties.begin(), computeIt));
 }
 
 DeviceVK::~DeviceVK()

@@ -45,10 +45,8 @@ add_library(sigma-core STATIC
 	src/sigma/VertexLayout.cpp
 
 	include/sigma/Pipeline.hpp
-	src/sigma/Pipeline.cpp
 
 	include/sigma/VertexBuffer.hpp
-	src/sigma/VertexBuffer.cpp
 
 	include/sigma/IndexBuffer.hpp
 

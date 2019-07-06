@@ -1,1 +1,0 @@
-#include <sigma/VertexBuffer.hpp>

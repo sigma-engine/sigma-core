@@ -24,7 +24,7 @@ void WindowSDL::initializeSDL(std::shared_ptr<Engine> inEngine)
     }
 }
 
-WindowSDL::WindowSDL(std::shared_ptr<Engine> inEngine, const std::string& inTitle, std::size_t inWidth, std::size_t inHeight)
+WindowSDL::WindowSDL(std::shared_ptr<Engine> inEngine, const std::string& inTitle, uint32_t inWidth, uint32_t inHeight)
     : mTitle(inTitle)
     , mWidth(inWidth)
     , mHeight(inHeight)

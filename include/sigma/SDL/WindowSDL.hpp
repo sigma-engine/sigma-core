@@ -45,7 +45,7 @@ class WindowSDL : public Window {
 public:
     static void initializeSDL(std::shared_ptr<Engine> inEngine);
 
-    WindowSDL(std::shared_ptr<Engine> inEngine, const std::string& inTitle, std::size_t inWidth, std::size_t inHeight);
+    WindowSDL(std::shared_ptr<Engine> inEngine, const std::string& inTitle, uint32_t inWidth, uint32_t inHeight);
 
     virtual ~WindowSDL();
 
@@ -59,8 +59,8 @@ public:
 
 private:
     std::string mTitle;
-    std::size_t mWidth;
-    std::size_t mHeight;
+    uint32_t mWidth;
+	uint32_t mHeight;
     std::shared_ptr<Engine> mEngine = nullptr;
     std::shared_ptr<Surface> mSurface = nullptr;
 

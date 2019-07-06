@@ -97,7 +97,7 @@ int main(int argc, char const* argv[])
         frameData.commandBuffer->bindPipeline(pipeline);
         frameData.commandBuffer->bindVertexBuffer(vertexBuffer);
         frameData.commandBuffer->bindIndexBuffer(indexBuffer);
-        frameData.commandBuffer->drawIndexed(indices.size(), 1, 0, 0, 0);
+        frameData.commandBuffer->drawIndexed(static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 
         window->surface()->endFrame(frameData);
         /*auto fdt = std::chrono::high_resolution_clock::now() - start;
