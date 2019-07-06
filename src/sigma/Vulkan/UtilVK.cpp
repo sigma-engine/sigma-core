@@ -3,6 +3,7 @@
 #include <sigma/Log.hpp>
 #include <sigma/RenderPass.hpp>
 #include <sigma/Shader.hpp>
+#include <sigma/DescriptorSet.hpp>
 
 #include <vulkan/vulkan.h>
 
@@ -70,4 +71,17 @@ VkFormat formatForDataTypeVK(DataType inType)
     }
     SIGMA_ASSERT(false, "Unknown DataType");
     return VK_FORMAT_UNDEFINED;
+}
+
+VkDescriptorType convertDescriptorTypeVK(DescriptorType inType)
+{
+	switch (inType)
+	{
+	case DescriptorType::UniformBuffer:
+		return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	default:
+		break;
+	}
+	SIGMA_ASSERT(false, "Unknown DescriptorType");
+	return VK_DESCRIPTOR_TYPE_MAX_ENUM;
 }

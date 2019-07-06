@@ -13,6 +13,7 @@ struct VkLayerProperties;
 
 enum class ImageFormat;
 enum class ShaderType;
+enum class DescriptorType;
 
 std::ostream& operator<<(std::ostream& os, const VkExtensionProperties& prop);
 
@@ -25,3 +26,5 @@ ImageFormat convertImageFormatVK(VkFormat inFormat);
 VkShaderStageFlagBits convertShaderTypeVK(ShaderType inType);
 
 VkFormat formatForDataTypeVK(DataType inType);
+
+VkDescriptorType convertDescriptorTypeVK(DescriptorType inType);

@@ -2,6 +2,7 @@
 
 #include <sigma/Log.hpp>
 #include <sigma/OpenGL/CommandBufferGL.hpp>
+#include <sigma/OpenGL/DescriptorSetGL.hpp>
 #include <sigma/OpenGL/IndexBufferGL.hpp>
 #include <sigma/OpenGL/PipelineGL.hpp>
 #include <sigma/OpenGL/RenderPassGL.hpp>
@@ -84,6 +85,11 @@ std::shared_ptr<Shader> DeviceGL::createShader(ShaderType inType, const std::str
 std::shared_ptr<RenderPass> DeviceGL::createRenderPass(const RenderPassCreateParams& inParams)
 {
     return std::make_shared<RenderPassGL>();
+}
+
+std::shared_ptr<DescriptorSetLayout> DeviceGL::createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding> &inBindings)
+{
+    return std::make_shared<DescriptorSetLayout>();
 }
 
 std::shared_ptr<Pipeline> DeviceGL::createPipeline(const PipelineCreateParams& inParams)

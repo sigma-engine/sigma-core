@@ -2,6 +2,7 @@
 
 #include <sigma/Log.hpp>
 #include <sigma/Vulkan/CommandBufferVK.hpp>
+#include <sigma/Vulkan/DescriptorSetVK.hpp>
 #include <sigma/Vulkan/IndexBufferVK.hpp>
 #include <sigma/Vulkan/PipelineVK.hpp>
 #include <sigma/Vulkan/RenderPassVK.hpp>
@@ -287,6 +288,14 @@ std::shared_ptr<RenderPass> DeviceVK::createRenderPass(const RenderPassCreatePar
     if (!renderPass->initialize(inParams))
         return nullptr;
     return renderPass;
+}
+
+std::shared_ptr<DescriptorSetLayout> DeviceVK::createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding> &inBindings)
+{
+    auto layout = std::make_shared<DescriptorSetLayoutVK>(shared_from_this());
+    if (!layout->initialize(inBindings))
+        return nullptr;
+    return layout;
 }
 
 std::shared_ptr<Pipeline> DeviceVK::createPipeline(const PipelineCreateParams& inParams)

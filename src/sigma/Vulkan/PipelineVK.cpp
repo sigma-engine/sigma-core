@@ -5,6 +5,7 @@
 #include <sigma/Vulkan/RenderPassVK.hpp>
 #include <sigma/Vulkan/ShaderVK.hpp>
 #include <sigma/Vulkan/UtilVK.hpp>
+#include <sigma/Vulkan/DescriptorSetVK.hpp>
 
 PipelineVK::PipelineVK(std::shared_ptr<DeviceVK> inDevice)
     : mDevice(inDevice)
@@ -25,6 +26,15 @@ bool PipelineVK::initialize(const PipelineCreateParams& inParams)
 {
     SIGMA_ASSERT(std::dynamic_pointer_cast<RenderPassVK>(inParams.renderPass), "Must use vulkan render pass with vulkan pipeline");
     mRenderPass = std::static_pointer_cast<RenderPassVK>(inParams.renderPass);
+
+	mSetLayouts.resize(inParams.setLayouts.size());
+	std::vector<VkDescriptorSetLayout> setLayouts(inParams.setLayouts.size());
+	for (size_t i = 0; i < inParams.setLayouts.size(); ++i)
+	{
+		SIGMA_ASSERT(std::dynamic_pointer_cast<DescriptorSetLayoutVK>(inParams.setLayouts[i]), "Must use vulkan descriptor set layout with vulkan pipeline!");
+		mSetLayouts[i] = std::static_pointer_cast<DescriptorSetLayoutVK>(inParams.setLayouts[i]);
+		setLayouts[i] = mSetLayouts[i]->handle();
+	}
 
     VkVertexInputBindingDescription bindingDescription = {};
     bindingDescription.binding = 0;
@@ -140,8 +150,8 @@ bool PipelineVK::initialize(const PipelineCreateParams& inParams)
 
     VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    pipelineLayoutInfo.setLayoutCount = 0;
-    pipelineLayoutInfo.pSetLayouts = nullptr;
+    pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(setLayouts.size());
+    pipelineLayoutInfo.pSetLayouts = setLayouts.data();
     pipelineLayoutInfo.pushConstantRangeCount = 0;
     pipelineLayoutInfo.pPushConstantRanges = nullptr;
 

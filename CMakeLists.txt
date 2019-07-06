@@ -50,6 +50,8 @@ add_library(sigma-core STATIC
 
 	include/sigma/IndexBuffer.hpp
 
+	include/sigma/DescriptorSet.hpp
+
 	include/sigma/Log.hpp
 	
 	include/sigma/Engine.hpp
@@ -84,6 +86,8 @@ add_library(sigma-core STATIC
 
 	include/sigma/OpenGL/RenderPassGL.hpp
 	src/sigma/OpenGL/RenderPassGL.cpp
+
+	include/sigma/OpenGL/DescriptorSetGL.hpp
 
 	include/sigma/OpenGL/PipelineGL.hpp
 	src/sigma/OpenGL/PipelineGL.cpp
@@ -123,6 +127,9 @@ add_library(sigma-core STATIC
 
 	include/sigma/Vulkan/IndexBufferVK.hpp
 	src/sigma/Vulkan/IndexBufferVK.cpp
+
+	include/sigma/Vulkan/DescriptorSetVK.hpp
+	src/sigma/Vulkan/DescriptorSetVK.cpp
 
 	src/sigma/Vulkan/ExtensionsVK.cpp
 

@@ -19,6 +19,10 @@ enum class ShaderType;
 struct RenderPassCreateParams;
 class RenderPass;
 
+enum class DescriptorType;
+struct DescriptorSetLayoutBinding;
+class DescriptorSetLayout;
+
 struct PipelineCreateParams;
 class Pipeline;
 
@@ -55,6 +59,8 @@ public:
     virtual std::shared_ptr<Shader> createShader(ShaderType inType, const std::string& inSourcePath) = 0;
 
     virtual std::shared_ptr<RenderPass> createRenderPass(const RenderPassCreateParams& inParams) = 0;
+
+    virtual std::shared_ptr<DescriptorSetLayout> createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding> &inBindings) = 0;
 
     virtual std::shared_ptr<Pipeline> createPipeline(const PipelineCreateParams& inParams) = 0;
 

@@ -9,6 +9,7 @@
 
 class DeviceVK;
 class RenderPassVK;
+class DescriptorSetLayoutVK;
 
 class PipelineVK : public Pipeline {
 public:
@@ -24,6 +25,7 @@ public:
     std::shared_ptr<DeviceVK> mDevice = nullptr;
 
     std::shared_ptr<RenderPassVK> mRenderPass = nullptr;
+	std::vector<std::shared_ptr<DescriptorSetLayoutVK>> mSetLayouts;
     VkPipeline mPipeline = nullptr;
     VkPipelineLayout mLayout = nullptr;
 };

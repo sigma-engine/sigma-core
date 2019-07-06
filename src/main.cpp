@@ -10,11 +10,9 @@
 #include <sigma/Surface.hpp>
 #include <sigma/VertexBuffer.hpp>
 #include <sigma/Window.hpp>
+#include <sigma/DescriptorSet.hpp>
 
 #include <glm/vec3.hpp>
-
-#include <chrono>
-#include <thread>
 
 using namespace std::chrono_literals;
 
@@ -63,6 +61,10 @@ int main(int argc, char const* argv[])
     if (fragmentShader == nullptr)
         return -1;
 
+	auto setLayout = device->createDescriptorSetLayout({ {DescriptorType::UniformBuffer, 1} });
+	if (setLayout == nullptr)
+		return -1;
+
     VertexLayout vertexLayout = {
         { DataType::Vec3, "position" },
         { DataType::Vec3, "color" }
@@ -71,6 +73,7 @@ int main(int argc, char const* argv[])
         { { 0, 0 }, window->surface()->size() },
         window->surface()->renderPass(),
         vertexLayout,
+		{ setLayout }, 
         { vertexShader, fragmentShader }
     };
     auto pipeline = device->createPipeline(pipelineParams);
@@ -87,10 +90,7 @@ int main(int argc, char const* argv[])
         return -1;
     indexBuffer->setData(indices.data(), sizeof(uint16_t) * indices.size());
 
-    uint64_t count = 0;
-    auto start = std::chrono::high_resolution_clock::now();
     while (window->open() && engine->process()) {
-        auto fstart = std::chrono::high_resolution_clock::now();
         SurfaceFrameData frameData;
         window->surface()->beginFrame(frameData);
 
@@ -100,19 +100,5 @@ int main(int argc, char const* argv[])
         frameData.commandBuffer->drawIndexed(static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 
         window->surface()->endFrame(frameData);
-        /*auto fdt = std::chrono::high_resolution_clock::now() - start;
-        if (fdt < 16ms)
-        {
-            std::this_thread::sleep_for(16ms - fdt);
-        }*/
-
-        auto dt = std::chrono::high_resolution_clock::now() - start;
-        if (dt >= 1s) {
-            SIGMA_INFO("FPS: {}", float(1000 * count) / std::chrono::duration_cast<std::chrono::milliseconds>(dt).count());
-            count = 0;
-            start = std::chrono::high_resolution_clock::now();
-        }
-
-        count++;
     }
 }
