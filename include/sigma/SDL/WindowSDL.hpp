@@ -17,9 +17,9 @@ public:
 
     bool initialize(std::shared_ptr<DeviceManager> inDevice, uint32_t inWidth, uint32_t inHeight) override;
 
-    void beginFrame(SurfaceFrameData& outData) override;
+    void nextFrame(SurfaceFrameData*& outData) override;
 
-    void endFrame(const SurfaceFrameData& inData) override;
+    void presentFrame(const SurfaceFrameData* inData) override;
 
 private:
     SDL_Window* mWindow = nullptr;

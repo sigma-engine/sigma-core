@@ -169,6 +169,8 @@ add_executable(simple-game
 	shaders/simple.vert.glsl
 	shaders/simple.frag.glsl
 
+	src/SimpleRenderer.cpp
+	include/SimpleRenderer.hpp
 	src/main.cpp
 )
 compile_glsl_sources(simple-game)

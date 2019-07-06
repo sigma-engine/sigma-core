@@ -11,7 +11,6 @@ class VertexBuffer;
 class IndexBuffer;
 
 struct RenderPassBeginParams {
-    std::shared_ptr<RenderPass> renderPass;
     std::shared_ptr<Framebuffer> frameBuffer;
     Rect<int32_t> renderArea;
 };

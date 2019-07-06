@@ -4,6 +4,8 @@
 #include <sigma/OpenGL/DataTypesGL.hpp>
 #include <sigma/OpenGL/DeviceGL.hpp>
 #include <sigma/OpenGL/RenderPassGL.hpp>
+#include <sigma/OpenGL/FramebufferGL.hpp>
+#include <sigma/OpenGL/RenderPassGL.hpp>
 
 bool SurfaceGL::initialize(std::shared_ptr<DeviceManager> inDevice, uint32_t inWidth, uint32_t inHeight)
 {
@@ -22,16 +24,21 @@ ImageFormat SurfaceGL::format() const
     return convertImageFormatGL(mFormat);
 }
 
-std::shared_ptr<RenderPass> SurfaceGL::renderPass() const
+uint32_t SurfaceGL::imageCount() const
 {
-    return mRenderPass;
+	return 1;
 }
 
-void SurfaceGL::beginFrame(SurfaceFrameData& outData)
+std::shared_ptr<RenderPass> SurfaceGL::renderPass() const
 {
-    outData.commandBuffer = mCommandBuffer;
-    outData.frameIndex = 0;
-    outData.imageIndex = 0;
+	return mFrameData.framebuffer->renderPass();
+}
+
+void SurfaceGL::nextFrame(SurfaceFrameData*& outData)
+{
+	outData = &mFrameData;
+    outData->frameIndex = 0;
+    outData->imageIndex = 0;
 }
 
 bool SurfaceGL::createSwapChain(std::shared_ptr<DeviceGL> inDevice)
@@ -39,8 +46,11 @@ bool SurfaceGL::createSwapChain(std::shared_ptr<DeviceGL> inDevice)
     RenderPassCreateParams renderPassCreateParams = {
         { { AttachmentType::ColorAttachment, format() } }
     };
-    mRenderPass = std::static_pointer_cast<RenderPassGL>(inDevice->createRenderPass(renderPassCreateParams));
-    mCommandBuffer = std::static_pointer_cast<CommandBufferGL>(inDevice->createCommandBuffer());
+	auto renderPass = std::static_pointer_cast<RenderPassGL>(inDevice->createRenderPass(renderPassCreateParams));
+	if (renderPass == nullptr)
+		return false;
 
-    return mRenderPass != nullptr;
+	mFrameData.framebuffer = std::make_shared<FramebufferGL>(renderPass, Rect<int32_t>{ {0, 0}, {mWidth, mHeight} });
+
+    return mFrameData.framebuffer != nullptr;
 }

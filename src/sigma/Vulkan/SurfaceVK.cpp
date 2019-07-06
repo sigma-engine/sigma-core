@@ -26,8 +26,7 @@ SurfaceVK::~SurfaceVK()
         for (auto semaphore : mRenderFinishedSemaphores)
             vkDestroySemaphore(mDevice->handle(), semaphore, nullptr);
 
-        mCommandBuffers.clear();
-        mFramebuffers.clear();
+        mFrameData.clear();
 
         for (std::size_t i = 0; i < mImageViews.size(); ++i) {
             if (mImageViews[i])
@@ -54,54 +53,62 @@ ImageFormat SurfaceVK::format() const
     return convertImageFormatVK(mSurfaceFormat.format);
 }
 
+uint32_t SurfaceVK::imageCount() const
+{
+	return static_cast<uint32_t>(mImages.size());
+}
+
 std::shared_ptr<RenderPass> SurfaceVK::renderPass() const
 {
     return mRenderPass;
 }
 
-void SurfaceVK::beginFrame(SurfaceFrameData& outData)
+void SurfaceVK::nextFrame(SurfaceFrameData*& outData)
 {
-    outData.frameIndex = mCurrentFrameIndex;
-    mCurrentFrameIndex = (mCurrentFrameIndex + 1) % mMaxPendingFrames;
+	uint32_t imageIndex;
+	uint32_t frameIndex = mCurrentFrameIndex;
+	mCurrentFrameIndex = (mCurrentFrameIndex + 1) % mMaxPendingFrames;
 
-    vkWaitForFences(mDevice->handle(), 1, &mFrameFences[outData.frameIndex], VK_TRUE, std::numeric_limits<uint64_t>::max());
-    vkResetFences(mDevice->handle(), 1, &mFrameFences[outData.frameIndex]);
+    vkWaitForFences(mDevice->handle(), 1, &mFrameFences[frameIndex], VK_TRUE, std::numeric_limits<uint64_t>::max());
+    vkResetFences(mDevice->handle(), 1, &mFrameFences[frameIndex]);
 
-    vkAcquireNextImageKHR(mDevice->handle(), mSwapChain, std::numeric_limits<uint64_t>::max(), mImageAvailableSemaphores[outData.frameIndex], VK_NULL_HANDLE, &outData.imageIndex);
-    outData.commandBuffer = mCommandBuffers[outData.imageIndex];
-
-    RenderPassBeginParams beginRenderPass {
-        mRenderPass,
-        mFramebuffers[outData.imageIndex],
-        { { 0, 0 }, { mExtent.width, mExtent.height } }
-    };
-
-    mCommandBuffers[outData.imageIndex]->begin();
-    mCommandBuffers[outData.imageIndex]->beginRenderPass(beginRenderPass);
+    vkAcquireNextImageKHR(mDevice->handle(), mSwapChain, std::numeric_limits<uint64_t>::max(), mImageAvailableSemaphores[frameIndex], VK_NULL_HANDLE, &imageIndex);
+	outData = mFrameData.data() + imageIndex;
+	outData->commandBuffers.clear();
+	outData->imageIndex = imageIndex;
+	outData->frameIndex = frameIndex;
 }
 
-void SurfaceVK::endFrame(const SurfaceFrameData& inData)
+void SurfaceVK::presentFrame(const SurfaceFrameData* inData)
 {
-    mCommandBuffers[inData.imageIndex]->endRenderPass();
-    mCommandBuffers[inData.imageIndex]->end();
-
     VkSubmitInfo submitInfo = {};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-    VkSemaphore waitSemaphores[] = { mImageAvailableSemaphores[inData.frameIndex] };
+    VkSemaphore waitSemaphores[] = { mImageAvailableSemaphores[inData->frameIndex] };
     VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-    VkCommandBuffer commandBuffers[] = { mCommandBuffers[inData.imageIndex]->handle() };
-    VkSemaphore signalSemaphores[] = { mRenderFinishedSemaphores[inData.frameIndex] };
+
     submitInfo.waitSemaphoreCount = 1;
     submitInfo.pWaitSemaphores = waitSemaphores;
-    submitInfo.pWaitDstStageMask = waitStages;
-    submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = commandBuffers;
+	submitInfo.pWaitDstStageMask = waitStages;
+
+	if (mFrameData[inData->imageIndex].vkCommandBuffers.size() < inData->commandBuffers.size())
+		mFrameData[inData->imageIndex].vkCommandBuffers.resize(inData->commandBuffers.size());
+
+	for (size_t i = 0; i < inData->commandBuffers.size(); ++i)
+	{
+		// TODO : check command buffers are really vulkan command buffers
+		mFrameData[inData->imageIndex].vkCommandBuffers[i] = std::static_pointer_cast<CommandBufferVK>(inData->commandBuffers[i])->handle();
+	}
+
+	submitInfo.commandBufferCount = static_cast<uint32_t>(inData->commandBuffers.size());
+    submitInfo.pCommandBuffers = mFrameData[inData->imageIndex].vkCommandBuffers.data();
+
+	VkSemaphore signalSemaphores[] = { mRenderFinishedSemaphores[inData->frameIndex] };
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores = signalSemaphores;
 
     // TODO check for errors
-    vkQueueSubmit(mGraphicsQueue, 1, &submitInfo, mFrameFences[inData.frameIndex]);
+    vkQueueSubmit(mGraphicsQueue, 1, &submitInfo, mFrameFences[inData->frameIndex]);
 
     VkSwapchainKHR swapChains[] = { mSwapChain };
     VkPresentInfoKHR presetInfo = {};
@@ -110,7 +117,7 @@ void SurfaceVK::endFrame(const SurfaceFrameData& inData)
     presetInfo.pWaitSemaphores = signalSemaphores;
     presetInfo.swapchainCount = 1;
     presetInfo.pSwapchains = swapChains;
-    presetInfo.pImageIndices = &inData.imageIndex;
+    presetInfo.pImageIndices = &inData->imageIndex;
     presetInfo.pResults = nullptr;
 
     vkQueuePresentKHR(mPresetQueue, &presetInfo);
@@ -184,8 +191,7 @@ bool SurfaceVK::createSwapChain(std::shared_ptr<DeviceVK> inDevice, const Surfac
     }
 
     mImageViews.resize(imageCount);
-    mFramebuffers.resize(imageCount);
-    mCommandBuffers.resize(imageCount);
+    mFrameData.resize(imageCount);
     for (size_t i = 0; i < mImageViews.size(); ++i) {
         VkImageViewCreateInfo createInfo = {};
         createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -224,13 +230,7 @@ bool SurfaceVK::createSwapChain(std::shared_ptr<DeviceVK> inDevice, const Surfac
             SIGMA_ERROR("Could not create Swapchain frame buffer!");
             return false;
         }
-        mFramebuffers[i] = std::make_shared<FramebufferVK>(mDevice, framebuffer);
-
-        mCommandBuffers[i] = std::static_pointer_cast<CommandBufferVK>(mDevice->createCommandBuffer());
-        if (mCommandBuffers[i] == nullptr) {
-            SIGMA_ERROR("Could not create command buffer!");
-            return false;
-        }
+		mFrameData[i].framebuffer = std::make_shared<FramebufferVK>(mDevice, framebuffer, mRenderPass, Rect<int32_t>{ { 0, 0 }, { mExtent.width, mExtent.height } });
     }
 
     mImageAvailableSemaphores.resize(mMaxPendingFrames);
