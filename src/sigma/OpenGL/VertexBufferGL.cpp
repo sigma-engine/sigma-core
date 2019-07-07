@@ -15,16 +15,14 @@ VertexBufferGL::VertexBufferGL(const VertexLayout& inLayout)
     CHECK_GL(glBindVertexArray(mVAOHandle));
     CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, mBufferHandle));
 
-    uint32_t i = 0;
     for (const auto& member : mLayout) {
-        CHECK_GL(glEnableVertexAttribArray(i));
-        CHECK_GL(glVertexAttribPointer(i,
+        CHECK_GL(glEnableVertexAttribArray(member.location));
+        CHECK_GL(glVertexAttribPointer(member.location,
             componentCountOfDataType(member.type),
             baseTypeOfDataType(member.type),
             member.normalized ? GL_TRUE : GL_FALSE,
             static_cast<GLsizei>(mLayout.stride()),
             reinterpret_cast<const void*>(static_cast<uint64_t>(member.offset))));
-        i++;
     }
 }
 

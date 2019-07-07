@@ -6,7 +6,8 @@ VertexLayout::VertexLayout(const std::initializer_list<VertexMemberDescription>&
 {
     mStride = 0;
     for (const auto& des : inLayout) {
-        mMembers.push_back({ mStride,
+        mMembers.push_back({ des.location,
+            mStride,
             sizeOfDataType(des.type),
             des.type,
             des.name,

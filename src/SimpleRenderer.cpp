@@ -73,8 +73,8 @@ bool SimpleRenderer::initialize()
     }
 
     VertexLayout vertexLayout = {
-        { DataType::Vec3, "position" },
-        { DataType::Vec3, "color" }
+        { 0, DataType::Vec3, "position" },
+        { 1, DataType::Vec3, "color" }
     };
 
     auto vertexShader = mDevice->createShader(ShaderType::VertexShader, "shaders/simple.vert");

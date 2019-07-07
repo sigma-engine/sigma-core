@@ -8,12 +8,14 @@
 #include <vector>
 
 struct VertexMemberDescription {
+    uint32_t location;
     DataType type;
     std::string name;
     bool normalized = false;
 };
 
 struct VertexMember {
+    uint32_t location;
     uint32_t offset;
     uint32_t size;
     DataType type;

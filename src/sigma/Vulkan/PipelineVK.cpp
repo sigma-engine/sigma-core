@@ -47,7 +47,7 @@ bool PipelineVK::initialize(const PipelineCreateParams& inParams)
     uint32_t i = 0;
     for (const auto& member : inParams.vertexLayout) {
         attributeDescriptions[i].binding = 0; // TODO: Fixme
-        attributeDescriptions[i].location = i;
+        attributeDescriptions[i].location = member.location;
         attributeDescriptions[i].format = formatForDataTypeVK(member.type);
         attributeDescriptions[i].offset = member.offset;
         i++;
