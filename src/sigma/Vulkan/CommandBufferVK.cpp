@@ -8,6 +8,7 @@
 #include <sigma/Vulkan/RenderPassVK.hpp>
 #include <sigma/Vulkan/VertexBufferVK.hpp>
 #include <sigma/Vulkan/DescriptorSetVK.hpp>
+#include <sigma/Vulkan/UtilVK.hpp>
 
 #include <limits>
 
@@ -26,17 +27,15 @@ CommandBufferVK::~CommandBufferVK()
 
 bool CommandBufferVK::initialize()
 {
+	VkResult result;
     VkCommandBufferAllocateInfo allocInfo = {};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     allocInfo.commandPool = mCommandPool;
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     allocInfo.commandBufferCount = 1;
 
-    if (vkAllocateCommandBuffers(mDevice->handle(), &allocInfo, &mBuffer) != VK_SUCCESS) {
-        return false;
-    }
-
-    return true;
+	CHECK_VK(result = vkAllocateCommandBuffers(mDevice->handle(), &allocInfo, &mBuffer));
+	return result == VK_SUCCESS;
 }
 
 void CommandBufferVK::begin()
@@ -46,8 +45,7 @@ void CommandBufferVK::begin()
     beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT; //VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
     beginInfo.pInheritanceInfo = nullptr;
 
-    // TODO check for error
-    vkBeginCommandBuffer(mBuffer, &beginInfo);
+    CHECK_VK(vkBeginCommandBuffer(mBuffer, &beginInfo));
 }
 
 void CommandBufferVK::beginRenderPass(const RenderPassBeginParams& inParams)
@@ -117,6 +115,5 @@ void CommandBufferVK::endRenderPass()
 
 void CommandBufferVK::end()
 {
-    // TODO check for error
-    vkEndCommandBuffer(mBuffer);
+	CHECK_VK(vkEndCommandBuffer(mBuffer));
 }

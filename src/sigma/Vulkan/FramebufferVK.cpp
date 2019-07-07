@@ -2,6 +2,7 @@
 
 #include <sigma/Vulkan/DeviceVK.hpp>
 #include <sigma/Vulkan/RenderPassVK.hpp>
+#include <sigma/Vulkan/UtilVK.hpp>
 
 FrameBufferVK::FrameBufferVK(std::shared_ptr<DeviceVK> inDevice, VkFramebuffer inFrameBuffer, std::shared_ptr<RenderPassVK> inRenderPass, Rect<int32_t> inExtent)
     : mDevice(inDevice)

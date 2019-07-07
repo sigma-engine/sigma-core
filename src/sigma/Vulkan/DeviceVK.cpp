@@ -108,19 +108,23 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
     SIGMA_INFO("API Version: {}.{}.{}", (mPhysicalDeviceProperties.apiVersion >> 22) & 0x3FF, (mPhysicalDeviceProperties.apiVersion >> 12) & 0x3FF, mPhysicalDeviceProperties.apiVersion & 0xFFF);
     SIGMA_INFO("Driver Version: {}.{}.{}", (mPhysicalDeviceProperties.driverVersion >> 22) & 0x3FF, (mPhysicalDeviceProperties.driverVersion >> 12) & 0x3FF, mPhysicalDeviceProperties.driverVersion & 0xFFF);
 
-    // TODO add a way to specifiy required device extensions
+    VkResult result;
+
+    // TODO: add a way to specifiy required device extensions
     if (inSurfaces.size())
         mRequiredExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
 
     // Check if required extensions exists
     std::vector<VkExtensionProperties> extensionProperties;
     uint32_t extensionCount;
-    if (vkEnumerateDeviceExtensionProperties(mPhysicalDevice, nullptr, &extensionCount, nullptr) != VK_SUCCESS) {
+    CHECK_VK(result = vkEnumerateDeviceExtensionProperties(mPhysicalDevice, nullptr, &extensionCount, nullptr));
+    if (result != VK_SUCCESS) {
         SIGMA_ERROR("Could not enumerate extensions!");
         return false;
     }
     extensionProperties.resize(extensionCount);
-    if (vkEnumerateDeviceExtensionProperties(mPhysicalDevice, nullptr, &extensionCount, extensionProperties.data()) != VK_SUCCESS) {
+    CHECK_VK(result = vkEnumerateDeviceExtensionProperties(mPhysicalDevice, nullptr, &extensionCount, extensionProperties.data()));
+    if (result != VK_SUCCESS) {
         SIGMA_ERROR("Could not enumerate extensions!");
         return false;
     }
@@ -146,13 +150,15 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
     // Check if layers exists
     std::vector<VkLayerProperties> layerProperties;
     uint32_t layerCount;
-    if (vkEnumerateDeviceLayerProperties(mPhysicalDevice, &layerCount, nullptr) != VK_SUCCESS) {
-        SIGMA_ERROR("Could not enumerate instance layers!");
+    CHECK_VK(result = vkEnumerateDeviceLayerProperties(mPhysicalDevice, &layerCount, nullptr));
+    if (result != VK_SUCCESS) {
+        SIGMA_ERROR("Could not enumerate device layers!");
         return false;
     }
     layerProperties.resize(layerCount);
-    if (vkEnumerateDeviceLayerProperties(mPhysicalDevice, &layerCount, layerProperties.data()) != VK_SUCCESS) {
-        SIGMA_ERROR("Could not enumerate instance layers!");
+    CHECK_VK(result = vkEnumerateDeviceLayerProperties(mPhysicalDevice, &layerCount, layerProperties.data()));
+    if (result != VK_SUCCESS) {
+        SIGMA_ERROR("Could not enumerate device layers!");
         return false;
     }
 
@@ -229,7 +235,8 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
     createInfo.ppEnabledExtensionNames = enabledExtensions.data();
     createInfo.enabledExtensionCount = static_cast<uint32_t>(enabledExtensions.size());
 
-    if (vkCreateDevice(mPhysicalDevice, &createInfo, nullptr, &mDevice) != VK_SUCCESS) {
+    CHECK_VK(result = vkCreateDevice(mPhysicalDevice, &createInfo, nullptr, &mDevice));
+    if (result != VK_SUCCESS) {
         SIGMA_ERROR("Could not create Vulkan logical device!");
         return false;
     }
@@ -268,7 +275,8 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
     poolInfo.maxSets = 10; // TODO: Remove this hardcoded value
     poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 
-    if (vkCreateDescriptorPool(mDevice, &poolInfo, nullptr, &mDescriptorPool) != VK_SUCCESS) {
+    CHECK_VK(result = vkCreateDescriptorPool(mDevice, &poolInfo, nullptr, &mDescriptorPool));
+    if (result != VK_SUCCESS) {
         SIGMA_ERROR("Could not create descriptor pool!");
         return false;
     }
@@ -323,7 +331,7 @@ std::shared_ptr<DescriptorSetLayout> DeviceVK::createDescriptorSetLayout(const s
     return layout;
 }
 
-std::shared_ptr<DescriptorSet> DeviceVK::createDescriptorSet(const DescriptorSetCreateParams &inParams)
+std::shared_ptr<DescriptorSet> DeviceVK::createDescriptorSet(const DescriptorSetCreateParams& inParams)
 {
     auto set = std::make_shared<DescriptorSetVK>(shared_from_this(), mDescriptorPool);
     if (!set->initialize(inParams))
@@ -387,10 +395,11 @@ VkQueue DeviceVK::graphicsQueue() const
 
 VkResult DeviceVK::createBuffer(VkBufferCreateInfo* inBufferCreateInfo, VkMemoryPropertyFlagBits inProperties, VkBuffer* outBuffer, VkDeviceMemory* outMemory)
 {
+    VkResult result;
     VkMemoryRequirements requirements;
     VkMemoryAllocateInfo allocInfo = {};
 
-    VkResult result = vkCreateBuffer(mDevice, inBufferCreateInfo, nullptr, outBuffer);
+    CHECK_VK(result = vkCreateBuffer(mDevice, inBufferCreateInfo, nullptr, outBuffer));
     if (result != VK_SUCCESS)
         goto done;
 
@@ -400,11 +409,11 @@ VkResult DeviceVK::createBuffer(VkBufferCreateInfo* inBufferCreateInfo, VkMemory
     allocInfo.allocationSize = requirements.size;
     allocInfo.memoryTypeIndex = findMemoryType(requirements.memoryTypeBits, inProperties);
 
-    result = vkAllocateMemory(mDevice, &allocInfo, nullptr, outMemory);
+    CHECK_VK(result = vkAllocateMemory(mDevice, &allocInfo, nullptr, outMemory));
     if (result != VK_SUCCESS)
         goto done;
 
-    result = vkBindBufferMemory(mDevice, *outBuffer, *outMemory, 0);
+    CHECK_VK(result = vkBindBufferMemory(mDevice, *outBuffer, *outMemory, 0));
     if (result != VK_SUCCESS)
         goto done;
 
@@ -434,20 +443,20 @@ VkResult DeviceVK::copyBuffer(VkBuffer inDstBuffer, VkBuffer inSrcBuffer, uint64
     allocInfo.commandPool = mGraphicsCommandPool;
     allocInfo.commandBufferCount = 1;
 
-    result = vkAllocateCommandBuffers(mDevice, &allocInfo, &commandBuffer);
+    CHECK_VK(result = vkAllocateCommandBuffers(mDevice, &allocInfo, &commandBuffer));
     if (result != VK_SUCCESS)
         goto done;
 
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
-    result = vkBeginCommandBuffer(commandBuffer, &beginInfo);
+    CHECK_VK(result = vkBeginCommandBuffer(commandBuffer, &beginInfo));
     if (result != VK_SUCCESS)
         goto done;
 
     vkCmdCopyBuffer(commandBuffer, inSrcBuffer, inDstBuffer, 1, &copyRegion);
 
-    result = vkEndCommandBuffer(commandBuffer);
+    CHECK_VK(result = vkEndCommandBuffer(commandBuffer));
     if (result != VK_SUCCESS)
         goto done;
 
@@ -455,13 +464,11 @@ VkResult DeviceVK::copyBuffer(VkBuffer inDstBuffer, VkBuffer inSrcBuffer, uint64
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &commandBuffer;
 
-    result = vkQueueSubmit(mGraphicsQueue, 1, &submitInfo, nullptr);
+    CHECK_VK(result = vkQueueSubmit(mGraphicsQueue, 1, &submitInfo, nullptr));
     if (result != VK_SUCCESS)
         goto done;
 
-    result = vkQueueWaitIdle(mGraphicsQueue);
-
-    assert(result == VK_SUCCESS);
+    CHECK_VK(result = vkQueueWaitIdle(mGraphicsQueue));
 done:
     if (commandBuffer)
         vkFreeCommandBuffers(mDevice, mGraphicsCommandPool, 1, &commandBuffer);

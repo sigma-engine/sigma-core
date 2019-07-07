@@ -35,6 +35,8 @@ bool PipelineVK::initialize(const PipelineCreateParams& inParams)
         setLayouts[i] = mSetLayouts[i]->handle();
     }
 
+    VkResult result;
+
     VkVertexInputBindingDescription bindingDescription = {};
     bindingDescription.binding = 0;
     bindingDescription.stride = inParams.vertexLayout.stride();
@@ -161,7 +163,8 @@ bool PipelineVK::initialize(const PipelineCreateParams& inParams)
     pipelineLayoutInfo.pushConstantRangeCount = 0;
     pipelineLayoutInfo.pPushConstantRanges = nullptr;
 
-    if (vkCreatePipelineLayout(mDevice->handle(), &pipelineLayoutInfo, nullptr, &mLayout) != VK_SUCCESS) {
+    CHECK_VK(result = vkCreatePipelineLayout(mDevice->handle(), &pipelineLayoutInfo, nullptr, &mLayout));
+    if (result != VK_SUCCESS) {
         return false;
     }
 
@@ -183,9 +186,6 @@ bool PipelineVK::initialize(const PipelineCreateParams& inParams)
     pipelineInfo.basePipelineHandle = nullptr;
     pipelineInfo.basePipelineIndex = -1;
 
-    if (vkCreateGraphicsPipelines(mDevice->handle(), nullptr, 1, &pipelineInfo, nullptr, &mPipeline) != VK_SUCCESS) {
-        return false;
-    }
-
-    return true;
+    CHECK_VK(result = vkCreateGraphicsPipelines(mDevice->handle(), nullptr, 1, &pipelineInfo, nullptr, &mPipeline));
+    return result == VK_SUCCESS;
 }

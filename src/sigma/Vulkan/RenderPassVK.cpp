@@ -16,6 +16,7 @@ RenderPassVK::~RenderPassVK()
 
 bool RenderPassVK::initialize(const RenderPassCreateParams& inParams)
 {
+    VkResult result;
     std::vector<VkAttachmentDescription> colorAttachments;
     std::vector<VkAttachmentReference> colorAttachmentRefs;
     for (const auto& attch : inParams.attachments) {
@@ -70,9 +71,6 @@ bool RenderPassVK::initialize(const RenderPassCreateParams& inParams)
     renderPassInfo.dependencyCount = 1;
     renderPassInfo.pDependencies = &dependency;
 
-    if (vkCreateRenderPass(mDevice->handle(), &renderPassInfo, nullptr, &mRenderPass) != VK_SUCCESS) {
-        return false;
-    }
-
-    return true;
+    CHECK_VK(result = vkCreateRenderPass(mDevice->handle(), &renderPassInfo, nullptr, &mRenderPass));
+    return result == VK_SUCCESS;
 }

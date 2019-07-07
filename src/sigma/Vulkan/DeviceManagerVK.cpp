@@ -57,8 +57,10 @@ DeviceManagerVK::~DeviceManagerVK()
 
 bool DeviceManagerVK::initialize(const std::set<std::string>& s)
 {
+    VkResult result;
     uint32_t vulkanVersion;
-    if (vkEnumerateInstanceVersion(&vulkanVersion) != VK_SUCCESS) {
+    CHECK_VK(result = vkEnumerateInstanceVersion(&vulkanVersion));
+    if (result != VK_SUCCESS) {
         SIGMA_ERROR("Could not enumerate vulkan instance version!");
         return false;
     }
@@ -79,12 +81,14 @@ bool DeviceManagerVK::initialize(const std::set<std::string>& s)
     // Check if required extensions exists
     std::vector<VkExtensionProperties> extensionProperties;
     uint32_t extensionCount;
-    if (vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr) != VK_SUCCESS) {
+    CHECK_VK(result = vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr));
+    if (result != VK_SUCCESS) {
         SIGMA_ERROR("Could not enumerate extensions!");
         return false;
     }
     extensionProperties.resize(extensionCount);
-    if (vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensionProperties.data()) != VK_SUCCESS) {
+    CHECK_VK(result = vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensionProperties.data()));
+    if (result != VK_SUCCESS) {
         SIGMA_ERROR("Could not enumerate extensions!");
         return false;
     }
@@ -110,12 +114,14 @@ bool DeviceManagerVK::initialize(const std::set<std::string>& s)
     // Check if layers exists
     std::vector<VkLayerProperties> layerProperties;
     uint32_t layerCount;
-    if (vkEnumerateInstanceLayerProperties(&layerCount, nullptr) != VK_SUCCESS) {
+    CHECK_VK(result = vkEnumerateInstanceLayerProperties(&layerCount, nullptr));
+    if (result != VK_SUCCESS) {
         SIGMA_ERROR("Could not enumerate instance layers!");
         return false;
     }
     layerProperties.resize(layerCount);
-    if (vkEnumerateInstanceLayerProperties(&layerCount, layerProperties.data()) != VK_SUCCESS) {
+    CHECK_VK(result = vkEnumerateInstanceLayerProperties(&layerCount, layerProperties.data()));
+    if (result != VK_SUCCESS) {
         SIGMA_ERROR("Could not enumerate instance layers!");
         return false;
     }
@@ -165,7 +171,8 @@ bool DeviceManagerVK::initialize(const std::set<std::string>& s)
         createInfo.ppEnabledLayerNames = enabledLayers.data();
         createInfo.enabledLayerCount = static_cast<uint32_t>(enabledLayers.size());
 
-        if (vkCreateInstance(&createInfo, nullptr, &mHandle) != VK_SUCCESS)
+        CHECK_VK(result = vkCreateInstance(&createInfo, nullptr, &mHandle));
+        if (result != VK_SUCCESS)
             return false;
     }
 
@@ -178,7 +185,8 @@ bool DeviceManagerVK::initialize(const std::set<std::string>& s)
         createInfo.pfnUserCallback = vkDebugCallback;
         createInfo.pUserData = nullptr;
 
-        if (vkCreateDebugUtilsMessengerEXT(mHandle, &createInfo, nullptr, &mDebugMessenger) != VK_SUCCESS) {
+        CHECK_VK(result = vkCreateDebugUtilsMessengerEXT(mHandle, &createInfo, nullptr, &mDebugMessenger));
+        if (result != VK_SUCCESS) {
             SIGMA_ERROR("Could not create Debug Utils Messenger!");
             return false;
         }
@@ -187,12 +195,14 @@ bool DeviceManagerVK::initialize(const std::set<std::string>& s)
 
     std::vector<VkPhysicalDevice> physicalDevices;
     uint32_t physicalDeviceCount = 0;
-    if (vkEnumeratePhysicalDevices(mHandle, &physicalDeviceCount, nullptr) != VK_SUCCESS) {
+    CHECK_VK(result = vkEnumeratePhysicalDevices(mHandle, &physicalDeviceCount, nullptr));
+    if (result != VK_SUCCESS) {
         SIGMA_ERROR("Could not create enumerate physical devices!");
         return false;
     }
     physicalDevices.resize(physicalDeviceCount);
-    if (vkEnumeratePhysicalDevices(mHandle, &physicalDeviceCount, physicalDevices.data()) != VK_SUCCESS) {
+    CHECK_VK(result = vkEnumeratePhysicalDevices(mHandle, &physicalDeviceCount, physicalDevices.data()));
+    if (result != VK_SUCCESS) {
         SIGMA_ERROR("Could not create enumerate physical devices!");
         return false;
     }

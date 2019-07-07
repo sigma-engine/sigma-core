@@ -1,5 +1,7 @@
-#include <sigma/Vulkan/DeviceVK.hpp>
 #include <sigma/Vulkan/ShaderVK.hpp>
+
+#include <sigma/Vulkan/DeviceVK.hpp>
+#include <sigma/Vulkan/UtilVK.hpp>
 
 ShaderVK::ShaderVK(ShaderType inType, std::shared_ptr<DeviceVK> inDevice)
     : Shader(inType)
@@ -15,13 +17,12 @@ ShaderVK::~ShaderVK()
 
 bool ShaderVK::initialize(const std::vector<uint32_t>& inByteCode)
 {
+    VkResult result;
     VkShaderModuleCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
     createInfo.pCode = inByteCode.data();
     createInfo.codeSize = inByteCode.size() * sizeof(uint32_t);
 
-    if (vkCreateShaderModule(mDevice->handle(), &createInfo, nullptr, &mModule) != VK_SUCCESS) {
-        return false;
-    }
-    return true;
+    CHECK_VK(result = vkCreateShaderModule(mDevice->handle(), &createInfo, nullptr, &mModule));
+    return result == VK_SUCCESS;
 }

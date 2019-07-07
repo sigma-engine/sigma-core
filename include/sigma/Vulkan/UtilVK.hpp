@@ -1,12 +1,22 @@
 #pragma once
 
 #include <sigma/DataTypes.hpp>
+#include <sigma/Log.hpp>
 
 #include <spdlog/fmt/bundled/ostream.h>
 
 #include <vulkan/vulkan.h>
 
 #include <ostream>
+#include <string>
+
+// clang-format off
+#ifdef NDEBUG
+#define CHECK_VK(expression, ...) {(expression);}
+#else
+#define CHECK_VK(expression, ...) {auto CHECK_VK_RESULT = (expression); SIGMA_ASSERT(CHECK_VK_RESULT == VK_SUCCESS, "Vulkan Error: {} (0x{:x})", convertErrorStringVK(CHECK_VK_RESULT), CHECK_VK_RESULT);}
+#endif
+// clang-format on
 
 struct VkExtensionProperties;
 struct VkLayerProperties;
@@ -28,3 +38,5 @@ VkShaderStageFlagBits convertShaderTypeVK(ShaderType inType);
 VkFormat formatForDataTypeVK(DataType inType);
 
 VkDescriptorType convertDescriptorTypeVK(DescriptorType inType);
+
+std::string convertErrorStringVK(VkResult inResult);
