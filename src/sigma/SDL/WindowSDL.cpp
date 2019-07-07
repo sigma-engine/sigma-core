@@ -207,13 +207,13 @@ bool SurfaceSDLGL::initialize(std::shared_ptr<DeviceManager> inDevice, uint32_t 
 
 void SurfaceSDLGL::nextImage(SurfaceImageData*& outData)
 {
-    SDL_GL_MakeCurrent(mWindow, mHandle);
+    // SDL_GL_MakeCurrent(mWindow, mHandle);
     SurfaceGL::nextImage(outData);
 }
 
 void SurfaceSDLGL::presentImage(const SurfaceImageData* inData)
 {
-    SDL_GL_MakeCurrent(mWindow, mHandle);
+    // SDL_GL_MakeCurrent(mWindow, mHandle);
     SDL_GL_SwapWindow(mWindow);
 }
 

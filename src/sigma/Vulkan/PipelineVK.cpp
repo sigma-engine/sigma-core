@@ -1,11 +1,11 @@
 #include <sigma/Vulkan/PipelineVK.hpp>
 
 #include <sigma/Log.hpp>
+#include <sigma/Vulkan/DescriptorSetVK.hpp>
 #include <sigma/Vulkan/DeviceVK.hpp>
 #include <sigma/Vulkan/RenderPassVK.hpp>
 #include <sigma/Vulkan/ShaderVK.hpp>
 #include <sigma/Vulkan/UtilVK.hpp>
-#include <sigma/Vulkan/DescriptorSetVK.hpp>
 
 PipelineVK::PipelineVK(std::shared_ptr<DeviceVK> inDevice)
     : mDevice(inDevice)
@@ -27,14 +27,13 @@ bool PipelineVK::initialize(const PipelineCreateParams& inParams)
     SIGMA_ASSERT(std::dynamic_pointer_cast<RenderPassVK>(inParams.renderPass), "Must use vulkan render pass with vulkan pipeline");
     mRenderPass = std::static_pointer_cast<RenderPassVK>(inParams.renderPass);
 
-	mSetLayouts.resize(inParams.setLayouts.size());
-	std::vector<VkDescriptorSetLayout> setLayouts(inParams.setLayouts.size());
-	for (size_t i = 0; i < inParams.setLayouts.size(); ++i)
-	{
-		SIGMA_ASSERT(std::dynamic_pointer_cast<DescriptorSetLayoutVK>(inParams.setLayouts[i]), "Must use vulkan descriptor set layout with vulkan pipeline!");
-		mSetLayouts[i] = std::static_pointer_cast<DescriptorSetLayoutVK>(inParams.setLayouts[i]);
-		setLayouts[i] = mSetLayouts[i]->handle();
-	}
+    mSetLayouts.resize(inParams.setLayouts.size());
+    std::vector<VkDescriptorSetLayout> setLayouts(inParams.setLayouts.size());
+    for (size_t i = 0; i < inParams.setLayouts.size(); ++i) {
+        SIGMA_ASSERT(std::dynamic_pointer_cast<DescriptorSetLayoutVK>(inParams.setLayouts[i]), "Must use vulkan descriptor set layout with vulkan pipeline!");
+        mSetLayouts[i] = std::static_pointer_cast<DescriptorSetLayoutVK>(inParams.setLayouts[i]);
+        setLayouts[i] = mSetLayouts[i]->handle();
+    }
 
     VkVertexInputBindingDescription bindingDescription = {};
     bindingDescription.binding = 0;
@@ -59,7 +58,7 @@ bool PipelineVK::initialize(const PipelineCreateParams& inParams)
     vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
     vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
 
-    VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
+    VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo = {};
     inputAssemblyInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
     inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
     inputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
@@ -103,9 +102,17 @@ bool PipelineVK::initialize(const PipelineCreateParams& inParams)
     multisampleingInfo.alphaToCoverageEnable = VK_FALSE;
     multisampleingInfo.alphaToOneEnable = VK_FALSE;
 
-    // VkPipelineDepthStencilStateCreateInfo
+    VkPipelineDepthStencilStateCreateInfo depthStencilStateInfo = {};
+    depthStencilStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+    depthStencilStateInfo.depthTestEnable = VK_FALSE;
+    depthStencilStateInfo.depthWriteEnable = VK_FALSE;
+    depthStencilStateInfo.depthCompareOp = VK_COMPARE_OP_NEVER;
+    depthStencilStateInfo.depthBoundsTestEnable = VK_FALSE;
+    depthStencilStateInfo.stencilTestEnable = VK_FALSE;
+    depthStencilStateInfo.minDepthBounds = 0;
+    depthStencilStateInfo.maxDepthBounds = 1.0f;
 
-    VkPipelineColorBlendAttachmentState colorBlendAtt;
+    VkPipelineColorBlendAttachmentState colorBlendAtt = {};
     colorBlendAtt.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
     colorBlendAtt.blendEnable = VK_FALSE;
     colorBlendAtt.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
@@ -126,15 +133,14 @@ bool PipelineVK::initialize(const PipelineCreateParams& inParams)
     colorBlendInfo.blendConstants[2] = 0.0f;
     colorBlendInfo.blendConstants[3] = 0.0f;
 
-    //    std::vector<VkDynamicState> dynamicStates = {
-    //        VK_DYNAMIC_STATE_VIEWPORT,
-    //        VK_DYNAMIC_STATE_LINE_WIDTH
-    //    };
+    std::vector<VkDynamicState> dynamicStates = {
+        // VK_DYNAMIC_STATE_VIEWPORT
+    };
 
-    //    VkPipelineDynamicStateCreateInfo dynamicStateInfo = {};
-    //    dynamicStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-    //    dynamicStateInfo.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
-    //    dynamicStateInfo.pDynamicStates = dynamicStates.data();
+    VkPipelineDynamicStateCreateInfo dynamicStateInfo = {};
+    dynamicStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+    dynamicStateInfo.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
+    dynamicStateInfo.pDynamicStates = dynamicStates.data();
 
     std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
     for (const auto& shader : inParams.shaders) {
@@ -168,9 +174,9 @@ bool PipelineVK::initialize(const PipelineCreateParams& inParams)
     pipelineInfo.pViewportState = &viewportStateInfo;
     pipelineInfo.pRasterizationState = &rasterizerInfo;
     pipelineInfo.pMultisampleState = &multisampleingInfo;
-    pipelineInfo.pDepthStencilState = nullptr;
+    pipelineInfo.pDepthStencilState = &depthStencilStateInfo;
     pipelineInfo.pColorBlendState = &colorBlendInfo;
-    pipelineInfo.pDynamicState = nullptr;
+    pipelineInfo.pDynamicState = &dynamicStateInfo;
     pipelineInfo.layout = mLayout;
     pipelineInfo.renderPass = mRenderPass->handle();
     pipelineInfo.subpass = 0;

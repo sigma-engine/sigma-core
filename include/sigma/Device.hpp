@@ -23,6 +23,9 @@ enum class DescriptorType;
 struct DescriptorSetLayoutBinding;
 class DescriptorSetLayout;
 
+struct DescriptorSetCreateParams;
+class DescriptorSet;
+
 struct PipelineCreateParams;
 class Pipeline;
 
@@ -33,6 +36,8 @@ class IndexBuffer;
 enum class PrimitiveType;
 
 class VertexLayout;
+
+class UniformBuffer;
 
 enum class DeviceType {
     DiscreteGPU,
@@ -60,11 +65,15 @@ public:
 
     virtual std::shared_ptr<RenderPass> createRenderPass(const RenderPassCreateParams& inParams) = 0;
 
-    virtual std::shared_ptr<DescriptorSetLayout> createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding> &inBindings) = 0;
+    virtual std::shared_ptr<DescriptorSetLayout> createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding>& inBindings) = 0;
+
+    virtual std::shared_ptr<DescriptorSet> createDescriptorSet(const DescriptorSetCreateParams &inParams) = 0;
 
     virtual std::shared_ptr<Pipeline> createPipeline(const PipelineCreateParams& inParams) = 0;
 
     virtual std::shared_ptr<VertexBuffer> createVertexBuffer(const VertexLayout& inLayout, uint64_t inSize) = 0;
 
     virtual std::shared_ptr<IndexBuffer> createIndexBuffer(PrimitiveType inPrimitive, DataType inDataType, uint64_t inSize) = 0;
+
+    virtual std::shared_ptr<UniformBuffer> createUniformBuffer(uint64_t inSize) = 0;
 };

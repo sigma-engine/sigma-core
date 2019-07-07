@@ -9,7 +9,7 @@ void glDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLs
 {
     switch (severity) {
     case GL_DEBUG_SEVERITY_LOW:
-        SIGMA_ERROR("0x{:x}: {}", id, message);
+        SIGMA_WARN("0x{:x}: {}", id, message);
         break;
     case GL_DEBUG_SEVERITY_MEDIUM:
         SIGMA_ERROR("0x{:x}: {}", id, message);
@@ -37,6 +37,7 @@ bool DeviceManagerGL::initialize(const std::set<std::string>& inRequiredExtensio
     glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_MEDIUM, 0, nullptr, true);
     glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_HIGH, 0, nullptr, true);
     glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, false);
+    glDebugMessageControl(GL_DEBUG_SOURCE_API, GL_DEBUG_TYPE_OTHER, GL_DEBUG_SEVERITY_LOW, 0, nullptr, GL_FALSE);
 
     GLint extensionCount;
     glGetIntegerv(GL_NUM_EXTENSIONS, &extensionCount);

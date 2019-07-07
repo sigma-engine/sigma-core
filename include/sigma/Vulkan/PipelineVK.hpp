@@ -19,6 +19,8 @@ public:
 
     VkPipeline handle() const { return mPipeline; }
 
+	VkPipelineLayout layout() const { return mLayout; }
+
     bool initialize(const PipelineCreateParams& inParams);
 
 public:

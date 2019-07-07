@@ -1,9 +1,9 @@
+#include <SimpleRenderer.hpp>
 #include <sigma/Device.hpp>
 #include <sigma/DeviceManager.hpp>
 #include <sigma/Engine.hpp>
-#include <sigma/Window.hpp>
-#include <SimpleRenderer.hpp>
 #include <sigma/Log.hpp>
+#include <sigma/Window.hpp>
 
 int main(int argc, char const* argv[])
 {
@@ -30,11 +30,11 @@ int main(int argc, char const* argv[])
     if (!device->initialize({ window->surface() }))
         return -1;
 
-	auto renderer = std::make_shared<SimpleRenderer>(engine, device, window->surface());
-	if (!renderer->initialize())
-		return -1;
+    auto renderer = std::make_shared<SimpleRenderer>(engine, device, window->surface());
+    if (!renderer->initialize())
+        return -1;
 
     while (window->open() && engine->process()) {
-		renderer->render();
+        renderer->render();
     }
 }

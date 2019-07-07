@@ -10,6 +10,7 @@ class DeviceVK;
 class PipelineVK;
 class VertexBufferVK;
 class IndexBufferVK;
+class DescriptorSetVK;
 
 class CommandBufferVK : public CommandBuffer {
 public:
@@ -26,6 +27,8 @@ public:
     virtual void beginRenderPass(const RenderPassBeginParams& inParams) override;
 
     virtual void bindPipeline(std::shared_ptr<Pipeline> inPipeline) override;
+
+	virtual void bindDescriptorSet(std::shared_ptr<DescriptorSet> inDescriptorSet) override;
 
     virtual void bindVertexBuffer(std::shared_ptr<VertexBuffer> inBuffer) override;
 
@@ -48,4 +51,5 @@ public:
     std::shared_ptr<PipelineVK> mCurrentPipeline = nullptr;
     std::shared_ptr<VertexBufferVK> mCurrentVertexBuffer = nullptr;
     std::shared_ptr<IndexBufferVK> mCurrentIndexBuffer = nullptr;
+	std::shared_ptr<DescriptorSetVK> mCurrentDescriptorSet = nullptr;
 };

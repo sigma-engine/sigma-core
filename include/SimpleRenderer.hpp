@@ -10,6 +10,8 @@ class Pipeline;
 class VertexBuffer;
 class IndexBuffer;
 class CommandBuffer;
+class UniformBuffer;
+class DescriptorSet;
 
 class SimpleRenderer {
 public:
@@ -25,8 +27,12 @@ private:
     std::shared_ptr<Surface> mSurface = nullptr;
 
 	std::vector<std::shared_ptr<CommandBuffer>> mCommandBuffers;
+	std::vector<std::shared_ptr<UniformBuffer>> mUniformBuffers;
+	std::vector<std::shared_ptr<DescriptorSet>> mDescriptorSets;
 
     std::shared_ptr<Pipeline> mPipeline = nullptr;
     std::shared_ptr<VertexBuffer> mVertexBuffer = nullptr;
 	std::shared_ptr<IndexBuffer> mIndexBuffer = nullptr;
+
+	void setupUniformBuffer(std::shared_ptr<UniformBuffer> inBuffer);
 };

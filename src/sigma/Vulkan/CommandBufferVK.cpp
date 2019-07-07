@@ -7,6 +7,7 @@
 #include <sigma/Vulkan/PipelineVK.hpp>
 #include <sigma/Vulkan/RenderPassVK.hpp>
 #include <sigma/Vulkan/VertexBufferVK.hpp>
+#include <sigma/Vulkan/DescriptorSetVK.hpp>
 
 #include <limits>
 
@@ -72,6 +73,14 @@ void CommandBufferVK::bindPipeline(std::shared_ptr<Pipeline> inPipeline)
     SIGMA_ASSERT(std::dynamic_pointer_cast<PipelineVK>(inPipeline), "Must use vulkan pipeline with vulkan command buffer!");
     mCurrentPipeline = std::static_pointer_cast<PipelineVK>(inPipeline);
     vkCmdBindPipeline(mBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mCurrentPipeline->handle());
+}
+
+void CommandBufferVK::bindDescriptorSet(std::shared_ptr<DescriptorSet> inDescriptorSet)
+{
+	SIGMA_ASSERT(std::dynamic_pointer_cast<DescriptorSetVK>(inDescriptorSet), "Must use vulkan descriptor set with vulkan command buffer!");
+	mCurrentDescriptorSet = std::static_pointer_cast<DescriptorSetVK>(inDescriptorSet);
+	VkDescriptorSet descriptorSet = mCurrentDescriptorSet->handle();
+	vkCmdBindDescriptorSets(mBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mCurrentPipeline->layout(), 0, 1, &descriptorSet, 0, nullptr);
 }
 
 void CommandBufferVK::bindVertexBuffer(std::shared_ptr<VertexBuffer> inBuffer)

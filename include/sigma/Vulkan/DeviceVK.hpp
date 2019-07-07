@@ -41,13 +41,17 @@ public:
 
     virtual std::shared_ptr<RenderPass> createRenderPass(const RenderPassCreateParams& inParams) override;
 
-    virtual std::shared_ptr<DescriptorSetLayout> createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding> &inBindings) override;
+    virtual std::shared_ptr<DescriptorSetLayout> createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding>& inBindings) override;
+
+    virtual std::shared_ptr<DescriptorSet> createDescriptorSet(const DescriptorSetCreateParams &inParams) override;
 
     virtual std::shared_ptr<Pipeline> createPipeline(const PipelineCreateParams& inParams) override;
 
     virtual std::shared_ptr<VertexBuffer> createVertexBuffer(const VertexLayout& inLayout, uint64_t inSize) override;
 
     virtual std::shared_ptr<IndexBuffer> createIndexBuffer(PrimitiveType inPrimitive, DataType inDataType, uint64_t inSize) override;
+
+    virtual std::shared_ptr<UniformBuffer> createUniformBuffer(uint64_t inSize) override;
 
     uint32_t graphicsQueueFamily() const;
 
@@ -77,6 +81,7 @@ private:
     VkQueue mGraphicsQueue = nullptr;
 
     VkCommandPool mGraphicsCommandPool = nullptr;
+    VkDescriptorPool mDescriptorPool = nullptr;
     std::vector<VkCommandBuffer> mFreeGraphicsBuffers;
 
     std::optional<SurfaceSwapChainInfoVK> getSwapChainInfo(std::shared_ptr<SurfaceVK> inSurface) const;

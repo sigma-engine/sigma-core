@@ -9,6 +9,7 @@ class FrameBuffer;
 class Pipeline;
 class VertexBuffer;
 class IndexBuffer;
+class DescriptorSet;
 
 struct RenderPassBeginParams {
     std::shared_ptr<FrameBuffer> FrameBuffer;
@@ -24,6 +25,8 @@ public:
     virtual void beginRenderPass(const RenderPassBeginParams& inParams) = 0;
 
     virtual void bindPipeline(std::shared_ptr<Pipeline> inPipeline) = 0;
+
+	virtual void bindDescriptorSet(std::shared_ptr<DescriptorSet> inDescriptorSet) = 0;
 
     virtual void bindVertexBuffer(std::shared_ptr<VertexBuffer> inBuffer) = 0;
 

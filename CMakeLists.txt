@@ -52,6 +52,8 @@ add_library(sigma-core STATIC
 
 	include/sigma/DescriptorSet.hpp
 
+	include/sigma/UniformBuffer.hpp
+
 	include/sigma/Log.hpp
 	
 	include/sigma/Engine.hpp
@@ -88,6 +90,10 @@ add_library(sigma-core STATIC
 	src/sigma/OpenGL/RenderPassGL.cpp
 
 	include/sigma/OpenGL/DescriptorSetGL.hpp
+	src/sigma/OpenGL/DescriptorSetGL.cpp
+
+	include/sigma/OpenGL/UniformBufferGL.hpp
+	src/sigma/OpenGL/UniformBufferGL.cpp
 
 	include/sigma/OpenGL/PipelineGL.hpp
 	src/sigma/OpenGL/PipelineGL.cpp
@@ -131,6 +137,9 @@ add_library(sigma-core STATIC
 	include/sigma/Vulkan/DescriptorSetVK.hpp
 	src/sigma/Vulkan/DescriptorSetVK.cpp
 
+	include/sigma/Vulkan/UniformBufferVK.hpp
+	src/sigma/Vulkan/UniformBufferVK.cpp
+
 	src/sigma/Vulkan/ExtensionsVK.cpp
 
 	include/sigma/Vulkan/UtilVK.hpp
@@ -163,6 +172,7 @@ target_compile_definitions(sigma-core
 PUBLIC
     -DGLM_ENABLE_EXPERIMENTAL
     -DGLM_FORCE_CTOR_INIT
+	-DGLM_FORCE_RADIANS
 )
 
 add_executable(simple-game

@@ -8,6 +8,7 @@
 #include <sigma/Vulkan/RenderPassVK.hpp>
 #include <sigma/Vulkan/ShaderVK.hpp>
 #include <sigma/Vulkan/SurfaceVK.hpp>
+#include <sigma/Vulkan/UniformBufferVK.hpp>
 #include <sigma/Vulkan/UtilVK.hpp>
 #include <sigma/Vulkan/VertexBufferVK.hpp>
 
@@ -44,10 +45,15 @@ DeviceVK::DeviceVK(VkInstance inInstance, VkPhysicalDevice inDevice, const std::
 
 DeviceVK::~DeviceVK()
 {
-    if (mDevice && mGraphicsCommandPool)
-        vkDestroyCommandPool(mDevice, mGraphicsCommandPool, nullptr);
-    if (mDevice)
+    if (mDevice) {
+        if (mDescriptorPool)
+            vkDestroyDescriptorPool(mDevice, mDescriptorPool, nullptr);
+
+        if (mGraphicsCommandPool)
+            vkDestroyCommandPool(mDevice, mGraphicsCommandPool, nullptr);
+
         vkDestroyDevice(mDevice, nullptr);
+    }
 }
 
 DeviceType DeviceVK::type() const
@@ -250,6 +256,23 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
         }
     }
 
+    // TODO other descriptor types?
+    VkDescriptorPoolSize poolSize = {};
+    poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    poolSize.descriptorCount = 10; // TODO: Remove this hardcoded value
+
+    VkDescriptorPoolCreateInfo poolInfo = {};
+    poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+    poolInfo.poolSizeCount = 1;
+    poolInfo.pPoolSizes = &poolSize;
+    poolInfo.maxSets = 10; // TODO: Remove this hardcoded value
+    poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+
+    if (vkCreateDescriptorPool(mDevice, &poolInfo, nullptr, &mDescriptorPool) != VK_SUCCESS) {
+        SIGMA_ERROR("Could not create descriptor pool!");
+        return false;
+    }
+
     return true;
 }
 
@@ -259,9 +282,9 @@ std::shared_ptr<CommandBuffer> DeviceVK::createCommandBuffer()
         return nullptr;
 
     auto commandBuffer = std::make_shared<CommandBufferVK>(shared_from_this(), mGraphicsCommandPool);
-    if (!commandBuffer->initialize()) {
+    if (!commandBuffer->initialize())
         return nullptr;
-    }
+
     return commandBuffer;
 }
 
@@ -276,9 +299,9 @@ std::shared_ptr<Shader> DeviceVK::createShader(ShaderType inType, const std::str
     file.read(reinterpret_cast<char*>(data.data()), fsize);
 
     std::shared_ptr<ShaderVK> shader = std::make_shared<ShaderVK>(inType, shared_from_this());
-    if (!shader->initialize(data)) {
+    if (!shader->initialize(data))
         return nullptr;
-    }
+
     return shader;
 }
 
@@ -287,42 +310,62 @@ std::shared_ptr<RenderPass> DeviceVK::createRenderPass(const RenderPassCreatePar
     auto renderPass = std::make_shared<RenderPassVK>(shared_from_this());
     if (!renderPass->initialize(inParams))
         return nullptr;
+
     return renderPass;
 }
 
-std::shared_ptr<DescriptorSetLayout> DeviceVK::createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding> &inBindings)
+std::shared_ptr<DescriptorSetLayout> DeviceVK::createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding>& inBindings)
 {
     auto layout = std::make_shared<DescriptorSetLayoutVK>(shared_from_this());
     if (!layout->initialize(inBindings))
         return nullptr;
+
     return layout;
+}
+
+std::shared_ptr<DescriptorSet> DeviceVK::createDescriptorSet(const DescriptorSetCreateParams &inParams)
+{
+    auto set = std::make_shared<DescriptorSetVK>(shared_from_this(), mDescriptorPool);
+    if (!set->initialize(inParams))
+        return nullptr;
+
+    return set;
 }
 
 std::shared_ptr<Pipeline> DeviceVK::createPipeline(const PipelineCreateParams& inParams)
 {
     std::shared_ptr<PipelineVK> pipeline = std::make_shared<PipelineVK>(shared_from_this());
-    if (!pipeline->initialize(inParams)) {
+    if (!pipeline->initialize(inParams))
         return nullptr;
-    }
+
     return pipeline;
 }
 
 std::shared_ptr<VertexBuffer> DeviceVK::createVertexBuffer(const VertexLayout& inLayout, uint64_t inSize)
 {
     auto vertexBuffer = std::make_shared<VertexBufferVK>(shared_from_this(), inLayout);
-    if (!vertexBuffer->initialize(inSize)) {
+    if (!vertexBuffer->initialize(inSize))
         return nullptr;
-    }
+
     return vertexBuffer;
 }
 
 std::shared_ptr<IndexBuffer> DeviceVK::createIndexBuffer(PrimitiveType inPrimitive, DataType inDataType, uint64_t inSize)
 {
     auto indexBuffer = std::make_shared<IndexBufferVK>(shared_from_this(), inPrimitive, inDataType);
-    if (!indexBuffer->initialize(inSize)) {
+    if (!indexBuffer->initialize(inSize))
         return nullptr;
-    }
+
     return indexBuffer;
+}
+
+std::shared_ptr<UniformBuffer> DeviceVK::createUniformBuffer(uint64_t inSize)
+{
+    auto buffer = std::make_shared<UniformBufferVK>(shared_from_this());
+    if (!buffer->initialize(inSize))
+        return nullptr;
+
+    return buffer;
 }
 
 uint32_t DeviceVK::graphicsQueueFamily() const

@@ -4,6 +4,11 @@
 
 #include <glad/glad.h>
 
+class PipelineGL;
+class DescriptorSetGL;
+class VertexBufferGL;
+class IndexBufferGL;
+
 class CommandBufferGL : public CommandBuffer {
 public:
     virtual void begin() override;
@@ -11,6 +16,8 @@ public:
     virtual void beginRenderPass(const RenderPassBeginParams& inParams) override;
 
     virtual void bindPipeline(std::shared_ptr<Pipeline> inPipeline) override;
+
+	virtual void bindDescriptorSet(std::shared_ptr<DescriptorSet> inDescriptorSet) override;
 
     virtual void bindVertexBuffer(std::shared_ptr<VertexBuffer> inBuffer) override;
 
@@ -26,4 +33,9 @@ public:
 
 private:
     GLenum mBoundIndexType = GL_INVALID_ENUM;
+
+	std::shared_ptr<PipelineGL> mPipeline = nullptr;
+	std::shared_ptr<DescriptorSetGL> mDescriptorSet = nullptr;
+	std::shared_ptr<VertexBufferGL> mVertexBuffer = nullptr;
+	std::shared_ptr<IndexBufferGL> mIndexBuffer = nullptr;
 };

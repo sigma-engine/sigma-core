@@ -8,6 +8,7 @@
 #include <sigma/OpenGL/RenderPassGL.hpp>
 #include <sigma/OpenGL/ShaderGL.hpp>
 #include <sigma/OpenGL/SurfaceGL.hpp>
+#include <sigma/OpenGL/UniformBufferGL.hpp>
 #include <sigma/OpenGL/VertexBufferGL.hpp>
 
 #include <glad/glad.h>
@@ -87,9 +88,18 @@ std::shared_ptr<RenderPass> DeviceGL::createRenderPass(const RenderPassCreatePar
     return std::make_shared<RenderPassGL>();
 }
 
-std::shared_ptr<DescriptorSetLayout> DeviceGL::createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding> &inBindings)
+std::shared_ptr<DescriptorSetLayout> DeviceGL::createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding>& inBindings)
 {
-    return std::make_shared<DescriptorSetLayout>();
+    return std::make_shared<DescriptorSetLayoutGL>(inBindings);
+}
+
+std::shared_ptr<DescriptorSet> DeviceGL::createDescriptorSet(const DescriptorSetCreateParams& inParams)
+{
+    auto set = std::make_shared<DescriptorSetGL>();
+    if (!set->initialize(inParams))
+        return nullptr;
+
+    return set;
 }
 
 std::shared_ptr<Pipeline> DeviceGL::createPipeline(const PipelineCreateParams& inParams)
@@ -97,6 +107,7 @@ std::shared_ptr<Pipeline> DeviceGL::createPipeline(const PipelineCreateParams& i
     auto pipeline = std::make_shared<PipelineGL>();
     if (!pipeline->initialize(inParams))
         return nullptr;
+
     return pipeline;
 }
 
@@ -109,4 +120,13 @@ std::shared_ptr<IndexBuffer> DeviceGL::createIndexBuffer(PrimitiveType inPrimiti
 {
     assert((inDataType == DataType::UInt || inDataType == DataType::UShort) && "Invlaid data type");
     return std::make_shared<IndexBufferGL>(inPrimitive, inDataType);
+}
+
+std::shared_ptr<UniformBuffer> DeviceGL::createUniformBuffer(uint64_t inSize)
+{
+    auto buffer = std::make_shared<UniformBufferGL>();
+    if (!buffer->initialize(inSize))
+        return nullptr;
+
+    return buffer;
 }
