@@ -2,7 +2,7 @@
 #include <sigma/DescriptorSet.hpp>
 
 #include <memory>
-#include <vector>
+#include <unordered_map>
 
 #include <vulkan/vulkan.h>
 
@@ -42,5 +42,5 @@ private:
     VkDescriptorPool mDescriptorPool = nullptr;
     VkDescriptorSet mHandle = nullptr;
 
-	std::vector<std::shared_ptr<UniformBufferVK>> mUniformBuffers;
+	std::unordered_map<uint32_t, std::shared_ptr<UniformBufferVK>> mUniformBuffers;
 };

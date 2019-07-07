@@ -22,7 +22,7 @@ bool DescriptorSetLayoutVK::initialize(const std::vector<DescriptorSetLayoutBind
     std::vector<VkDescriptorSetLayoutBinding> bindings;
     bindings.resize(inBindings.size());
     for (size_t i = 0; i < inBindings.size(); ++i) {
-        bindings[i].binding = static_cast<uint32_t>(i);
+        bindings[i].binding = inBindings[i].binding;
         bindings[i].descriptorType = convertDescriptorTypeVK(inBindings[i].type);
         bindings[i].descriptorCount = inBindings[i].count;
         bindings[i].pImmutableSamplers = nullptr;
@@ -75,26 +75,25 @@ bool DescriptorSetVK::initialize(const DescriptorSetCreateParams& inParams)
     std::vector<VkWriteDescriptorSet> descriptorWrites;
     bufferInfos.resize(inParams.uniformBuffers.size());
     descriptorWrites.resize(inParams.uniformBuffers.size());
-    mUniformBuffers.resize(inParams.uniformBuffers.size());
 
-    // TODO: This code needs to be generalized and checked!
-    for (uint32_t i = 0; i < inParams.uniformBuffers.size(); ++i) {
-        SIGMA_ASSERT(std::dynamic_pointer_cast<UniformBufferVK>(inParams.uniformBuffers[i]), "Must use vulkan uniform buffer with vulkan descriptor set!");
-        auto buffer = std::static_pointer_cast<UniformBufferVK>(inParams.uniformBuffers[i]);
-        mUniformBuffers[i] = buffer;
-        bufferInfos[i].buffer = buffer->handle();
-        bufferInfos[i].offset = 0;
+    uint32_t i = 0;
+    for (const auto& [binding, buffer] : inParams.uniformBuffers) {
+        SIGMA_ASSERT(std::dynamic_pointer_cast<UniformBufferVK>(buffer), "Must use vulkan uniform buffer with vulkan descriptor set!");
+        mUniformBuffers[binding] = std::static_pointer_cast<UniformBufferVK>(buffer);
+        bufferInfos[i].buffer = mUniformBuffers[binding]->handle();
+        bufferInfos[i].offset = 0; // TODO: Fixme
         bufferInfos[i].range = buffer->size();
 
         descriptorWrites[i].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
         descriptorWrites[i].dstSet = mHandle;
-        descriptorWrites[i].dstBinding = i;
+        descriptorWrites[i].dstBinding = binding;
         descriptorWrites[i].dstArrayElement = 0;
         descriptorWrites[i].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
         descriptorWrites[i].descriptorCount = 1;
         descriptorWrites[i].pBufferInfo = &bufferInfos[i];
         descriptorWrites[i].pImageInfo = nullptr;
         descriptorWrites[i].pTexelBufferView = nullptr;
+        i++;
     }
 
     vkUpdateDescriptorSets(mDevice->handle(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);

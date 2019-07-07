@@ -19,10 +19,9 @@ bool DescriptorSetGL::initialize(const DescriptorSetCreateParams& inParams)
     SIGMA_ASSERT(std::dynamic_pointer_cast<DescriptorSetLayoutGL>(inParams.layout), "Must use opengl descriptor set layout with opengl descriptor set!");
     mLayout = std::static_pointer_cast<DescriptorSetLayoutGL>(inParams.layout);
 
-    mUniformBuffers.resize(inParams.uniformBuffers.size());
-    for (uint32_t i = 0; i < inParams.uniformBuffers.size(); ++i) {
-        SIGMA_ASSERT(std::dynamic_pointer_cast<UniformBufferGL>(inParams.uniformBuffers[i]), "Must use opengl uniform buffer with opengl descriptor set!");
-        mUniformBuffers[i] = std::static_pointer_cast<UniformBufferGL>(inParams.uniformBuffers[i]);
+    for (const auto& [binding, buffer] : inParams.uniformBuffers) {
+        SIGMA_ASSERT(std::dynamic_pointer_cast<UniformBufferGL>(buffer), "Must use opengl uniform buffer with opengl descriptor set!");
+        mUniformBuffers[binding] = std::static_pointer_cast<UniformBufferGL>(buffer);
     }
 
     return true;
@@ -30,7 +29,7 @@ bool DescriptorSetGL::initialize(const DescriptorSetCreateParams& inParams)
 
 void DescriptorSetGL::bind()
 {
-    for (uint32_t i = 0; i < mUniformBuffers.size(); ++i) {
-        CHECK_GL(glBindBufferBase(GL_UNIFORM_BUFFER, i, mUniformBuffers[i]->handle()));
+    for (const auto& [binding, buffer] : mUniformBuffers) {
+        CHECK_GL(glBindBufferBase(GL_UNIFORM_BUFFER, binding, buffer->handle()));
     }
 }

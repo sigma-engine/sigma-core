@@ -25,11 +25,11 @@ struct Vertex {
 };
 static std::vector<Vertex> vertices = {
     { { -0.5f, 0.5f, 0.0f }, { 1.0f, 0.0f, 0.0f } },
-    { { -0.5f, -0.5f, 0.0f }, { 1.0f, 0.0f, 0.0f } },
-    { { 0.5f, -0.5f, 0.0f }, { 1.0f, 0.0f, 0.0f } },
-    { { 0.5f, 0.5f, 0.0f }, { 1.0f, 0.0f, 0.0f } }
+    { { -0.5f, -0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f } },
+    { { 0.5f, -0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f } },
+    { { 0.5f, 0.5f, 0.0f }, { 1.0f, 1.0f, 1.0f } }
 };
-static std::vector<std::uint16_t> indices = { 0, 1, 2, 0, 2, 3 };
+static std::vector<std::uint16_t> indices = { 0, 1, 2, 2, 3, 0 };
 
 struct SimpleUniformBuffer {
     glm::mat4 model;
@@ -46,7 +46,7 @@ SimpleRenderer::SimpleRenderer(std::shared_ptr<Engine> inEngine, std::shared_ptr
 
 bool SimpleRenderer::initialize()
 {
-    auto setLayout = mDevice->createDescriptorSetLayout({ { DescriptorType::UniformBuffer, 1 } });
+    auto setLayout = mDevice->createDescriptorSetLayout({ { 0, DescriptorType::UniformBuffer, 1 } });
     if (setLayout == nullptr)
         return false;
 
@@ -61,7 +61,7 @@ bool SimpleRenderer::initialize()
 
         DescriptorSetCreateParams descriptorSetParams = {
             setLayout,
-            { uniformBuffer }
+            { { 0, uniformBuffer } }
         };
         auto descriptorSet = mDevice->createDescriptorSet(descriptorSetParams);
         if (descriptorSet == nullptr)

@@ -2,7 +2,7 @@
 #include <sigma/DescriptorSet.hpp>
 
 #include <memory>
-#include <vector>
+#include <unordered_map>
 
 class UniformBufferGL;
 
@@ -24,5 +24,5 @@ public:
 	void bind();
 public:
     std::shared_ptr<DescriptorSetLayoutGL> mLayout = nullptr;
-    std::vector<std::shared_ptr<UniformBufferGL>> mUniformBuffers;
+    std::unordered_map<uint32_t, std::shared_ptr<UniformBufferGL>> mUniformBuffers;
 };
