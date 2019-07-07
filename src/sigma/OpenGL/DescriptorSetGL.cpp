@@ -2,6 +2,7 @@
 
 #include <sigma/Log.hpp>
 #include <sigma/OpenGL/UniformBufferGL.hpp>
+#include <sigma/OpenGL/UtilGL.hpp>
 
 DescriptorSetLayoutGL::DescriptorSetLayoutGL(const std::vector<DescriptorSetLayoutBinding>& inBindings)
     : mBindings(inBindings)
@@ -10,7 +11,7 @@ DescriptorSetLayoutGL::DescriptorSetLayoutGL(const std::vector<DescriptorSetLayo
 
 std::shared_ptr<DescriptorSetLayout> DescriptorSetGL::layout() const
 {
-	return mLayout;
+    return mLayout;
 }
 
 bool DescriptorSetGL::initialize(const DescriptorSetCreateParams& inParams)
@@ -29,8 +30,7 @@ bool DescriptorSetGL::initialize(const DescriptorSetCreateParams& inParams)
 
 void DescriptorSetGL::bind()
 {
-	for (uint32_t i = 0; i < mUniformBuffers.size(); ++i)
-	{
-		glBindBufferBase(GL_UNIFORM_BUFFER, i, mUniformBuffers[i]->handle());
-	}
+    for (uint32_t i = 0; i < mUniformBuffers.size(); ++i) {
+        CHECK_GL(glBindBufferBase(GL_UNIFORM_BUFFER, i, mUniformBuffers[i]->handle()));
+    }
 }

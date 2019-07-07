@@ -2,6 +2,7 @@
 
 #include <sigma/Log.hpp>
 #include <sigma/OpenGL/DeviceGL.hpp>
+#include <sigma/OpenGL/UtilGL.hpp>
 
 #include <glad/glad.h>
 
@@ -29,18 +30,18 @@ DeviceManagerGL::DeviceManagerGL()
 
 bool DeviceManagerGL::initialize(const std::set<std::string>& inRequiredExtensions)
 {
-    gladLoadGL();
+    CHECK_GL(gladLoadGL());
 
-    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-    glDebugMessageCallback(glDebugCallback, nullptr);
-    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_LOW, 0, nullptr, true);
-    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_MEDIUM, 0, nullptr, true);
-    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_HIGH, 0, nullptr, true);
-    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, false);
-    glDebugMessageControl(GL_DEBUG_SOURCE_API, GL_DEBUG_TYPE_OTHER, GL_DEBUG_SEVERITY_LOW, 0, nullptr, GL_FALSE);
+    CHECK_GL(glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS));
+    CHECK_GL(glDebugMessageCallback(glDebugCallback, nullptr));
+    CHECK_GL(glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_LOW, 0, nullptr, true));
+    CHECK_GL(glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_MEDIUM, 0, nullptr, true));
+    CHECK_GL(glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_HIGH, 0, nullptr, true));
+    CHECK_GL(glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, false));
+    CHECK_GL(glDebugMessageControl(GL_DEBUG_SOURCE_API, GL_DEBUG_TYPE_OTHER, GL_DEBUG_SEVERITY_LOW, 0, nullptr, GL_FALSE));
 
     GLint extensionCount;
-    glGetIntegerv(GL_NUM_EXTENSIONS, &extensionCount);
+    CHECK_GL(glGetIntegerv(GL_NUM_EXTENSIONS, &extensionCount));
     for (GLint i = 0; i < extensionCount; ++i) {
         const char* ext = reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, static_cast<GLuint>(i)));
         mExtensions.insert(ext);

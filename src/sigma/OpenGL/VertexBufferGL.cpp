@@ -1,6 +1,6 @@
 #include <sigma/OpenGL/VertexBufferGL.hpp>
 
-#include <sigma/OpenGL/DataTypesGL.hpp>
+#include <sigma/OpenGL/UtilGL.hpp>
 
 #include <glad/glad.h>
 
@@ -9,21 +9,21 @@
 VertexBufferGL::VertexBufferGL(const VertexLayout& inLayout)
     : mLayout(inLayout)
 {
-    glCreateVertexArrays(1, &mVAOHandle);
-    glCreateBuffers(1, &mBufferHandle);
+    CHECK_GL(glCreateVertexArrays(1, &mVAOHandle));
+    CHECK_GL(glCreateBuffers(1, &mBufferHandle));
 
-    glBindVertexArray(mVAOHandle);
-    glBindBuffer(GL_ARRAY_BUFFER, mBufferHandle);
+    CHECK_GL(glBindVertexArray(mVAOHandle));
+    CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, mBufferHandle));
 
     uint32_t i = 0;
     for (const auto& member : mLayout) {
-        glEnableVertexAttribArray(i);
-        glVertexAttribPointer(i,
+        CHECK_GL(glEnableVertexAttribArray(i));
+        CHECK_GL(glVertexAttribPointer(i,
             componentCountOfDataType(member.type),
             baseTypeOfDataType(member.type),
             member.normalized ? GL_TRUE : GL_FALSE,
             static_cast<GLsizei>(mLayout.stride()),
-            reinterpret_cast<const void*>(static_cast<uint64_t>(member.offset)));
+            reinterpret_cast<const void*>(static_cast<uint64_t>(member.offset))));
         i++;
     }
 }

@@ -9,6 +9,7 @@
 #include <sigma/OpenGL/ShaderGL.hpp>
 #include <sigma/OpenGL/SurfaceGL.hpp>
 #include <sigma/OpenGL/UniformBufferGL.hpp>
+#include <sigma/OpenGL/UtilGL.hpp>
 #include <sigma/OpenGL/VertexBufferGL.hpp>
 
 #include <glad/glad.h>
@@ -40,8 +41,8 @@ bool DeviceGL::supportsSurface(std::shared_ptr<Surface> inSurface) const
 bool DeviceGL::initialize(const std::vector<std::shared_ptr<Surface>>& inSurfaces)
 {
     GLint majorVersion, minorVersion;
-    glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
-    glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
+    CHECK_GL(glGetIntegerv(GL_MAJOR_VERSION, &majorVersion));
+    CHECK_GL(glGetIntegerv(GL_MINOR_VERSION, &minorVersion));
 
     SIGMA_INFO("Graphics API: OpenGL");
     SIGMA_INFO("Vendor: {}", glGetString(GL_VENDOR));

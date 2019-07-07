@@ -80,8 +80,8 @@ add_library(sigma-core STATIC
 	include/sigma/OpenGL/SurfaceGL.hpp
 	src/sigma/OpenGL/SurfaceGL.cpp
 
-	include/sigma/OpenGL/DataTypesGL.hpp
-	src/sigma/OpenGL/DataTypesGL.cpp
+	include/sigma/OpenGL/UtilGL.hpp
+	src/sigma/OpenGL/UtilGL.cpp
 
 	include/sigma/OpenGL/ShaderGL.hpp
 	src/sigma/OpenGL/ShaderGL.cpp

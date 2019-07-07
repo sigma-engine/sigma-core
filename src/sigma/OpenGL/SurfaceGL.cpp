@@ -1,10 +1,10 @@
 #include <sigma/OpenGL/SurfaceGL.hpp>
 
 #include <sigma/OpenGL/CommandBufferGL.hpp>
-#include <sigma/OpenGL/DataTypesGL.hpp>
 #include <sigma/OpenGL/DeviceGL.hpp>
 #include <sigma/OpenGL/FrameBufferGL.hpp>
 #include <sigma/OpenGL/RenderPassGL.hpp>
+#include <sigma/OpenGL/UtilGL.hpp>
 
 bool SurfaceGL::initialize(std::shared_ptr<DeviceManager> inDevice, uint32_t inWidth, uint32_t inHeight)
 {
@@ -38,7 +38,7 @@ void SurfaceGL::nextImage(SurfaceImageData*& outData)
     outData = &mFrameData;
     outData->frameIndex = 0;
     outData->imageIndex = 0;
-	outData->commandBuffers.clear();
+    outData->commandBuffers.clear();
 }
 
 bool SurfaceGL::createSwapChain(std::shared_ptr<DeviceGL> inDevice)

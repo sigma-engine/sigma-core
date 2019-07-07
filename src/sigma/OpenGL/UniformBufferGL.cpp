@@ -1,5 +1,7 @@
 #include <sigma/OpenGL/UniformBufferGL.hpp>
 
+#include <sigma/OpenGL/UtilGL.hpp>
+
 #include <algorithm>
 
 UniformBufferGL::UniformBufferGL()
@@ -19,8 +21,8 @@ uint64_t UniformBufferGL::size() const
 
 void UniformBufferGL::setData(const void* inData, uint64_t inSize)
 {
-    glBindBuffer(GL_UNIFORM_BUFFER, mHandle);
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, std::min(inSize, mSize), inData);
+    CHECK_GL(glBindBuffer(GL_UNIFORM_BUFFER, mHandle));
+    CHECK_GL(glBufferSubData(GL_UNIFORM_BUFFER, 0, std::min(inSize, mSize), inData));
     // TODO: check performance
     // void* dstData = glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY);
     // memcpy(dstData, inData, std::min(mSize, inSize));
@@ -30,7 +32,7 @@ void UniformBufferGL::setData(const void* inData, uint64_t inSize)
 bool UniformBufferGL::initialize(uint64_t inSize)
 {
     mSize = inSize;
-    glBindBuffer(GL_UNIFORM_BUFFER, mHandle);
-    glBufferData(GL_UNIFORM_BUFFER, mSize, nullptr, GL_DYNAMIC_DRAW);
+    CHECK_GL(glBindBuffer(GL_UNIFORM_BUFFER, mHandle));
+    CHECK_GL(glBufferData(GL_UNIFORM_BUFFER, mSize, nullptr, GL_DYNAMIC_DRAW));
     return true;
 }

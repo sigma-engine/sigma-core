@@ -17,7 +17,7 @@ public:
 
     virtual void bindPipeline(std::shared_ptr<Pipeline> inPipeline) override;
 
-	virtual void bindDescriptorSet(std::shared_ptr<DescriptorSet> inDescriptorSet) override;
+    virtual void bindDescriptorSet(std::shared_ptr<DescriptorSet> inDescriptorSet) override;
 
     virtual void bindVertexBuffer(std::shared_ptr<VertexBuffer> inBuffer) override;
 
@@ -34,8 +34,8 @@ public:
 private:
     GLenum mBoundIndexType = GL_INVALID_ENUM;
 
-	std::shared_ptr<PipelineGL> mPipeline = nullptr;
-	std::shared_ptr<DescriptorSetGL> mDescriptorSet = nullptr;
-	std::shared_ptr<VertexBufferGL> mVertexBuffer = nullptr;
-	std::shared_ptr<IndexBufferGL> mIndexBuffer = nullptr;
+    std::shared_ptr<PipelineGL> mPipeline = nullptr;
+    std::shared_ptr<DescriptorSetGL> mDescriptorSet = nullptr;
+    std::shared_ptr<VertexBufferGL> mVertexBuffer = nullptr;
+    std::shared_ptr<IndexBufferGL> mIndexBuffer = nullptr;
 };

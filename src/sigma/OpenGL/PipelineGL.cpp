@@ -2,6 +2,7 @@
 
 #include <sigma/Log.hpp>
 #include <sigma/OpenGL/ShaderGL.hpp>
+#include <sigma/OpenGL/UtilGL.hpp>
 
 #include <glad/glad.h>
 
@@ -10,12 +11,12 @@
 
 PipelineGL::PipelineGL()
 {
-    mHandle = glCreateProgram();
+    CHECK_GL(mHandle = glCreateProgram());
 }
 
 PipelineGL::~PipelineGL()
 {
-    glDeleteProgram(mHandle);
+    CHECK_GL(glDeleteProgram(mHandle));
 }
 
 bool PipelineGL::initialize(const PipelineCreateParams& inParams)
@@ -29,7 +30,7 @@ bool PipelineGL::initialize(const PipelineCreateParams& inParams)
 
 void PipelineGL::attach(std::shared_ptr<Shader> inShader)
 {
-    assert(std::dynamic_pointer_cast<ShaderGL>(inShader));
+    SIGMA_ASSERT(std::dynamic_pointer_cast<ShaderGL>(inShader), "Must use opengl shader with opengl pipeline!");
     auto shader = std::static_pointer_cast<ShaderGL>(inShader);
     glAttachShader(mHandle, shader->handle());
 }
@@ -37,13 +38,13 @@ void PipelineGL::attach(std::shared_ptr<Shader> inShader)
 bool PipelineGL::link()
 {
     GLint linked = GL_FALSE;
-    glLinkProgram(mHandle);
-    glGetProgramiv(mHandle, GL_LINK_STATUS, &linked);
+    CHECK_GL(glLinkProgram(mHandle));
+    CHECK_GL(glGetProgramiv(mHandle, GL_LINK_STATUS, &linked));
     if (linked == GL_FALSE) {
         GLint length = 0;
-        glGetProgramiv(mHandle, GL_INFO_LOG_LENGTH, &length);
+        CHECK_GL(glGetProgramiv(mHandle, GL_INFO_LOG_LENGTH, &length));
         std::vector<GLchar> errorBuffer(static_cast<std::size_t>(length));
-        glGetProgramInfoLog(mHandle, length, &length, errorBuffer.data());
+        CHECK_GL(glGetProgramInfoLog(mHandle, length, &length, errorBuffer.data()));
         SIGMA_ERROR("{}", errorBuffer.data());
         return false;
     }
@@ -53,5 +54,5 @@ bool PipelineGL::link()
 
 void PipelineGL::bind() const
 {
-    glUseProgram(mHandle);
+    CHECK_GL(glUseProgram(mHandle));
 }

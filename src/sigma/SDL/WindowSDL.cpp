@@ -99,6 +99,8 @@ WindowSDL::WindowSDL(std::shared_ptr<Engine> inEngine, const std::string& inTitl
 
 WindowSDL::~WindowSDL()
 {
+    mSurface = nullptr;
+    mEngine = nullptr;
     if (mWindow)
         SDL_DestroyWindow(mWindow);
 }
@@ -193,9 +195,8 @@ SurfaceSDLGL::SurfaceSDLGL(SDL_Window* inWindow)
 
 SurfaceSDLGL::~SurfaceSDLGL()
 {
-    /* if (mHandle)
-        SDL_GL_DeleteContext(mHandle);
-	*/
+    // if (mHandle)
+    //     SDL_GL_DeleteContext(mHandle);
 }
 
 bool SurfaceSDLGL::initialize(std::shared_ptr<DeviceManager> inDevice, uint32_t inWidth, uint32_t inHeight)

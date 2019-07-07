@@ -1,5 +1,7 @@
-#include <sigma/Log.hpp>
 #include <sigma/OpenGL/ShaderGL.hpp>
+
+#include <sigma/Log.hpp>
+#include <sigma/OpenGL/UtilGL.hpp>
 
 #include <glad/glad.h>
 
@@ -19,12 +21,12 @@ constexpr GLenum glShaderType(ShaderType inType)
 ShaderGL::ShaderGL(ShaderType inType)
     : Shader(inType)
 {
-    mHandle = glCreateShader(glShaderType(inType));
+    CHECK_GL(mHandle = glCreateShader(glShaderType(inType)));
 }
 
 ShaderGL::~ShaderGL()
 {
-    glDeleteShader(mHandle);
+    CHECK_GL(glDeleteShader(mHandle));
 }
 
 uint32_t ShaderGL::handle() const
@@ -36,15 +38,15 @@ bool ShaderGL::compile(const std::string& inCode)
 {
     const char* srcCode = inCode.c_str();
     GLint compiled;
-    glShaderSource(mHandle, 1, &srcCode, nullptr);
-    glCompileShader(mHandle);
-    glGetShaderiv(mHandle, GL_COMPILE_STATUS, &compiled);
+    CHECK_GL(glShaderSource(mHandle, 1, &srcCode, nullptr));
+    CHECK_GL(glCompileShader(mHandle));
+    CHECK_GL(glGetShaderiv(mHandle, GL_COMPILE_STATUS, &compiled));
     if (compiled == GL_FALSE) {
         GLint length = 0;
-        glGetShaderiv(mHandle, GL_INFO_LOG_LENGTH, &length);
+        CHECK_GL(glGetShaderiv(mHandle, GL_INFO_LOG_LENGTH, &length));
 
         std::vector<GLchar> errorBuffer(static_cast<std::size_t>(length));
-        glGetShaderInfoLog(mHandle, length, &length, errorBuffer.data());
+        CHECK_GL(glGetShaderInfoLog(mHandle, length, &length, errorBuffer.data()));
         SIGMA_ERROR("{}", errorBuffer.data());
 
         return false;
