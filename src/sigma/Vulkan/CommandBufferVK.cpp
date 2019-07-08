@@ -50,7 +50,7 @@ void CommandBufferVK::begin()
 
 void CommandBufferVK::beginRenderPass(const RenderPassBeginParams& inParams)
 {
-    SIGMA_ASSERT(std::dynamic_pointer_cast<FrameBufferVK>(inParams.FrameBuffer), "Must use vulkan FrameBuffer with vulkan command buffer!");
+    SIGMA_ASSERT(std::dynamic_pointer_cast<FrameBufferVK>(inParams.frameBuffer), "Must use vulkan FrameBuffer with vulkan command buffer!");
 
     // TODO: correct clear colors!
     VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
