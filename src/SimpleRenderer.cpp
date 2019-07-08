@@ -7,11 +7,12 @@
 #include <sigma/FrameBuffer.hpp>
 #include <sigma/IndexBuffer.hpp>
 #include <sigma/Pipeline.hpp>
+#include <sigma/Sampler.hpp>
 #include <sigma/Shader.hpp>
 #include <sigma/Surface.hpp>
+#include <sigma/Texture.hpp>
 #include <sigma/UniformBuffer.hpp>
 #include <sigma/VertexBuffer.hpp>
-#include <sigma/Texture.hpp>
 
 #include <stb/stb_image.h>
 
@@ -25,12 +26,13 @@
 struct Vertex {
     glm::vec3 position;
     glm::vec3 color;
+    glm::vec2 uv;
 };
 static std::vector<Vertex> vertices = {
-    { { -0.5f, 0.5f, 0.0f }, { 1.0f, 0.0f, 0.0f } },
-    { { -0.5f, -0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f } },
-    { { 0.5f, -0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f } },
-    { { 0.5f, 0.5f, 0.0f }, { 1.0f, 1.0f, 1.0f } }
+    { { -0.5f, 0.5f, 0.0f }, { 1.0f, 0.0f, 0.0f }, { 1.0f, 0.0f } },
+    { { -0.5f, -0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f } },
+    { { 0.5f, -0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f } },
+    { { 0.5f, 0.5f, 0.0f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f } }
 };
 static std::vector<std::uint16_t> indices = { 0, 1, 2, 2, 3, 0 };
 
@@ -49,11 +51,16 @@ SimpleRenderer::SimpleRenderer(std::shared_ptr<Engine> inEngine, std::shared_ptr
 
 bool SimpleRenderer::initialize()
 {
-	mTexture = loadTexture("textures/TestImage.jpg");
-	if (mTexture == nullptr)
-		return false;
+    mTexture = loadTexture("textures/TestImage.jpg");
+    if (mTexture == nullptr)
+        return false;
 
-    auto setLayout = mDevice->createDescriptorSetLayout({ { 0, DescriptorType::UniformBuffer, 1 } });
+    mSampler = mDevice->createSampler2D();
+    if (mSampler == nullptr)
+        return false;
+
+    auto setLayout = mDevice->createDescriptorSetLayout({ { 0, DescriptorType::UniformBuffer, 1 },
+        { 1, DescriptorType::ImageSampler, 1 } });
     if (setLayout == nullptr)
         return false;
 
@@ -68,7 +75,8 @@ bool SimpleRenderer::initialize()
 
         DescriptorSetCreateParams descriptorSetParams = {
             setLayout,
-            { { 0, uniformBuffer } }
+            { { 0, uniformBuffer } },
+            { { 1, { mTexture, mSampler } } }
         };
         auto descriptorSet = mDevice->createDescriptorSet(descriptorSetParams);
         if (descriptorSet == nullptr)
@@ -81,7 +89,8 @@ bool SimpleRenderer::initialize()
 
     VertexLayout vertexLayout = {
         { 0, DataType::Vec3, "position" },
-        { 1, DataType::Vec3, "color" }
+        { 1, DataType::Vec3, "color" },
+        { 2, DataType::Vec2, "uv" }
     };
 
     auto vertexShader = mDevice->createShader(ShaderType::VertexShader, "shaders/simple.vert");
@@ -161,15 +170,15 @@ void SimpleRenderer::setupUniformBuffer(std::shared_ptr<UniformBuffer> inBuffer)
     SimpleUniformBuffer buffer;
 }
 
-std::shared_ptr<Texture2D> SimpleRenderer::loadTexture(const std::string &inFilepath)
+std::shared_ptr<Texture2D> SimpleRenderer::loadTexture(const std::string& inFilepath)
 {
-	int width, height, planes;
-	stbi_uc * pixels = stbi_load(inFilepath.c_str(), &width, &height, &planes, 4);
-	if (pixels == nullptr)
-		return  nullptr;
+    int width, height, planes;
+    stbi_uc* pixels = stbi_load(inFilepath.c_str(), &width, &height, &planes, 4);
+    if (pixels == nullptr)
+        return nullptr;
 
-	auto texture = mDevice->createTexture2D(ImageFormat::UnormR8G8B8A8, static_cast<uint32_t>(width), static_cast<uint32_t>(height), pixels);
+    auto texture = mDevice->createTexture2D(ImageFormat::UnormR8G8B8A8, static_cast<uint32_t>(width), static_cast<uint32_t>(height), pixels);
 
-	stbi_image_free(pixels);
-	return texture;
+    stbi_image_free(pixels);
+    return texture;
 }

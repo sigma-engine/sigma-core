@@ -6,6 +6,7 @@
 #include <sigma/Vulkan/IndexBufferVK.hpp>
 #include <sigma/Vulkan/PipelineVK.hpp>
 #include <sigma/Vulkan/RenderPassVK.hpp>
+#include <sigma/Vulkan/SamplerVK.hpp>
 #include <sigma/Vulkan/ShaderVK.hpp>
 #include <sigma/Vulkan/SurfaceVK.hpp>
 #include <sigma/Vulkan/TextureVK.hpp>
@@ -265,14 +266,16 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
     }
 
     // TODO other descriptor types?
-    VkDescriptorPoolSize poolSize = {};
-    poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    poolSize.descriptorCount = 10; // TODO: Remove this hardcoded value
+    std::vector<VkDescriptorPoolSize> poolSizes(2);
+    poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    poolSizes[0].descriptorCount = 10; // TODO: Remove this hardcoded value
+    poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    poolSizes[1].descriptorCount = 10; // TODO: Remove this hardcoded value
 
     VkDescriptorPoolCreateInfo poolInfo = {};
     poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    poolInfo.poolSizeCount = 1;
-    poolInfo.pPoolSizes = &poolSize;
+    poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
+    poolInfo.pPoolSizes = poolSizes.data();
     poolInfo.maxSets = 10; // TODO: Remove this hardcoded value
     poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 
@@ -386,6 +389,15 @@ std::shared_ptr<Texture2D> DeviceVK::createTexture2D(ImageFormat inFormat, uint3
     return texture;
 }
 
+std::shared_ptr<Sampler2D> DeviceVK::createSampler2D()
+{
+    auto sampler = std::make_shared<Sampler2DVK>(shared_from_this());
+    if (!sampler->initialize())
+        return nullptr;
+
+    return sampler;
+}
+
 uint32_t DeviceVK::graphicsQueueFamily() const
 {
     return mGraphicsFamily.value();
@@ -405,60 +417,60 @@ VkQueue DeviceVK::graphicsQueue() const
 
 VkResult DeviceVK::startTmpCommandBuffer(VkCommandBuffer* outCommandBuffer)
 {
-	// TODO: this is crap
-	VkResult result;
-	VkCommandBufferAllocateInfo allocInfo = {};
-	VkCommandBufferBeginInfo beginInfo = {};
+    // TODO: this is crap
+    VkResult result;
+    VkCommandBufferAllocateInfo allocInfo = {};
+    VkCommandBufferBeginInfo beginInfo = {};
 
-	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-	allocInfo.commandPool = mGraphicsCommandPool;
-	allocInfo.commandBufferCount = 1;
+    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    allocInfo.commandPool = mGraphicsCommandPool;
+    allocInfo.commandBufferCount = 1;
 
-	CHECK_VK(result = vkAllocateCommandBuffers(mDevice, &allocInfo, outCommandBuffer));
-	if (result != VK_SUCCESS)
-		goto done;
+    CHECK_VK(result = vkAllocateCommandBuffers(mDevice, &allocInfo, outCommandBuffer));
+    if (result != VK_SUCCESS)
+        goto done;
 
-	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
-	CHECK_VK(result = vkBeginCommandBuffer(*outCommandBuffer, &beginInfo));
-	if (result != VK_SUCCESS)
-		goto done;
+    CHECK_VK(result = vkBeginCommandBuffer(*outCommandBuffer, &beginInfo));
+    if (result != VK_SUCCESS)
+        goto done;
 
 done:
-	return result;
+    return result;
 }
 
 VkResult DeviceVK::endTmpCommandBuffer(VkCommandBuffer inCommandBuffer)
 {
-	// TODO: this is crap
-	VkResult result;
-	VkSubmitInfo submitInfo = {};
+    // TODO: this is crap
+    VkResult result;
+    VkSubmitInfo submitInfo = {};
 
-	CHECK_VK(result = vkEndCommandBuffer(inCommandBuffer));
-	if (result != VK_SUCCESS)
-		goto done;
+    CHECK_VK(result = vkEndCommandBuffer(inCommandBuffer));
+    if (result != VK_SUCCESS)
+        goto done;
 
-	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	submitInfo.commandBufferCount = 1;
-	submitInfo.pCommandBuffers = &inCommandBuffer;
+    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    submitInfo.commandBufferCount = 1;
+    submitInfo.pCommandBuffers = &inCommandBuffer;
 
-	CHECK_VK(result = vkQueueSubmit(mGraphicsQueue, 1, &submitInfo, nullptr));
-	if (result != VK_SUCCESS)
-		goto done;
+    CHECK_VK(result = vkQueueSubmit(mGraphicsQueue, 1, &submitInfo, nullptr));
+    if (result != VK_SUCCESS)
+        goto done;
 
-	CHECK_VK(result = vkQueueWaitIdle(mGraphicsQueue));
+    CHECK_VK(result = vkQueueWaitIdle(mGraphicsQueue));
 done:
-	if (inCommandBuffer)
-		vkFreeCommandBuffers(mDevice, mGraphicsCommandPool, 1, &inCommandBuffer);
+    if (inCommandBuffer)
+        vkFreeCommandBuffers(mDevice, mGraphicsCommandPool, 1, &inCommandBuffer);
 
-	return result;
+    return result;
 }
 
 VkResult DeviceVK::createBuffer(VkBufferCreateInfo* inBufferCreateInfo, VkMemoryPropertyFlagBits inProperties, VkBuffer* outBuffer, VkDeviceMemory* outMemory)
 {
-	// TODO: this is crap (memory)
+    // TODO: this is crap (memory)
     VkResult result;
     VkMemoryRequirements requirements;
     VkMemoryAllocateInfo allocInfo = {};
@@ -495,27 +507,27 @@ done:
 
 VkResult DeviceVK::copyBufferToBuffer(VkBuffer inDstBuffer, VkBuffer inSrcBuffer, uint64_t inSize)
 {
-	// TODO: this is crap
-	VkResult result;
-	VkBufferCopy copyRegion = { 0, 0, inSize };
-	VkCommandBuffer commandBuffer = nullptr;
-	
-	CHECK_VK(result = startTmpCommandBuffer(&commandBuffer));
-	if (result != VK_SUCCESS)
-		goto done;
+    // TODO: this is crap
+    VkResult result;
+    VkBufferCopy copyRegion = { 0, 0, inSize };
+    VkCommandBuffer commandBuffer = nullptr;
+
+    CHECK_VK(result = startTmpCommandBuffer(&commandBuffer));
+    if (result != VK_SUCCESS)
+        goto done;
 
     vkCmdCopyBuffer(commandBuffer, inSrcBuffer, inDstBuffer, 1, &copyRegion);
 
-	CHECK_VK(result = endTmpCommandBuffer(commandBuffer));
-	if (result != VK_SUCCESS)
-		goto done;
+    CHECK_VK(result = endTmpCommandBuffer(commandBuffer));
+    if (result != VK_SUCCESS)
+        goto done;
 done:
-	return result;
+    return result;
 }
 
 VkResult DeviceVK::createImage(VkImageCreateInfo* inImageCreateInfo, VkMemoryPropertyFlagBits inProperties, VkImage* outImage, VkDeviceMemory* outMemory)
 {
-	// TODO: this is crap (memory)
+    // TODO: this is crap (memory)
     VkResult result;
     VkMemoryRequirements requirements;
     VkMemoryAllocateInfo allocInfo = {};
@@ -552,100 +564,93 @@ done:
 
 VkResult DeviceVK::transitionImageLayout(VkImage inImage, VkFormat inFormat, VkImageLayout inSrcLayout, VkImageLayout inDstLayout)
 {
-	// TODO: this is crap
-	VkResult result;
-	VkCommandBuffer commandBuffer = nullptr;
+    // TODO: this is crap
+    VkResult result;
+    VkCommandBuffer commandBuffer = nullptr;
+    VkPipelineStageFlags srcStage;
+    VkPipelineStageFlags dstStage;
+    VkImageMemoryBarrier barrier = {};
 
-	CHECK_VK(result = startTmpCommandBuffer(&commandBuffer));
-	if (result != VK_SUCCESS)
-		goto done;
+    CHECK_VK(result = startTmpCommandBuffer(&commandBuffer));
+    if (result != VK_SUCCESS)
+        goto done;
 
-	VkPipelineStageFlags srcStage;
-	VkPipelineStageFlags dstStage;
-	VkImageMemoryBarrier barrier = {};
-	barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	barrier.oldLayout = inSrcLayout;
-	barrier.newLayout = inDstLayout;
-	barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	barrier.image = inImage;
-	barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	barrier.subresourceRange.baseMipLevel = 0;
-	barrier.subresourceRange.levelCount = 1;
-	barrier.subresourceRange.baseArrayLayer = 0;
-	barrier.subresourceRange.layerCount = 1;
+    barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+    barrier.oldLayout = inSrcLayout;
+    barrier.newLayout = inDstLayout;
+    barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    barrier.image = inImage;
+    barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    barrier.subresourceRange.baseMipLevel = 0;
+    barrier.subresourceRange.levelCount = 1;
+    barrier.subresourceRange.baseArrayLayer = 0;
+    barrier.subresourceRange.layerCount = 1;
 
-	if (inSrcLayout == VK_IMAGE_LAYOUT_UNDEFINED && inDstLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
-	{
-		barrier.srcAccessMask = 0;
-		barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-		srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-		dstStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-	}
-	else if (inSrcLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && inDstLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
-	{
-		barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-		barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-		srcStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-		dstStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-	}
-	else
-	{
-		SIGMA_ASSERT(false, "Unsupported layout transition!");
-	}
+    if (inSrcLayout == VK_IMAGE_LAYOUT_UNDEFINED && inDstLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
+        barrier.srcAccessMask = 0;
+        barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+        srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+        dstStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+    } else if (inSrcLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && inDstLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+        barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+        barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+        srcStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+        dstStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+    } else {
+        SIGMA_ASSERT(false, "Unsupported layout transition!");
+    }
 
-	vkCmdPipelineBarrier(commandBuffer,
-		srcStage,
-		dstStage, 
-		0,
-		0, nullptr,
-		0, nullptr,
-		1, &barrier
-	);
+    vkCmdPipelineBarrier(commandBuffer,
+        srcStage,
+        dstStage,
+        0,
+        0, nullptr,
+        0, nullptr,
+        1, &barrier);
 
-	CHECK_VK(result = endTmpCommandBuffer(commandBuffer));
-	if (result != VK_SUCCESS)
-		goto done;
+    CHECK_VK(result = endTmpCommandBuffer(commandBuffer));
+    if (result != VK_SUCCESS)
+        goto done;
 done:
-	return result;
+    return result;
 }
 
 VkResult DeviceVK::copyBufferToImage(VkImage inDstImage, VkBuffer inSrcBuffer, VkFormat inFormat, uint32_t inWidth, uint32_t inHeight)
 {
-	// TODO: this is crap
-	VkResult result;
-	VkCommandBuffer commandBuffer = nullptr;
+    // TODO: this is crap
+    VkResult result;
+    VkCommandBuffer commandBuffer = nullptr;
+    VkBufferImageCopy region = {};
 
-	transitionImageLayout(inDstImage, inFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+    transitionImageLayout(inDstImage, inFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
-	CHECK_VK(result = startTmpCommandBuffer(&commandBuffer));
-	if (result != VK_SUCCESS)
-		goto done;
+    CHECK_VK(result = startTmpCommandBuffer(&commandBuffer));
+    if (result != VK_SUCCESS)
+        goto done;
 
-	VkBufferImageCopy region = {};
-	region.bufferOffset = 0;
-	region.bufferRowLength = 0;
-	region.bufferImageHeight = 0;
+    region.bufferOffset = 0;
+    region.bufferRowLength = 0;
+    region.bufferImageHeight = 0;
 
-	region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	region.imageSubresource.mipLevel = 0;
-	region.imageSubresource.baseArrayLayer = 0;
-	region.imageSubresource.layerCount = 1;
+    region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    region.imageSubresource.mipLevel = 0;
+    region.imageSubresource.baseArrayLayer = 0;
+    region.imageSubresource.layerCount = 1;
 
-	region.imageOffset = { 0, 0, 0 };
-	region.imageExtent = { inWidth, inHeight, 1 };
+    region.imageOffset = { 0, 0, 0 };
+    region.imageExtent = { inWidth, inHeight, 1 };
 
-	vkCmdCopyBufferToImage(commandBuffer, inSrcBuffer, inDstImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+    vkCmdCopyBufferToImage(commandBuffer, inSrcBuffer, inDstImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 
-	CHECK_VK(result = endTmpCommandBuffer(commandBuffer));
-	if (result != VK_SUCCESS)
-		goto done;
+    CHECK_VK(result = endTmpCommandBuffer(commandBuffer));
+    if (result != VK_SUCCESS)
+        goto done;
 
-	transitionImageLayout(inDstImage, inFormat, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    transitionImageLayout(inDstImage, inFormat, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 done:
-	return result;
+    return result;
 }
-
 
 std::optional<SurfaceSwapChainInfoVK> DeviceVK::getSwapChainInfo(std::shared_ptr<SurfaceVK> inSurface) const
 {

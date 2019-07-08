@@ -55,6 +55,8 @@ public:
 
     virtual std::shared_ptr<Texture2D> createTexture2D(ImageFormat inFormat, uint32_t inWidth, uint32_t inHeight, const void* inPixels) override;
 
+    virtual std::shared_ptr<Sampler2D> createSampler2D() override;
+
     uint32_t graphicsQueueFamily() const;
 
     VkDevice handle() const { return mDevice; }
@@ -73,7 +75,7 @@ public:
 
     VkResult createImage(VkImageCreateInfo* inImageCreateInfo, VkMemoryPropertyFlagBits inProperties, VkImage* outImage, VkDeviceMemory* outMemory);
 
-	VkResult transitionImageLayout(VkImage inImage, VkFormat inFormat, VkImageLayout inSrcLayout, VkImageLayout inDstLayout);
+    VkResult transitionImageLayout(VkImage inImage, VkFormat inFormat, VkImageLayout inSrcLayout, VkImageLayout inDstLayout);
 
     VkResult copyBufferToImage(VkImage inDstImage, VkBuffer inSrcBuffer, VkFormat inFormat, uint32_t inWidth, uint32_t inHeight);
 

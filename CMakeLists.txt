@@ -59,6 +59,8 @@ add_library(sigma-core STATIC
 	include/sigma/Texture.hpp
 	src/sigma/Texture.cpp
 
+	include/sigma/Sampler.hpp
+
 	include/sigma/Log.hpp
 	
 	include/sigma/Engine.hpp
@@ -101,6 +103,8 @@ add_library(sigma-core STATIC
 	
 	include/sigma/OpenGL/TextureGL.hpp
 	src/sigma/OpenGL/TextureGL.cpp
+
+	include/sigma/OpenGL/SamplerGL.hpp
 
 	include/sigma/OpenGL/PipelineGL.hpp
 	src/sigma/OpenGL/PipelineGL.cpp
@@ -149,6 +153,9 @@ add_library(sigma-core STATIC
 
 	include/sigma/Vulkan/TextureVK.hpp
 	src/sigma/Vulkan/TextureVK.cpp
+
+	include/sigma/Vulkan/SamplerVK.hpp
+	src/sigma/Vulkan/SamplerVK.cpp
 
 	src/sigma/Vulkan/ExtensionsVK.cpp
 

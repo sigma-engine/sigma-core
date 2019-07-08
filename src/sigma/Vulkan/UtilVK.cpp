@@ -24,10 +24,10 @@ VkFormat convertImageFormatVK(ImageFormat inFormat)
     switch (inFormat) {
     case ImageFormat::UnormB8G8R8A8:
         return VK_FORMAT_B8G8R8A8_UNORM;
-	case ImageFormat::UnormR8G8B8A8:
-		return VK_FORMAT_R8G8B8A8_UNORM;
+    case ImageFormat::UnormR8G8B8A8:
+        return VK_FORMAT_R8G8B8A8_UNORM;
     }
-	SIGMA_ASSERT(false, "Unknown ImageFormat!");
+    SIGMA_ASSERT(false, "Unknown ImageFormat!");
     return VK_FORMAT_MAX_ENUM;
 }
 
@@ -79,6 +79,8 @@ VkDescriptorType convertDescriptorTypeVK(DescriptorType inType)
     switch (inType) {
     case DescriptorType::UniformBuffer:
         return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    case DescriptorType::ImageSampler:
+        return VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
     default:
         break;
     }
@@ -157,5 +159,5 @@ std::string convertErrorStringVK(VkResult inResult)
         break;
     }
 
-	return "ERROR_UNKNOWN";
+    return "ERROR_UNKNOWN";
 }

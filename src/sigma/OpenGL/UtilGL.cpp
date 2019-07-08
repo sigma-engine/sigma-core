@@ -55,12 +55,12 @@ GLenum convertImageFormatTypeGL(ImageFormat inFormat)
     switch (inFormat) {
     case ImageFormat::UnormB8G8R8A8:
     case ImageFormat::UnormR8G8B8A8:
-        return GL_UNSIGNED_INT_8_8_8_8;
+        return GL_UNSIGNED_BYTE;
     default:
         break;
     }
     SIGMA_ASSERT(false, "Unknown ImageFormat");
-    return GL_UNSIGNED_INT_8_8_8_8;
+    return GL_UNSIGNED_BYTE;
 }
 
 std::string convertErrorStringGL(GLenum inError)

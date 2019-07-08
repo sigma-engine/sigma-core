@@ -32,5 +32,7 @@ public:
 
     virtual std::shared_ptr<UniformBuffer> createUniformBuffer(uint64_t inSize) override;
 
-    virtual std::shared_ptr<Texture2D> createTexture2D(ImageFormat inFormat, uint32_t inWidth, uint32_t inHeight, const void *inPixels) override;
+    virtual std::shared_ptr<Texture2D> createTexture2D(ImageFormat inFormat, uint32_t inWidth, uint32_t inHeight, const void* inPixels) override;
+
+    virtual std::shared_ptr<Sampler2D> createSampler2D() override;
 };

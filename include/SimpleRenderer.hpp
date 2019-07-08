@@ -13,6 +13,7 @@ class CommandBuffer;
 class UniformBuffer;
 class DescriptorSet;
 class Texture2D;
+class Sampler2D;
 
 class SimpleRenderer {
 public:
@@ -30,14 +31,14 @@ private:
     std::vector<std::shared_ptr<CommandBuffer>> mCommandBuffers;
     std::vector<std::shared_ptr<UniformBuffer>> mUniformBuffers;
     std::vector<std::shared_ptr<DescriptorSet>> mDescriptorSets;
-	
 
     std::shared_ptr<Pipeline> mPipeline = nullptr;
     std::shared_ptr<VertexBuffer> mVertexBuffer = nullptr;
     std::shared_ptr<IndexBuffer> mIndexBuffer = nullptr;
-	std::shared_ptr<Texture2D> mTexture = nullptr;
+    std::shared_ptr<Texture2D> mTexture = nullptr;
+    std::shared_ptr<Sampler2D> mSampler = nullptr;
 
     void setupUniformBuffer(std::shared_ptr<UniformBuffer> inBuffer);
 
-	std::shared_ptr<Texture2D> loadTexture(const std::string &inFilepath);
+    std::shared_ptr<Texture2D> loadTexture(const std::string& inFilepath);
 };

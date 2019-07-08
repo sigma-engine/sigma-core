@@ -41,6 +41,8 @@ class UniformBuffer;
 
 class Texture2D;
 
+class Sampler2D;
+
 enum class ImageFormat;
 
 enum class DeviceType {
@@ -81,5 +83,7 @@ public:
 
     virtual std::shared_ptr<UniformBuffer> createUniformBuffer(uint64_t inSize) = 0;
 
-    virtual std::shared_ptr<Texture2D> createTexture2D(ImageFormat inFormat, uint32_t inWidth, uint32_t inHeight, const void *inPixels = nullptr) = 0;
+    virtual std::shared_ptr<Texture2D> createTexture2D(ImageFormat inFormat, uint32_t inWidth, uint32_t inHeight, const void* inPixels = nullptr) = 0;
+
+    virtual std::shared_ptr<Sampler2D> createSampler2D() = 0;
 };

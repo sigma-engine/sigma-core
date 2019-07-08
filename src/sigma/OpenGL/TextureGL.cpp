@@ -15,6 +15,8 @@ Texture2DGL::~Texture2DGL()
 bool Texture2DGL::initialize(ImageFormat inFormat, uint32_t inWidth, uint32_t inHeight, const void* inPixels)
 {
     CHECK_GL(glBindTexture(GL_TEXTURE_2D, mHandle));
+    CHECK_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+    CHECK_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
     CHECK_GL(glTexImage2D(GL_TEXTURE_2D,
         0,
         convertImageFormatInternalGL(inFormat),

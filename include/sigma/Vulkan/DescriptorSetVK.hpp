@@ -8,6 +8,8 @@
 
 class DeviceVK;
 class UniformBufferVK;
+class Texture2DVK;
+class Sampler2DVK;
 
 class DescriptorSetLayoutVK : public DescriptorSetLayout {
 public:
@@ -30,17 +32,23 @@ public:
 
     virtual ~DescriptorSetVK();
 
-	virtual std::shared_ptr<DescriptorSetLayout> layout() const override;
+    virtual std::shared_ptr<DescriptorSetLayout> layout() const override;
 
     VkDescriptorSet handle() const { return mHandle; }
 
-    bool initialize(const DescriptorSetCreateParams &inParams);
+    bool initialize(const DescriptorSetCreateParams& inParams);
 
 private:
+    struct CombinedImageSamplerVK {
+        std::shared_ptr<Texture2DVK> image;
+        std::shared_ptr<Sampler2DVK> sampler;
+    };
+
     std::shared_ptr<DeviceVK> mDevice = nullptr;
     std::shared_ptr<DescriptorSetLayoutVK> mLayout = nullptr;
     VkDescriptorPool mDescriptorPool = nullptr;
     VkDescriptorSet mHandle = nullptr;
 
-	std::unordered_map<uint32_t, std::shared_ptr<UniformBufferVK>> mUniformBuffers;
+    std::unordered_map<uint32_t, std::shared_ptr<UniformBufferVK>> mUniformBuffers;
+    std::unordered_map<uint32_t, CombinedImageSamplerVK> mCombinedImageSamplers;
 };

@@ -6,6 +6,7 @@
 #include <sigma/OpenGL/IndexBufferGL.hpp>
 #include <sigma/OpenGL/PipelineGL.hpp>
 #include <sigma/OpenGL/RenderPassGL.hpp>
+#include <sigma/OpenGL/SamplerGL.hpp>
 #include <sigma/OpenGL/ShaderGL.hpp>
 #include <sigma/OpenGL/SurfaceGL.hpp>
 #include <sigma/OpenGL/TextureGL.hpp>
@@ -133,11 +134,17 @@ std::shared_ptr<UniformBuffer> DeviceGL::createUniformBuffer(uint64_t inSize)
     return buffer;
 }
 
-std::shared_ptr<Texture2D> DeviceGL::createTexture2D(ImageFormat inFormat, uint32_t inWidth, uint32_t inHeight, const void *inPixels)
+std::shared_ptr<Texture2D> DeviceGL::createTexture2D(ImageFormat inFormat, uint32_t inWidth, uint32_t inHeight, const void* inPixels)
 {
     auto texture = std::make_shared<Texture2DGL>();
     if (!texture->initialize(inFormat, inWidth, inHeight, inPixels))
         return nullptr;
 
     return texture;
+}
+
+std::shared_ptr<Sampler2D> DeviceGL::createSampler2D()
+{
+    auto sampler = std::make_shared<Sampler2DGL>();
+    return sampler;
 }

@@ -2,6 +2,8 @@
 
 #include <sigma/Log.hpp>
 #include <sigma/Vulkan/DeviceVK.hpp>
+#include <sigma/Vulkan/SamplerVK.hpp>
+#include <sigma/Vulkan/TextureVK.hpp>
 #include <sigma/Vulkan/UniformBufferVK.hpp>
 #include <sigma/Vulkan/UtilVK.hpp>
 
@@ -71,29 +73,58 @@ bool DescriptorSetVK::initialize(const DescriptorSetCreateParams& inParams)
     if (result != VK_SUCCESS)
         return false;
 
-    std::vector<VkDescriptorBufferInfo> bufferInfos;
-    std::vector<VkWriteDescriptorSet> descriptorWrites;
-    bufferInfos.resize(inParams.uniformBuffers.size());
-    descriptorWrites.resize(inParams.uniformBuffers.size());
-
+    uint32_t wi = 0;
     uint32_t i = 0;
+    std::vector<VkWriteDescriptorSet> descriptorWrites;
+    descriptorWrites.resize(inParams.uniformBuffers.size() + inParams.imageSamplers.size());
+
+    i = 0;
+    std::vector<VkDescriptorBufferInfo> bufferInfos(inParams.uniformBuffers.size());
     for (const auto& [binding, buffer] : inParams.uniformBuffers) {
         SIGMA_ASSERT(std::dynamic_pointer_cast<UniformBufferVK>(buffer), "Must use vulkan uniform buffer with vulkan descriptor set!");
         mUniformBuffers[binding] = std::static_pointer_cast<UniformBufferVK>(buffer);
+
         bufferInfos[i].buffer = mUniformBuffers[binding]->handle();
         bufferInfos[i].offset = 0; // TODO: Fixme
         bufferInfos[i].range = buffer->size();
 
-        descriptorWrites[i].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-        descriptorWrites[i].dstSet = mHandle;
-        descriptorWrites[i].dstBinding = binding;
-        descriptorWrites[i].dstArrayElement = 0;
-        descriptorWrites[i].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-        descriptorWrites[i].descriptorCount = 1;
-        descriptorWrites[i].pBufferInfo = &bufferInfos[i];
-        descriptorWrites[i].pImageInfo = nullptr;
-        descriptorWrites[i].pTexelBufferView = nullptr;
+        descriptorWrites[wi].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descriptorWrites[wi].dstSet = mHandle;
+        descriptorWrites[wi].dstBinding = binding;
+        descriptorWrites[wi].dstArrayElement = 0;
+        descriptorWrites[wi].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        descriptorWrites[wi].descriptorCount = 1;
+        descriptorWrites[wi].pBufferInfo = &bufferInfos[i];
+        descriptorWrites[wi].pImageInfo = nullptr;
+        descriptorWrites[wi].pTexelBufferView = nullptr;
         i++;
+        wi++;
+    }
+
+    i = 0;
+    std::vector<VkDescriptorImageInfo> imageInfos(inParams.imageSamplers.size());
+    for (const auto& [binding, combindedSampler] : inParams.imageSamplers) {
+        SIGMA_ASSERT(std::dynamic_pointer_cast<Texture2DVK>(combindedSampler.image), "Must use vulkan image with vulkan descriptor set!");
+        SIGMA_ASSERT(std::dynamic_pointer_cast<Sampler2DVK>(combindedSampler.sampler), "Must use vulkan sampler with vulkan descriptor set!");
+        mCombinedImageSamplers[binding].image = std::static_pointer_cast<Texture2DVK>(combindedSampler.image);
+        mCombinedImageSamplers[binding].sampler = std::static_pointer_cast<Sampler2DVK>(combindedSampler.sampler);
+
+        imageInfos[i].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL; // TODO : Fixme
+        imageInfos[i].imageView = mCombinedImageSamplers[binding].image->imageViewHandle();
+        imageInfos[i].sampler = mCombinedImageSamplers[binding].sampler->handle();
+
+        descriptorWrites[wi].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descriptorWrites[wi].dstSet = mHandle;
+        descriptorWrites[wi].dstBinding = binding;
+        descriptorWrites[wi].dstArrayElement = 0;
+        descriptorWrites[wi].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        descriptorWrites[wi].descriptorCount = 1;
+        descriptorWrites[wi].pBufferInfo = nullptr;
+        descriptorWrites[wi].pImageInfo = &imageInfos[i];
+        descriptorWrites[wi].pTexelBufferView = nullptr;
+
+        i++;
+        wi++;
     }
 
     vkUpdateDescriptorSets(mDevice->handle(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
