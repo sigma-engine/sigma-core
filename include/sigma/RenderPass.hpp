@@ -2,10 +2,7 @@
 
 #include <vector>
 
-enum class ImageFormat {
-    Unknown,
-    UnormB8G8R8A8
-};
+#include <sigma/Texture.hpp>
 
 enum class AttachmentType {
     ColorAttachment

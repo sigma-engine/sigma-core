@@ -20,7 +20,7 @@ glm::uvec2 SurfaceGL::size() const
 
 ImageFormat SurfaceGL::format() const
 {
-    return convertImageFormatGL(mFormat);
+	return ImageFormat::UnormR8G8B8A8; // TODO: Don't hard code this?
 }
 
 uint32_t SurfaceGL::imageCount() const

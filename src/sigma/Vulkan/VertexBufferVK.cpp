@@ -50,7 +50,7 @@ void VertexBufferVK::setData(const void* inData, uint64_t inSize)
     memcpy(dstData, inData, bufferInfo.size);
     vkUnmapMemory(mDevice->handle(), stagingMemory);
 
-    mDevice->copyBuffer(mHandle, stagingBuffer, bufferInfo.size);
+    CHECK_VK(mDevice->copyBufferToBuffer(mHandle, stagingBuffer, bufferInfo.size));
 
 done:
     if (stagingBuffer)

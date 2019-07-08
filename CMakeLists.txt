@@ -8,8 +8,10 @@ find_package(glm REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(glad REQUIRED)
 find_package(Vulkan REQUIRED)
+find_package(stb REQUIRED)
 
 include(cmake/GLSL.cmake)
+include(cmake/Texture.cmake)
 
 add_library(sigma-core STATIC
 	include/sigma/Rect.hpp
@@ -54,6 +56,9 @@ add_library(sigma-core STATIC
 
 	include/sigma/UniformBuffer.hpp
 
+	include/sigma/Texture.hpp
+	src/sigma/Texture.cpp
+
 	include/sigma/Log.hpp
 	
 	include/sigma/Engine.hpp
@@ -87,13 +92,15 @@ add_library(sigma-core STATIC
 	src/sigma/OpenGL/ShaderGL.cpp
 
 	include/sigma/OpenGL/RenderPassGL.hpp
-	src/sigma/OpenGL/RenderPassGL.cpp
 
 	include/sigma/OpenGL/DescriptorSetGL.hpp
 	src/sigma/OpenGL/DescriptorSetGL.cpp
 
 	include/sigma/OpenGL/UniformBufferGL.hpp
 	src/sigma/OpenGL/UniformBufferGL.cpp
+	
+	include/sigma/OpenGL/TextureGL.hpp
+	src/sigma/OpenGL/TextureGL.cpp
 
 	include/sigma/OpenGL/PipelineGL.hpp
 	src/sigma/OpenGL/PipelineGL.cpp
@@ -140,6 +147,9 @@ add_library(sigma-core STATIC
 	include/sigma/Vulkan/UniformBufferVK.hpp
 	src/sigma/Vulkan/UniformBufferVK.cpp
 
+	include/sigma/Vulkan/TextureVK.hpp
+	src/sigma/Vulkan/TextureVK.cpp
+
 	src/sigma/Vulkan/ExtensionsVK.cpp
 
 	include/sigma/Vulkan/UtilVK.hpp
@@ -158,6 +168,7 @@ PUBLIC
     SDL2::SDL2-static
     glad::glad
     Vulkan::Vulkan
+	stb::stb_image
     glm
 )
 
@@ -178,12 +189,14 @@ PUBLIC
 add_executable(simple-game
 	shaders/simple.vert.glsl
 	shaders/simple.frag.glsl
+	textures/TestImage.jpg
 
 	src/SimpleRenderer.cpp
 	include/SimpleRenderer.hpp
 	src/main.cpp
 )
 compile_glsl_sources(simple-game)
+copy_texture_sources(simple-game)
 
 target_link_libraries(simple-game
 PUBLIC

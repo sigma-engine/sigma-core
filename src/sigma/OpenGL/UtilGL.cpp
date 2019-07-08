@@ -1,8 +1,7 @@
 #include <sigma/OpenGL/UtilGL.hpp>
 
-#include <sigma/RenderPass.hpp>
-
-#include <cassert>
+#include <sigma/Log.hpp>
+#include <sigma/Texture.hpp>
 
 GLenum baseTypeOfDataType(DataType inType)
 {
@@ -20,13 +19,48 @@ GLenum baseTypeOfDataType(DataType inType)
     case DataType::UShort:
         return GL_UNSIGNED_SHORT;
     }
-    assert(false && "Unknown DataType");
+    SIGMA_ASSERT(false, "Unknown DataType");
     return 0;
 }
 
-ImageFormat convertImageFormatGL(GLenum inFormat)
+GLenum convertImageFormatInternalGL(ImageFormat inFormat)
 {
-    return ImageFormat::Unknown;
+    switch (inFormat) {
+    case ImageFormat::UnormB8G8R8A8:
+    case ImageFormat::UnormR8G8B8A8:
+        return GL_RGBA8;
+    default:
+        break;
+    }
+    SIGMA_ASSERT(false, "Unknown ImageFormat");
+    return GL_RGBA;
+}
+
+GLenum convertImageFormatFormatGL(ImageFormat inFormat)
+{
+    switch (inFormat) {
+    case ImageFormat::UnormB8G8R8A8:
+        return GL_BGRA;
+    case ImageFormat::UnormR8G8B8A8:
+        return GL_RGBA;
+    default:
+        break;
+    }
+    SIGMA_ASSERT(false, "Unknown ImageFormat");
+    return GL_RGBA_INTEGER;
+}
+
+GLenum convertImageFormatTypeGL(ImageFormat inFormat)
+{
+    switch (inFormat) {
+    case ImageFormat::UnormB8G8R8A8:
+    case ImageFormat::UnormR8G8B8A8:
+        return GL_UNSIGNED_INT_8_8_8_8;
+    default:
+        break;
+    }
+    SIGMA_ASSERT(false, "Unknown ImageFormat");
+    return GL_UNSIGNED_INT_8_8_8_8;
 }
 
 std::string convertErrorStringGL(GLenum inError)

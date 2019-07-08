@@ -8,23 +8,23 @@
 		]
 	},
 	"environments": {
-		"linux-x64" : {
-			"cmake" : {
+		"linux-x64": {
+			"cmake": {
 				"cmake_args": [
 					"-GNinja"
 				]
 			}
 		},
-		"visual-studio-17-x64" : {
-			"cmake" :{
-				"cmake_args" : [
+		"visual-studio-17-x64": {
+			"cmake": {
+				"cmake_args": [
 					"-GVisual Studio 15 2017 Win64"
 				]
 			}
 		},
-		"visual-studio-19-x64" : {
-			"cmake" :{
-				"cmake_args" : [
+		"visual-studio-19-x64": {
+			"cmake": {
+				"cmake_args": [
 					"-GVisual Studio 16 2019 Win64"
 				]
 			}
@@ -56,8 +56,12 @@
 			]
 		},
 		{
-			"name" : "hg:SDL",
-			"build_system" : "cmake"
+			"name": "hg:SDL",
+			"build_system": "cmake"
+		},
+		{
+			"name": "git:sigma-engine/stb",
+			"build_system": "cmake"
 		}
 	],
 	"dependencies2": [

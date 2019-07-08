@@ -20,8 +20,10 @@ enum class ImageFormat;
 
 GLenum baseTypeOfDataType(DataType inType);
 
-ImageFormat convertImageFormatGL(GLenum inFormat);
+GLenum convertImageFormatInternalGL(ImageFormat inFormat);
 
-GLenum convertImageFormatGL(ImageFormat inFormat);
+GLenum convertImageFormatFormatGL(ImageFormat inFormat);
+
+GLenum convertImageFormatTypeGL(ImageFormat inFormat);
 
 std::string convertErrorStringGL(GLenum inError);

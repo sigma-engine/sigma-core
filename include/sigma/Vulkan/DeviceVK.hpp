@@ -43,7 +43,7 @@ public:
 
     virtual std::shared_ptr<DescriptorSetLayout> createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding>& inBindings) override;
 
-    virtual std::shared_ptr<DescriptorSet> createDescriptorSet(const DescriptorSetCreateParams &inParams) override;
+    virtual std::shared_ptr<DescriptorSet> createDescriptorSet(const DescriptorSetCreateParams& inParams) override;
 
     virtual std::shared_ptr<Pipeline> createPipeline(const PipelineCreateParams& inParams) override;
 
@@ -53,6 +53,8 @@ public:
 
     virtual std::shared_ptr<UniformBuffer> createUniformBuffer(uint64_t inSize) override;
 
+    virtual std::shared_ptr<Texture2D> createTexture2D(ImageFormat inFormat, uint32_t inWidth, uint32_t inHeight, const void* inPixels) override;
+
     uint32_t graphicsQueueFamily() const;
 
     VkDevice handle() const { return mDevice; }
@@ -61,9 +63,17 @@ public:
 
     VkQueue graphicsQueue() const;
 
+    VkResult startTmpCommandBuffer(VkCommandBuffer* outCommandBuffer);
+
+    VkResult endTmpCommandBuffer(VkCommandBuffer inCommandBuffer);
+
     VkResult createBuffer(VkBufferCreateInfo* inBufferCreateInfo, VkMemoryPropertyFlagBits inProperties, VkBuffer* outBuffer, VkDeviceMemory* outMemory);
 
-    VkResult copyBuffer(VkBuffer inDstBuffer, VkBuffer inSrcBuffer, uint64_t inSize);
+    VkResult copyBufferToBuffer(VkBuffer inDstBuffer, VkBuffer inSrcBuffer, uint64_t inSize);
+
+    VkResult createImage(VkImageCreateInfo* inImageCreateInfo, VkMemoryPropertyFlagBits inProperties, VkImage* outImage, VkDeviceMemory* outMemory);
+
+    VkResult copyBufferToImage(VkImage inDstImage, VkBuffer inSrcBuffer, uint32_t inWidth, uint32_t inHeight);
 
 private:
     VkInstance mInstance = nullptr;

@@ -11,6 +11,9 @@
 #include <sigma/Surface.hpp>
 #include <sigma/UniformBuffer.hpp>
 #include <sigma/VertexBuffer.hpp>
+#include <sigma/Texture.hpp>
+
+#include <stb/stb_image.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -46,6 +49,10 @@ SimpleRenderer::SimpleRenderer(std::shared_ptr<Engine> inEngine, std::shared_ptr
 
 bool SimpleRenderer::initialize()
 {
+	/*mTexture = loadTexture("textures/TestImage.jpg");
+	if (mTexture == nullptr)
+		return false;*/
+
     auto setLayout = mDevice->createDescriptorSetLayout({ { 0, DescriptorType::UniformBuffer, 1 } });
     if (setLayout == nullptr)
         return false;
@@ -152,4 +159,17 @@ void SimpleRenderer::setupUniformBuffer(std::shared_ptr<UniformBuffer> inBuffer)
     inBuffer->setData(static_cast<const void*>(&ubo), sizeof(SimpleUniformBuffer));
 
     SimpleUniformBuffer buffer;
+}
+
+std::shared_ptr<Texture2D> SimpleRenderer::loadTexture(const std::string &inFilepath)
+{
+	int width, height, planes;
+	stbi_uc * pixels = stbi_load(inFilepath.c_str(), &width, &height, &planes, 4);
+	if (pixels == nullptr)
+		return  nullptr;
+
+	auto texture = mDevice->createTexture2D(ImageFormat::UnormR8G8B8A8, static_cast<uint32_t>(width), static_cast<uint32_t>(height), pixels);
+
+	stbi_image_free(pixels);
+	return texture;
 }

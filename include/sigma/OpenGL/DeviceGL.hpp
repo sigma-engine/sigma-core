@@ -22,7 +22,7 @@ public:
 
     virtual std::shared_ptr<DescriptorSetLayout> createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding>& inBindings) override;
 
-	virtual std::shared_ptr<DescriptorSet> createDescriptorSet(const DescriptorSetCreateParams &inParams) override;
+    virtual std::shared_ptr<DescriptorSet> createDescriptorSet(const DescriptorSetCreateParams& inParams) override;
 
     virtual std::shared_ptr<Pipeline> createPipeline(const PipelineCreateParams& inParams) override;
 
@@ -31,4 +31,6 @@ public:
     virtual std::shared_ptr<IndexBuffer> createIndexBuffer(PrimitiveType inPrimitive, DataType inDataType, uint64_t inSize) override;
 
     virtual std::shared_ptr<UniformBuffer> createUniformBuffer(uint64_t inSize) override;
+
+    virtual std::shared_ptr<Texture2D> createTexture2D(ImageFormat inFormat, uint32_t inWidth, uint32_t inHeight, const void *inPixels) override;
 };

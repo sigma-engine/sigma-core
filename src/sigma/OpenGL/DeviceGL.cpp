@@ -8,6 +8,7 @@
 #include <sigma/OpenGL/RenderPassGL.hpp>
 #include <sigma/OpenGL/ShaderGL.hpp>
 #include <sigma/OpenGL/SurfaceGL.hpp>
+#include <sigma/OpenGL/TextureGL.hpp>
 #include <sigma/OpenGL/UniformBufferGL.hpp>
 #include <sigma/OpenGL/UtilGL.hpp>
 #include <sigma/OpenGL/VertexBufferGL.hpp>
@@ -130,4 +131,13 @@ std::shared_ptr<UniformBuffer> DeviceGL::createUniformBuffer(uint64_t inSize)
         return nullptr;
 
     return buffer;
+}
+
+std::shared_ptr<Texture2D> DeviceGL::createTexture2D(ImageFormat inFormat, uint32_t inWidth, uint32_t inHeight, const void *inPixels)
+{
+    auto texture = std::make_shared<Texture2DGL>();
+    if (!texture->initialize(inFormat, inWidth, inHeight, inPixels))
+        return nullptr;
+
+    return texture;
 }

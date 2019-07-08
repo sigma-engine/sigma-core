@@ -45,18 +45,18 @@ void IndexBufferVK::setData(const void* inData, uint64_t inSize)
     bufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
     bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-	CHECK_VK(result = mDevice->createBuffer(&bufferInfo, VkMemoryPropertyFlagBits(VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT), &stagingBuffer, &stagingMemory));
+    CHECK_VK(result = mDevice->createBuffer(&bufferInfo, VkMemoryPropertyFlagBits(VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT), &stagingBuffer, &stagingMemory));
     if (result != VK_SUCCESS)
         goto done;
 
-	CHECK_VK(result = vkMapMemory(mDevice->handle(), stagingMemory, 0, bufferInfo.size, 0, &dstData));
+    CHECK_VK(result = vkMapMemory(mDevice->handle(), stagingMemory, 0, bufferInfo.size, 0, &dstData));
     if (result != VK_SUCCESS)
         goto done;
 
     memcpy(dstData, inData, bufferInfo.size);
     vkUnmapMemory(mDevice->handle(), stagingMemory);
 
-    mDevice->copyBuffer(mHandle, stagingBuffer, bufferInfo.size);
+    CHECK_VK(mDevice->copyBufferToBuffer(mHandle, stagingBuffer, bufferInfo.size));
 
 done:
     if (stagingBuffer)
@@ -74,8 +74,8 @@ bool IndexBufferVK::initialize(uint64_t inSize)
     bufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
     bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-	VkResult result;
-	CHECK_VK(result = mDevice->createBuffer(&bufferInfo, VkMemoryPropertyFlagBits(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT), &mHandle, &mMemory));
+    VkResult result;
+    CHECK_VK(result = mDevice->createBuffer(&bufferInfo, VkMemoryPropertyFlagBits(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT), &mHandle, &mMemory));
 
-	return result == VK_SUCCESS;
+    return result == VK_SUCCESS;
 }

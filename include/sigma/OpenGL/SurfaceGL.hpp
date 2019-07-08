@@ -27,7 +27,6 @@ public:
 protected:
     uint32_t mWidth;
     uint32_t mHeight;
-    GLenum mFormat;
 
     SurfaceImageData mFrameData;
 };

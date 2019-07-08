@@ -8,6 +8,7 @@
 #include <sigma/Vulkan/RenderPassVK.hpp>
 #include <sigma/Vulkan/ShaderVK.hpp>
 #include <sigma/Vulkan/SurfaceVK.hpp>
+#include <sigma/Vulkan/TextureVK.hpp>
 #include <sigma/Vulkan/UniformBufferVK.hpp>
 #include <sigma/Vulkan/UtilVK.hpp>
 #include <sigma/Vulkan/VertexBufferVK.hpp>
@@ -376,6 +377,15 @@ std::shared_ptr<UniformBuffer> DeviceVK::createUniformBuffer(uint64_t inSize)
     return buffer;
 }
 
+std::shared_ptr<Texture2D> DeviceVK::createTexture2D(ImageFormat inFormat, uint32_t inWidth, uint32_t inHeight, const void* inPixels)
+{
+    auto texture = std::make_shared<Texture2DVK>(shared_from_this());
+    if (!texture->initialize(inFormat, inWidth, inHeight, inPixels))
+        return nullptr;
+
+    return texture;
+}
+
 uint32_t DeviceVK::graphicsQueueFamily() const
 {
     return mGraphicsFamily.value();
@@ -391,6 +401,57 @@ VkQueue DeviceVK::getQueue(uint32_t inFamily) const
 VkQueue DeviceVK::graphicsQueue() const
 {
     return mGraphicsQueue;
+}
+
+VkResult DeviceVK::startTmpCommandBuffer(VkCommandBuffer* outCommandBuffer)
+{
+	VkResult result;
+	VkCommandBufferAllocateInfo allocInfo = {};
+	VkCommandBufferBeginInfo beginInfo = {};
+
+	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	allocInfo.commandPool = mGraphicsCommandPool;
+	allocInfo.commandBufferCount = 1;
+
+	CHECK_VK(result = vkAllocateCommandBuffers(mDevice, &allocInfo, outCommandBuffer));
+	if (result != VK_SUCCESS)
+		goto done;
+
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+	CHECK_VK(result = vkBeginCommandBuffer(*outCommandBuffer, &beginInfo));
+	if (result != VK_SUCCESS)
+		goto done;
+
+done:
+	return result;
+}
+
+VkResult DeviceVK::endTmpCommandBuffer(VkCommandBuffer inCommandBuffer)
+{
+	VkResult result;
+	VkSubmitInfo submitInfo = {};
+
+	CHECK_VK(result = vkEndCommandBuffer(inCommandBuffer));
+	if (result != VK_SUCCESS)
+		goto done;
+
+	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = &inCommandBuffer;
+
+	CHECK_VK(result = vkQueueSubmit(mGraphicsQueue, 1, &submitInfo, nullptr));
+	if (result != VK_SUCCESS)
+		goto done;
+
+	CHECK_VK(result = vkQueueWaitIdle(mGraphicsQueue));
+done:
+	if (inCommandBuffer)
+		vkFreeCommandBuffers(mDevice, mGraphicsCommandPool, 1, &inCommandBuffer);
+
+	return result;
 }
 
 VkResult DeviceVK::createBuffer(VkBufferCreateInfo* inBufferCreateInfo, VkMemoryPropertyFlagBits inProperties, VkBuffer* outBuffer, VkDeviceMemory* outMemory)
@@ -429,51 +490,64 @@ done:
     return result;
 }
 
-VkResult DeviceVK::copyBuffer(VkBuffer inDstBuffer, VkBuffer inSrcBuffer, uint64_t inSize)
+VkResult DeviceVK::copyBufferToBuffer(VkBuffer inDstBuffer, VkBuffer inSrcBuffer, uint64_t inSize)
 {
-    VkResult result;
-    VkCommandBufferAllocateInfo allocInfo = {};
-    VkCommandBufferBeginInfo beginInfo = {};
-    VkSubmitInfo submitInfo = {};
-    VkCommandBuffer commandBuffer;
-    VkBufferCopy copyRegion = { 0, 0, inSize };
-
-    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    allocInfo.commandPool = mGraphicsCommandPool;
-    allocInfo.commandBufferCount = 1;
-
-    CHECK_VK(result = vkAllocateCommandBuffers(mDevice, &allocInfo, &commandBuffer));
-    if (result != VK_SUCCESS)
-        goto done;
-
-    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-
-    CHECK_VK(result = vkBeginCommandBuffer(commandBuffer, &beginInfo));
-    if (result != VK_SUCCESS)
-        goto done;
+	VkResult result;
+	VkBufferCopy copyRegion = { 0, 0, inSize };
+	VkCommandBuffer commandBuffer = nullptr;
+	
+	CHECK_VK(result = startTmpCommandBuffer(&commandBuffer));
+	if (result != VK_SUCCESS)
+		goto done;
 
     vkCmdCopyBuffer(commandBuffer, inSrcBuffer, inDstBuffer, 1, &copyRegion);
 
-    CHECK_VK(result = vkEndCommandBuffer(commandBuffer));
-    if (result != VK_SUCCESS)
-        goto done;
-
-    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-    submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = &commandBuffer;
-
-    CHECK_VK(result = vkQueueSubmit(mGraphicsQueue, 1, &submitInfo, nullptr));
-    if (result != VK_SUCCESS)
-        goto done;
-
-    CHECK_VK(result = vkQueueWaitIdle(mGraphicsQueue));
+	CHECK_VK(result = endTmpCommandBuffer(commandBuffer));
+	if (result != VK_SUCCESS)
+		goto done;
 done:
-    if (commandBuffer)
-        vkFreeCommandBuffers(mDevice, mGraphicsCommandPool, 1, &commandBuffer);
+	return result;
+}
 
+VkResult DeviceVK::createImage(VkImageCreateInfo* inImageCreateInfo, VkMemoryPropertyFlagBits inProperties, VkImage* outImage, VkDeviceMemory* outMemory)
+{
+    VkResult result;
+    VkMemoryRequirements requirements;
+    VkMemoryAllocateInfo allocInfo = {};
+
+    CHECK_VK(result = vkCreateImage(mDevice, inImageCreateInfo, nullptr, outImage));
+    if (result != VK_SUCCESS)
+        goto done;
+
+    vkGetImageMemoryRequirements(mDevice, *outImage, &requirements);
+
+    allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    allocInfo.allocationSize = requirements.size;
+    allocInfo.memoryTypeIndex = findMemoryType(requirements.memoryTypeBits, inProperties);
+
+    CHECK_VK(result = vkAllocateMemory(mDevice, &allocInfo, nullptr, outMemory));
+    if (result != VK_SUCCESS)
+        goto done;
+
+    CHECK_VK(result = vkBindImageMemory(mDevice, *outImage, *outMemory, 0));
+    if (result != VK_SUCCESS)
+        goto done;
+
+done:
+    if (result != VK_SUCCESS) {
+        if (*outMemory)
+            vkFreeMemory(mDevice, *outMemory, nullptr);
+        if (*outImage)
+            vkDestroyImage(mDevice, *outImage, nullptr);
+        *outImage = nullptr;
+        *outMemory = nullptr;
+    }
     return result;
+}
+
+VkResult DeviceVK::copyBufferToImage(VkImage inDstImage, VkBuffer inSrcBuffer, uint32_t inWidth, uint32_t inHeight)
+{
+    return VK_NOT_READY;
 }
 
 std::optional<SurfaceSwapChainInfoVK> DeviceVK::getSwapChainInfo(std::shared_ptr<SurfaceVK> inSurface) const
