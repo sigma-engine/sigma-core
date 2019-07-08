@@ -26,10 +26,11 @@ private:
 
     uint32_t mWidth;
     uint32_t mHeight;
+	ImageFormat mFormat;
 
     VkImage mImage = nullptr;
     VkDeviceMemory mMemory = nullptr; // TODO: memory manager
-    VkImageView mImageView = nullptr;
+	VkImageView mImageView = nullptr;
 
-    bool setData(const void* inData, uint64_t inSize);
+    VkResult setData(const void* inData, uint64_t inSize);
 };

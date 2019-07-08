@@ -73,7 +73,9 @@ public:
 
     VkResult createImage(VkImageCreateInfo* inImageCreateInfo, VkMemoryPropertyFlagBits inProperties, VkImage* outImage, VkDeviceMemory* outMemory);
 
-    VkResult copyBufferToImage(VkImage inDstImage, VkBuffer inSrcBuffer, uint32_t inWidth, uint32_t inHeight);
+	VkResult transitionImageLayout(VkImage inImage, VkFormat inFormat, VkImageLayout inSrcLayout, VkImageLayout inDstLayout);
+
+    VkResult copyBufferToImage(VkImage inDstImage, VkBuffer inSrcBuffer, VkFormat inFormat, uint32_t inWidth, uint32_t inHeight);
 
 private:
     VkInstance mInstance = nullptr;

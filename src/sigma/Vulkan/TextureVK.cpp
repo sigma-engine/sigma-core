@@ -22,7 +22,12 @@ Texture2DVK::~Texture2DVK()
 
 bool Texture2DVK::initialize(ImageFormat inFormat, uint32_t inWidth, uint32_t inHeight, const void* inPixels)
 {
+	mWidth = inWidth;
+	mHeight = inHeight;
+	mFormat = inFormat;
+
     uint64_t imageSize = inWidth * inHeight * imageFormatPixelSize(inFormat);
+	VkFormat format = convertImageFormatVK(inFormat);
 
     VkResult result;
     VkImageCreateInfo imageInfo = {};
@@ -33,7 +38,7 @@ bool Texture2DVK::initialize(ImageFormat inFormat, uint32_t inWidth, uint32_t in
     imageInfo.extent.depth = 1;
     imageInfo.mipLevels = 1;
     imageInfo.arrayLayers = 1;
-    imageInfo.format = convertImageFormatVK(inFormat);
+    imageInfo.format = format;
     imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
     imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
     imageInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
@@ -45,17 +50,34 @@ bool Texture2DVK::initialize(ImageFormat inFormat, uint32_t inWidth, uint32_t in
     if (result != VK_SUCCESS)
         return false;
 
-    // TODO: Image View
+	VkImageViewCreateInfo viewInfo = {};
+	viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+	viewInfo.components.r = VK_COMPONENT_SWIZZLE_R;
+	viewInfo.components.g = VK_COMPONENT_SWIZZLE_G;
+	viewInfo.components.b = VK_COMPONENT_SWIZZLE_B;
+	viewInfo.components.a = VK_COMPONENT_SWIZZLE_A;
+	viewInfo.format = format;
+	viewInfo.image = mImage;
+	viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	viewInfo.subresourceRange.baseMipLevel = 0;
+	viewInfo.subresourceRange.levelCount = 1;
+	viewInfo.subresourceRange.baseArrayLayer = 0;
+	viewInfo.subresourceRange.layerCount = 1;
+	viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
 
-    setData(inPixels, imageSize);
+	CHECK_VK(result = setData(inPixels, imageSize));
+	if (result != VK_SUCCESS)
+		return false;
 
-    mWidth = inWidth;
-    mHeight = inHeight;
+	CHECK_VK(result = vkCreateImageView(mDevice->handle(), &viewInfo, nullptr, &mImageView));
+	if (result != VK_SUCCESS)
+		return false;
 
-    return false;
+
+    return true;
 }
 
-bool Texture2DVK::setData(const void* inData, uint64_t inSize)
+VkResult Texture2DVK::setData(const void* inData, uint64_t inSize)
 {
     // TODO: This is crap
     VkResult result;
@@ -80,13 +102,12 @@ bool Texture2DVK::setData(const void* inData, uint64_t inSize)
     memcpy(dstData, inData, bufferInfo.size);
     vkUnmapMemory(mDevice->handle(), stagingMemory);
 
-    CHECK_VK(result = mDevice->copyBufferToImage(mImage, stagingBuffer, mWidth, mHeight));
-
+    CHECK_VK(result = mDevice->copyBufferToImage(mImage, stagingBuffer, convertImageFormatVK(mFormat), mWidth, mHeight));
 done:
     if (stagingBuffer)
         vkDestroyBuffer(mDevice->handle(), stagingBuffer, nullptr);
     if (stagingMemory)
         vkFreeMemory(mDevice->handle(), stagingMemory, nullptr);
 
-    return result == VK_SUCCESS;
+    return result;
 }

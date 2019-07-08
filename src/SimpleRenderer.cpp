@@ -49,9 +49,9 @@ SimpleRenderer::SimpleRenderer(std::shared_ptr<Engine> inEngine, std::shared_ptr
 
 bool SimpleRenderer::initialize()
 {
-	/*mTexture = loadTexture("textures/TestImage.jpg");
+	mTexture = loadTexture("textures/TestImage.jpg");
 	if (mTexture == nullptr)
-		return false;*/
+		return false;
 
     auto setLayout = mDevice->createDescriptorSetLayout({ { 0, DescriptorType::UniformBuffer, 1 } });
     if (setLayout == nullptr)

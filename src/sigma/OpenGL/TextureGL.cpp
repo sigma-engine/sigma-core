@@ -24,5 +24,5 @@ bool Texture2DGL::initialize(ImageFormat inFormat, uint32_t inWidth, uint32_t in
         convertImageFormatFormatGL(inFormat),
         convertImageFormatTypeGL(inFormat),
         inPixels));
-    return false;
+    return true;
 }
