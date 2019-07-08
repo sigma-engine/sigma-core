@@ -135,7 +135,7 @@ void SimpleRenderer::render()
 
     auto commandBuffer = mCommandBuffers[imageData->imageIndex];
 
-    RenderPassBeginParams beginRenderPass{
+    RenderPassBeginParams beginRenderPass {
         imageData->frameBuffer,
         imageData->frameBuffer->extent()
     };

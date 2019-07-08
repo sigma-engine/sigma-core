@@ -10,7 +10,7 @@ class FrameBuffer {
 public:
     virtual ~FrameBuffer() = default;
 
-	virtual std::shared_ptr<RenderPass> renderPass() const = 0;
+    virtual std::shared_ptr<RenderPass> renderPass() const = 0;
 
-	virtual Rect<int32_t> extent() const = 0;
+    virtual Rect<int32_t> extent() const = 0;
 };

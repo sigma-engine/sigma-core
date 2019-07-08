@@ -19,7 +19,7 @@ public:
 
     VkPipeline handle() const { return mPipeline; }
 
-	VkPipelineLayout layout() const { return mLayout; }
+    VkPipelineLayout layout() const { return mLayout; }
 
     bool initialize(const PipelineCreateParams& inParams);
 
@@ -27,7 +27,7 @@ public:
     std::shared_ptr<DeviceVK> mDevice = nullptr;
 
     std::shared_ptr<RenderPassVK> mRenderPass = nullptr;
-	std::vector<std::shared_ptr<DescriptorSetLayoutVK>> mSetLayouts;
+    std::vector<std::shared_ptr<DescriptorSetLayoutVK>> mSetLayouts;
     VkPipeline mPipeline = nullptr;
     VkPipelineLayout mLayout = nullptr;
 };

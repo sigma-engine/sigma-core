@@ -20,7 +20,7 @@ glm::uvec2 SurfaceGL::size() const
 
 ImageFormat SurfaceGL::format() const
 {
-	return ImageFormat::UnormR8G8B8A8; // TODO: Don't hard code this?
+    return ImageFormat::UnormR8G8B8A8; // TODO: Don't hard code this?
 }
 
 uint32_t SurfaceGL::imageCount() const
@@ -50,7 +50,7 @@ bool SurfaceGL::createSwapChain(std::shared_ptr<DeviceGL> inDevice)
     if (renderPass == nullptr)
         return false;
 
-    mFrameData.frameBuffer = std::make_shared<FrameBufferGL>(renderPass, Rect<int32_t>{ { 0, 0 }, { mWidth, mHeight } });
+    mFrameData.frameBuffer = std::make_shared<FrameBufferGL>(renderPass, Rect<int32_t> { { 0, 0 }, { mWidth, mHeight } });
 
     return mFrameData.frameBuffer != nullptr;
 }

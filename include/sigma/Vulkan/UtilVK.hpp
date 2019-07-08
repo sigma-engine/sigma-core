@@ -12,9 +12,9 @@
 
 // clang-format off
 #ifdef NDEBUG
-#define CHECK_VK(expression, ...) {(expression);}
+#define CHECK_VK(expression) {(expression);}
 #else
-#define CHECK_VK(expression, ...) {auto CHECK_VK_RESULT = (expression); SIGMA_ASSERT(CHECK_VK_RESULT == VK_SUCCESS, "Vulkan Error: {} (0x{:x})", convertErrorStringVK(CHECK_VK_RESULT), CHECK_VK_RESULT);}
+#define CHECK_VK(expression) {auto CHECK_VK_RESULT = (expression); SIGMA_ASSERT(CHECK_VK_RESULT == VK_SUCCESS, "Vulkan Error: {} (0x{:x})", convertErrorStringVK(CHECK_VK_RESULT), CHECK_VK_RESULT);}
 #endif
 // clang-format on
 

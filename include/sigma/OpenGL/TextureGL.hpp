@@ -14,7 +14,7 @@ public:
 
     GLuint handle() const { return mHandle; }
 
-    bool initialize(ImageFormat inFormat, uint32_t inWidth, uint32_t inHeight, const void *inPixels);
+    bool initialize(ImageFormat inFormat, uint32_t inWidth, uint32_t inHeight, const void* inPixels);
 
 private:
     GLuint mHandle = 0;

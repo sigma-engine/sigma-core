@@ -1,14 +1,14 @@
 #include <sigma/Vulkan/CommandBufferVK.hpp>
 
 #include <sigma/Log.hpp>
+#include <sigma/Vulkan/DescriptorSetVK.hpp>
 #include <sigma/Vulkan/DeviceVK.hpp>
 #include <sigma/Vulkan/FrameBufferVK.hpp>
 #include <sigma/Vulkan/IndexBufferVK.hpp>
 #include <sigma/Vulkan/PipelineVK.hpp>
 #include <sigma/Vulkan/RenderPassVK.hpp>
-#include <sigma/Vulkan/VertexBufferVK.hpp>
-#include <sigma/Vulkan/DescriptorSetVK.hpp>
 #include <sigma/Vulkan/UtilVK.hpp>
+#include <sigma/Vulkan/VertexBufferVK.hpp>
 
 #include <limits>
 
@@ -27,15 +27,15 @@ CommandBufferVK::~CommandBufferVK()
 
 bool CommandBufferVK::initialize()
 {
-	VkResult result;
+    VkResult result;
     VkCommandBufferAllocateInfo allocInfo = {};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     allocInfo.commandPool = mCommandPool;
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     allocInfo.commandBufferCount = 1;
 
-	CHECK_VK(result = vkAllocateCommandBuffers(mDevice->handle(), &allocInfo, &mBuffer));
-	return result == VK_SUCCESS;
+    CHECK_VK(result = vkAllocateCommandBuffers(mDevice->handle(), &allocInfo, &mBuffer));
+    return result == VK_SUCCESS;
 }
 
 void CommandBufferVK::begin()
@@ -56,8 +56,8 @@ void CommandBufferVK::beginRenderPass(const RenderPassBeginParams& inParams)
     VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
     VkRenderPassBeginInfo renderPassInfo = {};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    renderPassInfo.renderPass = std::static_pointer_cast<RenderPassVK>(inParams.FrameBuffer->renderPass())->handle();
-    renderPassInfo.framebuffer = std::static_pointer_cast<FrameBufferVK>(inParams.FrameBuffer)->handle();
+    renderPassInfo.renderPass = std::static_pointer_cast<RenderPassVK>(inParams.frameBuffer->renderPass())->handle();
+    renderPassInfo.framebuffer = std::static_pointer_cast<FrameBufferVK>(inParams.frameBuffer)->handle();
     renderPassInfo.renderArea.offset = { inParams.renderArea.origin.x, inParams.renderArea.origin.y };
     renderPassInfo.renderArea.extent = { inParams.renderArea.size.x, inParams.renderArea.size.y };
     renderPassInfo.clearValueCount = 1;
@@ -75,10 +75,10 @@ void CommandBufferVK::bindPipeline(std::shared_ptr<Pipeline> inPipeline)
 
 void CommandBufferVK::bindDescriptorSet(std::shared_ptr<DescriptorSet> inDescriptorSet)
 {
-	SIGMA_ASSERT(std::dynamic_pointer_cast<DescriptorSetVK>(inDescriptorSet), "Must use vulkan descriptor set with vulkan command buffer!");
-	mCurrentDescriptorSet = std::static_pointer_cast<DescriptorSetVK>(inDescriptorSet);
-	VkDescriptorSet descriptorSet = mCurrentDescriptorSet->handle();
-	vkCmdBindDescriptorSets(mBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mCurrentPipeline->layout(), 0, 1, &descriptorSet, 0, nullptr);
+    SIGMA_ASSERT(std::dynamic_pointer_cast<DescriptorSetVK>(inDescriptorSet), "Must use vulkan descriptor set with vulkan command buffer!");
+    mCurrentDescriptorSet = std::static_pointer_cast<DescriptorSetVK>(inDescriptorSet);
+    VkDescriptorSet descriptorSet = mCurrentDescriptorSet->handle();
+    vkCmdBindDescriptorSets(mBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mCurrentPipeline->layout(), 0, 1, &descriptorSet, 0, nullptr);
 }
 
 void CommandBufferVK::bindVertexBuffer(std::shared_ptr<VertexBuffer> inBuffer)
@@ -115,5 +115,5 @@ void CommandBufferVK::endRenderPass()
 
 void CommandBufferVK::end()
 {
-	CHECK_VK(vkEndCommandBuffer(mBuffer));
+    CHECK_VK(vkEndCommandBuffer(mBuffer));
 }

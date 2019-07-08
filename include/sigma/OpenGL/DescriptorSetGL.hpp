@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <unordered_map>
+#include <vector>
 
 class UniformBufferGL;
 class Texture2DGL;

@@ -14,7 +14,7 @@ struct PipelineCreateParams {
     Rect<uint32_t> viewportRect;
     std::shared_ptr<RenderPass> renderPass;
     VertexLayout vertexLayout;
-	std::vector<std::shared_ptr<DescriptorSetLayout>> setLayouts;
+    std::vector<std::shared_ptr<DescriptorSetLayout>> setLayouts;
     std::vector<std::shared_ptr<Shader>> shaders;
 };
 

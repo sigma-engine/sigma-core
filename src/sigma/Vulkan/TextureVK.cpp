@@ -22,12 +22,12 @@ Texture2DVK::~Texture2DVK()
 
 bool Texture2DVK::initialize(ImageFormat inFormat, uint32_t inWidth, uint32_t inHeight, const void* inPixels)
 {
-	mWidth = inWidth;
-	mHeight = inHeight;
-	mFormat = inFormat;
+    mWidth = inWidth;
+    mHeight = inHeight;
+    mFormat = inFormat;
 
     uint64_t imageSize = inWidth * inHeight * imageFormatPixelSize(inFormat);
-	VkFormat format = convertImageFormatVK(inFormat);
+    VkFormat format = convertImageFormatVK(inFormat);
 
     VkResult result;
     VkImageCreateInfo imageInfo = {};
@@ -50,29 +50,28 @@ bool Texture2DVK::initialize(ImageFormat inFormat, uint32_t inWidth, uint32_t in
     if (result != VK_SUCCESS)
         return false;
 
-	VkImageViewCreateInfo viewInfo = {};
-	viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-	viewInfo.components.r = VK_COMPONENT_SWIZZLE_R;
-	viewInfo.components.g = VK_COMPONENT_SWIZZLE_G;
-	viewInfo.components.b = VK_COMPONENT_SWIZZLE_B;
-	viewInfo.components.a = VK_COMPONENT_SWIZZLE_A;
-	viewInfo.format = format;
-	viewInfo.image = mImage;
-	viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	viewInfo.subresourceRange.baseMipLevel = 0;
-	viewInfo.subresourceRange.levelCount = 1;
-	viewInfo.subresourceRange.baseArrayLayer = 0;
-	viewInfo.subresourceRange.layerCount = 1;
-	viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    VkImageViewCreateInfo viewInfo = {};
+    viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    viewInfo.components.r = VK_COMPONENT_SWIZZLE_R;
+    viewInfo.components.g = VK_COMPONENT_SWIZZLE_G;
+    viewInfo.components.b = VK_COMPONENT_SWIZZLE_B;
+    viewInfo.components.a = VK_COMPONENT_SWIZZLE_A;
+    viewInfo.format = format;
+    viewInfo.image = mImage;
+    viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    viewInfo.subresourceRange.baseMipLevel = 0;
+    viewInfo.subresourceRange.levelCount = 1;
+    viewInfo.subresourceRange.baseArrayLayer = 0;
+    viewInfo.subresourceRange.layerCount = 1;
+    viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
 
-	CHECK_VK(result = setData(inPixels, imageSize));
-	if (result != VK_SUCCESS)
-		return false;
+    CHECK_VK(result = setData(inPixels, imageSize));
+    if (result != VK_SUCCESS)
+        return false;
 
-	CHECK_VK(result = vkCreateImageView(mDevice->handle(), &viewInfo, nullptr, &mImageView));
-	if (result != VK_SUCCESS)
-		return false;
-
+    CHECK_VK(result = vkCreateImageView(mDevice->handle(), &viewInfo, nullptr, &mImageView));
+    if (result != VK_SUCCESS)
+        return false;
 
     return true;
 }

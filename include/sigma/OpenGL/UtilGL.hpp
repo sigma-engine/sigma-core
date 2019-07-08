@@ -10,9 +10,9 @@
 
 // clang-format off
 #ifdef NDEBUG
-#define CHECK_GL(expression, ...) {(expression);}
+#define CHECK_GL(expression) {(expression);}
 #else
-#define CHECK_GL(expression, ...) {(expression); auto error = glGetError(); SIGMA_ASSERT(error == GL_NO_ERROR, "OpenGL Error: {} (0x{:x})", convertErrorStringGL(error), error);}
+#define CHECK_GL(expression) {(expression); auto error = glGetError(); SIGMA_ASSERT(error == GL_NO_ERROR, "OpenGL Error: {} (0x{:x})", convertErrorStringGL(error), error);}
 #endif
 // clang-format on
 
