@@ -562,18 +562,12 @@ done:
     return result;
 }
 
-VkResult DeviceVK::transitionImageLayout(VkImage inImage, VkFormat inFormat, VkImageLayout inSrcLayout, VkImageLayout inDstLayout)
+void DeviceVK::transitionImageLayout(VkCommandBuffer inCommandBuffer, VkImage inImage, VkFormat inFormat, VkImageLayout inSrcLayout, VkImageLayout inDstLayout)
 {
-    // TODO: this is crap
     VkResult result;
-    VkCommandBuffer commandBuffer = nullptr;
     VkPipelineStageFlags srcStage;
     VkPipelineStageFlags dstStage;
     VkImageMemoryBarrier barrier = {};
-
-    CHECK_VK(result = startTmpCommandBuffer(&commandBuffer));
-    if (result != VK_SUCCESS)
-        goto done;
 
     barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
     barrier.oldLayout = inSrcLayout;
@@ -587,6 +581,7 @@ VkResult DeviceVK::transitionImageLayout(VkImage inImage, VkFormat inFormat, VkI
     barrier.subresourceRange.baseArrayLayer = 0;
     barrier.subresourceRange.layerCount = 1;
 
+	// TODO: add other layout transition types
     if (inSrcLayout == VK_IMAGE_LAYOUT_UNDEFINED && inDstLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
         barrier.srcAccessMask = 0;
         barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
@@ -601,19 +596,13 @@ VkResult DeviceVK::transitionImageLayout(VkImage inImage, VkFormat inFormat, VkI
         SIGMA_ASSERT(false, "Unsupported layout transition!");
     }
 
-    vkCmdPipelineBarrier(commandBuffer,
+    vkCmdPipelineBarrier(inCommandBuffer,
         srcStage,
         dstStage,
         0,
         0, nullptr,
         0, nullptr,
         1, &barrier);
-
-    CHECK_VK(result = endTmpCommandBuffer(commandBuffer));
-    if (result != VK_SUCCESS)
-        goto done;
-done:
-    return result;
 }
 
 VkResult DeviceVK::copyBufferToImage(VkImage inDstImage, VkBuffer inSrcBuffer, VkFormat inFormat, uint32_t inWidth, uint32_t inHeight)
@@ -623,11 +612,11 @@ VkResult DeviceVK::copyBufferToImage(VkImage inDstImage, VkBuffer inSrcBuffer, V
     VkCommandBuffer commandBuffer = nullptr;
     VkBufferImageCopy region = {};
 
-    transitionImageLayout(inDstImage, inFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+	CHECK_VK(result = startTmpCommandBuffer(&commandBuffer));
+	if (result != VK_SUCCESS)
+		goto done;
 
-    CHECK_VK(result = startTmpCommandBuffer(&commandBuffer));
-    if (result != VK_SUCCESS)
-        goto done;
+    transitionImageLayout(commandBuffer, inDstImage, inFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
     region.bufferOffset = 0;
     region.bufferRowLength = 0;
@@ -643,11 +632,12 @@ VkResult DeviceVK::copyBufferToImage(VkImage inDstImage, VkBuffer inSrcBuffer, V
 
     vkCmdCopyBufferToImage(commandBuffer, inSrcBuffer, inDstImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 
-    CHECK_VK(result = endTmpCommandBuffer(commandBuffer));
-    if (result != VK_SUCCESS)
-        goto done;
+    
+    transitionImageLayout(commandBuffer, inDstImage, inFormat, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
-    transitionImageLayout(inDstImage, inFormat, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+	CHECK_VK(result = endTmpCommandBuffer(commandBuffer));
+	if (result != VK_SUCCESS)
+		goto done;
 done:
     return result;
 }
