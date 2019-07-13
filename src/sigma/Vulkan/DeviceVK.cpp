@@ -326,6 +326,12 @@ std::shared_ptr<RenderPass> DeviceVK::createRenderPass(const RenderPassCreatePar
     return renderPass;
 }
 
+std::shared_ptr<FrameBuffer> DeviceVK::createFrameBuffer(const FrameBufferCreateParams &inParams)
+{
+    SIGMA_ASSERT(false, "Not implemented!");
+    return nullptr;
+}
+
 std::shared_ptr<DescriptorSetLayout> DeviceVK::createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding>& inBindings)
 {
     auto layout = std::make_shared<DescriptorSetLayoutVK>(shared_from_this());
@@ -380,10 +386,10 @@ std::shared_ptr<UniformBuffer> DeviceVK::createUniformBuffer(uint64_t inSize)
     return buffer;
 }
 
-std::shared_ptr<Texture2D> DeviceVK::createTexture2D(ImageFormat inFormat, uint32_t inWidth, uint32_t inHeight, const void* inPixels)
+std::shared_ptr<Texture2D> DeviceVK::createTexture2D(const TextureCreateParams &inParams)
 {
     auto texture = std::make_shared<Texture2DVK>(shared_from_this());
-    if (!texture->initialize(inFormat, inWidth, inHeight, inPixels))
+    if (!texture->initialize(inParams))
         return nullptr;
 
     return texture;
@@ -564,7 +570,6 @@ done:
 
 void DeviceVK::transitionImageLayout(VkCommandBuffer inCommandBuffer, VkImage inImage, VkFormat inFormat, VkImageLayout inSrcLayout, VkImageLayout inDstLayout)
 {
-    VkResult result;
     VkPipelineStageFlags srcStage;
     VkPipelineStageFlags dstStage;
     VkImageMemoryBarrier barrier = {};

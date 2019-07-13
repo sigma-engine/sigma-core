@@ -14,6 +14,7 @@ include(cmake/GLSL.cmake)
 include(cmake/Texture.cmake)
 
 add_library(sigma-core STATIC
+	include/sigma/FlagSet.hpp
 	include/sigma/Rect.hpp
 	include/sigma/Event.hpp
 	include/sigma/EventEmitter.hpp

@@ -39,11 +39,15 @@ class VertexLayout;
 
 class UniformBuffer;
 
+struct TextureCreateParams;
 class Texture2D;
 
 class Sampler2D;
 
 enum class ImageFormat;
+
+struct FrameBufferCreateParams;
+class FrameBuffer;
 
 enum class DeviceType {
     DiscreteGPU,
@@ -71,6 +75,8 @@ public:
 
     virtual std::shared_ptr<RenderPass> createRenderPass(const RenderPassCreateParams& inParams) = 0;
 
+    virtual std::shared_ptr<FrameBuffer> createFrameBuffer(const FrameBufferCreateParams &inParams) = 0;
+
     virtual std::shared_ptr<DescriptorSetLayout> createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding>& inBindings) = 0;
 
     virtual std::shared_ptr<DescriptorSet> createDescriptorSet(const DescriptorSetCreateParams& inParams) = 0;
@@ -83,7 +89,7 @@ public:
 
     virtual std::shared_ptr<UniformBuffer> createUniformBuffer(uint64_t inSize) = 0;
 
-    virtual std::shared_ptr<Texture2D> createTexture2D(ImageFormat inFormat, uint32_t inWidth, uint32_t inHeight, const void* inPixels = nullptr) = 0;
+    virtual std::shared_ptr<Texture2D> createTexture2D(const TextureCreateParams &inParams) = 0;
 
     virtual std::shared_ptr<Sampler2D> createSampler2D() = 0;
 };

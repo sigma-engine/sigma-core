@@ -3,6 +3,7 @@
 #include <sigma/Log.hpp>
 #include <sigma/OpenGL/CommandBufferGL.hpp>
 #include <sigma/OpenGL/DescriptorSetGL.hpp>
+#include <sigma/OpenGL/FrameBufferGL.hpp>
 #include <sigma/OpenGL/IndexBufferGL.hpp>
 #include <sigma/OpenGL/PipelineGL.hpp>
 #include <sigma/OpenGL/RenderPassGL.hpp>
@@ -80,15 +81,24 @@ std::shared_ptr<Shader> DeviceGL::createShader(ShaderType inType, const std::str
     file.read(code.data(), fsize);
 
     auto shader = std::make_shared<ShaderGL>(inType);
-    if (shader->compile(code)) {
-        return std::move(shader);
-    }
-    return nullptr;
+    if (!shader->compile(code))
+        return nullptr;
+
+    return shader;
 }
 
 std::shared_ptr<RenderPass> DeviceGL::createRenderPass(const RenderPassCreateParams& inParams)
 {
     return std::make_shared<RenderPassGL>();
+}
+
+std::shared_ptr<FrameBuffer> DeviceGL::createFrameBuffer(const FrameBufferCreateParams& inParams)
+{
+    auto framebuffer = std::make_shared<FrameBufferGL>();
+    if (!framebuffer->initialize(inParams))
+        return nullptr;
+
+    return framebuffer;
 }
 
 std::shared_ptr<DescriptorSetLayout> DeviceGL::createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding>& inBindings)
@@ -134,10 +144,10 @@ std::shared_ptr<UniformBuffer> DeviceGL::createUniformBuffer(uint64_t inSize)
     return buffer;
 }
 
-std::shared_ptr<Texture2D> DeviceGL::createTexture2D(ImageFormat inFormat, uint32_t inWidth, uint32_t inHeight, const void* inPixels)
+std::shared_ptr<Texture2D> DeviceGL::createTexture2D(const TextureCreateParams &inParams)
 {
     auto texture = std::make_shared<Texture2DGL>();
-    if (!texture->initialize(inFormat, inWidth, inHeight, inPixels))
+    if (!texture->initialize(inParams))
         return nullptr;
 
     return texture;

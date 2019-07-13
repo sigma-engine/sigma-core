@@ -13,6 +13,8 @@
 #include <sigma/Texture.hpp>
 #include <sigma/UniformBuffer.hpp>
 #include <sigma/VertexBuffer.hpp>
+#include <sigma/RenderPass.hpp>
+#include <sigma/FrameBuffer.hpp>
 
 #include <stb/stb_image.h>
 
@@ -123,6 +125,20 @@ bool SimpleRenderer::initialize()
         return false;
     mIndexBuffer->setData(indices.data(), sizeof(uint16_t) * indices.size());
 
+	RenderPassCreateParams renderPassParams = {
+		{{ AttachmentType::ColorAttachment, ImageFormat::UnormR8G8B8A8 }}
+	};
+	mTestRenderPass = mDevice->createRenderPass(renderPassParams);
+	if (mTestRenderPass == nullptr)
+		return false;
+
+	// mTestTexture0 = mDevice->createTexture2D(ImageFormat::UnormR8G8B8A8, )
+
+	/*mTestFrameBuffer = mDevice->createFrameBuffer({
+		mSurface->size(),
+		mTestRenderPass,
+	});*/
+
     return true;
 }
 
@@ -135,9 +151,9 @@ void SimpleRenderer::render()
 
     auto commandBuffer = mCommandBuffers[imageData->imageIndex];
 
-    RenderPassBeginParams beginRenderPass {
-        imageData->frameBuffer,
-        imageData->frameBuffer->extent()
+	RenderPassBeginParams beginRenderPass{
+		imageData->frameBuffer,
+		{{0,0}, mSurface->size()}
     };
     commandBuffer->begin();
     commandBuffer->beginRenderPass(beginRenderPass);
@@ -166,8 +182,6 @@ void SimpleRenderer::setupUniformBuffer(std::shared_ptr<UniformBuffer> inBuffer)
     ubo.projection = glm::perspective(glm::radians(45.0f), surfaceSize.x / float(surfaceSize.y), 0.1f, 10.0f);
 
     inBuffer->setData(static_cast<const void*>(&ubo), sizeof(SimpleUniformBuffer));
-
-    SimpleUniformBuffer buffer;
 }
 
 std::shared_ptr<Texture2D> SimpleRenderer::loadTexture(const std::string& inFilepath)
@@ -177,7 +191,13 @@ std::shared_ptr<Texture2D> SimpleRenderer::loadTexture(const std::string& inFile
     if (pixels == nullptr)
         return nullptr;
 
-    auto texture = mDevice->createTexture2D(ImageFormat::UnormR8G8B8A8, static_cast<uint32_t>(width), static_cast<uint32_t>(height), pixels);
+	TextureCreateParams textureParams = {
+		glm::uvec3{width, height, 1},
+		ImageFormat::UnormR8G8B8A8,
+		ImageUsage::Sampler,
+		pixels
+	};
+    auto texture = mDevice->createTexture2D(textureParams);
 
     stbi_image_free(pixels);
     return texture;

@@ -4,11 +4,11 @@
 #include <sigma/Vulkan/RenderPassVK.hpp>
 #include <sigma/Vulkan/UtilVK.hpp>
 
-FrameBufferVK::FrameBufferVK(std::shared_ptr<DeviceVK> inDevice, VkFramebuffer inFrameBuffer, std::shared_ptr<RenderPassVK> inRenderPass, Rect<int32_t> inExtent)
+FrameBufferVK::FrameBufferVK(std::shared_ptr<DeviceVK> inDevice, VkFramebuffer inFrameBuffer, std::shared_ptr<RenderPassVK> inRenderPass, const glm::uvec2& inSize)
     : mDevice(inDevice)
     , mFrameBuffer(inFrameBuffer)
     , mRenderPass(inRenderPass)
-    , mExtent(inExtent)
+    , mSize(inSize)
 {
 }
 
@@ -23,7 +23,7 @@ std::shared_ptr<RenderPass> FrameBufferVK::renderPass() const
     return mRenderPass;
 }
 
-Rect<int32_t> FrameBufferVK::extent() const
+glm::uvec2 FrameBufferVK::size() const
 {
-    return mExtent;
+    return mSize;
 }

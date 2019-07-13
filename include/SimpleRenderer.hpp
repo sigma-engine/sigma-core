@@ -14,6 +14,8 @@ class UniformBuffer;
 class DescriptorSet;
 class Texture2D;
 class Sampler2D;
+class RenderPass;
+class FrameBuffer;
 
 class SimpleRenderer {
 public:
@@ -27,6 +29,10 @@ private:
     std::shared_ptr<Engine> mEngine = nullptr;
     std::shared_ptr<Device> mDevice = nullptr;
     std::shared_ptr<Surface> mSurface = nullptr;
+
+	std::shared_ptr<RenderPass> mTestRenderPass = nullptr;
+	std::shared_ptr<Texture2D> mTestTexture0 = nullptr;
+	std::shared_ptr<FrameBuffer> mTestFrameBuffer = nullptr;
 
     std::vector<std::shared_ptr<CommandBuffer>> mCommandBuffers;
     std::vector<std::shared_ptr<UniformBuffer>> mUniformBuffers;

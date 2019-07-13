@@ -20,28 +20,43 @@ Texture2DVK::~Texture2DVK()
     }
 }
 
-bool Texture2DVK::initialize(ImageFormat inFormat, uint32_t inWidth, uint32_t inHeight, const void* inPixels)
+bool Texture2DVK::initialize(const TextureCreateParams& inParams)
 {
-    mWidth = inWidth;
-    mHeight = inHeight;
-    mFormat = inFormat;
+	// TODO texture types other than 2D
+	SIGMA_ASSERT(inParams.size.x > 0 && inParams.size.y > 0 && inParams.size.z == 1, "Can only create 2d textures for now!");
 
-    uint64_t imageSize = inWidth * inHeight * imageFormatPixelSize(inFormat);
-    VkFormat format = convertImageFormatVK(inFormat);
+	mSize = inParams.size;
+    mFormat = inParams.format;
+
+    uint64_t imageSize = mSize.x * mSize.y * imageFormatPixelSize(mFormat);
+    VkFormat format = convertImageFormatVK(mFormat);
 
     VkResult result;
     VkImageCreateInfo imageInfo = {};
     imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
     imageInfo.imageType = VK_IMAGE_TYPE_2D;
-    imageInfo.extent.width = inWidth;
-    imageInfo.extent.height = inHeight;
-    imageInfo.extent.depth = 1;
+    imageInfo.extent.width = mSize.x;
+    imageInfo.extent.height = mSize.y;
+    imageInfo.extent.depth = mSize.z;
     imageInfo.mipLevels = 1;
     imageInfo.arrayLayers = 1;
     imageInfo.format = format;
     imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
     imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-    imageInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+
+	imageInfo.usage = 0;
+	if (inParams.usage.isSet(ImageUsage::Sampler))
+		imageInfo.usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
+
+	if (inParams.usage.isSet(ImageUsage::ColorAttachment))
+		imageInfo.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+
+	if (inParams.usage.isSet(ImageUsage::DepthStencilAttachment))
+		imageInfo.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+
+	if (inParams.pixels)
+		imageInfo.usage |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+
     imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
     imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
     imageInfo.flags = 0;
@@ -65,9 +80,12 @@ bool Texture2DVK::initialize(ImageFormat inFormat, uint32_t inWidth, uint32_t in
     viewInfo.subresourceRange.layerCount = 1;
     viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
 
-    CHECK_VK(result = setData(inPixels, imageSize));
-    if (result != VK_SUCCESS)
-        return false;
+	if (inParams.pixels)
+	{
+		CHECK_VK(result = setData(inParams.pixels, imageSize));
+		if (result != VK_SUCCESS)
+			return false;
+	}
 
     CHECK_VK(result = vkCreateImageView(mDevice->handle(), &viewInfo, nullptr, &mImageView));
     if (result != VK_SUCCESS)
@@ -101,7 +119,7 @@ VkResult Texture2DVK::setData(const void* inData, uint64_t inSize)
     memcpy(dstData, inData, bufferInfo.size);
     vkUnmapMemory(mDevice->handle(), stagingMemory);
 
-    CHECK_VK(result = mDevice->copyBufferToImage(mImage, stagingBuffer, convertImageFormatVK(mFormat), mWidth, mHeight));
+    CHECK_VK(result = mDevice->copyBufferToImage(mImage, stagingBuffer, convertImageFormatVK(mFormat), mSize.x, mSize.y));
 done:
     if (stagingBuffer)
         vkDestroyBuffer(mDevice->handle(), stagingBuffer, nullptr);

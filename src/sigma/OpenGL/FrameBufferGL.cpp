@@ -4,10 +4,23 @@
 #include <sigma/OpenGL/RenderPassGL.hpp>
 #include <sigma/OpenGL/UtilGL.hpp>
 
-FrameBufferGL::FrameBufferGL(std::shared_ptr<RenderPassGL> inRenderPass, Rect<int32_t> inExtent)
-    : mRenderPass(inRenderPass)
-    , mExtent(inExtent)
+FrameBufferGL::FrameBufferGL(std::shared_ptr<RenderPassGL> inRenderPass, const glm::uvec2& inSize, GLuint inHandle)
+	: mRenderPass(inRenderPass)
+	, mSize(inSize)
+	, mHandle(inHandle)
 {
+
+}
+
+FrameBufferGL::FrameBufferGL()
+{
+	CHECK_GL(glCreateFramebuffers(1, &mHandle));
+}
+
+FrameBufferGL::~FrameBufferGL()
+{
+	if (mHandle)
+		CHECK_GL(glDeleteFramebuffers(1, &mHandle));
 }
 
 std::shared_ptr<RenderPass> FrameBufferGL::renderPass() const
@@ -15,7 +28,15 @@ std::shared_ptr<RenderPass> FrameBufferGL::renderPass() const
     return mRenderPass;
 }
 
-Rect<int32_t> FrameBufferGL::extent() const
+glm::uvec2 FrameBufferGL::size() const
 {
-    return mExtent;
+    return mSize;
+}
+
+bool FrameBufferGL::initialize(const FrameBufferCreateParams& inParams)
+{
+	SIGMA_ASSERT(std::dynamic_pointer_cast<RenderPassGL>(inParams.renderPass), "Must use opengl render pass with opengl framebuffer");
+    mSize = inParams.size;
+    mRenderPass = std::static_pointer_cast<RenderPassGL>(inParams.renderPass);
+    return false;
 }

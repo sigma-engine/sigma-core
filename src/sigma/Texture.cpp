@@ -2,6 +2,12 @@
 
 #include <sigma/Log.hpp>
 
+FlagSet<ImageUsage> operator|(const ImageUsage &inA, const ImageUsage &inB)
+{
+	return FlagSet<ImageUsage>(inA) | inB;
+}
+
+
 uint64_t imageFormatPixelSize(ImageFormat inFormat)
 {
     switch (inFormat) {

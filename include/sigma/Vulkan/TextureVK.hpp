@@ -19,13 +19,12 @@ public:
 
     VkImageView imageViewHandle() const { return mImageView; };
 
-    bool initialize(ImageFormat inFormat, uint32_t inWidth, uint32_t inHeight, const void* inPixels);
+    bool initialize(const TextureCreateParams &inParams);
 
 private:
     std::shared_ptr<DeviceVK> mDevice = nullptr;
 
-    uint32_t mWidth;
-    uint32_t mHeight;
+	glm::uvec3 mSize;
     ImageFormat mFormat;
 
     VkImage mImage = nullptr;

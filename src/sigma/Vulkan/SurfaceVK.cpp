@@ -238,7 +238,7 @@ bool SurfaceVK::createSwapChain(std::shared_ptr<DeviceVK> inDevice, const Surfac
             SIGMA_ERROR("Could not create Swapchain frame buffer!");
             return false;
         }
-        mFrameData[i].frameBuffer = std::make_shared<FrameBufferVK>(mDevice, FrameBuffer, mRenderPass, Rect<int32_t> { { 0, 0 }, { mExtent.width, mExtent.height } });
+        mFrameData[i].frameBuffer = std::make_shared<FrameBufferVK>(mDevice, FrameBuffer, mRenderPass, glm::uvec2{ mExtent.width, mExtent.height });
     }
 
     mImageAvailableSemaphores.resize(mMaxPendingFrames);

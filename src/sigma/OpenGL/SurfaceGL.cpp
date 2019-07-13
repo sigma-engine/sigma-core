@@ -50,7 +50,7 @@ bool SurfaceGL::createSwapChain(std::shared_ptr<DeviceGL> inDevice)
     if (renderPass == nullptr)
         return false;
 
-    mFrameData.frameBuffer = std::make_shared<FrameBufferGL>(renderPass, Rect<int32_t> { { 0, 0 }, { mWidth, mHeight } });
+    mFrameData.frameBuffer = std::make_shared<FrameBufferGL>(renderPass, glm::uvec2{ mWidth, mHeight }, 0);
 
     return mFrameData.frameBuffer != nullptr;
 }
