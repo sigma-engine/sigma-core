@@ -3,12 +3,15 @@
 #include <sigma/Rect.hpp>
 
 #include <memory>
+#include <vector>
 
 class RenderPass;
+class Texture2D;
 
 struct FrameBufferCreateParams {
     glm::uvec2 size;
     std::shared_ptr<RenderPass> renderPass = nullptr;
+	std::vector<std::shared_ptr<Texture2D>> attachments;
 };
 
 class FrameBuffer {

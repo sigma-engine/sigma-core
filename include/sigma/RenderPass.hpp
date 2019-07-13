@@ -20,4 +20,7 @@ struct RenderPassCreateParams {
 class RenderPass {
 public:
     virtual ~RenderPass() = default;
+
+	virtual const std::vector<RenderPassAttachment> &attachments() const = 0;
+private:
 };

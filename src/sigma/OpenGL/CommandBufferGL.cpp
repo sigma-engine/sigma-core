@@ -6,6 +6,7 @@
 #include <sigma/OpenGL/PipelineGL.hpp>
 #include <sigma/OpenGL/UtilGL.hpp>
 #include <sigma/OpenGL/VertexBufferGL.hpp>
+#include <sigma/OpenGL/FrameBufferGL.hpp>
 
 #include <glad/glad.h>
 
@@ -15,6 +16,7 @@ void CommandBufferGL::begin()
 
 void CommandBufferGL::beginRenderPass(const RenderPassBeginParams& inParams)
 {
+	std::static_pointer_cast<FrameBufferGL>(inParams.frameBuffer)->bind();
     CHECK_GL(glViewport(inParams.renderArea.origin.x, inParams.renderArea.origin.y, inParams.renderArea.size.x, inParams.renderArea.size.y));
     CHECK_GL(glClearColor(0, 0, 0, 1));
     CHECK_GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));

@@ -89,7 +89,11 @@ std::shared_ptr<Shader> DeviceGL::createShader(ShaderType inType, const std::str
 
 std::shared_ptr<RenderPass> DeviceGL::createRenderPass(const RenderPassCreateParams& inParams)
 {
-    return std::make_shared<RenderPassGL>();
+    auto renderPass = std::make_shared<RenderPassGL>();
+    if (!renderPass->initialize(inParams))
+        return nullptr;
+
+    return renderPass;
 }
 
 std::shared_ptr<FrameBuffer> DeviceGL::createFrameBuffer(const FrameBufferCreateParams& inParams)
@@ -144,7 +148,7 @@ std::shared_ptr<UniformBuffer> DeviceGL::createUniformBuffer(uint64_t inSize)
     return buffer;
 }
 
-std::shared_ptr<Texture2D> DeviceGL::createTexture2D(const TextureCreateParams &inParams)
+std::shared_ptr<Texture2D> DeviceGL::createTexture2D(const TextureCreateParams& inParams)
 {
     auto texture = std::make_shared<Texture2DGL>();
     if (!texture->initialize(inParams))

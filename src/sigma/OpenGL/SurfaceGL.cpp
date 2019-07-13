@@ -44,7 +44,7 @@ void SurfaceGL::nextImage(SurfaceImageData*& outData)
 bool SurfaceGL::createSwapChain(std::shared_ptr<DeviceGL> inDevice)
 {
     RenderPassCreateParams renderPassCreateParams = {
-        { { AttachmentType::ColorAttachment, format() } }
+        { { AttachmentType::ColorAttachment, format() } } // TODO: depth buffer, and stencil buffer
     };
     auto renderPass = std::static_pointer_cast<RenderPassGL>(inDevice->createRenderPass(renderPassCreateParams));
     if (renderPass == nullptr)

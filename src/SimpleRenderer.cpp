@@ -126,18 +126,35 @@ bool SimpleRenderer::initialize()
     mIndexBuffer->setData(indices.data(), sizeof(uint16_t) * indices.size());
 
 	RenderPassCreateParams renderPassParams = {
-		{{ AttachmentType::ColorAttachment, ImageFormat::UnormR8G8B8A8 }}
+		{
+			{ AttachmentType::ColorAttachment, ImageFormat::UnormR8G8B8A8 },
+			{ AttachmentType::ColorAttachment, ImageFormat::UnormR8G8B8A8 }
+		}
 	};
 	mTestRenderPass = mDevice->createRenderPass(renderPassParams);
 	if (mTestRenderPass == nullptr)
 		return false;
 
-	// mTestTexture0 = mDevice->createTexture2D(ImageFormat::UnormR8G8B8A8, )
+	TextureCreateParams colorAttParams = {
+		glm::uvec3(mSurface->size(), 1),
+		ImageFormat::UnormR8G8B8A8,
+		ImageUsage::ColorAttachment
+	};
+	mTestTexture0 = mDevice->createTexture2D(colorAttParams);
+	if (mTestTexture0 == nullptr)
+		return false;
 
-	/*mTestFrameBuffer = mDevice->createFrameBuffer({
+	mTestTexture1 = mDevice->createTexture2D(colorAttParams);
+	if (mTestTexture1 == nullptr)
+		return false;
+
+	mTestFrameBuffer = mDevice->createFrameBuffer({
 		mSurface->size(),
 		mTestRenderPass,
-	});*/
+		{mTestTexture0, mTestTexture1}
+	});
+	if (mTestFrameBuffer == nullptr)
+		return false;
 
     return true;
 }

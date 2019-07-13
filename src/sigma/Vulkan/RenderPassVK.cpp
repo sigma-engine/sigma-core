@@ -14,8 +14,15 @@ RenderPassVK::~RenderPassVK()
         vkDestroyRenderPass(mDevice->handle(), mRenderPass, nullptr);
 }
 
+const std::vector<RenderPassAttachment>& RenderPassVK::attachments() const
+{
+    return mAttachments;
+}
+
 bool RenderPassVK::initialize(const RenderPassCreateParams& inParams)
 {
+    mAttachments = inParams.attachments;
+
     VkResult result;
     std::vector<VkAttachmentDescription> colorAttachments;
     std::vector<VkAttachmentReference> colorAttachmentRefs;

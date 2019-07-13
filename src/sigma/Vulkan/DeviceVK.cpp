@@ -13,6 +13,7 @@
 #include <sigma/Vulkan/UniformBufferVK.hpp>
 #include <sigma/Vulkan/UtilVK.hpp>
 #include <sigma/Vulkan/VertexBufferVK.hpp>
+#include <sigma/Vulkan/FrameBufferVK.hpp>
 
 #include <sigma/Log.hpp>
 
@@ -328,8 +329,11 @@ std::shared_ptr<RenderPass> DeviceVK::createRenderPass(const RenderPassCreatePar
 
 std::shared_ptr<FrameBuffer> DeviceVK::createFrameBuffer(const FrameBufferCreateParams &inParams)
 {
-    SIGMA_ASSERT(false, "Not implemented!");
-    return nullptr;
+	auto frameBuffer = std::make_shared<FrameBufferVK>(shared_from_this());
+	if (!frameBuffer->initialize(inParams))
+		return nullptr;
+
+	return frameBuffer;
 }
 
 std::shared_ptr<DescriptorSetLayout> DeviceVK::createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding>& inBindings)

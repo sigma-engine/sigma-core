@@ -95,6 +95,7 @@ add_library(sigma-core STATIC
 	src/sigma/OpenGL/ShaderGL.cpp
 
 	include/sigma/OpenGL/RenderPassGL.hpp
+	src/sigma/OpenGL/RenderPassGL.cpp
 
 	include/sigma/OpenGL/DescriptorSetGL.hpp
 	src/sigma/OpenGL/DescriptorSetGL.cpp

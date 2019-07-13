@@ -32,6 +32,7 @@ private:
 
 	std::shared_ptr<RenderPass> mTestRenderPass = nullptr;
 	std::shared_ptr<Texture2D> mTestTexture0 = nullptr;
+	std::shared_ptr<Texture2D> mTestTexture1 = nullptr;
 	std::shared_ptr<FrameBuffer> mTestFrameBuffer = nullptr;
 
     std::vector<std::shared_ptr<CommandBuffer>> mCommandBuffers;

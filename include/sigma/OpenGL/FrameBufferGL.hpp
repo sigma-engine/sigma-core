@@ -4,10 +4,12 @@
 
 #include <glad/glad.h>
 
+#include <vector>
 #include <memory>
 
 class DeviceGL;
 class RenderPassGL;
+class Texture2DGL;
 
 class FrameBufferGL : public FrameBuffer {
 public:
@@ -23,8 +25,12 @@ public:
 
     bool initialize(const FrameBufferCreateParams& inParams);
 
+	void bind();
+
 private:
     std::shared_ptr<RenderPassGL> mRenderPass = nullptr;
+	std::vector<std::shared_ptr<Texture2DGL>> mAttachments;
+	std::vector<GLenum> mDrawBuffers;
     glm::uvec2 mSize;
 	GLuint mHandle = 0;
 };
