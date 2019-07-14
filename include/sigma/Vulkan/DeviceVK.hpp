@@ -4,6 +4,7 @@
 
 #include <sigma/Vulkan/DeviceManagerVK.hpp>
 
+#include <VulkanMemoryAllocator/vk_mem_alloc.h>
 #include <vulkan/vulkan.h>
 
 #include <optional>
@@ -41,7 +42,7 @@ public:
 
     virtual std::shared_ptr<RenderPass> createRenderPass(const RenderPassCreateParams& inParams) override;
 
-    virtual std::shared_ptr<FrameBuffer> createFrameBuffer(const FrameBufferCreateParams &inParams) override;
+    virtual std::shared_ptr<FrameBuffer> createFrameBuffer(const FrameBufferCreateParams& inParams) override;
 
     virtual std::shared_ptr<DescriptorSetLayout> createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding>& inBindings) override;
 
@@ -55,13 +56,15 @@ public:
 
     virtual std::shared_ptr<UniformBuffer> createUniformBuffer(uint64_t inSize) override;
 
-    virtual std::shared_ptr<Texture2D> createTexture2D(const TextureCreateParams &inParams) override;
+    virtual std::shared_ptr<Texture2D> createTexture2D(const TextureCreateParams& inParams) override;
 
     virtual std::shared_ptr<Sampler2D> createSampler2D() override;
 
     uint32_t graphicsQueueFamily() const;
 
     VkDevice handle() const { return mDevice; }
+
+    VmaAllocator allocator() const { return mAllocator; }
 
     VkQueue getQueue(uint32_t inFamily) const;
 
@@ -71,11 +74,11 @@ public:
 
     VkResult endTmpCommandBuffer(VkCommandBuffer inCommandBuffer);
 
-    VkResult createBuffer(VkBufferCreateInfo* inBufferCreateInfo, VkMemoryPropertyFlagBits inProperties, VkBuffer* outBuffer, VkDeviceMemory* outMemory);
+    // VkResult createBuffer(VkBufferCreateInfo* inBufferCreateInfo, VkMemoryPropertyFlagBits inProperties, VkBuffer* outBuffer, VkDeviceMemory* outMemory);
 
     VkResult copyBufferToBuffer(VkBuffer inDstBuffer, VkBuffer inSrcBuffer, uint64_t inSize);
 
-    VkResult createImage(VkImageCreateInfo* inImageCreateInfo, VkMemoryPropertyFlagBits inProperties, VkImage* outImage, VkDeviceMemory* outMemory);
+    // VkResult createImage(VkImageCreateInfo* inImageCreateInfo, VkMemoryPropertyFlagBits inProperties, VkImage* outImage, VkDeviceMemory* outMemory);
 
     void transitionImageLayout(VkCommandBuffer inCommandBuffer, VkImage inImage, VkFormat inFormat, VkImageLayout inSrcLayout, VkImageLayout inDstLayout);
 
@@ -85,6 +88,7 @@ private:
     VkInstance mInstance = nullptr;
     VkPhysicalDevice mPhysicalDevice = nullptr;
     VkDevice mDevice = nullptr;
+    VmaAllocator mAllocator = nullptr;
     std::vector<std::string> mRequiredExtensions;
     std::vector<std::string> mEnabledLayers;
     VkPhysicalDeviceProperties mPhysicalDeviceProperties;

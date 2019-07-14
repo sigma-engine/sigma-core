@@ -62,6 +62,10 @@
 		{
 			"name": "git:sigma-engine/stb",
 			"build_system": "cmake"
+		},
+		{
+			"name": "git:sigma-engine/VulkanMemoryAllocator",
+			"build_system": "cmake"
 		}
 	],
 	"dependencies2": [

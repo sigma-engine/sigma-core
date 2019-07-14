@@ -2,6 +2,7 @@
 
 #include <sigma/IndexBuffer.hpp>
 
+#include <VulkanMemoryAllocator/vk_mem_alloc.h>
 #include <vulkan/vulkan.h>
 
 #include <memory>
@@ -27,7 +28,7 @@ public:
 private:
     std::shared_ptr<DeviceVK> mDevice = nullptr;
     VkBuffer mHandle = nullptr;
-    VkDeviceMemory mMemory = nullptr;
+    VmaAllocation mAllocation = nullptr;
     uint64_t mSize = 0;
 
     PrimitiveType mPrimitiveType;

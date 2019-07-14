@@ -9,6 +9,7 @@ find_package(SDL2 REQUIRED)
 find_package(glad REQUIRED)
 find_package(Vulkan REQUIRED)
 find_package(stb REQUIRED)
+find_package(VulkanMemoryAllocator REQUIRED)
 
 include(cmake/GLSL.cmake)
 include(cmake/Texture.cmake)
@@ -176,7 +177,8 @@ PUBLIC
     spdlog::spdlog
     SDL2::SDL2-static
     glad::glad
-    Vulkan::Vulkan
+	Vulkan::Vulkan
+	VulkanMemoryAllocator::VulkanMemoryAllocator
 	stb::stb_image
     glm
 )

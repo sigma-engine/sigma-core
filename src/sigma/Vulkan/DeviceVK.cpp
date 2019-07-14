@@ -15,9 +15,6 @@
 #include <sigma/Vulkan/UtilVK.hpp>
 #include <sigma/Vulkan/VertexBufferVK.hpp>
 
-
-#include <sigma/Log.hpp>
-
 #include <fstream>
 
 DeviceVK::DeviceVK(VkInstance inInstance, VkPhysicalDevice inDevice, const std::vector<std::string>& inEnabledLayers)
@@ -55,6 +52,9 @@ DeviceVK::~DeviceVK()
 
         if (mGraphicsCommandPool)
             vkDestroyCommandPool(mDevice, mGraphicsCommandPool, nullptr);
+
+        if (mAllocator)
+            vmaDestroyAllocator(mAllocator);
 
         vkDestroyDevice(mDevice, nullptr);
     }
@@ -242,6 +242,16 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
     CHECK_VK(result = vkCreateDevice(mPhysicalDevice, &createInfo, nullptr, &mDevice));
     if (result != VK_SUCCESS) {
         SIGMA_ERROR("Could not create Vulkan logical device!");
+        return false;
+    }
+
+    VmaAllocatorCreateInfo allocatorInfo = {};
+    allocatorInfo.physicalDevice = mPhysicalDevice;
+    allocatorInfo.device = mDevice;
+
+    CHECK_VK(result = vmaCreateAllocator(&allocatorInfo, &mAllocator));
+    if (result != VK_SUCCESS) {
+        SIGMA_ERROR("Could not create VulkanMemoryAllocator!");
         return false;
     }
 
@@ -479,6 +489,7 @@ done:
     return result;
 }
 
+#if 0
 VkResult DeviceVK::createBuffer(VkBufferCreateInfo* inBufferCreateInfo, VkMemoryPropertyFlagBits inProperties, VkBuffer* outBuffer, VkDeviceMemory* outMemory)
 {
     // TODO: this is crap (memory)
@@ -515,6 +526,7 @@ done:
     }
     return result;
 }
+#endif
 
 VkResult DeviceVK::copyBufferToBuffer(VkBuffer inDstBuffer, VkBuffer inSrcBuffer, uint64_t inSize)
 {
@@ -536,6 +548,7 @@ done:
     return result;
 }
 
+#if 0
 VkResult DeviceVK::createImage(VkImageCreateInfo* inImageCreateInfo, VkMemoryPropertyFlagBits inProperties, VkImage* outImage, VkDeviceMemory* outMemory)
 {
     // TODO: this is crap (memory)
@@ -572,6 +585,7 @@ done:
     }
     return result;
 }
+#endif
 
 void DeviceVK::transitionImageLayout(VkCommandBuffer inCommandBuffer, VkImage inImage, VkFormat inFormat, VkImageLayout inSrcLayout, VkImageLayout inDstLayout)
 {

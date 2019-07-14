@@ -15,8 +15,9 @@ Texture2DVK::~Texture2DVK()
             vkDestroyImageView(mDevice->handle(), mImageView, nullptr);
         if (mImage)
             vkDestroyImage(mDevice->handle(), mImage, nullptr);
-        if (mMemory)
-            vkFreeMemory(mDevice->handle(), mMemory, nullptr);
+
+        if (mAllocation)
+            vmaFreeMemory(mDevice->allocator(), mAllocation);
     }
 }
 
@@ -61,7 +62,14 @@ bool Texture2DVK::initialize(const TextureCreateParams& inParams)
     imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
     imageInfo.flags = 0;
 
+#if 0
     CHECK_VK(result = mDevice->createImage(&imageInfo, VkMemoryPropertyFlagBits(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT), &mImage, &mMemory));
+#else
+    VmaAllocationCreateInfo allocInfo = {};
+    allocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+
+    CHECK_VK(result = vmaCreateImage(mDevice->allocator(), &imageInfo, &allocInfo, &mImage, &mAllocation, nullptr));
+#endif
     if (result != VK_SUCCESS)
         return false;
 
@@ -93,6 +101,7 @@ bool Texture2DVK::initialize(const TextureCreateParams& inParams)
     return true;
 }
 
+#if 0
 VkResult Texture2DVK::setData(const void* inData, uint64_t inSize)
 {
     // TODO: This is crap
@@ -127,3 +136,41 @@ done:
 
     return result;
 }
+#else
+VkResult Texture2DVK::setData(const void* inData, uint64_t inSize)
+{
+    // TODO: This is still crap
+    VkResult result;
+    VkBuffer stagingBuffer = nullptr;
+    VmaAllocation stagingAllocation = nullptr;
+    void* dstData = nullptr;
+    VkBufferCreateInfo bufferInfo = {};
+
+    bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    bufferInfo.size = inSize;
+    bufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+    bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+    VmaAllocationCreateInfo allocInfo = {};
+    allocInfo.usage = VMA_MEMORY_USAGE_CPU_ONLY;
+
+    CHECK_VK(result = vmaCreateBuffer(mDevice->allocator(), &bufferInfo, &allocInfo, &stagingBuffer, &stagingAllocation, nullptr));
+    if (result != VK_SUCCESS)
+        goto done;
+
+    CHECK_VK(result = vmaMapMemory(mDevice->allocator(), stagingAllocation, &dstData));
+    if (result != VK_SUCCESS)
+        goto done;
+
+    memcpy(dstData, inData, bufferInfo.size);
+
+    vmaUnmapMemory(mDevice->allocator(), stagingAllocation);
+
+    CHECK_VK(result = mDevice->copyBufferToImage(mImage, stagingBuffer, convertImageFormatVK(mFormat), mSize.x, mSize.y));
+done:
+    if (stagingBuffer || stagingAllocation)
+        vmaDestroyBuffer(mDevice->allocator(), stagingBuffer, stagingAllocation);
+
+    return result;
+}
+#endif

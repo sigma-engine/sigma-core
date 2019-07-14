@@ -2,6 +2,7 @@
 
 #include <sigma/UniformBuffer.hpp>
 
+#include <VulkanMemoryAllocator/vk_mem_alloc.h>
 #include <vulkan/vulkan.h>
 
 #include <cstdint>
@@ -27,6 +28,8 @@ private:
     std::shared_ptr<DeviceVK> mDevice = nullptr;
 
     VkBuffer mHandle = nullptr;
-    VkDeviceMemory mMemory = nullptr;
+    VmaAllocation mAllocation = nullptr;
+    void* mData = nullptr;
+
     uint64_t mSize;
 };

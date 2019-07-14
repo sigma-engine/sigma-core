@@ -2,6 +2,7 @@
 
 #include <sigma/Texture.hpp>
 
+#include <VulkanMemoryAllocator/vk_mem_alloc.h>
 #include <vulkan/vulkan.h>
 
 #include <cstdint>
@@ -19,17 +20,17 @@ public:
 
     VkImageView imageViewHandle() const { return mImageView; };
 
-    bool initialize(const TextureCreateParams &inParams);
+    bool initialize(const TextureCreateParams& inParams);
 
 private:
     std::shared_ptr<DeviceVK> mDevice = nullptr;
 
-	glm::uvec3 mSize;
+    glm::uvec3 mSize;
     ImageFormat mFormat;
 
     VkImage mImage = nullptr;
-    VkDeviceMemory mMemory = nullptr; // TODO: memory manager
     VkImageView mImageView = nullptr;
+    VmaAllocation mAllocation = nullptr;
 
     VkResult setData(const void* inData, uint64_t inSize);
 };
