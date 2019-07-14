@@ -22,10 +22,10 @@ Texture2DVK::~Texture2DVK()
 
 bool Texture2DVK::initialize(const TextureCreateParams& inParams)
 {
-	// TODO texture types other than 2D
-	SIGMA_ASSERT(inParams.size.x > 0 && inParams.size.y > 0 && inParams.size.z == 1, "Can only create 2d textures for now!");
+    // TODO texture types other than 2D
+    SIGMA_ASSERT(inParams.size.x > 0 && inParams.size.y > 0 && inParams.size.z == 1, "Can only create 2d textures for now!");
 
-	mSize = inParams.size;
+    mSize = inParams.size;
     mFormat = inParams.format;
 
     uint64_t imageSize = mSize.x * mSize.y * imageFormatPixelSize(mFormat);
@@ -44,18 +44,18 @@ bool Texture2DVK::initialize(const TextureCreateParams& inParams)
     imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
     imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
-	imageInfo.usage = 0;
-	if (inParams.usage.isSet(ImageUsage::Sampler))
-		imageInfo.usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
+    imageInfo.usage = 0;
+    if (inParams.usage.isSet(ImageUsage::Sampler))
+        imageInfo.usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
 
-	if (inParams.usage.isSet(ImageUsage::ColorAttachment))
-		imageInfo.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+    if (inParams.usage.isSet(ImageUsage::ColorAttachment))
+        imageInfo.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-	if (inParams.usage.isSet(ImageUsage::DepthStencilAttachment))
-		imageInfo.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+    if (inParams.usage.isSet(ImageUsage::DepthStencilAttachment))
+        imageInfo.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
 
-	if (inParams.pixels)
-		imageInfo.usage |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+    if (inParams.pixels)
+        imageInfo.usage |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 
     imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
     imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -80,12 +80,11 @@ bool Texture2DVK::initialize(const TextureCreateParams& inParams)
     viewInfo.subresourceRange.layerCount = 1;
     viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
 
-	if (inParams.pixels)
-	{
-		CHECK_VK(result = setData(inParams.pixels, imageSize));
-		if (result != VK_SUCCESS)
-			return false;
-	}
+    if (inParams.pixels) {
+        CHECK_VK(result = setData(inParams.pixels, imageSize));
+        if (result != VK_SUCCESS)
+            return false;
+    }
 
     CHECK_VK(result = vkCreateImageView(mDevice->handle(), &viewInfo, nullptr, &mImageView));
     if (result != VK_SUCCESS)

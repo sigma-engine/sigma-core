@@ -3,6 +3,7 @@
 #include <sigma/Log.hpp>
 #include <sigma/Vulkan/CommandBufferVK.hpp>
 #include <sigma/Vulkan/DescriptorSetVK.hpp>
+#include <sigma/Vulkan/FrameBufferVK.hpp>
 #include <sigma/Vulkan/IndexBufferVK.hpp>
 #include <sigma/Vulkan/PipelineVK.hpp>
 #include <sigma/Vulkan/RenderPassVK.hpp>
@@ -13,7 +14,7 @@
 #include <sigma/Vulkan/UniformBufferVK.hpp>
 #include <sigma/Vulkan/UtilVK.hpp>
 #include <sigma/Vulkan/VertexBufferVK.hpp>
-#include <sigma/Vulkan/FrameBufferVK.hpp>
+
 
 #include <sigma/Log.hpp>
 
@@ -327,13 +328,13 @@ std::shared_ptr<RenderPass> DeviceVK::createRenderPass(const RenderPassCreatePar
     return renderPass;
 }
 
-std::shared_ptr<FrameBuffer> DeviceVK::createFrameBuffer(const FrameBufferCreateParams &inParams)
+std::shared_ptr<FrameBuffer> DeviceVK::createFrameBuffer(const FrameBufferCreateParams& inParams)
 {
-	auto frameBuffer = std::make_shared<FrameBufferVK>(shared_from_this());
-	if (!frameBuffer->initialize(inParams))
-		return nullptr;
+    auto frameBuffer = std::make_shared<FrameBufferVK>(shared_from_this());
+    if (!frameBuffer->initialize(inParams))
+        return nullptr;
 
-	return frameBuffer;
+    return frameBuffer;
 }
 
 std::shared_ptr<DescriptorSetLayout> DeviceVK::createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding>& inBindings)
@@ -390,7 +391,7 @@ std::shared_ptr<UniformBuffer> DeviceVK::createUniformBuffer(uint64_t inSize)
     return buffer;
 }
 
-std::shared_ptr<Texture2D> DeviceVK::createTexture2D(const TextureCreateParams &inParams)
+std::shared_ptr<Texture2D> DeviceVK::createTexture2D(const TextureCreateParams& inParams)
 {
     auto texture = std::make_shared<Texture2DVK>(shared_from_this());
     if (!texture->initialize(inParams))
@@ -590,7 +591,7 @@ void DeviceVK::transitionImageLayout(VkCommandBuffer inCommandBuffer, VkImage in
     barrier.subresourceRange.baseArrayLayer = 0;
     barrier.subresourceRange.layerCount = 1;
 
-	// TODO: add other layout transition types
+    // TODO: add other layout transition types
     if (inSrcLayout == VK_IMAGE_LAYOUT_UNDEFINED && inDstLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
         barrier.srcAccessMask = 0;
         barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
@@ -621,9 +622,9 @@ VkResult DeviceVK::copyBufferToImage(VkImage inDstImage, VkBuffer inSrcBuffer, V
     VkCommandBuffer commandBuffer = nullptr;
     VkBufferImageCopy region = {};
 
-	CHECK_VK(result = startTmpCommandBuffer(&commandBuffer));
-	if (result != VK_SUCCESS)
-		goto done;
+    CHECK_VK(result = startTmpCommandBuffer(&commandBuffer));
+    if (result != VK_SUCCESS)
+        goto done;
 
     transitionImageLayout(commandBuffer, inDstImage, inFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
@@ -641,12 +642,11 @@ VkResult DeviceVK::copyBufferToImage(VkImage inDstImage, VkBuffer inSrcBuffer, V
 
     vkCmdCopyBufferToImage(commandBuffer, inSrcBuffer, inDstImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 
-    
     transitionImageLayout(commandBuffer, inDstImage, inFormat, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
-	CHECK_VK(result = endTmpCommandBuffer(commandBuffer));
-	if (result != VK_SUCCESS)
-		goto done;
+    CHECK_VK(result = endTmpCommandBuffer(commandBuffer));
+    if (result != VK_SUCCESS)
+        goto done;
 done:
     return result;
 }
