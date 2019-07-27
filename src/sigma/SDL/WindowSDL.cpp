@@ -159,6 +159,59 @@ bool EventEmitterSDL::process(const std::vector<std::weak_ptr<EventListener>>& i
     while (SDL_PollEvent(&event) != 0) {
         switch (event.type) {
         // TODO: handle all events here
+		case SDL_MOUSEWHEEL:
+		{
+			MouseWheelEvent evt(float(event.wheel.x), float(event.wheel.y));
+			std::for_each(inListeners.begin(), inListeners.end(), [&](auto l) {
+				auto ptr = l.lock();
+				if (ptr)
+					ptr->processEvent(&evt);
+			});
+			break;
+		}
+		case SDL_MOUSEMOTION:
+		{
+			MouseEvent evt(EventType::MouseMove, float(event.motion.x), float(event.motion.y));
+			std::for_each(inListeners.begin(), inListeners.end(), [&](auto l) {
+				auto ptr = l.lock();
+				if (ptr)
+					ptr->processEvent(&evt);
+			});
+			break;
+		}
+		case SDL_MOUSEBUTTONUP:
+		case SDL_MOUSEBUTTONDOWN:
+		{
+			MouseButton button;
+			if (event.button.button == SDL_BUTTON_LEFT)
+				button = MouseButton::Left;
+			else if (event.button.button == SDL_BUTTON_RIGHT)
+				button = MouseButton::Right;
+			else if (event.button.button == SDL_BUTTON_MIDDLE)
+				button = MouseButton::Middle;
+
+			MouseButtonEvent evt(float(event.button.x), float(event.button.y), button, event.button.state == SDL_PRESSED);
+			std::for_each(inListeners.begin(), inListeners.end(), [&](auto l) {
+				auto ptr = l.lock();
+				if (ptr)
+					ptr->processEvent(&evt);
+				});
+			break;
+		}
+		case SDL_KEYDOWN:
+		case SDL_KEYUP:
+		{
+			if (event.key.keysym.sym == SDLK_LSHIFT)
+			{
+				KeyboardEvent evt(KeyboardKey::LeftShift, event.key.state == SDL_PRESSED);
+				std::for_each(inListeners.begin(), inListeners.end(), [&](auto l) {
+					auto ptr = l.lock();
+					if (ptr)
+						ptr->processEvent(&evt);
+					});
+				break;
+			}
+		}
         case SDL_WINDOWEVENT: {
             auto handle = SDL_GetWindowFromID(event.window.windowID);
             auto window = static_cast<WindowSDL*>(SDL_GetWindowData(handle, "this"));

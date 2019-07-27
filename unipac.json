@@ -66,6 +66,17 @@
 		{
 			"name": "git:sigma-engine/VulkanMemoryAllocator",
 			"build_system": "cmake"
+		},
+		{
+			"name": "git:skypjack/entt",
+			"build_system": "cmake"
+		},
+		{
+			"name": "git:sigma-engine/json",
+			"build_system": "cmake",
+			"cmake_args": [
+				"-DJSON_BuildTests=OFF"
+			]
 		}
 	],
 	"dependencies2": [
@@ -103,13 +114,6 @@
 			"cmake_args": [
 				"-DBENCHMARK_ENABLE_TESTING=OFF",
 				"-DBENCHMARK_ENABLE_INSTALL=ON"
-			]
-		},
-		{
-			"name": "git:sigma-engine/json",
-			"build_system": "cmake",
-			"cmake_args": [
-				"-DJSON_BuildTests=OFF"
 			]
 		},
 		{

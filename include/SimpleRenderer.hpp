@@ -3,6 +3,10 @@
 #include <memory>
 #include <vector>
 
+#include <entt/entt.hpp>
+
+#include <glm/mat4x4.hpp>
+
 class Engine;
 class Device;
 class Surface;
@@ -17,23 +21,29 @@ class Sampler2D;
 class RenderPass;
 class FrameBuffer;
 
+struct Vertex {
+    glm::vec3 position;
+    glm::vec3 color;
+    glm::vec2 uv;
+};
+
 class SimpleRenderer {
 public:
     SimpleRenderer(std::shared_ptr<Engine> inEngine, std::shared_ptr<Device> inDevice, std::shared_ptr<Surface> inSurface);
 
     bool initialize();
 
-    void render();
+    void render(const entt::entity& inCurrentCamera, const entt::registry& inRegistry);
 
 private:
     std::shared_ptr<Engine> mEngine = nullptr;
     std::shared_ptr<Device> mDevice = nullptr;
     std::shared_ptr<Surface> mSurface = nullptr;
 
-	std::shared_ptr<RenderPass> mTestRenderPass = nullptr;
-	std::shared_ptr<Texture2D> mTestTexture0 = nullptr;
-	std::shared_ptr<Texture2D> mTestTexture1 = nullptr;
-	std::shared_ptr<FrameBuffer> mTestFrameBuffer = nullptr;
+    std::shared_ptr<RenderPass> mTestRenderPass = nullptr;
+    std::shared_ptr<Texture2D> mTestTexture0 = nullptr;
+    std::shared_ptr<Texture2D> mTestTexture1 = nullptr;
+    std::shared_ptr<FrameBuffer> mTestFrameBuffer = nullptr;
 
     std::vector<std::shared_ptr<CommandBuffer>> mCommandBuffers;
     std::vector<std::shared_ptr<UniformBuffer>> mUniformBuffers;
@@ -45,7 +55,7 @@ private:
     std::shared_ptr<Texture2D> mTexture = nullptr;
     std::shared_ptr<Sampler2D> mSampler = nullptr;
 
-    void setupUniformBuffer(std::shared_ptr<UniformBuffer> inBuffer);
+    void setupUniformBuffer(const glm::mat4& inViewMatrix, std::shared_ptr<UniformBuffer> inBuffer);
 
     std::shared_ptr<Texture2D> loadTexture(const std::string& inFilepath);
 };

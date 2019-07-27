@@ -1,40 +1,80 @@
-#include <SimpleRenderer.hpp>
-#include <sigma/Device.hpp>
-#include <sigma/DeviceManager.hpp>
-#include <sigma/Engine.hpp>
-#include <sigma/Log.hpp>
-#include <sigma/Window.hpp>
+#include <sigma/Algorithm.hpp>
+
+#include <SimpleGame.hpp>
+
+#include <string>
+#include <vector>
+
+
+/* namespace gltf {
+using Buffer = std::vector<uint8_t>;
+
+struct BufferView {
+    uint64_t buffer;
+    uint64_t byteOffset;
+    uint64_t byteSize;
+    uint64_t byteStride;
+    uint64_t target;
+};
+
+struct BufferAccessor {
+    uint64_t bufferView;
+    uint64_t byteOffset;
+    uint64_t componentType;
+    uint64_t count;
+    uint64_t type;
+};
+
+class Mesh {
+};
+
+struct Scene {
+    std::vector<Buffer> buffers;
+    std::vector<BufferView> bufferViews;
+    std::vector<BufferAccessor> accessors;
+    std::vector<Mesh> meshes;
+};
+}
+
+void loadRegistry(const std::filesystem::path& inPath, entt::registry& inRegistry)
+{
+    const auto& folder = inPath.parent_path();
+    std::ifstream file(inPath);
+    const auto& gltfJson = nlohmann::json::parse(file);
+    const auto& gltfJsonBuffers = gltfJson["buffers"];
+    const auto& gltfJsonBufferViews = gltfJson["bufferViews"];
+    const auto& gltfJsonMeshes = gltfJson["meshes"];
+    gltf::Scene scene;
+    scene.buffers.resize(gltfJsonBuffers.size());
+    scene.bufferViews.resize(gltfJsonBufferViews.size());
+    scene.meshes.resize(gltfJsonMeshes.size());
+
+    for (size_t i = 0; i < scene.buffers.size(); ++i) {
+        auto bufferPath = folder / std::string(gltfJsonBuffers[i]["uri"]);
+        std::ifstream bufferFile(bufferPath, std::ios::binary);
+        scene.buffers[i].resize(gltfJsonBuffers[i]["byteLength"]);
+        bufferFile.read(reinterpret_cast<char*>(scene.buffers[i].data()), scene.buffers[i].size());
+    }
+
+    for (size_t i = 0; i < scene.bufferViews.size(); ++i) {
+        scene.bufferViews[i].buffer = gltfJsonBufferViews[i]["buffer"];
+        scene.bufferViews[i].byteOffset = gltfJsonBufferViews[i]["byteOffset"];
+        scene.bufferViews[i].byteSize = gltfJsonBufferViews[i]["byteLength"];
+        if (gltfJsonBufferViews[i].count("byteStride"))
+            scene.bufferViews[i].byteStride = gltfJsonBufferViews[i]["byteStride"];
+        scene.bufferViews[i].target = gltfJsonBufferViews[i]["target"];
+    }
+}
+*/
 
 int main(int argc, char const* argv[])
 {
-    (void)argc;
-    (void)argv;
-    auto engine = Engine::create();
-    if (!engine->initialize(argc > 1 ? GraphicsAPI::OpenGL : GraphicsAPI::Vulkan))
-        return -1;
+    std::vector<std::string> arguments(argc - 1);
+    std::transform(argv + 1, argv + (argc - 1) + 1, arguments.begin(), [](auto arg) { return arg; });
+    std::stable_sort(arguments.begin(), arguments.end(), [](auto a, auto b) {
+        return StartsWith(a, "-") && !StartsWith(b, "-");
+    });
 
-    auto deviceManager = engine->deviceManager();
-    if (deviceManager == nullptr)
-        return -1;
-
-    auto window = engine->createWindow(fmt::format("Simple Game - ({})", engine->graphicsAPI() == GraphicsAPI::OpenGL ? "OpenGL" : "Vulkan"), 1920 / 2, 1080 / 2);
-    if (window == nullptr)
-        return -1;
-
-    std::vector<std::shared_ptr<Device>> surfaceDevices;
-    deviceManager->enumerateSurfaceDevices(window->surface(), surfaceDevices);
-    if (surfaceDevices.empty())
-        return -1;
-
-    auto device = surfaceDevices[0];
-    if (!device->initialize({ window->surface() }))
-        return -1;
-
-    auto renderer = std::make_shared<SimpleRenderer>(engine, device, window->surface());
-    if (!renderer->initialize())
-        return -1;
-
-    while (window->open() && engine->process()) {
-        renderer->render();
-    }
+    SimpleGame game;
+    return game.run(arguments);
 }

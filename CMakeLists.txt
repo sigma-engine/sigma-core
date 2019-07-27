@@ -10,16 +10,20 @@ find_package(glad REQUIRED)
 find_package(Vulkan REQUIRED)
 find_package(stb REQUIRED)
 find_package(VulkanMemoryAllocator REQUIRED)
+find_package(EnTT REQUIRED)
+find_package(nlohmann_json REQUIRED)
 
 include(cmake/GLSL.cmake)
 include(cmake/Texture.cmake)
 
 add_library(sigma-core STATIC
+	include/sigma/Algorithm.hpp
 	include/sigma/FlagSet.hpp
 	include/sigma/Rect.hpp
 	include/sigma/Event.hpp
 	include/sigma/EventEmitter.hpp
 	include/sigma/EventListener.hpp
+	include/sigma/CameraComponent.hpp
 
 	include/sigma/DataTypes.hpp
 	src/sigma/DataTypes.cpp
@@ -181,6 +185,8 @@ PUBLIC
 	VulkanMemoryAllocator::VulkanMemoryAllocator
 	stb::stb_image
     glm
+	nlohmann_json::nlohmann_json
+	EnTT
 )
 
 if(NOT WIN32)
@@ -204,6 +210,12 @@ add_executable(simple-game
 
 	src/SimpleRenderer.cpp
 	include/SimpleRenderer.hpp
+	
+	src/SimpleCameraController.cpp
+	include/SimpleCameraController.hpp
+
+	src/SimpleGame.cpp
+	include/SimpleGame.hpp
 	src/main.cpp
 )
 compile_glsl_sources(simple-game)

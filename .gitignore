@@ -1,5 +1,7 @@
 *.jpg
 
+models
+
 build
 CMakeLists.txt.user
 .unipac

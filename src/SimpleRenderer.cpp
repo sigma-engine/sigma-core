@@ -1,5 +1,6 @@
 #include <SimpleRenderer.hpp>
 
+#include <sigma/CameraComponent.hpp>
 #include <sigma/CommandBuffer.hpp>
 #include <sigma/DescriptorSet.hpp>
 #include <sigma/Device.hpp>
@@ -7,14 +8,14 @@
 #include <sigma/FrameBuffer.hpp>
 #include <sigma/IndexBuffer.hpp>
 #include <sigma/Pipeline.hpp>
+#include <sigma/RenderPass.hpp>
 #include <sigma/Sampler.hpp>
 #include <sigma/Shader.hpp>
 #include <sigma/Surface.hpp>
 #include <sigma/Texture.hpp>
+#include <sigma/TransformComponent.hpp>
 #include <sigma/UniformBuffer.hpp>
 #include <sigma/VertexBuffer.hpp>
-#include <sigma/RenderPass.hpp>
-#include <sigma/FrameBuffer.hpp>
 
 #include <stb/stb_image.h>
 
@@ -25,11 +26,6 @@
 
 #include <chrono>
 
-struct Vertex {
-    glm::vec3 position;
-    glm::vec3 color;
-    glm::vec2 uv;
-};
 static std::vector<Vertex> vertices = {
     { { -0.5f, 0.5f, 0.0f }, { 1.0f, 0.0f, 0.0f }, { 1.0f, 0.0f } },
     { { -0.5f, -0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f } },
@@ -125,52 +121,51 @@ bool SimpleRenderer::initialize()
         return false;
     mIndexBuffer->setData(indices.data(), sizeof(uint16_t) * indices.size());
 
-	RenderPassCreateParams renderPassParams = {
-		{
-			{ AttachmentType::ColorAttachment, ImageFormat::UnormR8G8B8A8 },
-			{ AttachmentType::ColorAttachment, ImageFormat::UnormR8G8B8A8 }
-		}
-	};
-	mTestRenderPass = mDevice->createRenderPass(renderPassParams);
-	if (mTestRenderPass == nullptr)
-		return false;
+    RenderPassCreateParams renderPassParams = {
+        { { AttachmentType::ColorAttachment, ImageFormat::UnormR8G8B8A8 },
+            { AttachmentType::ColorAttachment, ImageFormat::UnormR8G8B8A8 } }
+    };
+    mTestRenderPass = mDevice->createRenderPass(renderPassParams);
+    if (mTestRenderPass == nullptr)
+        return false;
 
-	TextureCreateParams colorAttParams = {
-		glm::uvec3(mSurface->size(), 1),
-		ImageFormat::UnormR8G8B8A8,
-		ImageUsage::ColorAttachment
-	};
-	mTestTexture0 = mDevice->createTexture2D(colorAttParams);
-	if (mTestTexture0 == nullptr)
-		return false;
+    TextureCreateParams colorAttParams = {
+        glm::uvec3(mSurface->size(), 1),
+        ImageFormat::UnormR8G8B8A8,
+        ImageUsage::ColorAttachment
+    };
+    mTestTexture0 = mDevice->createTexture2D(colorAttParams);
+    if (mTestTexture0 == nullptr)
+        return false;
 
-	mTestTexture1 = mDevice->createTexture2D(colorAttParams);
-	if (mTestTexture1 == nullptr)
-		return false;
+    mTestTexture1 = mDevice->createTexture2D(colorAttParams);
+    if (mTestTexture1 == nullptr)
+        return false;
 
-	mTestFrameBuffer = mDevice->createFrameBuffer({
-		mSurface->size(),
-		mTestRenderPass,
-		{mTestTexture0, mTestTexture1}
-	});
-	if (mTestFrameBuffer == nullptr)
-		return false;
+    mTestFrameBuffer = mDevice->createFrameBuffer({ mSurface->size(),
+        mTestRenderPass,
+        { mTestTexture0, mTestTexture1 } });
+    if (mTestFrameBuffer == nullptr)
+        return false;
 
     return true;
 }
 
-void SimpleRenderer::render()
+void SimpleRenderer::render(const entt::entity& inCurrentCamera, const entt::registry& inRegistry)
 {
     SurfaceImageData* imageData = nullptr;
     mSurface->nextImage(imageData);
 
-    setupUniformBuffer(mUniformBuffers[imageData->imageIndex]);
+    const auto& [camera, transform] = inRegistry.get<CameraComponent, TransformComponent>(inCurrentCamera);
+    auto viewMatrix = glm::inverse(transform.local_matrix());
+
+    setupUniformBuffer(viewMatrix, mUniformBuffers[imageData->imageIndex]);
 
     auto commandBuffer = mCommandBuffers[imageData->imageIndex];
 
-	RenderPassBeginParams beginRenderPass{
-		imageData->frameBuffer,
-		{{0,0}, mSurface->size()}
+    RenderPassBeginParams beginRenderPass{
+        imageData->frameBuffer,
+        { { 0, 0 }, mSurface->size() }
     };
     commandBuffer->begin();
     commandBuffer->beginRenderPass(beginRenderPass);
@@ -186,7 +181,7 @@ void SimpleRenderer::render()
     mSurface->presentImage(imageData);
 }
 
-void SimpleRenderer::setupUniformBuffer(std::shared_ptr<UniformBuffer> inBuffer)
+void SimpleRenderer::setupUniformBuffer(const glm::mat4& inViewMatrix, std::shared_ptr<UniformBuffer> inBuffer)
 {
     static auto startTime = std::chrono::high_resolution_clock::now();
 
@@ -194,8 +189,8 @@ void SimpleRenderer::setupUniformBuffer(std::shared_ptr<UniformBuffer> inBuffer)
     auto currentTime = std::chrono::high_resolution_clock::now();
     auto elapsedTime = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
     SimpleUniformBuffer ubo;
-    ubo.model = glm::rotate(glm::mat4(1.0f), elapsedTime * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    // ubo.model = glm::rotate(glm::mat4(1.0f), elapsedTime * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    ubo.view = inViewMatrix;
     ubo.projection = glm::perspective(glm::radians(45.0f), surfaceSize.x / float(surfaceSize.y), 0.1f, 10.0f);
 
     inBuffer->setData(static_cast<const void*>(&ubo), sizeof(SimpleUniformBuffer));
@@ -208,12 +203,12 @@ std::shared_ptr<Texture2D> SimpleRenderer::loadTexture(const std::string& inFile
     if (pixels == nullptr)
         return nullptr;
 
-	TextureCreateParams textureParams = {
-		glm::uvec3{width, height, 1},
-		ImageFormat::UnormR8G8B8A8,
-		ImageUsage::Sampler,
-		pixels
-	};
+    TextureCreateParams textureParams = {
+        glm::uvec3{ width, height, 1 },
+        ImageFormat::UnormR8G8B8A8,
+        ImageUsage::Sampler,
+        pixels
+    };
     auto texture = mDevice->createTexture2D(textureParams);
 
     stbi_image_free(pixels);
