@@ -9,35 +9,35 @@ SimpleCameraController::SimpleCameraController(entt::registry& inRegistry)
     : mRegistry(inRegistry)
     , mCameraEntity(entt::null)
 {
-    mRegistry.on_destroy<CameraComponent>().connect<&SimpleCameraController::onCameraRemoved>(this);
-    mRegistry.on_destroy<CameraComponent>().connect<&SimpleCameraController::onCameraRemoved>(this);
+    mRegistry.on_destroy<CameraComponent>().connect<&SimpleCameraController::onCameraRemoved>(*this);
+    mRegistry.on_destroy<CameraComponent>().connect<&SimpleCameraController::onCameraRemoved>(*this);
 
-    mRegistry.on_construct<CameraComponent>().connect<&SimpleCameraController::onCameraCreated>(this);
-    mRegistry.on_construct<TransformComponent>().connect<&SimpleCameraController::onTransformCreated>(this);
+    mRegistry.on_construct<CameraComponent>().connect<&SimpleCameraController::onCameraCreated>(*this);
+    mRegistry.on_construct<TransformComponent>().connect<&SimpleCameraController::onTransformCreated>(*this);
 }
 
 SimpleCameraController::~SimpleCameraController()
 {
-    mRegistry.on_destroy<CameraComponent>().disconnect<&SimpleCameraController::onCameraRemoved>(this);
-    mRegistry.on_destroy<CameraComponent>().disconnect<&SimpleCameraController::onCameraRemoved>(this);
+    mRegistry.on_destroy<CameraComponent>().disconnect<&SimpleCameraController::onCameraRemoved>(*this);
+    mRegistry.on_destroy<CameraComponent>().disconnect<&SimpleCameraController::onCameraRemoved>(*this);
 
-    mRegistry.on_construct<CameraComponent>().disconnect<&SimpleCameraController::onCameraCreated>(this);
-    mRegistry.on_construct<TransformComponent>().disconnect<&SimpleCameraController::onTransformCreated>(this);
+    mRegistry.on_construct<CameraComponent>().disconnect<&SimpleCameraController::onCameraCreated>(*this);
+    mRegistry.on_construct<TransformComponent>().disconnect<&SimpleCameraController::onTransformCreated>(*this);
 }
 
-void SimpleCameraController::onCameraCreated(entt::registry& inRegistry, entt::entity inEntity, CameraComponent& inComponent)
+void SimpleCameraController::onCameraCreated(entt::entity inEntity, entt::registry& inRegistry, CameraComponent& inComponent)
 {
     if (mCameraEntity == entt::null)
         tryAttachCamera(inEntity);
 }
 
-void SimpleCameraController::onTransformCreated(entt::registry& inRegistry, entt::entity inEntity, TransformComponent& inComponent)
+void SimpleCameraController::onTransformCreated(entt::entity inEntity, entt::registry& inRegistry, TransformComponent& inComponent)
 {
     if (mCameraEntity == entt::null)
         tryAttachCamera(inEntity);
 }
 
-void SimpleCameraController::onCameraRemoved(entt::registry& inRegistry, entt::entity inEntity)
+void SimpleCameraController::onCameraRemoved(entt::entity inEntity, entt::registry& inRegistry)
 {
     if (inEntity == mCameraEntity)
         mCameraEntity = entt::null;

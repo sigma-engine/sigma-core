@@ -17,11 +17,11 @@ public:
 
     ~SimpleCameraController();
 
-    void onCameraCreated(entt::registry& inRegistry, entt::entity inEntity, CameraComponent& inComponent);
+    void onCameraCreated(entt::entity inEntity, entt::registry& inRegistry, CameraComponent& inComponent);
 
-    void onTransformCreated(entt::registry& inRegistry, entt::entity inEntity, TransformComponent& inComponent);
+    void onTransformCreated(entt::entity inEntity, entt::registry& inRegistry, TransformComponent& inComponent);
 
-    void onCameraRemoved(entt::registry& inRegistry, entt::entity inEntity);
+    void onCameraRemoved(entt::entity inEntity, entt::registry& inRegistry);
 
     void tryAttachCamera(entt::entity inEntity);
 
