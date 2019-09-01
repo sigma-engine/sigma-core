@@ -11,6 +11,7 @@
 #include <sigma/Log.hpp>
 #include <sigma/TransformComponent.hpp>
 #include <sigma/Window.hpp>
+#include <sigma/Resource/GLTF2Loader.hpp>
 
 #include <SimpleGame.hpp>
 
@@ -18,9 +19,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/vec3.hpp>
-#include <nlohmann/json.hpp>
 
-int SimpleGame::run(const std::vector<std::string>& inArguments)
+int SimpleGame::run(const std::vector<std::string> &inArguments)
 {
     bool useOpenGL = std::find_if(inArguments.begin(), inArguments.end(), [](auto a) { return a == "--opengl"; }) != inArguments.end();
 
@@ -42,7 +42,7 @@ int SimpleGame::run(const std::vector<std::string>& inArguments)
         return -1;
 
     auto device = surfaceDevices[0];
-    if (!device->initialize({ window->surface() }))
+    if (!device->initialize({window->surface()}))
         return -1;
 
     auto renderer = std::make_shared<SimpleRenderer>(engine, device, window->surface());
@@ -55,13 +55,24 @@ int SimpleGame::run(const std::vector<std::string>& inArguments)
     /* if (!inArguments.empty() && !starts_with(inArguments.back(), "-"))
         loadRegistry(inArguments.back(), mRegistry);*/
 
+    GLTF2Loader loader;
+    // if (!loader.load("C:/Users/aaron/projects/personal/sigma-engine/models/2.0/Box/glTF/Box.gltf"))
+    // if (!loader.load("C:/Users/aaron/projects/personal/sigma-engine/models/2.0/AntiqueCamera/glTF/AntiqueCamera.gltf"))
+    // if (!loader.load("C:/Users/aaron/projects/personal/sigma-engine/models/2.0/Sponza/glTF/Sponza.gltf"))
+    if (!loader.load("C:/Users/aaron/projects/personal/sigma-engine/models/2.0/FlightHelmet/glTF/FlightHelmet.gltf"))
+    {
+        return -1;
+    }
+
     auto cameras = mRegistry.view<CameraComponent, TransformComponent>();
-    if (cameras.size() == 0) {
-        auto& [entity, camera, transfrom] = mRegistry.create<CameraComponent, TransformComponent>();
+    if (cameras.size() == 0)
+    {
+        auto &[entity, camera, transfrom] = mRegistry.create<CameraComponent, TransformComponent>();
         transfrom.position = glm::vec3(0, 0, 1);
     }
 
-    while (window->open() && engine->process()) {
+    while (window->open() && engine->process())
+    {
         renderer->render(mCameraController->attachedEntity(), mRegistry);
     }
 
