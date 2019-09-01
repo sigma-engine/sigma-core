@@ -246,6 +246,56 @@ private:
     bool mDoubleSided = false;
 };
 
+class GLTF2Primitive : public GLTF2Extra
+{
+public:
+    static constexpr const size_t POINTS = 0;
+    static constexpr const size_t LINES = 1;
+    static constexpr const size_t LINE_LOOP = 2;
+    static constexpr const size_t LINE_STRIP = 3;
+    static constexpr const size_t TRIANGLES = 4;
+    static constexpr const size_t TRIANGLE_STRIP = 5;
+    static constexpr const size_t TRIANGLE_FAN = 6;
+
+    size_t indicesAccessorIndex() const { return mIndicesAccessorIndex; }
+
+    size_t materialIndex() const { return mMaterialIndex; }
+
+    size_t mode() const { return mMode; }
+
+	const std::unordered_map<std::string, std::shared_ptr<GLTF2Accessor>> &attributeAccessors() const { return mAttributeAccessors; }
+
+    std::shared_ptr<GLTF2Accessor> indicesAccessor() const { return mIndicesAccessor; }
+
+    std::shared_ptr<GLTF2Material> material() const { return mMaterial; }
+
+    virtual void deserialize(const GLTF2Document &inDocument, const nlohmann::json &inJson) override;
+
+private:
+	std::unordered_map<std::string, size_t> mAttributeAccessorIndices;
+    size_t mIndicesAccessorIndex = 0;
+    size_t mMaterialIndex = 0;
+    size_t mMode = TRIANGLES;
+
+	std::unordered_map<std::string, std::shared_ptr<GLTF2Accessor>> mAttributeAccessors;
+    std::shared_ptr<GLTF2Accessor> mIndicesAccessor = nullptr;
+    std::shared_ptr<GLTF2Material> mMaterial = nullptr;
+};
+
+class GLTF2Mesh : public GLTF2Extra
+{
+public:
+    const std::vector<GLTF2Primitive> &primitives() const { return mPrimitives; }
+
+    const std::vector<float> &weights() const { return mWeights; }
+
+    virtual void deserialize(const GLTF2Document &inDocument, const nlohmann::json &inJson) override;
+
+private:
+    std::vector<GLTF2Primitive> mPrimitives;
+    std::vector<float> mWeights;
+};
+
 class GLTF2Document : public GLTF2Extra
 {
 public:
@@ -265,7 +315,9 @@ public:
 
     const std::vector<std::shared_ptr<GLTF2Texture>> &textures() const { return mTextures; }
 
-	const std::vector<std::shared_ptr<GLTF2Material>> &materials() const { return mMaterials; }
+    const std::vector<std::shared_ptr<GLTF2Material>> &materials() const { return mMaterials; }
+
+	const std::vector<std::shared_ptr<GLTF2Mesh>> &meshes() const { return mMeshes; }
 
     virtual void deserialize(const GLTF2Document &inDocument, const nlohmann::json &inJson) override;
 
@@ -278,7 +330,8 @@ public:
     std::vector<std::shared_ptr<GLTF2Image>> mImages;
     std::vector<std::shared_ptr<GLTF2Sampler>> mSamplers;
     std::vector<std::shared_ptr<GLTF2Texture>> mTextures;
-	std::vector<std::shared_ptr<GLTF2Material>> mMaterials;
+    std::vector<std::shared_ptr<GLTF2Material>> mMaterials;
+	std::vector<std::shared_ptr<GLTF2Mesh>> mMeshes;
 };
 
 class GLTF2Loader

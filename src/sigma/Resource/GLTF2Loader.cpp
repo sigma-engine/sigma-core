@@ -1,6 +1,9 @@
 #include <sigma/Resource/GLTF2Loader.hpp>
 
 #include <fstream>
+#include <iostream>
+
+#include <sigma/Log.hpp>
 
 // https://github.com/KhronosGroup/glTF/tree/master/specification/2.0#objects
 
@@ -163,104 +166,177 @@ void GLTF2Sampler::deserialize(const GLTF2Document &inDocument, const nlohmann::
 
 void GLTF2Texture::deserialize(const GLTF2Document &inDocument, const nlohmann::json &inJson)
 {
-	GLTF2JsonHelper json(inJson);
-	const auto &samplers = inDocument.samplers();
-	const auto &images = inDocument.images();
+    GLTF2JsonHelper json(inJson);
+    const auto &samplers = inDocument.samplers();
+    const auto &images = inDocument.images();
 
-	if (inJson.count("sampler"))
+    if (inJson.count("sampler"))
+    {
+        mSamplerIndex = json.required<size_t>("sampler");
+        if (mSamplerIndex >= 0 && mSamplerIndex < samplers.size())
+        {
+            mSampler = samplers[mSamplerIndex];
+        }
+        else
+        {
+            throw GLTF2Exception("Sampler " + std::to_string(mSamplerIndex) + " doesn't exist!");
+        }
+    }
+
+    mSourceIndex = json.required<size_t>("source");
+    if (mSourceIndex >= 0 && mSourceIndex < images.size())
+    {
+        mImage = images[mSamplerIndex];
+    }
+    else
+    {
+        throw GLTF2Exception("Image " + std::to_string(mSourceIndex) + " doesn't exist!");
+    }
+
+    GLTF2Extra::deserialize(inDocument, inJson);
+}
+
+void GLTF2TextureInfo::deserialize(const GLTF2Document &inDocument, const nlohmann::json &inJson)
+{
+    GLTF2JsonHelper json(inJson);
+    const auto &textures = inDocument.textures();
+
+    mTextureIndex = json.required<size_t>("index");
+    if (mTextureIndex >= 0 && mTextureIndex < textures.size())
+    {
+        mTexture = textures[mTextureIndex];
+    }
+    else
+    {
+        throw GLTF2Exception("Texture " + std::to_string(mTextureIndex) + " doesn't exist!");
+    }
+
+    mTexCoord = json.optional<size_t>("texCoord", 0);
+
+    GLTF2Extra::deserialize(inDocument, inJson);
+}
+
+void GLTF2Material::deserialize(const GLTF2Document &inDocument, const nlohmann::json &inJson)
+{
+    GLTF2JsonHelper json(inJson);
+
+    if (inJson.count("pbrMetallicRoughness"))
+    {
+        const nlohmann::json &inPbr = inJson["pbrMetallicRoughness"];
+        GLTF2JsonHelper pbrJson(inPbr);
+        mBaseColorFactor = pbrJson.optional<std::array<float, 4>>("baseColorFactor", {1, 1, 1, 1});
+
+        if (inPbr.count("baseColorTexture"))
+        {
+            mBaseColorTexture = std::make_shared<GLTF2TextureInfo>();
+            mBaseColorTexture->deserialize(inDocument, inPbr["baseColorTexture"]);
+        }
+
+        mMetallicFactor = pbrJson.optional<float>("metallicFactor", 1);
+        mRoughnessFactor = pbrJson.optional<float>("roughnessFactor", 1);
+
+        if (inPbr.count("metallicRoughnessTexture"))
+        {
+            mMetallicRoughnessTexture = std::make_shared<GLTF2TextureInfo>();
+            mMetallicRoughnessTexture->deserialize(inDocument, inPbr["metallicRoughnessTexture"]);
+        }
+    }
+
+    if (inJson.count("normalTexture"))
+    {
+        mNormalTexture = std::make_shared<GLTF2TextureInfo>();
+        mNormalTexture->deserialize(inDocument, inJson["normalTexture"]);
+    }
+
+    if (inJson.count("occlusionTexture"))
+    {
+        mOcclusionTexture = std::make_shared<GLTF2TextureInfo>();
+        mOcclusionTexture->deserialize(inDocument, inJson["occlusionTexture"]);
+    }
+
+    if (inJson.count("emissiveTexture"))
+    {
+        mEmissiveTexture = std::make_shared<GLTF2TextureInfo>();
+        mEmissiveTexture->deserialize(inDocument, inJson["emissiveTexture"]);
+    }
+
+    mEmissiveFactor = json.optional<std::array<float, 3>>("emissiveFactor", {0, 0, 0});
+    mAlphaMode = json.optional<std::string>("alphaMode", "OPAQUE");
+    mAlphaCutoff = json.optional<float>("alphaCutoff", 0.5);
+    mDoubleSided = json.optional<bool>("doubleSided", false);
+
+    GLTF2Extra::deserialize(inDocument, inJson);
+}
+
+void GLTF2Primitive::deserialize(const GLTF2Document &inDocument, const nlohmann::json &inJson)
+{
+    GLTF2JsonHelper json(inJson);
+    const auto &accessors = inDocument.accessors();
+    const auto &materials = inDocument.materials();
+
+	mAttributeAccessorIndices = json.required<std::unordered_map<std::string, size_t>>("attributes");
+	for (const auto& accessorInfo : mAttributeAccessorIndices)
 	{
-		mSamplerIndex = json.required<size_t>("sampler");
-		if (mSamplerIndex >= 0 && mSamplerIndex < samplers.size())
+		if (accessorInfo.second >= 0 && accessorInfo.second < accessors.size())
 		{
-			mSampler = samplers[mSamplerIndex];
+			mAttributeAccessors[accessorInfo.first] = accessors[accessorInfo.second];
 		}
 		else
 		{
-			throw GLTF2Exception("Sampler " + std::to_string(mSamplerIndex) + " doesn't exist!");
+			throw GLTF2Exception("Accessor " + std::to_string(accessorInfo.second) + " doesn't exist!");
 		}
 	}
 
-	mSourceIndex = json.required<size_t>("source");
-	if (mSourceIndex >= 0 && mSourceIndex < images.size())
-	{
-		mImage = images[mSamplerIndex];
-	}
-	else
-	{
-		throw GLTF2Exception("Image " + std::to_string(mSourceIndex) + " doesn't exist!");
-	}
+    if (inJson.count("indices"))
+    {
+        mIndicesAccessorIndex = json.required<size_t>("indices");
+        if (mIndicesAccessorIndex >= 0 && mIndicesAccessorIndex < accessors.size())
+        {
+            mIndicesAccessor = accessors[mIndicesAccessorIndex];
+        }
+        else
+        {
+            throw GLTF2Exception("Accessor " + std::to_string(mIndicesAccessorIndex) + " doesn't exist!");
+        }
+    }
 
-	GLTF2Extra::deserialize(inDocument, inJson);
+    if (inJson.count("material"))
+    {
+        mMaterialIndex = json.required<size_t>("material");
+        if (mMaterialIndex >= 0 && mMaterialIndex < materials.size())
+        {
+            mMaterial = materials[mMaterialIndex];
+        }
+        else
+        {
+            throw GLTF2Exception("Material " + std::to_string(mMaterialIndex) + " doesn't exist!");
+        }
+    }
+
+    mMode = json.optional<size_t>("mode", TRIANGLES);
+
+    GLTF2Extra::deserialize(inDocument, inJson);
 }
 
-void GLTF2TextureInfo::deserialize(const GLTF2Document & inDocument, const nlohmann::json & inJson)
-{
-	GLTF2JsonHelper json(inJson);
-	const auto &textures = inDocument.textures();
-	
-	mTextureIndex = json.required<size_t>("index");
-	if (mTextureIndex >= 0 && mTextureIndex < textures.size())
-	{
-		mTexture = textures[mTextureIndex];
-	}
-	else
-	{
-		throw GLTF2Exception("Texture " + std::to_string(mTextureIndex) + " doesn't exist!");
-	}
-
-	mTexCoord = json.optional<size_t>("texCoord", 0);
-
-	GLTF2Extra::deserialize(inDocument, inJson);
-}
-
-void GLTF2Material::deserialize(const GLTF2Document & inDocument, const nlohmann::json & inJson)
+void GLTF2Mesh::deserialize(const GLTF2Document & inDocument, const nlohmann::json & inJson)
 {
 	GLTF2JsonHelper json(inJson);
 
-	if (inJson.count("pbrMetallicRoughness"))
+	if (inJson.count("primitives"))
 	{
-		const nlohmann::json &inPbr = inJson["pbrMetallicRoughness"];
-		GLTF2JsonHelper pbrJson(inPbr);
-		mBaseColorFactor = pbrJson.optional<std::array<float, 4>>("baseColorFactor", { 1, 1, 1, 1 });
-
-		if (inPbr.count("baseColorTexture"))
-		{ 
-			mBaseColorTexture = std::make_shared<GLTF2TextureInfo>();
-			mBaseColorTexture->deserialize(inDocument, inPbr["baseColorTexture"]);
-		}
-
-		mMetallicFactor = pbrJson.optional<float>("metallicFactor", 1);
-		mRoughnessFactor = pbrJson.optional<float>("roughnessFactor", 1);
-
-		if (inPbr.count("metallicRoughnessTexture"))
+		for (const auto &jPrimitive : inJson["primitives"])
 		{
-			mMetallicRoughnessTexture = std::make_shared<GLTF2TextureInfo>();
-			mMetallicRoughnessTexture->deserialize(inDocument, inPbr["metallicRoughnessTexture"]);
+			GLTF2Primitive primitive;
+			primitive.deserialize(inDocument, jPrimitive);
+			mPrimitives.push_back(std::move(primitive));
 		}
 	}
-	
-	if (inJson.count("normalTexture"))
+	else
 	{
-		mNormalTexture = std::make_shared<GLTF2TextureInfo>();
-		mNormalTexture->deserialize(inDocument, inJson["normalTexture"]);
+		throw GLTF2Exception("Missing required key \"primitives\"");
 	}
 
-	if (inJson.count("occlusionTexture"))
-	{
-		mOcclusionTexture = std::make_shared<GLTF2TextureInfo>();
-		mOcclusionTexture->deserialize(inDocument, inJson["occlusionTexture"]);
-	}
-
-	if (inJson.count("emissiveTexture"))
-	{
-		mEmissiveTexture = std::make_shared<GLTF2TextureInfo>();
-		mEmissiveTexture->deserialize(inDocument, inJson["emissiveTexture"]);
-	}
-	
-	mEmissiveFactor = json.optional<std::array<float, 3>>("emissiveFactor", { 0, 0, 0 });
-	mAlphaMode = json.optional<std::string>("alphaMode", "OPAQUE");
-	mAlphaCutoff = json.optional<float>("alphaCutoff", 0.5);
-	mDoubleSided = json.optional<bool>("doubleSided", false);
+	mWeights = json.optional<std::vector<float>>("weights");
 
 	GLTF2Extra::deserialize(inDocument, inJson);
 }
@@ -338,20 +414,28 @@ void GLTF2Document::deserialize(const GLTF2Document &inDocument, const nlohmann:
         }
     }
 
-	if (inJson.count("materials"))
+    if (inJson.count("materials"))
+    {
+        for (auto jMaterail : inJson["materials"])
+        {
+            auto material = std::make_shared<GLTF2Material>();
+            material->deserialize(*this, jMaterail);
+            mMaterials.push_back(material);
+        }
+    }
+
+	if (inJson.count("meshes"))
 	{
-		for (auto jMaterail : inJson["materials"])
+		for (auto jMeshes : inJson["meshes"])
 		{
-			auto material = std::make_shared<GLTF2Material>();
-			material->deserialize(*this, jMaterail);
-			mMaterials.push_back(material);
+			auto mesh = std::make_shared<GLTF2Mesh>();
+			mesh->deserialize(*this, jMeshes);
+			mMeshes.push_back(mesh);
 		}
 	}
 
     GLTF2Extra::deserialize(inDocument, inJson);
 }
-
-
 
 bool GLTF2Loader::load(const std::filesystem::path &inPath)
 {
