@@ -6,11 +6,13 @@
 #include <string>
 #include <vector>
 
-namespace spdlog {
+namespace spdlog
+{
 class logger;
 }
 
-enum class GraphicsAPI {
+enum class GraphicsAPI
+{
     OpenGL,
     Vulkan
 };
@@ -20,7 +22,8 @@ class DeviceManager;
 class EventListener;
 class EventEmitter;
 
-class Engine : public std::enable_shared_from_this<Engine> {
+class Engine : public std::enable_shared_from_this<Engine>
+{
 public:
     virtual ~Engine() = default;
 
@@ -28,7 +31,7 @@ public:
 
     virtual bool initialize(GraphicsAPI inGraphicsAPI);
 
-    std::shared_ptr<Window> createWindow(const std::string& inTitle, uint32_t inWidth, uint32_t inHeight);
+    std::shared_ptr<Window> createWindow(const std::string &inTitle, uint32_t inWidth, uint32_t inHeight);
 
     void addEmitter(std::weak_ptr<EventEmitter> inEmitter);
 

@@ -7,7 +7,7 @@
 
 #include <glm/mat4x4.hpp>
 
-class Engine;
+class Context;
 class Device;
 class Surface;
 class Pipeline;
@@ -29,15 +29,15 @@ struct Vertex {
 
 class SimpleRenderer {
 public:
-    SimpleRenderer(std::shared_ptr<Engine> inEngine, std::shared_ptr<Device> inDevice, std::shared_ptr<Surface> inSurface);
+    SimpleRenderer(std::shared_ptr<Context> inContext, std::shared_ptr<Surface> inSurface);
 
     bool initialize();
 
     void render(const entt::entity& inCurrentCamera, const entt::registry& inRegistry);
 
 private:
-    std::shared_ptr<Engine> mEngine = nullptr;
-    std::shared_ptr<Device> mDevice = nullptr;
+    std::shared_ptr<Context> mContext = nullptr;
+	std::shared_ptr<Device> mDevice = nullptr;
     std::shared_ptr<Surface> mSurface = nullptr;
 
     std::shared_ptr<RenderPass> mTestRenderPass = nullptr;

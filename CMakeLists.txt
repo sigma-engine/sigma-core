@@ -25,8 +25,26 @@ add_library(sigma-core STATIC
 	include/sigma/EventListener.hpp
 	include/sigma/CameraComponent.hpp
 
+	include/sigma/Context.hpp
+	src/sigma/Context.cpp
+
+	include/sigma/Resource/AssetManager.hpp
+	src/sigma/Resource/AssetManager.cpp
+
+	include/sigma/Resource/AssetCache.hpp
+	src/sigma/Resource/AssetCache.cpp
+
+	include/sigma/Resource/AssetLoader.hpp
+	src/sigma/Resource/AssetLoader.cpp
+
+	include/sigma/Resource/GLTF2.hpp
+	src/sigma/Resource/GLTF2.cpp
+
 	include/sigma/Resource/GLTF2Loader.hpp
 	src/sigma/Resource/GLTF2Loader.cpp
+
+	include/sigma/Resource/StbImageLoader.hpp
+	src/sigma/Resource/StbImageLoader.cpp
 
 	include/sigma/DataTypes.hpp
 	src/sigma/DataTypes.cpp

@@ -1,5 +1,6 @@
 #include <SimpleGame.hpp>
 
+#include <sigma/Context.hpp>
 #include <SimpleCameraController.hpp>
 #include <SimpleRenderer.hpp>
 #include <sigma/Algorithm.hpp>
@@ -12,6 +13,8 @@
 #include <sigma/TransformComponent.hpp>
 #include <sigma/Window.hpp>
 #include <sigma/Resource/GLTF2Loader.hpp>
+#include <sigma/Resource/StbImageLoader.hpp>
+#include <sigma/Resource/AssetManager.hpp>
 
 #include <SimpleGame.hpp>
 
@@ -45,7 +48,14 @@ int SimpleGame::run(const std::vector<std::string> &inArguments)
     if (!device->initialize({window->surface()}))
         return -1;
 
-    auto renderer = std::make_shared<SimpleRenderer>(engine, device, window->surface());
+	auto context = std::make_shared<Context>();
+	if (!context->initialize(engine, device))
+		return -1;
+
+	context->assetManager()->addLoader(std::make_shared<StbImageLoader>());
+	context->assetManager()->addLoader(std::make_shared<GLTF2Loader>());
+
+    auto renderer = std::make_shared<SimpleRenderer>(context, window->surface());
     if (!renderer->initialize())
         return -1;
 
@@ -55,14 +65,14 @@ int SimpleGame::run(const std::vector<std::string> &inArguments)
     /* if (!inArguments.empty() && !starts_with(inArguments.back(), "-"))
         loadRegistry(inArguments.back(), mRegistry);*/
 
-    GLTF2Loader loader;
+    // GLTF2Loader loader;
     // if (!loader.load("C:/Users/aaron/projects/personal/sigma-engine/models/2.0/Box/glTF/Box.gltf"))
     // if (!loader.load("C:/Users/aaron/projects/personal/sigma-engine/models/2.0/AntiqueCamera/glTF/AntiqueCamera.gltf"))
     // if (!loader.load("C:/Users/aaron/projects/personal/sigma-engine/models/2.0/Sponza/glTF/Sponza.gltf"))
-    if (!loader.load("C:/Users/aaron/projects/personal/sigma-engine/models/2.0/FlightHelmet/glTF/FlightHelmet.gltf"))
+    /*if (!loader.load("C:/Users/aaron/projects/personal/sigma-engine/models/2.0/FlightHelmet/glTF/FlightHelmet.gltf"))
     {
         return -1;
-    }
+    }*/
 
     auto cameras = mRegistry.view<CameraComponent, TransformComponent>();
     if (cameras.size() == 0)

@@ -6,6 +6,7 @@
 #include <sigma/OpenGL/DeviceManagerGL.hpp>
 #include <sigma/SDL/WindowSDL.hpp>
 #include <sigma/Vulkan/DeviceManagerVK.hpp>
+#include <sigma/Resource/AssetManager.hpp>
 
 #include <algorithm>
 
@@ -24,16 +25,20 @@ bool Engine::initialize(GraphicsAPI inGraphicsAPI)
     mGraphicsAPI = inGraphicsAPI;
     mConsole = spdlog::stdout_color_mt(SIGMA_LOG_NAME);
 
-    switch (inGraphicsAPI) {
-    case GraphicsAPI::OpenGL: {
+    switch (inGraphicsAPI)
+    {
+    case GraphicsAPI::OpenGL:
+    {
         mDeviceManger = std::make_shared<DeviceManagerGL>();
         break;
     }
-    case GraphicsAPI::Vulkan: {
+    case GraphicsAPI::Vulkan:
+    {
         mDeviceManger = std::make_shared<DeviceManagerVK>();
         break;
     }
-    default: {
+    default:
+    {
         return false;
     }
     }
@@ -41,23 +46,27 @@ bool Engine::initialize(GraphicsAPI inGraphicsAPI)
     return true;
 }
 
-std::shared_ptr<Window> Engine::createWindow(const std::string& inTitle, uint32_t inWidth, uint32_t inHeight)
+std::shared_ptr<Window> Engine::createWindow(const std::string &inTitle, uint32_t inWidth, uint32_t inHeight)
 {
     std::shared_ptr<Window> window = nullptr;
-    switch (mGraphicsAPI) {
+    switch (mGraphicsAPI)
+    {
     case GraphicsAPI::Vulkan:
-    case GraphicsAPI::OpenGL: {
+    case GraphicsAPI::OpenGL:
+    {
         WindowSDL::initializeSDL(shared_from_this());
         window = std::make_shared<WindowSDL>(shared_from_this(), inTitle, inWidth, inHeight);
         break;
     }
-    default: {
+    default:
+    {
         SIGMA_ASSERT(false, "Unknown Graphics API");
         break;
     }
     }
 
-    if (!mDeviceInitialized) {
+    if (!mDeviceInitialized)
+    {
         auto exts = window->requiredExtensions(mGraphicsAPI);
         mRequiredExtensions[mGraphicsAPI].insert(exts.begin(), exts.end());
 
