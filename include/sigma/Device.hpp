@@ -42,6 +42,7 @@ class UniformBuffer;
 struct TextureCreateParams;
 class Texture2D;
 
+struct SamplerCreateParams;
 class Sampler2D;
 
 enum class ImageFormat;
@@ -91,5 +92,5 @@ public:
 
     virtual std::shared_ptr<Texture2D> createTexture2D(const TextureCreateParams &inParams) = 0;
 
-    virtual std::shared_ptr<Sampler2D> createSampler2D() = 0;
+    virtual std::shared_ptr<Sampler2D> createSampler2D(const SamplerCreateParams &inParams) = 0;
 };

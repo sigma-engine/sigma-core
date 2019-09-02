@@ -17,10 +17,8 @@
 
 #include <fstream>
 
-DeviceVK::DeviceVK(VkInstance inInstance, VkPhysicalDevice inDevice, const std::vector<std::string>& inEnabledLayers)
-    : mInstance(inInstance)
-    , mPhysicalDevice(inDevice)
-    , mEnabledLayers(inEnabledLayers)
+DeviceVK::DeviceVK(VkInstance inInstance, VkPhysicalDevice inDevice, const std::vector<std::string> &inEnabledLayers)
+    : mInstance(inInstance), mPhysicalDevice(inDevice), mEnabledLayers(inEnabledLayers)
 {
     vkGetPhysicalDeviceProperties(inDevice, &mPhysicalDeviceProperties);
     vkGetPhysicalDeviceFeatures(inDevice, &mPhysicalDeviceFeatures);
@@ -31,13 +29,13 @@ DeviceVK::DeviceVK(VkInstance inInstance, VkPhysicalDevice inDevice, const std::
     mQueueFamilyProperties.resize(queueFamilyCount);
     vkGetPhysicalDeviceQueueFamilyProperties(mPhysicalDevice, &queueFamilyCount, mQueueFamilyProperties.data());
 
-    auto graphicsIt = std::find_if(mQueueFamilyProperties.begin(), mQueueFamilyProperties.end(), [](const auto& prop) {
+    auto graphicsIt = std::find_if(mQueueFamilyProperties.begin(), mQueueFamilyProperties.end(), [](const auto &prop) {
         return prop.queueCount > 0 && ((prop.queueFlags & VK_QUEUE_GRAPHICS_BIT) == VK_QUEUE_GRAPHICS_BIT);
     });
     if (graphicsIt != mQueueFamilyProperties.end())
         mGraphicsFamily = static_cast<uint32_t>(std::distance(mQueueFamilyProperties.begin(), graphicsIt));
 
-    auto computeIt = std::find_if(mQueueFamilyProperties.begin(), mQueueFamilyProperties.end(), [](const auto& prop) {
+    auto computeIt = std::find_if(mQueueFamilyProperties.begin(), mQueueFamilyProperties.end(), [](const auto &prop) {
         return prop.queueCount > 0 && ((prop.queueFlags & VK_QUEUE_COMPUTE_BIT) == VK_QUEUE_COMPUTE_BIT);
     });
     if (computeIt != mQueueFamilyProperties.end())
@@ -46,7 +44,8 @@ DeviceVK::DeviceVK(VkInstance inInstance, VkPhysicalDevice inDevice, const std::
 
 DeviceVK::~DeviceVK()
 {
-    if (mDevice) {
+    if (mDevice)
+    {
         if (mDescriptorPool)
             vkDestroyDescriptorPool(mDevice, mDescriptorPool, nullptr);
 
@@ -63,16 +62,20 @@ DeviceVK::~DeviceVK()
 DeviceType DeviceVK::type() const
 {
     DeviceType type = DeviceType::Unknown;
-    switch (mPhysicalDeviceProperties.deviceType) {
-    case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU: {
+    switch (mPhysicalDeviceProperties.deviceType)
+    {
+    case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
+    {
         type = DeviceType::DiscreteGPU;
         break;
     }
-    case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU: {
+    case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
+    {
         type = DeviceType::IntegratedGPU;
         break;
     }
-    default: {
+    default:
+    {
         break;
     }
     }
@@ -96,16 +99,15 @@ bool DeviceVK::supportsSurface(std::shared_ptr<Surface> inSurface) const
     return getSwapChainInfo(vksurface).has_value();
 }
 
-bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurfaces)
+bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>> &inSurfaces)
 {
     static std::unordered_map<uint32_t, std::string> vendorNames = {
-        { 0x1002, "AMD" },
-        { 0x1010, "ImgTec" },
-        { 0x10DE, "NVIDIA" },
-        { 0x13B5, "ARM" },
-        { 0x5143, "Qualcomm" },
-        { 0x8086, "INTEL" }
-    };
+        {0x1002, "AMD"},
+        {0x1010, "ImgTec"},
+        {0x10DE, "NVIDIA"},
+        {0x13B5, "ARM"},
+        {0x5143, "Qualcomm"},
+        {0x8086, "INTEL"}};
     SIGMA_INFO("Graphics API: Vulkan");
     SIGMA_INFO("Vender: {}", vendorNames.count(mPhysicalDeviceProperties.vendorID) ? vendorNames[mPhysicalDeviceProperties.vendorID] : "Unknown");
     SIGMA_INFO("Model: {}", mPhysicalDeviceProperties.deviceName);
@@ -122,13 +124,15 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
     std::vector<VkExtensionProperties> extensionProperties;
     uint32_t extensionCount;
     CHECK_VK(result = vkEnumerateDeviceExtensionProperties(mPhysicalDevice, nullptr, &extensionCount, nullptr));
-    if (result != VK_SUCCESS) {
+    if (result != VK_SUCCESS)
+    {
         SIGMA_ERROR("Could not enumerate extensions!");
         return false;
     }
     extensionProperties.resize(extensionCount);
     CHECK_VK(result = vkEnumerateDeviceExtensionProperties(mPhysicalDevice, nullptr, &extensionCount, extensionProperties.data()));
-    if (result != VK_SUCCESS) {
+    if (result != VK_SUCCESS)
+    {
         SIGMA_ERROR("Could not enumerate extensions!");
         return false;
     }
@@ -136,17 +140,19 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
     // Find and report about missing extensions
     auto extIt = std::remove_if(mRequiredExtensions.begin(), mRequiredExtensions.end(), [&](auto ext) {
         auto strName = std::string(ext);
-        auto it = std::find_if(extensionProperties.begin(), extensionProperties.end(), [&](const auto& prop) {
+        auto it = std::find_if(extensionProperties.begin(), extensionProperties.end(), [&](const auto &prop) {
             return prop.extensionName == strName;
         });
         return it == extensionProperties.end();
     });
 
-    for (auto it = extIt; it != mRequiredExtensions.end(); it++) {
+    for (auto it = extIt; it != mRequiredExtensions.end(); it++)
+    {
         SIGMA_ERROR("Missing Required Vulkan Extension: {}", *it);
     }
 
-    if (extIt != mRequiredExtensions.end()) {
+    if (extIt != mRequiredExtensions.end())
+    {
         SIGMA_INFO("Supported Vulkan Extensions: {}", fmt::join(extensionProperties.begin(), extensionProperties.end(), ","));
         return false;
     }
@@ -155,31 +161,35 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
     std::vector<VkLayerProperties> layerProperties;
     uint32_t layerCount;
     CHECK_VK(result = vkEnumerateDeviceLayerProperties(mPhysicalDevice, &layerCount, nullptr));
-    if (result != VK_SUCCESS) {
+    if (result != VK_SUCCESS)
+    {
         SIGMA_ERROR("Could not enumerate device layers!");
         return false;
     }
     layerProperties.resize(layerCount);
     CHECK_VK(result = vkEnumerateDeviceLayerProperties(mPhysicalDevice, &layerCount, layerProperties.data()));
-    if (result != VK_SUCCESS) {
+    if (result != VK_SUCCESS)
+    {
         SIGMA_ERROR("Could not enumerate device layers!");
         return false;
     }
 
     // Find and report missing layers
-    auto layerIt = std::remove_if(mEnabledLayers.begin(), mEnabledLayers.end(), [&](const auto& ext) {
+    auto layerIt = std::remove_if(mEnabledLayers.begin(), mEnabledLayers.end(), [&](const auto &ext) {
         auto strName = std::string(ext);
-        auto it = std::find_if(layerProperties.begin(), layerProperties.end(), [&](const auto& prop) {
+        auto it = std::find_if(layerProperties.begin(), layerProperties.end(), [&](const auto &prop) {
             return prop.layerName == strName;
         });
         return it == layerProperties.end();
     });
 
-    for (auto it = layerIt; it != mEnabledLayers.end(); it++) {
+    for (auto it = layerIt; it != mEnabledLayers.end(); it++)
+    {
         SIGMA_WARN("Skipping Missing Vulkan Layer: {}", *it);
     }
 
-    if (layerIt != mEnabledLayers.end()) {
+    if (layerIt != mEnabledLayers.end())
+    {
         SIGMA_INFO("Supported Vulkan Layers: {}", fmt::join(layerProperties.begin(), layerProperties.end(), ","));
         mEnabledLayers.erase(layerIt, mEnabledLayers.end());
     }
@@ -188,11 +198,13 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
     std::set<uint32_t> queueFamilies;
 
     std::vector<SurfaceSwapChainInfoVK> surfaceSwapChainInfos;
-    for (auto surface : inSurfaces) {
+    for (auto surface : inSurfaces)
+    {
         SIGMA_ASSERT(std::dynamic_pointer_cast<SurfaceVK>(surface), "Incorrect surface type!");
         auto vksurface = std::static_pointer_cast<SurfaceVK>(surface);
         auto swapChainInfo = getSwapChainInfo(vksurface);
-        if (!swapChainInfo.has_value() || !swapChainInfo->presentFamily.has_value()) {
+        if (!swapChainInfo.has_value() || !swapChainInfo->presentFamily.has_value())
+        {
             SIGMA_ERROR("Devices does not support surface presentation!");
             return false;
         }
@@ -209,7 +221,8 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
 
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
     float queuePriority = 1;
-    for (auto family : queueFamilies) {
+    for (auto family : queueFamilies)
+    {
         queueCreateInfos.push_back({});
         queueCreateInfos.back().sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
         queueCreateInfos.back().queueCount = 1;
@@ -220,12 +233,12 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
     // TODO fill out device features
     VkPhysicalDeviceFeatures deviceFeatures = {};
 
-    std::vector<const char*> enabledLayers(mEnabledLayers.size());
-    std::transform(mEnabledLayers.begin(), mEnabledLayers.end(), enabledLayers.begin(), [](const auto& ext) {
+    std::vector<const char *> enabledLayers(mEnabledLayers.size());
+    std::transform(mEnabledLayers.begin(), mEnabledLayers.end(), enabledLayers.begin(), [](const auto &ext) {
         return ext.c_str();
     });
-    std::vector<const char*> enabledExtensions(mRequiredExtensions.size());
-    std::transform(mRequiredExtensions.begin(), mRequiredExtensions.end(), enabledExtensions.begin(), [](const auto& ext) {
+    std::vector<const char *> enabledExtensions(mRequiredExtensions.size());
+    std::transform(mRequiredExtensions.begin(), mRequiredExtensions.end(), enabledExtensions.begin(), [](const auto &ext) {
         return ext.c_str();
     });
 
@@ -240,7 +253,8 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
     createInfo.enabledExtensionCount = static_cast<uint32_t>(enabledExtensions.size());
 
     CHECK_VK(result = vkCreateDevice(mPhysicalDevice, &createInfo, nullptr, &mDevice));
-    if (result != VK_SUCCESS) {
+    if (result != VK_SUCCESS)
+    {
         SIGMA_ERROR("Could not create Vulkan logical device!");
         return false;
     }
@@ -250,18 +264,21 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
     allocatorInfo.device = mDevice;
 
     CHECK_VK(result = vmaCreateAllocator(&allocatorInfo, &mAllocator));
-    if (result != VK_SUCCESS) {
+    if (result != VK_SUCCESS)
+    {
         SIGMA_ERROR("Could not create VulkanMemoryAllocator!");
         return false;
     }
 
-    if (mGraphicsFamily.has_value()) {
+    if (mGraphicsFamily.has_value())
+    {
         VkCommandPoolCreateInfo graphicsPoolInfo = {};
         graphicsPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
         graphicsPoolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT; //VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
         graphicsPoolInfo.queueFamilyIndex = mGraphicsFamily.value();
 
-        if (vkCreateCommandPool(mDevice, &graphicsPoolInfo, nullptr, &mGraphicsCommandPool) != VK_SUCCESS) {
+        if (vkCreateCommandPool(mDevice, &graphicsPoolInfo, nullptr, &mGraphicsCommandPool) != VK_SUCCESS)
+        {
             SIGMA_ERROR("Could not create graphics command pool!");
             return false;
         }
@@ -269,9 +286,11 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
         vkGetDeviceQueue(mDevice, mGraphicsFamily.value(), 0, &mGraphicsQueue);
     }
 
-    for (std::size_t i = 0; i < inSurfaces.size(); ++i) {
+    for (std::size_t i = 0; i < inSurfaces.size(); ++i)
+    {
         auto surface = std::static_pointer_cast<SurfaceVK>(inSurfaces[i]);
-        if (!surface->createSwapChain(shared_from_this(), surfaceSwapChainInfos[i])) {
+        if (!surface->createSwapChain(shared_from_this(), surfaceSwapChainInfos[i]))
+        {
             SIGMA_ERROR("Could not create surface swapchain!");
             return false;
         }
@@ -292,7 +311,8 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
     poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 
     CHECK_VK(result = vkCreateDescriptorPool(mDevice, &poolInfo, nullptr, &mDescriptorPool));
-    if (result != VK_SUCCESS) {
+    if (result != VK_SUCCESS)
+    {
         SIGMA_ERROR("Could not create descriptor pool!");
         return false;
     }
@@ -312,7 +332,7 @@ std::shared_ptr<CommandBuffer> DeviceVK::createCommandBuffer()
     return commandBuffer;
 }
 
-std::shared_ptr<Shader> DeviceVK::createShader(ShaderType inType, const std::string& inSourcePath)
+std::shared_ptr<Shader> DeviceVK::createShader(ShaderType inType, const std::string &inSourcePath)
 {
     std::ifstream file("vulkan/" + inSourcePath + ".glsl", std::ios::ate | std::ios::binary);
     if (!file.is_open())
@@ -320,7 +340,7 @@ std::shared_ptr<Shader> DeviceVK::createShader(ShaderType inType, const std::str
     size_t fsize = file.tellg();
     std::vector<uint32_t> data(fsize / sizeof(uint32_t));
     file.seekg(0);
-    file.read(reinterpret_cast<char*>(data.data()), fsize);
+    file.read(reinterpret_cast<char *>(data.data()), fsize);
 
     std::shared_ptr<ShaderVK> shader = std::make_shared<ShaderVK>(inType, shared_from_this());
     if (!shader->initialize(data))
@@ -329,7 +349,7 @@ std::shared_ptr<Shader> DeviceVK::createShader(ShaderType inType, const std::str
     return shader;
 }
 
-std::shared_ptr<RenderPass> DeviceVK::createRenderPass(const RenderPassCreateParams& inParams)
+std::shared_ptr<RenderPass> DeviceVK::createRenderPass(const RenderPassCreateParams &inParams)
 {
     auto renderPass = std::make_shared<RenderPassVK>(shared_from_this());
     if (!renderPass->initialize(inParams))
@@ -338,7 +358,7 @@ std::shared_ptr<RenderPass> DeviceVK::createRenderPass(const RenderPassCreatePar
     return renderPass;
 }
 
-std::shared_ptr<FrameBuffer> DeviceVK::createFrameBuffer(const FrameBufferCreateParams& inParams)
+std::shared_ptr<FrameBuffer> DeviceVK::createFrameBuffer(const FrameBufferCreateParams &inParams)
 {
     auto frameBuffer = std::make_shared<FrameBufferVK>(shared_from_this());
     if (!frameBuffer->initialize(inParams))
@@ -347,7 +367,7 @@ std::shared_ptr<FrameBuffer> DeviceVK::createFrameBuffer(const FrameBufferCreate
     return frameBuffer;
 }
 
-std::shared_ptr<DescriptorSetLayout> DeviceVK::createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding>& inBindings)
+std::shared_ptr<DescriptorSetLayout> DeviceVK::createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding> &inBindings)
 {
     auto layout = std::make_shared<DescriptorSetLayoutVK>(shared_from_this());
     if (!layout->initialize(inBindings))
@@ -356,7 +376,7 @@ std::shared_ptr<DescriptorSetLayout> DeviceVK::createDescriptorSetLayout(const s
     return layout;
 }
 
-std::shared_ptr<DescriptorSet> DeviceVK::createDescriptorSet(const DescriptorSetCreateParams& inParams)
+std::shared_ptr<DescriptorSet> DeviceVK::createDescriptorSet(const DescriptorSetCreateParams &inParams)
 {
     auto set = std::make_shared<DescriptorSetVK>(shared_from_this(), mDescriptorPool);
     if (!set->initialize(inParams))
@@ -365,7 +385,7 @@ std::shared_ptr<DescriptorSet> DeviceVK::createDescriptorSet(const DescriptorSet
     return set;
 }
 
-std::shared_ptr<Pipeline> DeviceVK::createPipeline(const PipelineCreateParams& inParams)
+std::shared_ptr<Pipeline> DeviceVK::createPipeline(const PipelineCreateParams &inParams)
 {
     std::shared_ptr<PipelineVK> pipeline = std::make_shared<PipelineVK>(shared_from_this());
     if (!pipeline->initialize(inParams))
@@ -374,7 +394,7 @@ std::shared_ptr<Pipeline> DeviceVK::createPipeline(const PipelineCreateParams& i
     return pipeline;
 }
 
-std::shared_ptr<VertexBuffer> DeviceVK::createVertexBuffer(const VertexLayout& inLayout, uint64_t inSize)
+std::shared_ptr<VertexBuffer> DeviceVK::createVertexBuffer(const VertexLayout &inLayout, uint64_t inSize)
 {
     auto vertexBuffer = std::make_shared<VertexBufferVK>(shared_from_this(), inLayout);
     if (!vertexBuffer->initialize(inSize))
@@ -401,7 +421,7 @@ std::shared_ptr<UniformBuffer> DeviceVK::createUniformBuffer(uint64_t inSize)
     return buffer;
 }
 
-std::shared_ptr<Texture2D> DeviceVK::createTexture2D(const TextureCreateParams& inParams)
+std::shared_ptr<Texture2D> DeviceVK::createTexture2D(const TextureCreateParams &inParams)
 {
     auto texture = std::make_shared<Texture2DVK>(shared_from_this());
     if (!texture->initialize(inParams))
@@ -410,10 +430,10 @@ std::shared_ptr<Texture2D> DeviceVK::createTexture2D(const TextureCreateParams& 
     return texture;
 }
 
-std::shared_ptr<Sampler2D> DeviceVK::createSampler2D()
+std::shared_ptr<Sampler2D> DeviceVK::createSampler2D(const SamplerCreateParams &inParams)
 {
     auto sampler = std::make_shared<Sampler2DVK>(shared_from_this());
-    if (!sampler->initialize())
+    if (!sampler->initialize(inParams))
         return nullptr;
 
     return sampler;
@@ -436,7 +456,7 @@ VkQueue DeviceVK::graphicsQueue() const
     return mGraphicsQueue;
 }
 
-VkResult DeviceVK::startTmpCommandBuffer(VkCommandBuffer* outCommandBuffer)
+VkResult DeviceVK::startTmpCommandBuffer(VkCommandBuffer *outCommandBuffer)
 {
     // TODO: this is crap
     VkResult result;
@@ -532,7 +552,7 @@ VkResult DeviceVK::copyBufferToBuffer(VkBuffer inDstBuffer, VkBuffer inSrcBuffer
 {
     // TODO: this is crap
     VkResult result;
-    VkBufferCopy copyRegion = { 0, 0, inSize };
+    VkBufferCopy copyRegion = {0, 0, inSize};
     VkCommandBuffer commandBuffer = nullptr;
 
     CHECK_VK(result = startTmpCommandBuffer(&commandBuffer));
@@ -606,27 +626,32 @@ void DeviceVK::transitionImageLayout(VkCommandBuffer inCommandBuffer, VkImage in
     barrier.subresourceRange.layerCount = 1;
 
     // TODO: add other layout transition types
-    if (inSrcLayout == VK_IMAGE_LAYOUT_UNDEFINED && inDstLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
+    if (inSrcLayout == VK_IMAGE_LAYOUT_UNDEFINED && inDstLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
+    {
         barrier.srcAccessMask = 0;
         barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
         srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
         dstStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-    } else if (inSrcLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && inDstLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+    }
+    else if (inSrcLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && inDstLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+    {
         barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
         barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
         srcStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
         dstStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-    } else {
+    }
+    else
+    {
         SIGMA_ASSERT(false, "Unsupported layout transition!");
     }
 
     vkCmdPipelineBarrier(inCommandBuffer,
-        srcStage,
-        dstStage,
-        0,
-        0, nullptr,
-        0, nullptr,
-        1, &barrier);
+                         srcStage,
+                         dstStage,
+                         0,
+                         0, nullptr,
+                         0, nullptr,
+                         1, &barrier);
 }
 
 VkResult DeviceVK::copyBufferToImage(VkImage inDstImage, VkBuffer inSrcBuffer, VkFormat inFormat, uint32_t inWidth, uint32_t inHeight)
@@ -651,8 +676,8 @@ VkResult DeviceVK::copyBufferToImage(VkImage inDstImage, VkBuffer inSrcBuffer, V
     region.imageSubresource.baseArrayLayer = 0;
     region.imageSubresource.layerCount = 1;
 
-    region.imageOffset = { 0, 0, 0 };
-    region.imageExtent = { inWidth, inHeight, 1 };
+    region.imageOffset = {0, 0, 0};
+    region.imageExtent = {inWidth, inHeight, 1};
 
     vkCmdCopyBufferToImage(commandBuffer, inSrcBuffer, inDstImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 
@@ -688,10 +713,12 @@ std::optional<SurfaceSwapChainInfoVK> DeviceVK::getSwapChainInfo(std::shared_ptr
     if (vkGetPhysicalDeviceSurfacePresentModesKHR(mPhysicalDevice, inSurface->handle(), &modeCount, info.modes.data()) != VK_SUCCESS)
         return {};
 
-    for (uint32_t i = 0; i < mQueueFamilyProperties.size(); ++i) {
+    for (uint32_t i = 0; i < mQueueFamilyProperties.size(); ++i)
+    {
         VkBool32 support = VK_FALSE;
         vkGetPhysicalDeviceSurfaceSupportKHR(mPhysicalDevice, i, inSurface->handle(), &support);
-        if (support == VK_TRUE) {
+        if (support == VK_TRUE)
+        {
             info.presentFamily = i;
             break;
         }
@@ -705,8 +732,10 @@ std::optional<SurfaceSwapChainInfoVK> DeviceVK::getSwapChainInfo(std::shared_ptr
 
 uint32_t DeviceVK::findMemoryType(uint32_t inTypeFilter, VkMemoryPropertyFlagBits inProperties) const
 {
-    for (uint32_t i = 0; i < mMemoryProperties.memoryTypeCount; ++i) {
-        if ((inTypeFilter & (1 << i)) && ((mMemoryProperties.memoryTypes[i].propertyFlags & inProperties) == inProperties)) {
+    for (uint32_t i = 0; i < mMemoryProperties.memoryTypeCount; ++i)
+    {
+        if ((inTypeFilter & (1 << i)) && ((mMemoryProperties.memoryTypes[i].propertyFlags & inProperties) == inProperties))
+        {
             return i;
         }
     }

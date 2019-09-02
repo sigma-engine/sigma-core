@@ -6,6 +6,8 @@
 
 #include <glm/vec3.hpp>
 
+#include <string>
+
 enum class ImageFormat {
     Unknown,
     UnormB8G8R8A8,
@@ -31,5 +33,6 @@ struct TextureCreateParams {
 
 class Texture2D {
 public:
+	using ResourceID = std::string;
     virtual ~Texture2D() = default;
 };

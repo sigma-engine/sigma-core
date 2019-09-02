@@ -19,20 +19,20 @@ public:
     void addLoader(std::shared_ptr<AssetLoader> inLoader);
 
     template <class U>
-    std::shared_ptr<U> getAsset(const std::filesystem::path &inPath)
+    std::shared_ptr<U> getAsset(const typename U::ResourceID &inRID)
     {
-        return aquireCache<U>()->get(inPath);
+        return aquireCache<U>()->get(inRID);
     }
 
     template <class U>
-    std::shared_ptr<U> aquireAsset(const std::filesystem::path &inPath)
+    std::shared_ptr<U> aquireAsset(const typename U::ResourceID &inRID)
     {
-        std::shared_ptr<U> result = getAsset<U>(inPath);
+        std::shared_ptr<U> result = getAsset<U>(inRID);
 
         if (result == nullptr)
         {
-            loadAsset(inPath);
-            result = getAsset<U>(inPath);
+            loadAsset(inRID);
+            result = getAsset<U>(inRID);
         }
 
         return result;

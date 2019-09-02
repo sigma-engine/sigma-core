@@ -4,16 +4,17 @@
 #include <sigma/Log.hpp>
 #include <sigma/RenderPass.hpp>
 #include <sigma/Shader.hpp>
+#include <sigma/Sampler.hpp>
 
 #include <vulkan/vulkan.h>
 
-std::ostream& operator<<(std::ostream& os, const VkExtensionProperties& prop)
+std::ostream &operator<<(std::ostream &os, const VkExtensionProperties &prop)
 {
     os << prop.extensionName;
     return os;
 }
 
-std::ostream& operator<<(std::ostream& os, const VkLayerProperties& prop)
+std::ostream &operator<<(std::ostream &os, const VkLayerProperties &prop)
 {
     os << prop.layerName;
     return os;
@@ -21,7 +22,8 @@ std::ostream& operator<<(std::ostream& os, const VkLayerProperties& prop)
 
 VkFormat convertImageFormatVK(ImageFormat inFormat)
 {
-    switch (inFormat) {
+    switch (inFormat)
+    {
     case ImageFormat::UnormB8G8R8A8:
         return VK_FORMAT_B8G8R8A8_UNORM;
     case ImageFormat::UnormR8G8B8A8:
@@ -33,7 +35,8 @@ VkFormat convertImageFormatVK(ImageFormat inFormat)
 
 ImageFormat convertImageFormatVK(VkFormat inFormat)
 {
-    switch (inFormat) {
+    switch (inFormat)
+    {
     case VK_FORMAT_B8G8R8A8_UNORM:
         return ImageFormat::UnormB8G8R8A8;
     default:
@@ -44,7 +47,8 @@ ImageFormat convertImageFormatVK(VkFormat inFormat)
 
 VkShaderStageFlagBits convertShaderTypeVK(ShaderType inType)
 {
-    switch (inType) {
+    switch (inType)
+    {
     case ShaderType::VertexShader:
         return VK_SHADER_STAGE_VERTEX_BIT;
     case ShaderType::FragmentShader:
@@ -56,7 +60,8 @@ VkShaderStageFlagBits convertShaderTypeVK(ShaderType inType)
 
 VkFormat formatForDataTypeVK(DataType inType)
 {
-    switch (inType) {
+    switch (inType)
+    {
     case DataType::Float:
         return VK_FORMAT_R32_SFLOAT;
     case DataType::Vec2:
@@ -76,7 +81,8 @@ VkFormat formatForDataTypeVK(DataType inType)
 
 VkDescriptorType convertDescriptorTypeVK(DescriptorType inType)
 {
-    switch (inType) {
+    switch (inType)
+    {
     case DescriptorType::UniformBuffer:
         return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     case DescriptorType::ImageSampler:
@@ -90,7 +96,8 @@ VkDescriptorType convertDescriptorTypeVK(DescriptorType inType)
 
 std::string convertErrorStringVK(VkResult inResult)
 {
-    switch (inResult) {
+    switch (inResult)
+    {
     case VK_SUCCESS:
         return "SUCCESS";
     case VK_NOT_READY:
@@ -160,4 +167,48 @@ std::string convertErrorStringVK(VkResult inResult)
     }
 
     return "ERROR_UNKNOWN";
+}
+
+VkSamplerAddressMode convertSamplerWarpModeVK(SamplerWarpMode inMode)
+{
+    switch (inMode)
+    {
+    case SamplerWarpMode::ClampToEdge:
+        return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+    case SamplerWarpMode::MirroredRepeat:
+        return VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT;
+    case SamplerWarpMode::Repeat:
+        return VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    }
+    SIGMA_ASSERT(false, "Unknown SamplerWarpMode");
+    return VK_SAMPLER_ADDRESS_MODE_REPEAT;
+}
+
+VkFilter convertSamplerFilterModeVK(SamplerFilterMode inMode)
+{
+    switch (inMode)
+    {
+    case SamplerFilterMode::Nearest:
+        return VK_FILTER_NEAREST;
+    case SamplerFilterMode::Linear:
+        return VK_FILTER_LINEAR;
+    case SamplerFilterMode::Cubic:
+        return VK_FILTER_CUBIC_IMG;
+    }
+    SIGMA_ASSERT(false, "Unknown SamplerFilterMode");
+    return VK_FILTER_LINEAR;
+}
+
+VkSamplerMipmapMode convertSamplerMipmapModeVK(SamplerMipmapMode inMode)
+{
+    switch (inMode)
+    {
+	case SamplerMipmapMode::None:
+    case SamplerMipmapMode::Nearest:
+        return VK_SAMPLER_MIPMAP_MODE_NEAREST;
+    case SamplerMipmapMode::Linear:
+        return VK_SAMPLER_MIPMAP_MODE_LINEAR;
+    }
+    SIGMA_ASSERT(false, "Unknown SamplerMipmapMode");
+	return VK_SAMPLER_MIPMAP_MODE_NEAREST;
 }

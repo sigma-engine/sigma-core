@@ -36,7 +36,7 @@ void StbImageLoader::load(std::shared_ptr<Context> inContext, const std::filesys
 			ImageUsage::Sampler,
 			pixels};
 
-		textureCache->insert(inPath, device->createTexture2D(textureParams));
+		textureCache->insert(inPath.string(), device->createTexture2D(textureParams));
 
 		stbi_image_free(pixels);
 	}

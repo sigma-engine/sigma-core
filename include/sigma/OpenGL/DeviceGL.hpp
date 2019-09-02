@@ -36,5 +36,5 @@ public:
 
     virtual std::shared_ptr<Texture2D> createTexture2D(const TextureCreateParams &inParams) override;
 
-    virtual std::shared_ptr<Sampler2D> createSampler2D() override;
+    virtual std::shared_ptr<Sampler2D> createSampler2D(const SamplerCreateParams &inParams) override;
 };

@@ -16,19 +16,21 @@ template <class T>
 class AssetCache : public AssetCacheBase
 {
 public:
-    std::shared_ptr<T> get(const std::filesystem::path &inPath)
+	using ResourceID = typename T::ResourceID;
+
+    std::shared_ptr<T> get(const ResourceID &inRID)
     {
-        auto it = mMap.find(inPath.string());
+        auto it = mMap.find(inRID);
         if (it != mMap.end())
             return it->second;
         return nullptr;
     }
 
-    void insert(const std::filesystem::path &inPath, std::shared_ptr<T> inItem)
+    void insert(const ResourceID &inRID, std::shared_ptr<T> inItem)
     {
-        mMap[inPath.string()] = inItem;
+        mMap[inRID] = inItem;
     }
 
 private:
-    std::unordered_map<std::string, std::shared_ptr<T>> mMap;
+    std::unordered_map<ResourceID, std::shared_ptr<T>> mMap;
 };

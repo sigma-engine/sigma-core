@@ -2,10 +2,12 @@
 
 #include <sigma/Log.hpp>
 #include <sigma/Texture.hpp>
+#include <sigma/Sampler.hpp>
 
 GLenum baseTypeOfDataType(DataType inType)
 {
-    switch (inType) {
+    switch (inType)
+    {
     case DataType::Float:
         return GL_FLOAT;
     case DataType::Vec2:
@@ -25,7 +27,8 @@ GLenum baseTypeOfDataType(DataType inType)
 
 GLenum convertImageFormatInternalGL(ImageFormat inFormat)
 {
-    switch (inFormat) {
+    switch (inFormat)
+    {
     case ImageFormat::UnormB8G8R8A8:
     case ImageFormat::UnormR8G8B8A8:
         return GL_RGBA8;
@@ -38,7 +41,8 @@ GLenum convertImageFormatInternalGL(ImageFormat inFormat)
 
 GLenum convertImageFormatFormatGL(ImageFormat inFormat)
 {
-    switch (inFormat) {
+    switch (inFormat)
+    {
     case ImageFormat::UnormB8G8R8A8:
         return GL_BGRA;
     case ImageFormat::UnormR8G8B8A8:
@@ -52,7 +56,8 @@ GLenum convertImageFormatFormatGL(ImageFormat inFormat)
 
 GLenum convertImageFormatTypeGL(ImageFormat inFormat)
 {
-    switch (inFormat) {
+    switch (inFormat)
+    {
     case ImageFormat::UnormB8G8R8A8:
     case ImageFormat::UnormR8G8B8A8:
         return GL_UNSIGNED_BYTE;
@@ -65,7 +70,8 @@ GLenum convertImageFormatTypeGL(ImageFormat inFormat)
 
 std::string convertErrorStringGL(GLenum inError)
 {
-    switch (inError) {
+    switch (inError)
+    {
     case GL_INVALID_ENUM:
         return "GL_INVALID_ENUM";
     case GL_INVALID_VALUE:
@@ -86,4 +92,55 @@ std::string convertErrorStringGL(GLenum inError)
         break;
     }
     return "UNKNOWN_ERROR";
+}
+
+GLenum convertSamplerWarpModeGL(SamplerWarpMode inMode)
+{
+    switch (inMode)
+    {
+    case SamplerWarpMode::ClampToEdge:
+        return GL_CLAMP_TO_EDGE;
+    case SamplerWarpMode::MirroredRepeat:
+        return GL_MIRRORED_REPEAT;
+    case SamplerWarpMode::Repeat:
+        return GL_REPEAT;
+    }
+    SIGMA_ASSERT(false, "Unknown SamplerWarpMode");
+    return GL_REPEAT;
+}
+
+GLenum convertSamplerFilterModeGL(SamplerFilterMode inFilterMode, SamplerMipmapMode inMipmapMode)
+{
+    switch (inMipmapMode)
+    {
+    case SamplerMipmapMode::None:
+        switch (inFilterMode)
+        {
+        case SamplerFilterMode::Nearest:
+            return GL_NEAREST;
+        case SamplerFilterMode::Linear:
+            return GL_LINEAR;
+        }
+        break;
+    case SamplerMipmapMode::Nearest:
+        switch (inFilterMode)
+        {
+        case SamplerFilterMode::Nearest:
+            return GL_NEAREST_MIPMAP_NEAREST;
+        case SamplerFilterMode::Linear:
+            return GL_LINEAR_MIPMAP_NEAREST;
+        }
+        break;
+    case SamplerMipmapMode::Linear:
+        switch (inFilterMode)
+        {
+        case SamplerFilterMode::Nearest:
+            return GL_NEAREST_MIPMAP_LINEAR;
+        case SamplerFilterMode::Linear:
+            return GL_LINEAR_MIPMAP_LINEAR;
+        }
+        break;
+    }
+    SIGMA_ASSERT(false, "Unknown SamplerFilterMode, SamplerMipmapMode combo");
+    return GL_LINEAR;
 }

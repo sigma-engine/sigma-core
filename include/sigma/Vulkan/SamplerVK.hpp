@@ -16,7 +16,7 @@ public:
 
     VkSampler handle() const { return mHandle; }
 
-    bool initialize();
+    bool initialize(const SamplerCreateParams &inParams);
 
 private:
     std::shared_ptr<DeviceVK> mDevice = nullptr;

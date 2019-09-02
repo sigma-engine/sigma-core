@@ -24,10 +24,13 @@ struct VkLayerProperties;
 enum class ImageFormat;
 enum class ShaderType;
 enum class DescriptorType;
+enum class SamplerWarpMode;
+enum class SamplerFilterMode;
+enum class SamplerMipmapMode;
 
-std::ostream& operator<<(std::ostream& os, const VkExtensionProperties& prop);
+std::ostream &operator<<(std::ostream &os, const VkExtensionProperties &prop);
 
-std::ostream& operator<<(std::ostream& os, const VkLayerProperties& prop);
+std::ostream &operator<<(std::ostream &os, const VkLayerProperties &prop);
 
 VkFormat convertImageFormatVK(ImageFormat inFormat);
 
@@ -40,3 +43,9 @@ VkFormat formatForDataTypeVK(DataType inType);
 VkDescriptorType convertDescriptorTypeVK(DescriptorType inType);
 
 std::string convertErrorStringVK(VkResult inResult);
+
+VkSamplerAddressMode convertSamplerWarpModeVK(SamplerWarpMode inMode);
+
+VkFilter convertSamplerFilterModeVK(SamplerFilterMode inMode);
+
+VkSamplerMipmapMode convertSamplerMipmapModeVK(SamplerMipmapMode inMode);

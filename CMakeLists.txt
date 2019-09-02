@@ -133,6 +133,7 @@ add_library(sigma-core STATIC
 	src/sigma/OpenGL/TextureGL.cpp
 
 	include/sigma/OpenGL/SamplerGL.hpp
+	src/sigma/OpenGL/SamplerGL.cpp
 
 	include/sigma/OpenGL/PipelineGL.hpp
 	src/sigma/OpenGL/PipelineGL.cpp

@@ -41,7 +41,9 @@ struct SimpleUniformBuffer
 };
 
 SimpleRenderer::SimpleRenderer(std::shared_ptr<Context> inContext, std::shared_ptr<Surface> inSurface)
-	: mContext(inContext), mDevice(inContext->device()), mSurface(inSurface)
+    : mContext(inContext), 
+	mDevice(inContext->device()), 
+	mSurface(inSurface)
 {
 }
 
@@ -51,7 +53,7 @@ bool SimpleRenderer::initialize()
     if (mTexture == nullptr)
         return false;
 
-    mSampler = mDevice->createSampler2D();
+    mSampler = mDevice->createSampler2D({ SamplerMipmapMode::None });
     if (mSampler == nullptr)
         return false;
 

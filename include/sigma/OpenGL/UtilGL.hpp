@@ -17,6 +17,9 @@
 // clang-format on
 
 enum class ImageFormat;
+enum class SamplerWarpMode;
+enum class SamplerFilterMode;
+enum class SamplerMipmapMode;
 
 GLenum baseTypeOfDataType(DataType inType);
 
@@ -27,3 +30,7 @@ GLenum convertImageFormatFormatGL(ImageFormat inFormat);
 GLenum convertImageFormatTypeGL(ImageFormat inFormat);
 
 std::string convertErrorStringGL(GLenum inError);
+
+GLenum convertSamplerWarpModeGL(SamplerWarpMode inMode);
+
+GLenum convertSamplerFilterModeGL(SamplerFilterMode inFilterMode, SamplerMipmapMode inMipmapMode);
