@@ -2,7 +2,7 @@
 
 #include <sigma/UniformBuffer.hpp>
 
-#include <VulkanMemoryAllocator/vk_mem_alloc.h>
+#include <vk_mem_alloc.h>
 #include <vulkan/vulkan.h>
 
 #include <cstdint>

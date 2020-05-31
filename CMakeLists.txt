@@ -3,15 +3,13 @@ project(sigma-engine)
 
 set(CMAKE_CXX_STANDARD 17)
 
-find_package(spdlog REQUIRED)
-find_package(glm REQUIRED)
-find_package(SDL2 REQUIRED)
-find_package(glad REQUIRED)
-find_package(Vulkan REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
 find_package(stb REQUIRED)
-find_package(VulkanMemoryAllocator REQUIRED)
-find_package(EnTT REQUIRED)
-find_package(nlohmann_json REQUIRED)
+find_package(SDL2 CONFIG REQUIRED)
+find_package(glad CONFIG REQUIRED)
+find_package(Vulkan REQUIRED)
+find_package(unofficial-vulkan-memory-allocator CONFIG REQUIRED)
 
 include(cmake/GLSL.cmake)
 include(cmake/Texture.cmake)
@@ -36,12 +34,6 @@ add_library(sigma-core STATIC
 
 	include/sigma/Resource/AssetLoader.hpp
 	src/sigma/Resource/AssetLoader.cpp
-
-	include/sigma/Resource/GLTF2.hpp
-	src/sigma/Resource/GLTF2.cpp
-
-	include/sigma/Resource/GLTF2Loader.hpp
-	src/sigma/Resource/GLTF2Loader.cpp
 
 	include/sigma/Resource/StbImageLoader.hpp
 	src/sigma/Resource/StbImageLoader.cpp
@@ -195,20 +187,20 @@ add_library(sigma-core STATIC
 target_include_directories(sigma-core
 PUBLIC
 	include
+PRIVATE
+	${Stb_INCLUDE_DIR}
 )
 
 target_link_libraries(sigma-core
 PUBLIC
-    ${CMAKE_DL_LIBS}
-    spdlog::spdlog
-    SDL2::SDL2-static
-    glad::glad
+	${CMAKE_DL_LIBS}
+	spdlog::spdlog
+	SDL2::SDL2
+	SDL2::SDL2main
+	glad::glad
 	Vulkan::Vulkan
-	VulkanMemoryAllocator::VulkanMemoryAllocator
-	stb::stb_image
-    glm
-	nlohmann_json::nlohmann_json
-	EnTT
+	unofficial::vulkan-memory-allocator::vulkan-memory-allocator
+	glm
 )
 
 if(NOT WIN32)
@@ -220,12 +212,12 @@ endif()
 
 target_compile_definitions(sigma-core
 PUBLIC
-    -DGLM_ENABLE_EXPERIMENTAL
-    -DGLM_FORCE_CTOR_INIT
+	-DGLM_ENABLE_EXPERIMENTAL
+	-DGLM_FORCE_CTOR_INIT
 	-DGLM_FORCE_RADIANS
 )
 
-add_executable(simple-game
+add_executable(simple-game WIN32
 	shaders/simple.vert.glsl
 	shaders/simple.frag.glsl
 	textures/TestImage.jpg

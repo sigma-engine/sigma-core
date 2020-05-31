@@ -1,11 +1,12 @@
 #include <sigma/Algorithm.hpp>
 
+#include <SDL2/SDL.h>
 #include <SimpleGame.hpp>
 
 #include <string>
 #include <vector>
 
-int main(int argc, char const* argv[])
+int main(int argc, char** argv)
 {
     std::vector<std::string> arguments(argc - 1);
     std::transform(argv + 1, argv + (argc - 1) + 1, arguments.begin(), [](auto arg) { return arg; });

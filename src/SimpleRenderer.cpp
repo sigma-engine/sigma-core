@@ -147,13 +147,12 @@ bool SimpleRenderer::initialize()
     return true;
 }
 
-void SimpleRenderer::render(const entt::entity &inCurrentCamera, const entt::registry &inRegistry)
+void SimpleRenderer::render(const TransformComponent &inCameraTransform)
 {
     SurfaceImageData *imageData = nullptr;
     mSurface->nextImage(imageData);
 
-    const auto &[camera, transform] = inRegistry.get<CameraComponent, TransformComponent>(inCurrentCamera);
-    auto viewMatrix = glm::inverse(transform.local_matrix());
+    auto viewMatrix = glm::inverse(inCameraTransform.local_matrix());
 
     setupUniformBuffer(viewMatrix, mUniformBuffers[imageData->imageIndex]);
 

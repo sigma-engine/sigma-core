@@ -1,9 +1,8 @@
 #pragma once
 
-#include <entt/entt.hpp>
-
 #include <string>
 #include <vector>
+#include <memory>
 
 class SimpleCameraController;
 
@@ -12,6 +11,5 @@ public:
     int run(const std::vector<std::string>& inArguments);
 
 private:
-    entt::registry mRegistry;
     std::shared_ptr<SimpleCameraController> mCameraController = nullptr;
 };

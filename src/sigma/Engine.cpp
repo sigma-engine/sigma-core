@@ -8,6 +8,8 @@
 #include <sigma/Vulkan/DeviceManagerVK.hpp>
 #include <sigma/Resource/AssetManager.hpp>
 
+#include <spdlog/sinks/stdout_color_sinks.h>
+
 #include <algorithm>
 
 std::shared_ptr<Engine> Engine::create()

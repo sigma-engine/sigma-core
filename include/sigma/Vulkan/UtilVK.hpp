@@ -3,8 +3,6 @@
 #include <sigma/DataTypes.hpp>
 #include <sigma/Log.hpp>
 
-#include <spdlog/fmt/bundled/ostream.h>
-
 #include <vulkan/vulkan.h>
 
 #include <ostream>
@@ -28,9 +26,25 @@ enum class SamplerWarpMode;
 enum class SamplerFilterMode;
 enum class SamplerMipmapMode;
 
-std::ostream &operator<<(std::ostream &os, const VkExtensionProperties &prop);
+namespace fmt {
+	template <>
+	struct formatter<VkExtensionProperties>: formatter<string_view> {
+		template <typename FormatContext>
+		auto format(VkExtensionProperties prop, FormatContext& ctx) {
+			string_view name = prop.extensionName;
+			return formatter<string_view>::format(name, ctx);
+		}
+	};
 
-std::ostream &operator<<(std::ostream &os, const VkLayerProperties &prop);
+	template <>
+	struct formatter<VkLayerProperties>: formatter<string_view> {
+		template <typename FormatContext>
+		auto format(VkLayerProperties prop, FormatContext& ctx) {
+			string_view name = prop.layerName;
+			return formatter<string_view>::format(name, ctx);
+		}
+	};
+}
 
 VkFormat convertImageFormatVK(ImageFormat inFormat);
 

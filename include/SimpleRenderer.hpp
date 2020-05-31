@@ -2,8 +2,7 @@
 
 #include <memory>
 #include <vector>
-
-#include <entt/entt.hpp>
+#include <string>
 
 #include <glm/mat4x4.hpp>
 
@@ -20,6 +19,7 @@ class Texture2D;
 class Sampler2D;
 class RenderPass;
 class FrameBuffer;
+struct TransformComponent;
 
 struct Vertex {
     glm::vec3 position;
@@ -33,7 +33,7 @@ public:
 
     bool initialize();
 
-    void render(const entt::entity& inCurrentCamera, const entt::registry& inRegistry);
+    void render(const TransformComponent& inCameraTransform);
 
 private:
     std::shared_ptr<Context> mContext = nullptr;

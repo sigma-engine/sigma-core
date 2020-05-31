@@ -15,6 +15,9 @@
 #include <sigma/Vulkan/UtilVK.hpp>
 #include <sigma/Vulkan/VertexBufferVK.hpp>
 
+#define VMA_IMPLEMENTATION
+#include <vk_mem_alloc.h>
+
 #include <fstream>
 
 DeviceVK::DeviceVK(VkInstance inInstance, VkPhysicalDevice inDevice, const std::vector<std::string> &inEnabledLayers)

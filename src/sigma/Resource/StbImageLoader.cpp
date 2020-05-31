@@ -5,7 +5,8 @@
 #include <sigma/Resource/AssetManager.hpp>
 #include <sigma/Device.hpp>
 
-#include <stb/stb_image.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 #include <set>
 #include <algorithm>
