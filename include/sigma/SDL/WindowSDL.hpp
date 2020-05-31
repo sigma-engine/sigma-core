@@ -3,7 +3,6 @@
 #include <sigma/EventEmitter.hpp>
 #include <sigma/EventListener.hpp>
 #include <sigma/OpenGL/SurfaceGL.hpp>
-#include <sigma/Vulkan/SurfaceVK.hpp>
 #include <sigma/Window.hpp>
 
 struct SDL_Window;
@@ -26,6 +25,8 @@ private:
 	void* mHandle = nullptr;
 };
 
+#ifdef SIGMA_VULKAN_SUPPORT
+#include <sigma/Vulkan/SurfaceVK.hpp>
 class SurfaceSDLVK : public SurfaceVK {
 public:
 	SurfaceSDLVK(SDL_Window* inWindow);
@@ -35,6 +36,7 @@ public:
 private:
 	SDL_Window* mWindow = nullptr;
 };
+#endif
 
 class EventEmitterSDL : public EventEmitter {
 public:

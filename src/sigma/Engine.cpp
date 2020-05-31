@@ -5,8 +5,11 @@
 #include <sigma/Log.hpp>
 #include <sigma/OpenGL/DeviceManagerGL.hpp>
 #include <sigma/SDL/WindowSDL.hpp>
-#include <sigma/Vulkan/DeviceManagerVK.hpp>
 #include <sigma/Resource/AssetManager.hpp>
+
+#ifdef SIGMA_VULKAN_SUPPORT
+#include <sigma/Vulkan/DeviceManagerVK.hpp>
+#endif
 
 #include <spdlog/sinks/stdout_color_sinks.h>
 
@@ -34,11 +37,13 @@ bool Engine::initialize(GraphicsAPI inGraphicsAPI)
 		mDeviceManger = std::make_shared<DeviceManagerGL>();
 		break;
 	}
+#ifdef SIGMA_VULKAN_SUPPORT
 	case GraphicsAPI::Vulkan:
 	{
 		mDeviceManger = std::make_shared<DeviceManagerVK>();
 		break;
 	}
+#endif
 	default:
 	{
 		return false;
@@ -53,7 +58,9 @@ std::shared_ptr<Window> Engine::createWindow(const std::string &inTitle, uint32_
 	std::shared_ptr<Window> window = nullptr;
 	switch (mGraphicsAPI)
 	{
+#ifdef SIGMA_VULKAN_SUPPORT
 	case GraphicsAPI::Vulkan:
+#endif
 	case GraphicsAPI::OpenGL:
 	{
 		WindowSDL::initializeSDL(shared_from_this());

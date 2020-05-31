@@ -2,10 +2,11 @@
 
 #include <sigma/Engine.hpp>
 #include <sigma/Log.hpp>
-#include <sigma/Vulkan/DeviceManagerVK.hpp>
 
 #include <SDL2/SDL.h>
+#ifdef SIGMA_VULKAN_SUPPORT
 #include <SDL2/SDL_vulkan.h>
+#endif
 
 #include <algorithm>
 #include <cassert>
@@ -66,10 +67,12 @@ WindowSDL::WindowSDL(std::shared_ptr<Engine> inEngine, const std::string& inTitl
 		flags |= SDL_WINDOW_OPENGL;
 		break;
 	}
+#ifdef SIGMA_VULKAN_SUPPORT
 	case GraphicsAPI::Vulkan: {
 		flags |= SDL_WINDOW_VULKAN;
 		break;
 	}
+#endif
 	default: {
 		SIGMA_ASSERT(false, "Unknown Graphics API!");
 		break;
@@ -87,10 +90,12 @@ WindowSDL::WindowSDL(std::shared_ptr<Engine> inEngine, const std::string& inTitl
 		mSurface = std::make_shared<SurfaceSDLGL>(mWindow);
 		break;
 	}
+#ifdef SIGMA_VULKAN_SUPPORT
 	case GraphicsAPI::Vulkan: {
 		mSurface = std::make_shared<SurfaceSDLVK>(mWindow);
 		break;
 	}
+#endif
 	default: {
 		break;
 	}
@@ -110,6 +115,7 @@ std::set<std::string> WindowSDL::requiredExtensions(GraphicsAPI inGraphicsAPI) c
 	std::set<std::string> extsSet;
 
 	switch (inGraphicsAPI) {
+#ifdef SIGMA_VULKAN_SUPPORT
 	case GraphicsAPI::Vulkan: {
 		uint32_t count;
 		std::vector<const char*> exts;
@@ -124,6 +130,10 @@ std::set<std::string> WindowSDL::requiredExtensions(GraphicsAPI inGraphicsAPI) c
 			SIGMA_ERROR(SDL_GetError());
 		}
 		extsSet.insert(exts.begin(), exts.end());
+		break;
+	}
+#endif
+	case GraphicsAPI::Unknown: {
 		break;
 	}
 	default: {
@@ -271,6 +281,9 @@ void SurfaceSDLGL::presentImage(const SurfaceImageData* inData)
 	SDL_GL_SwapWindow(mWindow);
 }
 
+#ifdef SIGMA_VULKAN_SUPPORT
+#include <sigma/Vulkan/DeviceManagerVK.hpp>
+
 SurfaceSDLVK::SurfaceSDLVK(SDL_Window* inWindow)
 	: mWindow(inWindow)
 {
@@ -289,3 +302,4 @@ bool SurfaceSDLVK::initialize(std::shared_ptr<DeviceManager> inDevice, uint32_t 
 
 	return true;
 }
+#endif

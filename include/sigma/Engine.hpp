@@ -13,8 +13,11 @@ class logger;
 
 enum class GraphicsAPI
 {
+	Unknown,
 	OpenGL,
+#ifdef SIGMA_VULKAN_SUPPORT
 	Vulkan
+#endif
 };
 
 class Window;

@@ -3,13 +3,22 @@ project(sigma-engine)
 
 set(CMAKE_CXX_STANDARD 17)
 
+if (APPLE)
+	set(SIGMA_VULKAN_SUPPORT OFF)
+else()
+	set(SIGMA_VULKAN_SUPPORT ON)
+endif()
+
 find_package(spdlog CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(stb REQUIRED)
 find_package(SDL2 CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
-find_package(Vulkan REQUIRED)
-find_package(unofficial-vulkan-memory-allocator CONFIG REQUIRED)
+
+if (${SIGMA_VULKAN_SUPPORT})
+	find_package(Vulkan REQUIRED)
+	find_package(unofficial-vulkan-memory-allocator CONFIG REQUIRED)
+endif()
 
 include(cmake/GLSL.cmake)
 include(cmake/Texture.cmake)
@@ -135,54 +144,54 @@ add_library(sigma-core STATIC
 
 	include/sigma/OpenGL/IndexBufferGL.hpp
 	src/sigma/OpenGL/IndexBufferGL.cpp
-
-	include/sigma/Vulkan/DeviceManagerVK.hpp
-	src/sigma/Vulkan/DeviceManagerVK.cpp
-
-	include/sigma/Vulkan/DeviceVK.hpp
-	src/sigma/Vulkan/DeviceVK.cpp
-
-	include/sigma/Vulkan/CommandBufferVK.hpp
-	src/sigma/Vulkan/CommandBufferVK.cpp
-
-	include/sigma/Vulkan/FrameBufferVK.hpp
-	src/sigma/Vulkan/FrameBufferVK.cpp
-
-	include/sigma/Vulkan/SurfaceVK.hpp
-	src/sigma/Vulkan/SurfaceVK.cpp
-
-	include/sigma/Vulkan/ShaderVK.hpp
-	src/sigma/Vulkan/ShaderVK.cpp
-
-	include/sigma/Vulkan/RenderPassVK.hpp
-	src/sigma/Vulkan/RenderPassVK.cpp
-
-	include/sigma/Vulkan/PipelineVK.hpp
-	src/sigma/Vulkan/PipelineVK.cpp
-
-	include/sigma/Vulkan/VertexBufferVK.hpp
-	src/sigma/Vulkan/VertexBufferVK.cpp
-
-	include/sigma/Vulkan/IndexBufferVK.hpp
-	src/sigma/Vulkan/IndexBufferVK.cpp
-
-	include/sigma/Vulkan/DescriptorSetVK.hpp
-	src/sigma/Vulkan/DescriptorSetVK.cpp
-
-	include/sigma/Vulkan/UniformBufferVK.hpp
-	src/sigma/Vulkan/UniformBufferVK.cpp
-
-	include/sigma/Vulkan/TextureVK.hpp
-	src/sigma/Vulkan/TextureVK.cpp
-
-	include/sigma/Vulkan/SamplerVK.hpp
-	src/sigma/Vulkan/SamplerVK.cpp
-
-	src/sigma/Vulkan/ExtensionsVK.cpp
-
-	include/sigma/Vulkan/UtilVK.hpp
-	src/sigma/Vulkan/UtilVK.cpp
 )
+
+if (${SIGMA_VULKAN_SUPPORT})
+	target_sources(sigma-core PRIVATE 
+		include/sigma/Vulkan/DeviceManagerVK.hpp
+		src/sigma/Vulkan/DeviceManagerVK.cpp
+		include/sigma/Vulkan/DeviceVK.hpp
+		src/sigma/Vulkan/DeviceVK.cpp
+		include/sigma/Vulkan/CommandBufferVK.hpp
+		src/sigma/Vulkan/CommandBufferVK.cpp
+		include/sigma/Vulkan/FrameBufferVK.hpp
+		src/sigma/Vulkan/FrameBufferVK.cpp
+		include/sigma/Vulkan/SurfaceVK.hpp
+		src/sigma/Vulkan/SurfaceVK.cpp
+		include/sigma/Vulkan/ShaderVK.hpp
+		src/sigma/Vulkan/ShaderVK.cpp
+		include/sigma/Vulkan/RenderPassVK.hpp
+		src/sigma/Vulkan/RenderPassVK.cpp
+		include/sigma/Vulkan/PipelineVK.hpp
+		src/sigma/Vulkan/PipelineVK.cpp
+		include/sigma/Vulkan/VertexBufferVK.hpp
+		src/sigma/Vulkan/VertexBufferVK.cpp
+		include/sigma/Vulkan/IndexBufferVK.hpp
+		src/sigma/Vulkan/IndexBufferVK.cpp
+		include/sigma/Vulkan/DescriptorSetVK.hpp
+		src/sigma/Vulkan/DescriptorSetVK.cpp
+		include/sigma/Vulkan/UniformBufferVK.hpp
+		src/sigma/Vulkan/UniformBufferVK.cpp
+		include/sigma/Vulkan/TextureVK.hpp
+		src/sigma/Vulkan/TextureVK.cpp
+		include/sigma/Vulkan/SamplerVK.hpp
+		src/sigma/Vulkan/SamplerVK.cpp
+		src/sigma/Vulkan/ExtensionsVK.cpp
+		include/sigma/Vulkan/UtilVK.hpp
+		src/sigma/Vulkan/UtilVK.cpp
+	)
+
+	target_compile_definitions(sigma-core
+	PUBLIC
+		SIGMA_VULKAN_SUPPORT
+	)
+
+	target_link_libraries(sigma-core
+	PRIVATE
+		Vulkan::Vulkan
+		unofficial::vulkan-memory-allocator::vulkan-memory-allocator
+	)
+endif()
 
 target_include_directories(sigma-core
 PUBLIC
@@ -198,8 +207,6 @@ PUBLIC
 	SDL2::SDL2
 	SDL2::SDL2main
 	glad::glad
-	Vulkan::Vulkan
-	unofficial::vulkan-memory-allocator::vulkan-memory-allocator
 	glm
 )
 

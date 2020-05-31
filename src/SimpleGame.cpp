@@ -26,7 +26,13 @@ int SimpleGame::run(const std::vector<std::string> &inArguments)
 	bool useOpenGL = std::find_if(inArguments.begin(), inArguments.end(), [](auto a) { return a == "--opengl"; }) != inArguments.end();
 
 	auto engine = Engine::create();
-	if (!engine->initialize(useOpenGL ? GraphicsAPI::OpenGL : GraphicsAPI::Vulkan))
+	GraphicsAPI graphicsAPI = GraphicsAPI::OpenGL;
+
+#ifdef SIGMA_VULKAN_SUPPORT
+	if (!useOpenGL) graphicsAPI = GraphicsAPI::Vulkan;
+#endif
+
+	if (!engine->initialize(graphicsAPI))
 		return -1;
 
 	auto deviceManager = engine->deviceManager();
