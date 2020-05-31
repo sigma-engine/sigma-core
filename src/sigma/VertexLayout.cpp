@@ -4,27 +4,27 @@
 
 VertexLayout::VertexLayout(const std::initializer_list<VertexMemberDescription>& inLayout)
 {
-    mStride = 0;
-    for (const auto& des : inLayout) {
-        mMembers.push_back({ des.location,
-            mStride,
-            sizeOfDataType(des.type),
-            des.type,
-            des.name,
-            des.normalized });
-        mStride += mMembers.back().size;
-    }
+	mStride = 0;
+	for (const auto& des : inLayout) {
+		mMembers.push_back({ des.location,
+			mStride,
+			sizeOfDataType(des.type),
+			des.type,
+			des.name,
+			des.normalized });
+		mStride += mMembers.back().size;
+	}
 }
 
 VertexLayout::VertexLayout(const std::vector<VertexMember>& inMembers, uint32_t inStride)
-    : mStride(inStride)
-    , mMembers(inMembers)
+	: mStride(inStride)
+	, mMembers(inMembers)
 {
 }
 
 uint32_t VertexLayout::stride() const
 {
-    return mStride;
+	return mStride;
 }
 
 std::vector<VertexMember>::const_iterator VertexLayout::begin() const { return mMembers.begin(); }

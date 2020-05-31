@@ -5,21 +5,21 @@
 #include <sigma/Texture.hpp>
 
 enum class AttachmentType {
-    ColorAttachment
+	ColorAttachment
 };
 
 struct RenderPassAttachment {
-    AttachmentType type;
-    ImageFormat format;
+	AttachmentType type;
+	ImageFormat format;
 };
 
 struct RenderPassCreateParams {
-    std::vector<RenderPassAttachment> attachments;
+	std::vector<RenderPassAttachment> attachments;
 };
 
 class RenderPass {
 public:
-    virtual ~RenderPass() = default;
+	virtual ~RenderPass() = default;
 
 	virtual const std::vector<RenderPassAttachment> &attachments() const = 0;
 private:

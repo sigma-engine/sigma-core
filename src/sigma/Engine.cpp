@@ -14,118 +14,118 @@
 
 std::shared_ptr<Engine> Engine::create()
 {
-    return std::make_shared<Engine>();
+	return std::make_shared<Engine>();
 }
 
 GraphicsAPI Engine::graphicsAPI() const
 {
-    return mGraphicsAPI;
+	return mGraphicsAPI;
 }
 
 bool Engine::initialize(GraphicsAPI inGraphicsAPI)
 {
-    mGraphicsAPI = inGraphicsAPI;
-    mConsole = spdlog::stdout_color_mt(SIGMA_LOG_NAME);
+	mGraphicsAPI = inGraphicsAPI;
+	mConsole = spdlog::stdout_color_mt(SIGMA_LOG_NAME);
 
-    switch (inGraphicsAPI)
-    {
-    case GraphicsAPI::OpenGL:
-    {
-        mDeviceManger = std::make_shared<DeviceManagerGL>();
-        break;
-    }
-    case GraphicsAPI::Vulkan:
-    {
-        mDeviceManger = std::make_shared<DeviceManagerVK>();
-        break;
-    }
-    default:
-    {
-        return false;
-    }
-    }
+	switch (inGraphicsAPI)
+	{
+	case GraphicsAPI::OpenGL:
+	{
+		mDeviceManger = std::make_shared<DeviceManagerGL>();
+		break;
+	}
+	case GraphicsAPI::Vulkan:
+	{
+		mDeviceManger = std::make_shared<DeviceManagerVK>();
+		break;
+	}
+	default:
+	{
+		return false;
+	}
+	}
 
-    return true;
+	return true;
 }
 
 std::shared_ptr<Window> Engine::createWindow(const std::string &inTitle, uint32_t inWidth, uint32_t inHeight)
 {
-    std::shared_ptr<Window> window = nullptr;
-    switch (mGraphicsAPI)
-    {
-    case GraphicsAPI::Vulkan:
-    case GraphicsAPI::OpenGL:
-    {
-        WindowSDL::initializeSDL(shared_from_this());
-        window = std::make_shared<WindowSDL>(shared_from_this(), inTitle, inWidth, inHeight);
-        break;
-    }
-    default:
-    {
-        SIGMA_ASSERT(false, "Unknown Graphics API");
-        break;
-    }
-    }
+	std::shared_ptr<Window> window = nullptr;
+	switch (mGraphicsAPI)
+	{
+	case GraphicsAPI::Vulkan:
+	case GraphicsAPI::OpenGL:
+	{
+		WindowSDL::initializeSDL(shared_from_this());
+		window = std::make_shared<WindowSDL>(shared_from_this(), inTitle, inWidth, inHeight);
+		break;
+	}
+	default:
+	{
+		SIGMA_ASSERT(false, "Unknown Graphics API");
+		break;
+	}
+	}
 
-    if (!mDeviceInitialized)
-    {
-        auto exts = window->requiredExtensions(mGraphicsAPI);
-        mRequiredExtensions[mGraphicsAPI].insert(exts.begin(), exts.end());
+	if (!mDeviceInitialized)
+	{
+		auto exts = window->requiredExtensions(mGraphicsAPI);
+		mRequiredExtensions[mGraphicsAPI].insert(exts.begin(), exts.end());
 
-        if (mDeviceManger->initialize(mRequiredExtensions[mGraphicsAPI]))
-            mDeviceInitialized = true;
-        else
-            window = nullptr;
-    }
+		if (mDeviceManger->initialize(mRequiredExtensions[mGraphicsAPI]))
+			mDeviceInitialized = true;
+		else
+			window = nullptr;
+	}
 
-    if (window && window->initialize())
-        mEventListeners.push_back(window);
-    else
-        window = nullptr;
+	if (window && window->initialize())
+		mEventListeners.push_back(window);
+	else
+		window = nullptr;
 
-    return window;
+	return window;
 }
 
 void Engine::addEmitter(std::weak_ptr<EventEmitter> inEmitter)
 {
-    mEventEmitters.push_back(inEmitter);
+	mEventEmitters.push_back(inEmitter);
 }
 
 void Engine::removeEmitter(std::weak_ptr<EventEmitter> inEmitter)
 {
-    auto it = std::remove_if(mEventEmitters.begin(), mEventEmitters.end(), [&](auto e) { return e.lock() == inEmitter.lock(); });
-    mEventEmitters.erase(it, mEventEmitters.end());
+	auto it = std::remove_if(mEventEmitters.begin(), mEventEmitters.end(), [&](auto e) { return e.lock() == inEmitter.lock(); });
+	mEventEmitters.erase(it, mEventEmitters.end());
 }
 
 void Engine::addListener(std::weak_ptr<EventListener> inListener)
 {
-    mEventListeners.push_back(inListener);
+	mEventListeners.push_back(inListener);
 }
 
 void Engine::removeListener(std::weak_ptr<EventListener> inListener)
 {
-    auto it = std::remove_if(mEventListeners.begin(), mEventListeners.end(), [&](auto e) { return e.lock() == inListener.lock(); });
-    mEventListeners.erase(it, mEventListeners.end());
+	auto it = std::remove_if(mEventListeners.begin(), mEventListeners.end(), [&](auto e) { return e.lock() == inListener.lock(); });
+	mEventListeners.erase(it, mEventListeners.end());
 }
 
 std::shared_ptr<DeviceManager> Engine::deviceManager()
 {
-    return mDeviceManger;
+	return mDeviceManger;
 }
 
 bool Engine::process()
 {
-    auto listIt = std::remove_if(mEventListeners.begin(), mEventListeners.end(), [](auto a) { return a.lock() == nullptr; });
-    mEventListeners.erase(listIt, mEventListeners.end());
+	auto listIt = std::remove_if(mEventListeners.begin(), mEventListeners.end(), [](auto a) { return a.lock() == nullptr; });
+	mEventListeners.erase(listIt, mEventListeners.end());
 
-    auto emitIt = std::remove_if(mEventEmitters.begin(), mEventEmitters.end(), [&](auto e) {
-        auto ptr = e.lock();
-        if (ptr)
-            return !ptr->process(mEventListeners);
-        else
-            return true;
-    });
-    mEventEmitters.erase(emitIt, mEventEmitters.end());
+	auto emitIt = std::remove_if(mEventEmitters.begin(), mEventEmitters.end(), [&](auto e) {
+		auto ptr = e.lock();
+		if (ptr)
+			return !ptr->process(mEventListeners);
+		else
+			return true;
+	});
+	mEventEmitters.erase(emitIt, mEventEmitters.end());
 
-    return true;
+	return true;
 }

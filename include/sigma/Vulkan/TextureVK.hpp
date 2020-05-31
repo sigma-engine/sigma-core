@@ -12,25 +12,25 @@ class DeviceVK;
 
 class Texture2DVK : public Texture2D {
 public:
-    Texture2DVK(std::shared_ptr<DeviceVK> inDevice);
+	Texture2DVK(std::shared_ptr<DeviceVK> inDevice);
 
-    virtual ~Texture2DVK();
+	virtual ~Texture2DVK();
 
-    VkImage imageHandle() const { return mImage; };
+	VkImage imageHandle() const { return mImage; };
 
-    VkImageView imageViewHandle() const { return mImageView; };
+	VkImageView imageViewHandle() const { return mImageView; };
 
-    bool initialize(const TextureCreateParams& inParams);
+	bool initialize(const TextureCreateParams& inParams);
 
 private:
-    std::shared_ptr<DeviceVK> mDevice = nullptr;
+	std::shared_ptr<DeviceVK> mDevice = nullptr;
 
-    glm::uvec3 mSize;
-    ImageFormat mFormat;
+	glm::uvec3 mSize;
+	ImageFormat mFormat;
 
-    VkImage mImage = nullptr;
-    VkImageView mImageView = nullptr;
-    VmaAllocation mAllocation = nullptr;
+	VkImage mImage = nullptr;
+	VkImageView mImageView = nullptr;
+	VmaAllocation mAllocation = nullptr;
 
-    VkResult setData(const void* inData, uint64_t inSize);
+	VkResult setData(const void* inData, uint64_t inSize);
 };

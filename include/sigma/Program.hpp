@@ -2,5 +2,5 @@
 
 class Program {
 public:
-    virtual ~Program() = default;
+	virtual ~Program() = default;
 };

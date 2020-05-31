@@ -15,98 +15,98 @@ class SurfaceVK;
 
 struct SurfaceSwapChainInfoVK
 {
-    VkSurfaceCapabilitiesKHR capabilities;
-    std::vector<VkSurfaceFormatKHR> formats;
-    std::vector<VkPresentModeKHR> modes;
-    std::optional<uint32_t> presentFamily;
+	VkSurfaceCapabilitiesKHR capabilities;
+	std::vector<VkSurfaceFormatKHR> formats;
+	std::vector<VkPresentModeKHR> modes;
+	std::optional<uint32_t> presentFamily;
 };
 
 class DeviceVK : public Device, public std::enable_shared_from_this<DeviceVK>
 {
 public:
-    DeviceVK(VkInstance inInstance, VkPhysicalDevice inDevice, const std::vector<std::string> &inEnabledLayers);
+	DeviceVK(VkInstance inInstance, VkPhysicalDevice inDevice, const std::vector<std::string> &inEnabledLayers);
 
-    virtual ~DeviceVK();
+	virtual ~DeviceVK();
 
-    virtual DeviceType type() const override;
+	virtual DeviceType type() const override;
 
-    virtual uint32_t maxGraphicsQueues() const override;
+	virtual uint32_t maxGraphicsQueues() const override;
 
-    virtual uint32_t maxComputeQueues() const override;
+	virtual uint32_t maxComputeQueues() const override;
 
-    virtual bool supportsSurface(std::shared_ptr<Surface> inSurface) const override;
+	virtual bool supportsSurface(std::shared_ptr<Surface> inSurface) const override;
 
-    virtual bool initialize(const std::vector<std::shared_ptr<Surface>> &inSurfaces) override;
+	virtual bool initialize(const std::vector<std::shared_ptr<Surface>> &inSurfaces) override;
 
-    virtual std::shared_ptr<CommandBuffer> createCommandBuffer() override;
+	virtual std::shared_ptr<CommandBuffer> createCommandBuffer() override;
 
-    virtual std::shared_ptr<Shader> createShader(ShaderType inType, const std::string &inSourcePath) override;
+	virtual std::shared_ptr<Shader> createShader(ShaderType inType, const std::string &inSourcePath) override;
 
-    virtual std::shared_ptr<RenderPass> createRenderPass(const RenderPassCreateParams &inParams) override;
+	virtual std::shared_ptr<RenderPass> createRenderPass(const RenderPassCreateParams &inParams) override;
 
-    virtual std::shared_ptr<FrameBuffer> createFrameBuffer(const FrameBufferCreateParams &inParams) override;
+	virtual std::shared_ptr<FrameBuffer> createFrameBuffer(const FrameBufferCreateParams &inParams) override;
 
-    virtual std::shared_ptr<DescriptorSetLayout> createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding> &inBindings) override;
+	virtual std::shared_ptr<DescriptorSetLayout> createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding> &inBindings) override;
 
-    virtual std::shared_ptr<DescriptorSet> createDescriptorSet(const DescriptorSetCreateParams &inParams) override;
+	virtual std::shared_ptr<DescriptorSet> createDescriptorSet(const DescriptorSetCreateParams &inParams) override;
 
-    virtual std::shared_ptr<Pipeline> createPipeline(const PipelineCreateParams &inParams) override;
+	virtual std::shared_ptr<Pipeline> createPipeline(const PipelineCreateParams &inParams) override;
 
-    virtual std::shared_ptr<VertexBuffer> createVertexBuffer(const VertexLayout &inLayout, uint64_t inSize) override;
+	virtual std::shared_ptr<VertexBuffer> createVertexBuffer(const VertexLayout &inLayout, uint64_t inSize) override;
 
-    virtual std::shared_ptr<IndexBuffer> createIndexBuffer(PrimitiveType inPrimitive, DataType inDataType, uint64_t inSize) override;
+	virtual std::shared_ptr<IndexBuffer> createIndexBuffer(PrimitiveType inPrimitive, DataType inDataType, uint64_t inSize) override;
 
-    virtual std::shared_ptr<UniformBuffer> createUniformBuffer(uint64_t inSize) override;
+	virtual std::shared_ptr<UniformBuffer> createUniformBuffer(uint64_t inSize) override;
 
-    virtual std::shared_ptr<Texture2D> createTexture2D(const TextureCreateParams &inParams) override;
+	virtual std::shared_ptr<Texture2D> createTexture2D(const TextureCreateParams &inParams) override;
 
-    virtual std::shared_ptr<Sampler2D> createSampler2D(const SamplerCreateParams &inParams) override;
+	virtual std::shared_ptr<Sampler2D> createSampler2D(const SamplerCreateParams &inParams) override;
 
-    uint32_t graphicsQueueFamily() const;
+	uint32_t graphicsQueueFamily() const;
 
-    VkDevice handle() const { return mDevice; }
+	VkDevice handle() const { return mDevice; }
 
-    VmaAllocator allocator() const { return mAllocator; }
+	VmaAllocator allocator() const { return mAllocator; }
 
-    VkQueue getQueue(uint32_t inFamily) const;
+	VkQueue getQueue(uint32_t inFamily) const;
 
-    VkQueue graphicsQueue() const;
+	VkQueue graphicsQueue() const;
 
-    VkResult startTmpCommandBuffer(VkCommandBuffer *outCommandBuffer);
+	VkResult startTmpCommandBuffer(VkCommandBuffer *outCommandBuffer);
 
-    VkResult endTmpCommandBuffer(VkCommandBuffer inCommandBuffer);
+	VkResult endTmpCommandBuffer(VkCommandBuffer inCommandBuffer);
 
-    // VkResult createBuffer(VkBufferCreateInfo* inBufferCreateInfo, VkMemoryPropertyFlagBits inProperties, VkBuffer* outBuffer, VkDeviceMemory* outMemory);
+	// VkResult createBuffer(VkBufferCreateInfo* inBufferCreateInfo, VkMemoryPropertyFlagBits inProperties, VkBuffer* outBuffer, VkDeviceMemory* outMemory);
 
-    VkResult copyBufferToBuffer(VkBuffer inDstBuffer, VkBuffer inSrcBuffer, uint64_t inSize);
+	VkResult copyBufferToBuffer(VkBuffer inDstBuffer, VkBuffer inSrcBuffer, uint64_t inSize);
 
-    // VkResult createImage(VkImageCreateInfo* inImageCreateInfo, VkMemoryPropertyFlagBits inProperties, VkImage* outImage, VkDeviceMemory* outMemory);
+	// VkResult createImage(VkImageCreateInfo* inImageCreateInfo, VkMemoryPropertyFlagBits inProperties, VkImage* outImage, VkDeviceMemory* outMemory);
 
-    void transitionImageLayout(VkCommandBuffer inCommandBuffer, VkImage inImage, VkFormat inFormat, VkImageLayout inSrcLayout, VkImageLayout inDstLayout);
+	void transitionImageLayout(VkCommandBuffer inCommandBuffer, VkImage inImage, VkFormat inFormat, VkImageLayout inSrcLayout, VkImageLayout inDstLayout);
 
-    VkResult copyBufferToImage(VkImage inDstImage, VkBuffer inSrcBuffer, VkFormat inFormat, uint32_t inWidth, uint32_t inHeight);
+	VkResult copyBufferToImage(VkImage inDstImage, VkBuffer inSrcBuffer, VkFormat inFormat, uint32_t inWidth, uint32_t inHeight);
 
 private:
-    VkInstance mInstance = nullptr;
-    VkPhysicalDevice mPhysicalDevice = nullptr;
-    VkDevice mDevice = nullptr;
-    VmaAllocator mAllocator = nullptr;
-    std::vector<std::string> mRequiredExtensions;
-    std::vector<std::string> mEnabledLayers;
-    VkPhysicalDeviceProperties mPhysicalDeviceProperties;
-    VkPhysicalDeviceMemoryProperties mMemoryProperties;
-    std::vector<VkExtensionProperties> mExtensionProperties;
-    std::vector<VkQueueFamilyProperties> mQueueFamilyProperties;
-    VkPhysicalDeviceFeatures mPhysicalDeviceFeatures;
-    std::optional<uint32_t> mGraphicsFamily;
-    std::optional<uint32_t> mComputeFamily;
-    VkQueue mGraphicsQueue = nullptr;
+	VkInstance mInstance = nullptr;
+	VkPhysicalDevice mPhysicalDevice = nullptr;
+	VkDevice mDevice = nullptr;
+	VmaAllocator mAllocator = nullptr;
+	std::vector<std::string> mRequiredExtensions;
+	std::vector<std::string> mEnabledLayers;
+	VkPhysicalDeviceProperties mPhysicalDeviceProperties;
+	VkPhysicalDeviceMemoryProperties mMemoryProperties;
+	std::vector<VkExtensionProperties> mExtensionProperties;
+	std::vector<VkQueueFamilyProperties> mQueueFamilyProperties;
+	VkPhysicalDeviceFeatures mPhysicalDeviceFeatures;
+	std::optional<uint32_t> mGraphicsFamily;
+	std::optional<uint32_t> mComputeFamily;
+	VkQueue mGraphicsQueue = nullptr;
 
-    VkCommandPool mGraphicsCommandPool = nullptr;
-    VkDescriptorPool mDescriptorPool = nullptr;
-    std::vector<VkCommandBuffer> mFreeGraphicsBuffers;
+	VkCommandPool mGraphicsCommandPool = nullptr;
+	VkDescriptorPool mDescriptorPool = nullptr;
+	std::vector<VkCommandBuffer> mFreeGraphicsBuffers;
 
-    std::optional<SurfaceSwapChainInfoVK> getSwapChainInfo(std::shared_ptr<SurfaceVK> inSurface) const;
+	std::optional<SurfaceSwapChainInfoVK> getSwapChainInfo(std::shared_ptr<SurfaceVK> inSurface) const;
 
-    uint32_t findMemoryType(uint32_t inTypeFilter, VkMemoryPropertyFlagBits inProperties) const;
+	uint32_t findMemoryType(uint32_t inTypeFilter, VkMemoryPropertyFlagBits inProperties) const;
 };

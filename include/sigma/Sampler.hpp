@@ -4,23 +4,23 @@
 
 enum class SamplerWarpMode
 {
-    ClampToEdge,
-    MirroredRepeat,
-    Repeat
+	ClampToEdge,
+	MirroredRepeat,
+	Repeat
 };
 
 enum class SamplerFilterMode
 {
-    Nearest,
-    Linear,
-    Cubic
+	Nearest,
+	Linear,
+	Cubic
 };
 
 enum class SamplerMipmapMode
 {
-    None,
-    Nearest,
-    Linear
+	None,
+	Nearest,
+	Linear
 };
 
 struct SamplerCreateParams
@@ -28,9 +28,9 @@ struct SamplerCreateParams
 	SamplerMipmapMode mipmapMode = SamplerMipmapMode::Linear;
 	SamplerFilterMode minFilter = SamplerFilterMode::Linear;
 	SamplerFilterMode magFilter = SamplerFilterMode::Linear;
-    SamplerWarpMode warpU = SamplerWarpMode::Repeat;
-    SamplerWarpMode warpV = SamplerWarpMode::Repeat;
-    SamplerWarpMode warpW = SamplerWarpMode::Repeat;
+	SamplerWarpMode warpU = SamplerWarpMode::Repeat;
+	SamplerWarpMode warpV = SamplerWarpMode::Repeat;
+	SamplerWarpMode warpW = SamplerWarpMode::Repeat;
 };
 
 class Sampler2D
@@ -38,7 +38,7 @@ class Sampler2D
 public:
 	using ResourceID = SamplerCreateParams;
 
-    virtual ~Sampler2D() = default;
+	virtual ~Sampler2D() = default;
 };
 
 namespace std {

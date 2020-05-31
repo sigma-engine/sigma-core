@@ -23,28 +23,28 @@
 
 int SimpleGame::run(const std::vector<std::string> &inArguments)
 {
-    bool useOpenGL = std::find_if(inArguments.begin(), inArguments.end(), [](auto a) { return a == "--opengl"; }) != inArguments.end();
+	bool useOpenGL = std::find_if(inArguments.begin(), inArguments.end(), [](auto a) { return a == "--opengl"; }) != inArguments.end();
 
-    auto engine = Engine::create();
-    if (!engine->initialize(useOpenGL ? GraphicsAPI::OpenGL : GraphicsAPI::Vulkan))
-        return -1;
+	auto engine = Engine::create();
+	if (!engine->initialize(useOpenGL ? GraphicsAPI::OpenGL : GraphicsAPI::Vulkan))
+		return -1;
 
-    auto deviceManager = engine->deviceManager();
-    if (deviceManager == nullptr)
-        return -1;
+	auto deviceManager = engine->deviceManager();
+	if (deviceManager == nullptr)
+		return -1;
 
-    auto window = engine->createWindow(fmt::format("Simple Game - ({})", engine->graphicsAPI() == GraphicsAPI::OpenGL ? "OpenGL" : "Vulkan"), 1920 - 50, 1080 - 50);
-    if (window == nullptr)
-        return -1;
+	auto window = engine->createWindow(fmt::format("Simple Game - ({})", engine->graphicsAPI() == GraphicsAPI::OpenGL ? "OpenGL" : "Vulkan"), 1920 - 50, 1080 - 50);
+	if (window == nullptr)
+		return -1;
 
-    std::vector<std::shared_ptr<Device>> surfaceDevices;
-    deviceManager->enumerateSurfaceDevices(window->surface(), surfaceDevices);
-    if (surfaceDevices.empty())
-        return -1;
+	std::vector<std::shared_ptr<Device>> surfaceDevices;
+	deviceManager->enumerateSurfaceDevices(window->surface(), surfaceDevices);
+	if (surfaceDevices.empty())
+		return -1;
 
-    auto device = surfaceDevices[0];
-    if (!device->initialize({window->surface()}))
-        return -1;
+	auto device = surfaceDevices[0];
+	if (!device->initialize({window->surface()}))
+		return -1;
 
 	auto context = std::make_shared<Context>();
 	if (!context->initialize(engine, device))
@@ -52,17 +52,17 @@ int SimpleGame::run(const std::vector<std::string> &inArguments)
 
 	context->assetManager()->addLoader(std::make_shared<StbImageLoader>());
 
-    auto renderer = std::make_shared<SimpleRenderer>(context, window->surface());
-    if (!renderer->initialize())
-        return -1;
+	auto renderer = std::make_shared<SimpleRenderer>(context, window->surface());
+	if (!renderer->initialize())
+		return -1;
 
-    mCameraController = std::make_shared<SimpleCameraController>();
-    engine->addListener(mCameraController);
+	mCameraController = std::make_shared<SimpleCameraController>();
+	engine->addListener(mCameraController);
 
-    while (window->open() && engine->process())
-    {
-        renderer->render(mCameraController->transform());
-    }
+	while (window->open() && engine->process())
+	{
+		renderer->render(mCameraController->transform());
+	}
 
-    return 0;
+	return 0;
 }

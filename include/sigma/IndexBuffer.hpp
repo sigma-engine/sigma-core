@@ -5,16 +5,16 @@
 #include <cstdint>
 
 enum class PrimitiveType {
-    Triangle
+	Triangle
 };
 
 class IndexBuffer {
 public:
-    virtual ~IndexBuffer() = default;
+	virtual ~IndexBuffer() = default;
 
-    virtual DataType dataType() const = 0;
+	virtual DataType dataType() const = 0;
 
-    virtual PrimitiveType primitiveType() const = 0;
+	virtual PrimitiveType primitiveType() const = 0;
 
-    virtual void setData(const void* inData, uint64_t inSize) = 0;
+	virtual void setData(const void* inData, uint64_t inSize) = 0;
 };

@@ -4,7 +4,7 @@ class Event;
 
 class EventListener {
 public:
-    virtual ~EventListener() = default;
+	virtual ~EventListener() = default;
 
-    virtual void processEvent(Event* inEvent) = 0;
+	virtual void processEvent(Event* inEvent) = 0;
 };

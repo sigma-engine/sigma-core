@@ -10,16 +10,16 @@ class DeviceVK;
 
 class Sampler2DVK : public Sampler2D {
 public:
-    Sampler2DVK(std::shared_ptr<DeviceVK> inDevice);
+	Sampler2DVK(std::shared_ptr<DeviceVK> inDevice);
 
-    virtual ~Sampler2DVK();
+	virtual ~Sampler2DVK();
 
-    VkSampler handle() const { return mHandle; }
+	VkSampler handle() const { return mHandle; }
 
-    bool initialize(const SamplerCreateParams &inParams);
+	bool initialize(const SamplerCreateParams &inParams);
 
 private:
-    std::shared_ptr<DeviceVK> mDevice = nullptr;
+	std::shared_ptr<DeviceVK> mDevice = nullptr;
 
-    VkSampler mHandle = nullptr;
+	VkSampler mHandle = nullptr;
 };

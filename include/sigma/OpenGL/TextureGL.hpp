@@ -8,14 +8,14 @@
 
 class Texture2DGL : public Texture2D {
 public:
-    Texture2DGL();
+	Texture2DGL();
 
-    virtual ~Texture2DGL();
+	virtual ~Texture2DGL();
 
-    GLuint handle() const { return mHandle; }
+	GLuint handle() const { return mHandle; }
 
-    bool initialize(const TextureCreateParams& inParams);
+	bool initialize(const TextureCreateParams& inParams);
 
 private:
-    GLuint mHandle = 0;
+	GLuint mHandle = 0;
 };

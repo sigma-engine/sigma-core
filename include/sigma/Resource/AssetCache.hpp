@@ -7,7 +7,7 @@
 class AssetCacheBase
 {
 public:
-    virtual ~AssetCacheBase() = default;
+	virtual ~AssetCacheBase() = default;
 
 private:
 };
@@ -18,19 +18,19 @@ class AssetCache : public AssetCacheBase
 public:
 	using ResourceID = typename T::ResourceID;
 
-    std::shared_ptr<T> get(const ResourceID &inRID)
-    {
-        auto it = mMap.find(inRID);
-        if (it != mMap.end())
-            return it->second;
-        return nullptr;
-    }
+	std::shared_ptr<T> get(const ResourceID &inRID)
+	{
+		auto it = mMap.find(inRID);
+		if (it != mMap.end())
+			return it->second;
+		return nullptr;
+	}
 
-    void insert(const ResourceID &inRID, std::shared_ptr<T> inItem)
-    {
-        mMap[inRID] = inItem;
-    }
+	void insert(const ResourceID &inRID, std::shared_ptr<T> inItem)
+	{
+		mMap[inRID] = inItem;
+	}
 
 private:
-    std::unordered_map<ResourceID, std::shared_ptr<T>> mMap;
+	std::unordered_map<ResourceID, std::shared_ptr<T>> mMap;
 };

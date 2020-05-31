@@ -11,15 +11,15 @@ class DeviceVK;
 
 class ShaderVK : public Shader {
 public:
-    ShaderVK(ShaderType inType, std::shared_ptr<DeviceVK> inDevice);
+	ShaderVK(ShaderType inType, std::shared_ptr<DeviceVK> inDevice);
 
-    virtual ~ShaderVK();
+	virtual ~ShaderVK();
 
-    VkShaderModule handle() const { return mModule; }
+	VkShaderModule handle() const { return mModule; }
 
-    bool initialize(const std::vector<uint32_t>& inByteCode);
+	bool initialize(const std::vector<uint32_t>& inByteCode);
 
 private:
-    std::shared_ptr<DeviceVK> mDevice = nullptr;
-    VkShaderModule mModule = nullptr;
+	std::shared_ptr<DeviceVK> mDevice = nullptr;
+	VkShaderModule mModule = nullptr;
 };

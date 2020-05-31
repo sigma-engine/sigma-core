@@ -4,21 +4,21 @@
 
 class IndexBufferGL : public IndexBuffer {
 public:
-    IndexBufferGL(PrimitiveType inPrimitiveType, DataType inDataType);
+	IndexBufferGL(PrimitiveType inPrimitiveType, DataType inDataType);
 
-    virtual ~IndexBufferGL();
+	virtual ~IndexBufferGL();
 
-    virtual DataType dataType() const override;
+	virtual DataType dataType() const override;
 
-    virtual PrimitiveType primitiveType() const override;
+	virtual PrimitiveType primitiveType() const override;
 
-    virtual void setData(const void* inData, uint64_t inSize) override;
+	virtual void setData(const void* inData, uint64_t inSize) override;
 
-    void bind();
+	void bind();
 
 private:
-    PrimitiveType mPrimitiveType;
-    DataType mDataType;
-    uint64_t mCount;
-    uint32_t mHandle;
+	PrimitiveType mPrimitiveType;
+	DataType mDataType;
+	uint64_t mCount;
+	uint32_t mHandle;
 };

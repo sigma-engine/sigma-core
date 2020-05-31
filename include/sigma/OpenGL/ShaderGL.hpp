@@ -7,14 +7,14 @@
 
 class ShaderGL : public Shader {
 public:
-    ShaderGL(ShaderType inType);
+	ShaderGL(ShaderType inType);
 
-    virtual ~ShaderGL();
+	virtual ~ShaderGL();
 
-    uint32_t handle() const;
+	uint32_t handle() const;
 
-    bool compile(const std::string& inCode);
+	bool compile(const std::string& inCode);
 
 private:
-    uint32_t mHandle = 0;
+	uint32_t mHandle = 0;
 };

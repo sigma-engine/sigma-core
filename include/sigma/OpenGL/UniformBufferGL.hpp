@@ -6,19 +6,19 @@
 
 class UniformBufferGL : public UniformBuffer {
 public:
-    UniformBufferGL();
+	UniformBufferGL();
 
-    virtual ~UniformBufferGL();
+	virtual ~UniformBufferGL();
 
-    virtual uint64_t size() const override;
+	virtual uint64_t size() const override;
 
-    virtual void setData(const void* inData, uint64_t inSize) override;
+	virtual void setData(const void* inData, uint64_t inSize) override;
 
-    GLuint handle() const { return mHandle; }
+	GLuint handle() const { return mHandle; }
 
-    bool initialize(uint64_t inSize);
+	bool initialize(uint64_t inSize);
 
 private:
-    GLuint mHandle;
-    uint64_t mSize;
+	GLuint mHandle;
+	uint64_t mSize;
 };

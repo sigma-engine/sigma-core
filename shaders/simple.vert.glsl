@@ -1,9 +1,9 @@
 #version 450
 
 layout(binding = 0) uniform SimpleBufferObject {
-    mat4 model;
-    mat4 view;
-    mat4 projection;
+	mat4 model;
+	mat4 view;
+	mat4 projection;
 } ubo;
 
 layout(location = 0) in vec3 inPosition;

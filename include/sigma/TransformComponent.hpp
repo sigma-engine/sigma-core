@@ -9,8 +9,8 @@ struct TransformComponent {
 	glm::quat rotation = { 0, 0, 0, 1 };
 	glm::vec3 scale = {1, 1, 1};
 
-    glm::mat4 local_matrix() const
-    {
-        return glm::translate(glm::mat4(1), position) * glm::mat4_cast(rotation) * glm::scale(glm::mat4(1), glm::vec3(scale));
-    }
+	glm::mat4 local_matrix() const
+	{
+		return glm::translate(glm::mat4(1), position) * glm::mat4_cast(rotation) * glm::scale(glm::mat4(1), glm::vec3(scale));
+	}
 };

@@ -9,14 +9,14 @@
 class Sampler2DGL : public Sampler2D
 {
 public:
-    Sampler2DGL();
+	Sampler2DGL();
 
-    ~Sampler2DGL();
+	~Sampler2DGL();
 
-    bool initialize(const SamplerCreateParams &inParams);
+	bool initialize(const SamplerCreateParams &inParams);
 
-    GLuint handle() const { return mHandle; }
+	GLuint handle() const { return mHandle; }
 
 private:
-    GLuint mHandle = 0;
+	GLuint mHandle = 0;
 };

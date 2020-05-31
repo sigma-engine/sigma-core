@@ -19,18 +19,18 @@ public:
 
 	virtual ~FrameBufferGL();
 
-    std::shared_ptr<RenderPass> renderPass() const override;
+	std::shared_ptr<RenderPass> renderPass() const override;
 
-    virtual glm::uvec2 size() const override;
+	virtual glm::uvec2 size() const override;
 
-    bool initialize(const FrameBufferCreateParams& inParams);
+	bool initialize(const FrameBufferCreateParams& inParams);
 
 	void bind();
 
 private:
-    std::shared_ptr<RenderPassGL> mRenderPass = nullptr;
+	std::shared_ptr<RenderPassGL> mRenderPass = nullptr;
 	std::vector<std::shared_ptr<Texture2DGL>> mAttachments;
 	std::vector<GLenum> mDrawBuffers;
-    glm::uvec2 mSize;
+	glm::uvec2 mSize;
 	GLuint mHandle = 0;
 };

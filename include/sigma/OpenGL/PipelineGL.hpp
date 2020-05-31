@@ -9,18 +9,18 @@ class Shader;
 
 class PipelineGL : public Pipeline {
 public:
-    PipelineGL();
+	PipelineGL();
 
-    virtual ~PipelineGL();
+	virtual ~PipelineGL();
 
-    bool initialize(const PipelineCreateParams& inParams);
+	bool initialize(const PipelineCreateParams& inParams);
 
-    void attach(std::shared_ptr<Shader> inShader);
+	void attach(std::shared_ptr<Shader> inShader);
 
-    bool link();
+	bool link();
 
-    void bind() const;
+	void bind() const;
 
 private:
-    uint32_t mHandle = 0;
+	uint32_t mHandle = 0;
 };

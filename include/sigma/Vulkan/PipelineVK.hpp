@@ -13,21 +13,21 @@ class DescriptorSetLayoutVK;
 
 class PipelineVK : public Pipeline {
 public:
-    PipelineVK(std::shared_ptr<DeviceVK> inDevice);
+	PipelineVK(std::shared_ptr<DeviceVK> inDevice);
 
-    virtual ~PipelineVK();
+	virtual ~PipelineVK();
 
-    VkPipeline handle() const { return mPipeline; }
+	VkPipeline handle() const { return mPipeline; }
 
-    VkPipelineLayout layout() const { return mLayout; }
+	VkPipelineLayout layout() const { return mLayout; }
 
-    bool initialize(const PipelineCreateParams& inParams);
+	bool initialize(const PipelineCreateParams& inParams);
 
 public:
-    std::shared_ptr<DeviceVK> mDevice = nullptr;
+	std::shared_ptr<DeviceVK> mDevice = nullptr;
 
-    std::shared_ptr<RenderPassVK> mRenderPass = nullptr;
-    std::vector<std::shared_ptr<DescriptorSetLayoutVK>> mSetLayouts;
-    VkPipeline mPipeline = nullptr;
-    VkPipelineLayout mLayout = nullptr;
+	std::shared_ptr<RenderPassVK> mRenderPass = nullptr;
+	std::vector<std::shared_ptr<DescriptorSetLayoutVK>> mSetLayouts;
+	VkPipeline mPipeline = nullptr;
+	VkPipelineLayout mLayout = nullptr;
 };

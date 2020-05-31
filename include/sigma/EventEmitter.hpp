@@ -7,9 +7,9 @@ class EventListener;
 
 class EventEmitter {
 public:
-    virtual ~EventEmitter() = default;
+	virtual ~EventEmitter() = default;
 
-    virtual bool process(const std::vector<std::weak_ptr<EventListener>>& inListeners) = 0;
+	virtual bool process(const std::vector<std::weak_ptr<EventListener>>& inListeners) = 0;
 
 private:
 };

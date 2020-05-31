@@ -11,58 +11,58 @@ class Device;
 
 class SurfaceSDLGL : public SurfaceGL {
 public:
-    SurfaceSDLGL(SDL_Window* inWindow);
+	SurfaceSDLGL(SDL_Window* inWindow);
 
-    virtual ~SurfaceSDLGL();
+	virtual ~SurfaceSDLGL();
 
-    bool initialize(std::shared_ptr<DeviceManager> inDevice, uint32_t inWidth, uint32_t inHeight) override;
+	bool initialize(std::shared_ptr<DeviceManager> inDevice, uint32_t inWidth, uint32_t inHeight) override;
 
-    void nextImage(SurfaceImageData*& outData) override;
+	void nextImage(SurfaceImageData*& outData) override;
 
-    void presentImage(const SurfaceImageData* inData) override;
+	void presentImage(const SurfaceImageData* inData) override;
 
 private:
-    SDL_Window* mWindow = nullptr;
-    void* mHandle = nullptr;
+	SDL_Window* mWindow = nullptr;
+	void* mHandle = nullptr;
 };
 
 class SurfaceSDLVK : public SurfaceVK {
 public:
-    SurfaceSDLVK(SDL_Window* inWindow);
+	SurfaceSDLVK(SDL_Window* inWindow);
 
-    bool initialize(std::shared_ptr<DeviceManager> inDevice, uint32_t inWidth, uint32_t inHeight) override;
+	bool initialize(std::shared_ptr<DeviceManager> inDevice, uint32_t inWidth, uint32_t inHeight) override;
 
 private:
-    SDL_Window* mWindow = nullptr;
+	SDL_Window* mWindow = nullptr;
 };
 
 class EventEmitterSDL : public EventEmitter {
 public:
-    virtual bool process(const std::vector<std::weak_ptr<EventListener>>& inListeners) override;
+	virtual bool process(const std::vector<std::weak_ptr<EventListener>>& inListeners) override;
 };
 
 class WindowSDL : public Window {
 public:
-    static void initializeSDL(std::shared_ptr<Engine> inEngine);
+	static void initializeSDL(std::shared_ptr<Engine> inEngine);
 
-    WindowSDL(std::shared_ptr<Engine> inEngine, const std::string& inTitle, uint32_t inWidth, uint32_t inHeight);
+	WindowSDL(std::shared_ptr<Engine> inEngine, const std::string& inTitle, uint32_t inWidth, uint32_t inHeight);
 
-    virtual ~WindowSDL();
+	virtual ~WindowSDL();
 
-    virtual std::set<std::string> requiredExtensions(GraphicsAPI inGraphicsAPI) const override;
+	virtual std::set<std::string> requiredExtensions(GraphicsAPI inGraphicsAPI) const override;
 
-    virtual bool initialize() override;
+	virtual bool initialize() override;
 
-    virtual std::shared_ptr<Surface> surface() override;
+	virtual std::shared_ptr<Surface> surface() override;
 
-    SDL_Window* handle();
+	SDL_Window* handle();
 
 private:
-    std::string mTitle;
-    uint32_t mWidth;
-    uint32_t mHeight;
-    std::shared_ptr<Engine> mEngine = nullptr;
-    std::shared_ptr<Surface> mSurface = nullptr;
+	std::string mTitle;
+	uint32_t mWidth;
+	uint32_t mHeight;
+	std::shared_ptr<Engine> mEngine = nullptr;
+	std::shared_ptr<Surface> mSurface = nullptr;
 
-    SDL_Window* mWindow = nullptr;
+	SDL_Window* mWindow = nullptr;
 };
