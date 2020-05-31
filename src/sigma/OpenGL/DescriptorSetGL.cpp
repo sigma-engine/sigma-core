@@ -6,6 +6,8 @@
 #include <sigma/OpenGL/UniformBufferGL.hpp>
 #include <sigma/OpenGL/UtilGL.hpp>
 
+#include <glad/glad.h>
+
 DescriptorSetLayoutGL::DescriptorSetLayoutGL(const std::vector<DescriptorSetLayoutBinding> &inBindings)
 	: mBindings(inBindings)
 {

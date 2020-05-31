@@ -4,7 +4,9 @@
 #include <sigma/OpenGL/TextureGL.hpp>
 #include <sigma/OpenGL/UtilGL.hpp>
 
-FrameBufferGL::FrameBufferGL(std::shared_ptr<RenderPassGL> inRenderPass, const glm::uvec2& inSize, GLuint inHandle)
+#include <glad/glad.h>
+
+FrameBufferGL::FrameBufferGL(std::shared_ptr<RenderPassGL> inRenderPass, const glm::uvec2& inSize, unsigned int inHandle)
 	: mRenderPass(inRenderPass)
 	, mSize(inSize)
 	, mHandle(inHandle)

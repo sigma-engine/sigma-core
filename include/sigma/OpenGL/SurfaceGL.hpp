@@ -2,8 +2,6 @@
 
 #include <sigma/Surface.hpp>
 
-#include <glad/glad.h>
-
 class DeviceGL;
 class RenderPassGL;
 class CommandBufferGL;

@@ -2,6 +2,8 @@
 
 #include <sigma/OpenGL/UtilGL.hpp>
 
+#include <glad/glad.h>
+
 Texture2DGL::Texture2DGL()
 {
 	CHECK_GL(glCreateTextures(GL_TEXTURE_2D, 1, &mHandle));

@@ -3,8 +3,6 @@
 #include <sigma/DataTypes.hpp>
 #include <sigma/Log.hpp>
 
-#include <glad/glad.h>
-
 #include <cstdint>
 #include <string>
 
@@ -21,16 +19,16 @@ enum class SamplerWarpMode;
 enum class SamplerFilterMode;
 enum class SamplerMipmapMode;
 
-GLenum baseTypeOfDataType(DataType inType);
+unsigned int baseTypeOfDataType(DataType inType);
 
-GLenum convertImageFormatInternalGL(ImageFormat inFormat);
+unsigned int convertImageFormatInternalGL(ImageFormat inFormat);
 
-GLenum convertImageFormatFormatGL(ImageFormat inFormat);
+unsigned int convertImageFormatFormatGL(ImageFormat inFormat);
 
-GLenum convertImageFormatTypeGL(ImageFormat inFormat);
+unsigned int convertImageFormatTypeGL(ImageFormat inFormat);
 
-std::string convertErrorStringGL(GLenum inError);
+std::string convertErrorStringGL(unsigned int inError);
 
-GLenum convertSamplerWarpModeGL(SamplerWarpMode inMode);
+unsigned int convertSamplerWarpModeGL(SamplerWarpMode inMode);
 
-GLenum convertSamplerFilterModeGL(SamplerFilterMode inFilterMode, SamplerMipmapMode inMipmapMode);
+unsigned int convertSamplerFilterModeGL(SamplerFilterMode inFilterMode, SamplerMipmapMode inMipmapMode);

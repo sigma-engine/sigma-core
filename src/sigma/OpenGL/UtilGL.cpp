@@ -4,7 +4,9 @@
 #include <sigma/Texture.hpp>
 #include <sigma/Sampler.hpp>
 
-GLenum baseTypeOfDataType(DataType inType)
+#include <glad/glad.h>
+
+unsigned int baseTypeOfDataType(DataType inType)
 {
 	switch (inType)
 	{
@@ -25,7 +27,7 @@ GLenum baseTypeOfDataType(DataType inType)
 	return 0;
 }
 
-GLenum convertImageFormatInternalGL(ImageFormat inFormat)
+unsigned int convertImageFormatInternalGL(ImageFormat inFormat)
 {
 	switch (inFormat)
 	{
@@ -39,7 +41,7 @@ GLenum convertImageFormatInternalGL(ImageFormat inFormat)
 	return GL_RGBA;
 }
 
-GLenum convertImageFormatFormatGL(ImageFormat inFormat)
+unsigned int convertImageFormatFormatGL(ImageFormat inFormat)
 {
 	switch (inFormat)
 	{
@@ -54,7 +56,7 @@ GLenum convertImageFormatFormatGL(ImageFormat inFormat)
 	return GL_RGBA_INTEGER;
 }
 
-GLenum convertImageFormatTypeGL(ImageFormat inFormat)
+unsigned int convertImageFormatTypeGL(ImageFormat inFormat)
 {
 	switch (inFormat)
 	{
@@ -68,7 +70,7 @@ GLenum convertImageFormatTypeGL(ImageFormat inFormat)
 	return GL_UNSIGNED_BYTE;
 }
 
-std::string convertErrorStringGL(GLenum inError)
+std::string convertErrorStringGL(unsigned int inError)
 {
 	switch (inError)
 	{
@@ -94,7 +96,7 @@ std::string convertErrorStringGL(GLenum inError)
 	return "UNKNOWN_ERROR";
 }
 
-GLenum convertSamplerWarpModeGL(SamplerWarpMode inMode)
+unsigned int convertSamplerWarpModeGL(SamplerWarpMode inMode)
 {
 	switch (inMode)
 	{
@@ -109,7 +111,7 @@ GLenum convertSamplerWarpModeGL(SamplerWarpMode inMode)
 	return GL_REPEAT;
 }
 
-GLenum convertSamplerFilterModeGL(SamplerFilterMode inFilterMode, SamplerMipmapMode inMipmapMode)
+unsigned int convertSamplerFilterModeGL(SamplerFilterMode inFilterMode, SamplerMipmapMode inMipmapMode)
 {
 	switch (inMipmapMode)
 	{

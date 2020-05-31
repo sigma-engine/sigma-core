@@ -2,6 +2,8 @@
 
 #include <sigma/OpenGL/UtilGL.hpp>
 
+#include <glad/glad.h>
+
 Sampler2DGL::Sampler2DGL()
 {
 	CHECK_GL(glGenSamplers(1, &mHandle));

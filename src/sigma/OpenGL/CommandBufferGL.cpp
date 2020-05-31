@@ -11,6 +11,11 @@
 
 #include <glad/glad.h>
 
+CommandBufferGL::CommandBufferGL()
+	: mBoundIndexType(GL_INVALID_ENUM)
+{
+}
+
 void CommandBufferGL::begin()
 {
 }

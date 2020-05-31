@@ -2,8 +2,6 @@
 
 #include <sigma/UniformBuffer.hpp>
 
-#include <glad/glad.h>
-
 class UniformBufferGL : public UniformBuffer {
 public:
 	UniformBufferGL();
@@ -14,11 +12,11 @@ public:
 
 	virtual void setData(const void* inData, uint64_t inSize) override;
 
-	GLuint handle() const { return mHandle; }
+	unsigned int handle() const { return mHandle; }
 
 	bool initialize(uint64_t inSize);
 
 private:
-	GLuint mHandle;
+	unsigned int mHandle;
 	uint64_t mSize;
 };

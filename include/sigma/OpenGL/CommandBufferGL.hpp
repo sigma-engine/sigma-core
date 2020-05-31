@@ -2,8 +2,6 @@
 
 #include <sigma/CommandBuffer.hpp>
 
-#include <glad/glad.h>
-
 class PipelineGL;
 class DescriptorSetGL;
 class VertexBufferGL;
@@ -11,6 +9,8 @@ class IndexBufferGL;
 
 class CommandBufferGL : public CommandBuffer {
 public:
+	CommandBufferGL();
+	
 	virtual void begin() override;
 
 	virtual void beginRenderPass(const RenderPassBeginParams& inParams) override;
@@ -32,7 +32,7 @@ public:
 	virtual void end() override;
 
 private:
-	GLenum mBoundIndexType = GL_INVALID_ENUM;
+	unsigned int mBoundIndexType;
 
 	std::shared_ptr<PipelineGL> mPipeline = nullptr;
 	std::shared_ptr<DescriptorSetGL> mDescriptorSet = nullptr;

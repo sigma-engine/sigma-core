@@ -2,8 +2,6 @@
 
 #include <sigma/FrameBuffer.hpp>
 
-#include <glad/glad.h>
-
 #include <vector>
 #include <memory>
 
@@ -13,7 +11,7 @@ class Texture2DGL;
 
 class FrameBufferGL : public FrameBuffer {
 public:
-	FrameBufferGL(std::shared_ptr<RenderPassGL> inRenderPass, const glm::uvec2& inSize, GLuint inHandle);
+	FrameBufferGL(std::shared_ptr<RenderPassGL> inRenderPass, const glm::uvec2& inSize, unsigned int inHandle);
 
 	FrameBufferGL();
 
@@ -30,7 +28,7 @@ public:
 private:
 	std::shared_ptr<RenderPassGL> mRenderPass = nullptr;
 	std::vector<std::shared_ptr<Texture2DGL>> mAttachments;
-	std::vector<GLenum> mDrawBuffers;
+	std::vector<unsigned int> mDrawBuffers;
 	glm::uvec2 mSize;
-	GLuint mHandle = 0;
+	unsigned int mHandle = 0;
 };

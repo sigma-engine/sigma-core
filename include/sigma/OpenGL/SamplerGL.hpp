@@ -2,8 +2,6 @@
 
 #include <sigma/Sampler.hpp>
 
-#include <glad/glad.h>
-
 #include <cstdint>
 
 class Sampler2DGL : public Sampler2D
@@ -15,8 +13,8 @@ public:
 
 	bool initialize(const SamplerCreateParams &inParams);
 
-	GLuint handle() const { return mHandle; }
+	unsigned int handle() const { return mHandle; }
 
 private:
-	GLuint mHandle = 0;
+	unsigned int mHandle = 0;
 };

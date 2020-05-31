@@ -4,6 +4,8 @@
 
 #include <algorithm>
 
+#include <glad/glad.h>
+
 UniformBufferGL::UniformBufferGL()
 {
 	glCreateBuffers(1, &mHandle);
