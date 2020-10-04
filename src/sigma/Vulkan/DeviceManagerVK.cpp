@@ -94,10 +94,9 @@ bool DeviceManagerVK::initialize(const std::set<std::string>& s)
 	}
 
 	// Find and report about missing extensions
-	auto extIt = std::remove_if(mRequiredExtensions.begin(), mRequiredExtensions.end(), [&](auto ext) {
-		auto strName = std::string(ext);
-		auto it = std::find_if(extensionProperties.begin(), extensionProperties.end(), [&](const auto& prop) {
-			return prop.extensionName == strName;
+	auto extIt = std::remove_if(mRequiredExtensions.begin(), mRequiredExtensions.end(), [&](const auto &ext) {
+		auto it = std::find_if(extensionProperties.begin(), extensionProperties.end(), [&](const auto &prop) {
+			return prop.extensionName == ext;
 		});
 		return it == extensionProperties.end();
 	});
@@ -156,7 +155,7 @@ bool DeviceManagerVK::initialize(const std::set<std::string>& s)
 
 	{
 		VkApplicationInfo appInfo = {};
-		appInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 		appInfo.pApplicationName = "<TOOD>";
 		appInfo.applicationVersion = VK_MAKE_VERSION(0, 0, 1);
 		appInfo.pEngineName = "sigma";

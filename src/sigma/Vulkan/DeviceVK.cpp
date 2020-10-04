@@ -179,9 +179,8 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>> &inSurface
 
 	// Find and report missing layers
 	auto layerIt = std::remove_if(mEnabledLayers.begin(), mEnabledLayers.end(), [&](const auto &ext) {
-		auto strName = std::string(ext);
 		auto it = std::find_if(layerProperties.begin(), layerProperties.end(), [&](const auto &prop) {
-			return prop.layerName == strName;
+			return ext == prop.layerName;
 		});
 		return it == layerProperties.end();
 	});
