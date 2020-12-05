@@ -154,9 +154,9 @@ void SimpleRenderer::render(const TransformComponent &inCameraTransform)
 
 	auto viewMatrix = glm::inverse(inCameraTransform.local_matrix());
 
-	setupUniformBuffer(viewMatrix, mUniformBuffers[imageData->imageIndex]);
+	setupUniformBuffer(viewMatrix, mUniformBuffers[imageData->imageIndex % mUniformBuffers.size()]);
 
-	auto commandBuffer = mCommandBuffers[imageData->imageIndex];
+	auto commandBuffer = mCommandBuffers[imageData->imageIndex % mCommandBuffers.size()];
 
 	RenderPassBeginParams beginRenderPass{
 		imageData->frameBuffer,
@@ -164,7 +164,7 @@ void SimpleRenderer::render(const TransformComponent &inCameraTransform)
 	commandBuffer->begin();
 	commandBuffer->beginRenderPass(beginRenderPass);
 	commandBuffer->bindPipeline(mPipeline);
-	commandBuffer->bindDescriptorSet(mDescriptorSets[imageData->imageIndex]);
+	commandBuffer->bindDescriptorSet(mDescriptorSets[imageData->imageIndex % mDescriptorSets.size()]);
 	commandBuffer->bindVertexBuffer(mVertexBuffer);
 	commandBuffer->bindIndexBuffer(mIndexBuffer);
 	commandBuffer->drawIndexed(static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
