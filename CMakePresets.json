@@ -1,0 +1,29 @@
+{
+	"version": 2,
+	"cmakeMinimumRequired": {
+		"major": 3,
+		"minor": 18,
+		"patch": 0
+	},
+	"configurePresets": [
+		{
+			"name": "Windows x64 Debug",
+			"displayName": "Windows x64 Debug",
+			"binaryDir": "${sourceDir}/build/Windows/x64/Debug",
+			"generator": "Ninja",
+			"architecture": {
+				"value": "x64",
+				"strategy": "external"
+			},
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Debug",
+				"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/../vcpkg/scripts/buildsystems/vcpkg.cmake"
+			},
+			"vendor": {
+				"microsoft.com/VisualStudioSettings/CMake/1.0": {
+					"hostOS": [ "Windows" ]
+				}
+			}
+		}
+	]
+}

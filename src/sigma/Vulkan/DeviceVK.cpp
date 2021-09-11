@@ -264,6 +264,7 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>> &inSurface
 	VmaAllocatorCreateInfo allocatorInfo = {};
 	allocatorInfo.physicalDevice = mPhysicalDevice;
 	allocatorInfo.device = mDevice;
+	allocatorInfo.instance = mInstance;
 
 	CHECK_VK(result = vmaCreateAllocator(&allocatorInfo, &mAllocator));
 	if (result != VK_SUCCESS)

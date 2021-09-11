@@ -207,7 +207,7 @@ PUBLIC
 	SDL2::SDL2
 	SDL2::SDL2main
 	glad::glad
-	glm
+	glm::glm
 )
 
 if(NOT WIN32)
@@ -224,7 +224,7 @@ PUBLIC
 	-DGLM_FORCE_RADIANS
 )
 
-add_executable(simple-game WIN32
+add_executable(simple-game
 	shaders/simple.vert.glsl
 	shaders/simple.frag.glsl
 	textures/TestImage.jpg

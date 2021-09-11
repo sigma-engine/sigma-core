@@ -75,7 +75,7 @@ bool DeviceManagerVK::initialize(const std::set<std::string>& s)
 #ifndef NDEBUG
 	mRequiredExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 	mEnabledLayers.push_back("VK_LAYER_KHRONOS_validation");
-	mEnabledLayers.push_back("VK_LAYER_LUNARG_standard_validation");
+	// mEnabledLayers.push_back("VK_LAYER_LUNARG_standard_validation");
 #endif
 
 	// Check if required extensions exists
