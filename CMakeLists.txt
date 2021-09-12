@@ -14,6 +14,7 @@ find_package(glm CONFIG REQUIRED)
 find_package(stb REQUIRED)
 find_package(SDL2 CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
+find_package(assimp CONFIG REQUIRED)
 
 if (${SIGMA_VULKAN_SUPPORT})
 	find_package(Vulkan REQUIRED)
@@ -21,7 +22,6 @@ if (${SIGMA_VULKAN_SUPPORT})
 endif()
 
 include(cmake/GLSL.cmake)
-include(cmake/Texture.cmake)
 
 add_library(sigma-core STATIC
 	include/sigma/Algorithm.hpp
@@ -31,117 +31,69 @@ add_library(sigma-core STATIC
 	include/sigma/EventEmitter.hpp
 	include/sigma/EventListener.hpp
 	include/sigma/CameraComponent.hpp
-
 	include/sigma/Context.hpp
 	src/sigma/Context.cpp
-
-	include/sigma/Resource/AssetManager.hpp
-	src/sigma/Resource/AssetManager.cpp
-
-	include/sigma/Resource/AssetCache.hpp
-	src/sigma/Resource/AssetCache.cpp
-
-	include/sigma/Resource/AssetLoader.hpp
-	src/sigma/Resource/AssetLoader.cpp
-
-	include/sigma/Resource/StbImageLoader.hpp
-	src/sigma/Resource/StbImageLoader.cpp
-
 	include/sigma/DataTypes.hpp
 	src/sigma/DataTypes.cpp
-	
 	include/sigma/DeviceManager.hpp
 	src/sigma/DeviceManager.cpp
-
 	include/sigma/Device.hpp
 	src/sigma/Device.cpp
-
 	include/sigma/CommandBuffer.hpp
 	src/sigma/CommandBuffer.cpp
-
 	include/sigma/FrameBuffer.hpp
 	src/sigma/FrameBuffer.cpp
-
 	include/sigma/Surface.hpp
 	src/sigma/Surface.cpp
-
 	include/sigma/Shader.hpp
 	src/sigma/Shader.cpp
-
 	include/sigma/RenderPass.hpp
 	src/sigma/RenderPass.cpp
-
 	include/sigma/VertexLayout.hpp
 	src/sigma/VertexLayout.cpp
-
 	include/sigma/Pipeline.hpp
-
 	include/sigma/VertexBuffer.hpp
-
 	include/sigma/IndexBuffer.hpp
-
 	include/sigma/DescriptorSet.hpp
-
 	include/sigma/UniformBuffer.hpp
-
 	include/sigma/Texture.hpp
 	src/sigma/Texture.cpp
-
 	include/sigma/Sampler.hpp
-
 	include/sigma/Log.hpp
-	
 	include/sigma/Engine.hpp
 	src/sigma/Engine.cpp
-
 	include/sigma/Window.hpp
 	src/sigma/Window.cpp
-
 	include/sigma/SDL/WindowSDL.hpp
 	src/sigma/SDL/WindowSDL.cpp
-
 	include/sigma/OpenGL/DeviceManagerGL.hpp
 	src/sigma/OpenGL/DeviceManagerGL.cpp
-
 	include/sigma/OpenGL/DeviceGL.hpp
 	src/sigma/OpenGL/DeviceGL.cpp
-
 	include/sigma/OpenGL/CommandBufferGL.hpp
 	src/sigma/OpenGL/CommandBufferGL.cpp
-
 	include/sigma/OpenGL/FrameBufferGL.hpp
 	src/sigma/OpenGL/FrameBufferGL.cpp
-
 	include/sigma/OpenGL/SurfaceGL.hpp
 	src/sigma/OpenGL/SurfaceGL.cpp
-
 	include/sigma/OpenGL/UtilGL.hpp
 	src/sigma/OpenGL/UtilGL.cpp
-
 	include/sigma/OpenGL/ShaderGL.hpp
 	src/sigma/OpenGL/ShaderGL.cpp
-
 	include/sigma/OpenGL/RenderPassGL.hpp
 	src/sigma/OpenGL/RenderPassGL.cpp
-
 	include/sigma/OpenGL/DescriptorSetGL.hpp
 	src/sigma/OpenGL/DescriptorSetGL.cpp
-
 	include/sigma/OpenGL/UniformBufferGL.hpp
 	src/sigma/OpenGL/UniformBufferGL.cpp
-	
 	include/sigma/OpenGL/TextureGL.hpp
 	src/sigma/OpenGL/TextureGL.cpp
-
 	include/sigma/OpenGL/SamplerGL.hpp
 	src/sigma/OpenGL/SamplerGL.cpp
-
 	include/sigma/OpenGL/PipelineGL.hpp
 	src/sigma/OpenGL/PipelineGL.cpp
-
 	include/sigma/OpenGL/VertexBufferGL.hpp
 	src/sigma/OpenGL/VertexBufferGL.cpp
-
 	include/sigma/OpenGL/IndexBufferGL.hpp
 	src/sigma/OpenGL/IndexBufferGL.cpp
 )
@@ -224,23 +176,32 @@ PUBLIC
 	-DGLM_FORCE_RADIANS
 )
 
+add_executable(sigma-bake
+	src/sigma/Tools/main.cpp
+
+	src/sigma/Tools/SceneConverter.cpp
+	include/sigma/Tools/SceneConverter.hpp
+)
+
+target_link_libraries(sigma-bake
+PUBLIC
+	sigma-core
+	assimp::assimp
+)
+
 add_executable(simple-game
 	shaders/simple.vert.glsl
 	shaders/simple.frag.glsl
-	textures/TestImage.jpg
 
 	src/SimpleRenderer.cpp
 	include/SimpleRenderer.hpp
-	
 	src/SimpleCameraController.cpp
 	include/SimpleCameraController.hpp
-
 	src/SimpleGame.cpp
 	include/SimpleGame.hpp
 	src/main.cpp
 )
 compile_glsl_sources(simple-game)
-copy_texture_sources(simple-game)
 
 target_link_libraries(simple-game
 PUBLIC

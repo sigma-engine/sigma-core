@@ -12,8 +12,6 @@
 #include <sigma/Log.hpp>
 #include <sigma/TransformComponent.hpp>
 #include <sigma/Window.hpp>
-#include <sigma/Resource/StbImageLoader.hpp>
-#include <sigma/Resource/AssetManager.hpp>
 
 #include <SimpleGame.hpp>
 
@@ -55,8 +53,6 @@ int SimpleGame::run(const std::vector<std::string> &inArguments)
 	auto context = std::make_shared<Context>();
 	if (!context->initialize(engine, device))
 		return -1;
-
-	context->assetManager()->addLoader(std::make_shared<StbImageLoader>());
 
 	auto renderer = std::make_shared<SimpleRenderer>(context, window->surface());
 	if (!renderer->initialize())

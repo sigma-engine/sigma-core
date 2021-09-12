@@ -16,7 +16,6 @@
 #include <sigma/TransformComponent.hpp>
 #include <sigma/UniformBuffer.hpp>
 #include <sigma/VertexBuffer.hpp>
-#include <sigma/Resource/AssetManager.hpp>
 #include <sigma/Context.hpp>
 
 #include <glm/glm.hpp>
@@ -49,6 +48,7 @@ SimpleRenderer::SimpleRenderer(std::shared_ptr<Context> inContext, std::shared_p
 
 bool SimpleRenderer::initialize()
 {
+#if 0
 	mTexture = loadTexture("textures/TestImage.jpg");
 	if (mTexture == nullptr)
 		return false;
@@ -56,6 +56,7 @@ bool SimpleRenderer::initialize()
 	mSampler = mDevice->createSampler2D({ SamplerMipmapMode::None });
 	if (mSampler == nullptr)
 		return false;
+#endif
 
 	auto setLayout = mDevice->createDescriptorSetLayout({{0, DescriptorType::UniformBuffer, 1},
 														 {1, DescriptorType::ImageSampler, 1}});
@@ -75,7 +76,8 @@ bool SimpleRenderer::initialize()
 		DescriptorSetCreateParams descriptorSetParams = {
 			setLayout,
 			{{0, uniformBuffer}},
-			{{1, {mTexture, mSampler}}}};
+			// {{1, {mTexture, mSampler}}}
+		};
 		auto descriptorSet = mDevice->createDescriptorSet(descriptorSetParams);
 		if (descriptorSet == nullptr)
 			return false;
@@ -188,9 +190,4 @@ void SimpleRenderer::setupUniformBuffer(const glm::mat4 &inViewMatrix, std::shar
 	ubo.projection = glm::perspective(glm::radians(45.0f), surfaceSize.x / float(surfaceSize.y), 0.1f, 10.0f);
 
 	inBuffer->setData(static_cast<const void *>(&ubo), sizeof(SimpleUniformBuffer));
-}
-
-std::shared_ptr<Texture2D> SimpleRenderer::loadTexture(const std::string &inFilepath)
-{
-	return mContext->assetManager()->aquireAsset<Texture2D>(inFilepath);
 }

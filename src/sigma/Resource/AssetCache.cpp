@@ -1,1 +1,0 @@
-#include <sigma/Resource/AssetCache.hpp>

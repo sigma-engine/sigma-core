@@ -5,7 +5,6 @@
 #include <sigma/Log.hpp>
 #include <sigma/OpenGL/DeviceManagerGL.hpp>
 #include <sigma/SDL/WindowSDL.hpp>
-#include <sigma/Resource/AssetManager.hpp>
 
 #ifdef SIGMA_VULKAN_SUPPORT
 #include <sigma/Vulkan/DeviceManagerVK.hpp>

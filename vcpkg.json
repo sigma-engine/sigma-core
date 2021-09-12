@@ -11,6 +11,7 @@
 		"glm",
 		"stb",
 		"glad",
-		"vulkan-memory-allocator"
+		"vulkan-memory-allocator",
+		"assimp"
 	]
 }
