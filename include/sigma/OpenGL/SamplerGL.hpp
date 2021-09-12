@@ -11,7 +11,7 @@ public:
 
 	~Sampler2DGL();
 
-	bool initialize(const SamplerCreateParams &inParams);
+	bool initialize(const SamplerCreateParams& inParams);
 
 	unsigned int handle() const { return mHandle; }
 

@@ -1,6 +1,7 @@
 #pragma once
 
-enum class EventType {
+enum class EventType
+{
 	WindowClose,
 	MouseMove,
 	MouseButtonDown,
@@ -10,17 +11,20 @@ enum class EventType {
 	KeyUp
 };
 
-enum class MouseButton {
+enum class MouseButton
+{
 	Left,
 	Right,
 	Middle
 };
 
-enum class KeyboardKey {
+enum class KeyboardKey
+{
 	LeftShift
 };
 
-class Event {
+class Event
+{
 public:
 	Event(EventType inType)
 		: mType(inType)
@@ -33,7 +37,8 @@ private:
 	EventType mType;
 };
 
-class MouseEvent : public Event {
+class MouseEvent : public Event
+{
 public:
 	MouseEvent(EventType inType, float inX, float inY)
 		: Event(inType)
@@ -50,7 +55,8 @@ private:
 	float mX, mY;
 };
 
-class MouseWheelEvent : public Event {
+class MouseWheelEvent : public Event
+{
 public:
 	MouseWheelEvent(float inScrollX, float inScrollY)
 		: Event(EventType::MouseWheel)
@@ -67,7 +73,8 @@ private:
 	float mScrollX, mScrollY;
 };
 
-class MouseButtonEvent : public MouseEvent {
+class MouseButtonEvent : public MouseEvent
+{
 public:
 	MouseButtonEvent(float inX, float inY, MouseButton inButton, bool inDown)
 		: MouseEvent(inDown ? EventType::MouseButtonDown : EventType::MouseButtonUp, inX, inY)
@@ -81,7 +88,8 @@ private:
 	MouseButton mButton;
 };
 
-class KeyboardEvent : public Event {
+class KeyboardEvent : public Event
+{
 public:
 	KeyboardEvent(KeyboardKey inKey, bool inDown)
 		: Event(inDown ? EventType::KeyDown : EventType::KeyUp)

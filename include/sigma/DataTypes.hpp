@@ -2,7 +2,8 @@
 
 #include <cstdint>
 
-enum class DataType {
+enum class DataType
+{
 	Float,
 	Vec2,
 	Vec3,

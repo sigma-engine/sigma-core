@@ -2,6 +2,7 @@
 
 #include <sigma/CameraComponent.hpp>
 #include <sigma/CommandBuffer.hpp>
+#include <sigma/Context.hpp>
 #include <sigma/DescriptorSet.hpp>
 #include <sigma/Device.hpp>
 #include <sigma/Engine.hpp>
@@ -16,7 +17,6 @@
 #include <sigma/TransformComponent.hpp>
 #include <sigma/UniformBuffer.hpp>
 #include <sigma/VertexBuffer.hpp>
-#include <sigma/Context.hpp>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -26,11 +26,12 @@
 #include <chrono>
 
 static std::vector<Vertex> vertices = {
-	{{-0.5f, 0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
-	{{-0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
-	{{0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
-	{{0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}}};
-static std::vector<std::uint16_t> indices = {0, 1, 2, 2, 3, 0};
+	{ { -0.5f, 0.5f, 0.0f }, { 1.0f, 0.0f, 0.0f }, { 1.0f, 0.0f } },
+	{ { -0.5f, -0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f } },
+	{ { 0.5f, -0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f } },
+	{ { 0.5f, 0.5f, 0.0f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f } }
+};
+static std::vector<std::uint16_t> indices = { 0, 1, 2, 2, 3, 0 };
 
 struct SimpleUniformBuffer
 {
@@ -40,9 +41,9 @@ struct SimpleUniformBuffer
 };
 
 SimpleRenderer::SimpleRenderer(std::shared_ptr<Context> inContext, std::shared_ptr<Surface> inSurface)
-	: mContext(inContext), 
-	mDevice(inContext->device()), 
-	mSurface(inSurface)
+	: mContext(inContext)
+	, mDevice(inContext->device())
+	, mSurface(inSurface)
 {
 }
 
@@ -58,8 +59,8 @@ bool SimpleRenderer::initialize()
 		return false;
 #endif
 
-	auto setLayout = mDevice->createDescriptorSetLayout({{0, DescriptorType::UniformBuffer, 1},
-														 {1, DescriptorType::ImageSampler, 1}});
+	auto setLayout = mDevice->createDescriptorSetLayout({ { 0, DescriptorType::UniformBuffer, 1 },
+		{ 1, DescriptorType::ImageSampler, 1 } });
 	if (setLayout == nullptr)
 		return false;
 
@@ -75,7 +76,7 @@ bool SimpleRenderer::initialize()
 
 		DescriptorSetCreateParams descriptorSetParams = {
 			setLayout,
-			{{0, uniformBuffer}},
+			{ { 0, uniformBuffer } },
 			// {{1, {mTexture, mSampler}}}
 		};
 		auto descriptorSet = mDevice->createDescriptorSet(descriptorSetParams);
@@ -88,9 +89,10 @@ bool SimpleRenderer::initialize()
 	}
 
 	VertexLayout vertexLayout = {
-		{0, DataType::Vec3, "position"},
-		{1, DataType::Vec3, "color"},
-		{2, DataType::Vec2, "uv"}};
+		{ 0, DataType::Vec3, "position" },
+		{ 1, DataType::Vec3, "color" },
+		{ 2, DataType::Vec2, "uv" }
+	};
 
 	auto vertexShader = mDevice->createShader(ShaderType::VertexShader, "shaders/simple.vert");
 	if (vertexShader == nullptr)
@@ -101,11 +103,12 @@ bool SimpleRenderer::initialize()
 		return false;
 
 	PipelineCreateParams pipelineParams = {
-		{{0, 0}, mSurface->size()},
+		{ { 0, 0 }, mSurface->size() },
 		mSurface->renderPass(),
 		vertexLayout,
-		{setLayout},
-		{vertexShader, fragmentShader}};
+		{ setLayout },
+		{ vertexShader, fragmentShader }
+	};
 
 	mPipeline = mDevice->createPipeline(pipelineParams);
 	if (mPipeline == nullptr)
@@ -122,8 +125,9 @@ bool SimpleRenderer::initialize()
 	mIndexBuffer->setData(indices.data(), sizeof(uint16_t) * indices.size());
 
 	RenderPassCreateParams renderPassParams = {
-		{{AttachmentType::ColorAttachment, ImageFormat::UnormR8G8B8A8},
-		 {AttachmentType::ColorAttachment, ImageFormat::UnormR8G8B8A8}}};
+		{ { AttachmentType::ColorAttachment, ImageFormat::UnormR8G8B8A8 },
+			{ AttachmentType::ColorAttachment, ImageFormat::UnormR8G8B8A8 } }
+	};
 	mTestRenderPass = mDevice->createRenderPass(renderPassParams);
 	if (mTestRenderPass == nullptr)
 		return false;
@@ -131,7 +135,8 @@ bool SimpleRenderer::initialize()
 	TextureCreateParams colorAttParams = {
 		glm::uvec3(mSurface->size(), 1),
 		ImageFormat::UnormR8G8B8A8,
-		ImageUsage::ColorAttachment};
+		ImageUsage::ColorAttachment
+	};
 	mTestTexture0 = mDevice->createTexture2D(colorAttParams);
 	if (mTestTexture0 == nullptr)
 		return false;
@@ -140,18 +145,18 @@ bool SimpleRenderer::initialize()
 	if (mTestTexture1 == nullptr)
 		return false;
 
-	mTestFrameBuffer = mDevice->createFrameBuffer({mSurface->size(),
-												   mTestRenderPass,
-												   {mTestTexture0, mTestTexture1}});
+	mTestFrameBuffer = mDevice->createFrameBuffer({ mSurface->size(),
+		mTestRenderPass,
+		{ mTestTexture0, mTestTexture1 } });
 	if (mTestFrameBuffer == nullptr)
 		return false;
 
 	return true;
 }
 
-void SimpleRenderer::render(const TransformComponent &inCameraTransform)
+void SimpleRenderer::render(const TransformComponent& inCameraTransform)
 {
-	SurfaceImageData *imageData = nullptr;
+	SurfaceImageData* imageData = nullptr;
 	mSurface->nextImage(imageData);
 
 	auto viewMatrix = glm::inverse(inCameraTransform.local_matrix());
@@ -160,9 +165,10 @@ void SimpleRenderer::render(const TransformComponent &inCameraTransform)
 
 	auto commandBuffer = mCommandBuffers[imageData->imageIndex % mCommandBuffers.size()];
 
-	RenderPassBeginParams beginRenderPass{
+	RenderPassBeginParams beginRenderPass {
 		imageData->frameBuffer,
-		{{0, 0}, mSurface->size()}};
+		{ { 0, 0 }, mSurface->size() }
+	};
 	commandBuffer->begin();
 	commandBuffer->beginRenderPass(beginRenderPass);
 	commandBuffer->bindPipeline(mPipeline);
@@ -177,17 +183,17 @@ void SimpleRenderer::render(const TransformComponent &inCameraTransform)
 	mSurface->presentImage(imageData);
 }
 
-void SimpleRenderer::setupUniformBuffer(const glm::mat4 &inViewMatrix, std::shared_ptr<UniformBuffer> inBuffer)
+void SimpleRenderer::setupUniformBuffer(const glm::mat4& inViewMatrix, std::shared_ptr<UniformBuffer> inBuffer)
 {
 	static auto startTime = std::chrono::high_resolution_clock::now();
 
-	auto surfaceSize = mSurface->size();
-	auto currentTime = std::chrono::high_resolution_clock::now();
-	auto elapsedTime = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+	auto				surfaceSize = mSurface->size();
+	auto				currentTime = std::chrono::high_resolution_clock::now();
+	auto				elapsedTime = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 	SimpleUniformBuffer ubo;
 	// ubo.model = glm::rotate(glm::mat4(1.0f), elapsedTime * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 	ubo.view = inViewMatrix;
 	ubo.projection = glm::perspective(glm::radians(45.0f), surfaceSize.x / float(surfaceSize.y), 0.1f, 10.0f);
 
-	inBuffer->setData(static_cast<const void *>(&ubo), sizeof(SimpleUniformBuffer));
+	inBuffer->setData(static_cast<const void*>(&ubo), sizeof(SimpleUniformBuffer));
 }

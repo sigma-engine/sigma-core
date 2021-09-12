@@ -3,8 +3,8 @@
 #include <sigma/DescriptorSet.hpp>
 #include <sigma/Log.hpp>
 #include <sigma/RenderPass.hpp>
-#include <sigma/Shader.hpp>
 #include <sigma/Sampler.hpp>
+#include <sigma/Shader.hpp>
 
 #include <vulkan/vulkan.h>
 

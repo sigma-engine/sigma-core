@@ -20,8 +20,10 @@
 
 #include <fstream>
 
-DeviceVK::DeviceVK(VkInstance inInstance, VkPhysicalDevice inDevice, const std::vector<std::string> &inEnabledLayers)
-	: mInstance(inInstance), mPhysicalDevice(inDevice), mEnabledLayers(inEnabledLayers)
+DeviceVK::DeviceVK(VkInstance inInstance, VkPhysicalDevice inDevice, const std::vector<std::string>& inEnabledLayers)
+	: mInstance(inInstance)
+	, mPhysicalDevice(inDevice)
+	, mEnabledLayers(inEnabledLayers)
 {
 	vkGetPhysicalDeviceProperties(inDevice, &mPhysicalDeviceProperties);
 	vkGetPhysicalDeviceFeatures(inDevice, &mPhysicalDeviceFeatures);
@@ -32,13 +34,13 @@ DeviceVK::DeviceVK(VkInstance inInstance, VkPhysicalDevice inDevice, const std::
 	mQueueFamilyProperties.resize(queueFamilyCount);
 	vkGetPhysicalDeviceQueueFamilyProperties(mPhysicalDevice, &queueFamilyCount, mQueueFamilyProperties.data());
 
-	auto graphicsIt = std::find_if(mQueueFamilyProperties.begin(), mQueueFamilyProperties.end(), [](const auto &prop) {
+	auto graphicsIt = std::find_if(mQueueFamilyProperties.begin(), mQueueFamilyProperties.end(), [](const auto& prop) {
 		return prop.queueCount > 0 && ((prop.queueFlags & VK_QUEUE_GRAPHICS_BIT) == VK_QUEUE_GRAPHICS_BIT);
 	});
 	if (graphicsIt != mQueueFamilyProperties.end())
 		mGraphicsFamily = static_cast<uint32_t>(std::distance(mQueueFamilyProperties.begin(), graphicsIt));
 
-	auto computeIt = std::find_if(mQueueFamilyProperties.begin(), mQueueFamilyProperties.end(), [](const auto &prop) {
+	auto computeIt = std::find_if(mQueueFamilyProperties.begin(), mQueueFamilyProperties.end(), [](const auto& prop) {
 		return prop.queueCount > 0 && ((prop.queueFlags & VK_QUEUE_COMPUTE_BIT) == VK_QUEUE_COMPUTE_BIT);
 	});
 	if (computeIt != mQueueFamilyProperties.end())
@@ -102,15 +104,16 @@ bool DeviceVK::supportsSurface(std::shared_ptr<Surface> inSurface) const
 	return getSwapChainInfo(vksurface).has_value();
 }
 
-bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>> &inSurfaces)
+bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>>& inSurfaces)
 {
 	static std::unordered_map<uint32_t, std::string> vendorNames = {
-		{0x1002, "AMD"},
-		{0x1010, "ImgTec"},
-		{0x10DE, "NVIDIA"},
-		{0x13B5, "ARM"},
-		{0x5143, "Qualcomm"},
-		{0x8086, "INTEL"}};
+		{ 0x1002, "AMD" },
+		{ 0x1010, "ImgTec" },
+		{ 0x10DE, "NVIDIA" },
+		{ 0x13B5, "ARM" },
+		{ 0x5143, "Qualcomm" },
+		{ 0x8086, "INTEL" }
+	};
 	SIGMA_INFO("Graphics API: Vulkan");
 	SIGMA_INFO("Vender: {}", vendorNames.count(mPhysicalDeviceProperties.vendorID) ? vendorNames[mPhysicalDeviceProperties.vendorID] : "Unknown");
 	SIGMA_INFO("Model: {}", mPhysicalDeviceProperties.deviceName);
@@ -125,7 +128,7 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>> &inSurface
 
 	// Check if required extensions exists
 	std::vector<VkExtensionProperties> extensionProperties;
-	uint32_t extensionCount;
+	uint32_t						   extensionCount;
 	CHECK_VK(result = vkEnumerateDeviceExtensionProperties(mPhysicalDevice, nullptr, &extensionCount, nullptr));
 	if (result != VK_SUCCESS)
 	{
@@ -143,7 +146,7 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>> &inSurface
 	// Find and report about missing extensions
 	auto extIt = std::remove_if(mRequiredExtensions.begin(), mRequiredExtensions.end(), [&](auto ext) {
 		auto strName = std::string(ext);
-		auto it = std::find_if(extensionProperties.begin(), extensionProperties.end(), [&](const auto &prop) {
+		auto it = std::find_if(extensionProperties.begin(), extensionProperties.end(), [&](const auto& prop) {
 			return prop.extensionName == strName;
 		});
 		return it == extensionProperties.end();
@@ -162,7 +165,7 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>> &inSurface
 
 	// Check if layers exists
 	std::vector<VkLayerProperties> layerProperties;
-	uint32_t layerCount;
+	uint32_t					   layerCount;
 	CHECK_VK(result = vkEnumerateDeviceLayerProperties(mPhysicalDevice, &layerCount, nullptr));
 	if (result != VK_SUCCESS)
 	{
@@ -178,8 +181,8 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>> &inSurface
 	}
 
 	// Find and report missing layers
-	auto layerIt = std::remove_if(mEnabledLayers.begin(), mEnabledLayers.end(), [&](const auto &ext) {
-		auto it = std::find_if(layerProperties.begin(), layerProperties.end(), [&](const auto &prop) {
+	auto layerIt = std::remove_if(mEnabledLayers.begin(), mEnabledLayers.end(), [&](const auto& ext) {
+		auto it = std::find_if(layerProperties.begin(), layerProperties.end(), [&](const auto& prop) {
 			return ext == prop.layerName;
 		});
 		return it == layerProperties.end();
@@ -222,7 +225,7 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>> &inSurface
 		queueFamilies.insert(mComputeFamily.value());
 
 	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-	float queuePriority = 1;
+	float								 queuePriority = 1;
 	for (auto family : queueFamilies)
 	{
 		queueCreateInfos.push_back({});
@@ -235,12 +238,12 @@ bool DeviceVK::initialize(const std::vector<std::shared_ptr<Surface>> &inSurface
 	// TODO fill out device features
 	VkPhysicalDeviceFeatures deviceFeatures = {};
 
-	std::vector<const char *> enabledLayers(mEnabledLayers.size());
-	std::transform(mEnabledLayers.begin(), mEnabledLayers.end(), enabledLayers.begin(), [](const auto &ext) {
+	std::vector<const char*> enabledLayers(mEnabledLayers.size());
+	std::transform(mEnabledLayers.begin(), mEnabledLayers.end(), enabledLayers.begin(), [](const auto& ext) {
 		return ext.c_str();
 	});
-	std::vector<const char *> enabledExtensions(mRequiredExtensions.size());
-	std::transform(mRequiredExtensions.begin(), mRequiredExtensions.end(), enabledExtensions.begin(), [](const auto &ext) {
+	std::vector<const char*> enabledExtensions(mRequiredExtensions.size());
+	std::transform(mRequiredExtensions.begin(), mRequiredExtensions.end(), enabledExtensions.begin(), [](const auto& ext) {
 		return ext.c_str();
 	});
 
@@ -335,15 +338,15 @@ std::shared_ptr<CommandBuffer> DeviceVK::createCommandBuffer()
 	return commandBuffer;
 }
 
-std::shared_ptr<Shader> DeviceVK::createShader(ShaderType inType, const std::string &inSourcePath)
+std::shared_ptr<Shader> DeviceVK::createShader(ShaderType inType, const std::string& inSourcePath)
 {
 	std::ifstream file("vulkan/" + inSourcePath + ".glsl", std::ios::ate | std::ios::binary);
 	if (!file.is_open())
 		return nullptr;
-	size_t fsize = file.tellg();
+	size_t				  fsize = file.tellg();
 	std::vector<uint32_t> data(fsize / sizeof(uint32_t));
 	file.seekg(0);
-	file.read(reinterpret_cast<char *>(data.data()), fsize);
+	file.read(reinterpret_cast<char*>(data.data()), fsize);
 
 	std::shared_ptr<ShaderVK> shader = std::make_shared<ShaderVK>(inType, shared_from_this());
 	if (!shader->initialize(data))
@@ -352,7 +355,7 @@ std::shared_ptr<Shader> DeviceVK::createShader(ShaderType inType, const std::str
 	return shader;
 }
 
-std::shared_ptr<RenderPass> DeviceVK::createRenderPass(const RenderPassCreateParams &inParams)
+std::shared_ptr<RenderPass> DeviceVK::createRenderPass(const RenderPassCreateParams& inParams)
 {
 	auto renderPass = std::make_shared<RenderPassVK>(shared_from_this());
 	if (!renderPass->initialize(inParams))
@@ -361,7 +364,7 @@ std::shared_ptr<RenderPass> DeviceVK::createRenderPass(const RenderPassCreatePar
 	return renderPass;
 }
 
-std::shared_ptr<FrameBuffer> DeviceVK::createFrameBuffer(const FrameBufferCreateParams &inParams)
+std::shared_ptr<FrameBuffer> DeviceVK::createFrameBuffer(const FrameBufferCreateParams& inParams)
 {
 	auto frameBuffer = std::make_shared<FrameBufferVK>(shared_from_this());
 	if (!frameBuffer->initialize(inParams))
@@ -370,7 +373,7 @@ std::shared_ptr<FrameBuffer> DeviceVK::createFrameBuffer(const FrameBufferCreate
 	return frameBuffer;
 }
 
-std::shared_ptr<DescriptorSetLayout> DeviceVK::createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding> &inBindings)
+std::shared_ptr<DescriptorSetLayout> DeviceVK::createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding>& inBindings)
 {
 	auto layout = std::make_shared<DescriptorSetLayoutVK>(shared_from_this());
 	if (!layout->initialize(inBindings))
@@ -379,7 +382,7 @@ std::shared_ptr<DescriptorSetLayout> DeviceVK::createDescriptorSetLayout(const s
 	return layout;
 }
 
-std::shared_ptr<DescriptorSet> DeviceVK::createDescriptorSet(const DescriptorSetCreateParams &inParams)
+std::shared_ptr<DescriptorSet> DeviceVK::createDescriptorSet(const DescriptorSetCreateParams& inParams)
 {
 	auto set = std::make_shared<DescriptorSetVK>(shared_from_this(), mDescriptorPool);
 	if (!set->initialize(inParams))
@@ -388,7 +391,7 @@ std::shared_ptr<DescriptorSet> DeviceVK::createDescriptorSet(const DescriptorSet
 	return set;
 }
 
-std::shared_ptr<Pipeline> DeviceVK::createPipeline(const PipelineCreateParams &inParams)
+std::shared_ptr<Pipeline> DeviceVK::createPipeline(const PipelineCreateParams& inParams)
 {
 	std::shared_ptr<PipelineVK> pipeline = std::make_shared<PipelineVK>(shared_from_this());
 	if (!pipeline->initialize(inParams))
@@ -397,7 +400,7 @@ std::shared_ptr<Pipeline> DeviceVK::createPipeline(const PipelineCreateParams &i
 	return pipeline;
 }
 
-std::shared_ptr<VertexBuffer> DeviceVK::createVertexBuffer(const VertexLayout &inLayout, uint64_t inSize)
+std::shared_ptr<VertexBuffer> DeviceVK::createVertexBuffer(const VertexLayout& inLayout, uint64_t inSize)
 {
 	auto vertexBuffer = std::make_shared<VertexBufferVK>(shared_from_this(), inLayout);
 	if (!vertexBuffer->initialize(inSize))
@@ -424,7 +427,7 @@ std::shared_ptr<UniformBuffer> DeviceVK::createUniformBuffer(uint64_t inSize)
 	return buffer;
 }
 
-std::shared_ptr<Texture2D> DeviceVK::createTexture2D(const TextureCreateParams &inParams)
+std::shared_ptr<Texture2D> DeviceVK::createTexture2D(const TextureCreateParams& inParams)
 {
 	auto texture = std::make_shared<Texture2DVK>(shared_from_this());
 	if (!texture->initialize(inParams))
@@ -433,7 +436,7 @@ std::shared_ptr<Texture2D> DeviceVK::createTexture2D(const TextureCreateParams &
 	return texture;
 }
 
-std::shared_ptr<Sampler2D> DeviceVK::createSampler2D(const SamplerCreateParams &inParams)
+std::shared_ptr<Sampler2D> DeviceVK::createSampler2D(const SamplerCreateParams& inParams)
 {
 	auto sampler = std::make_shared<Sampler2DVK>(shared_from_this());
 	if (!sampler->initialize(inParams))
@@ -459,12 +462,12 @@ VkQueue DeviceVK::graphicsQueue() const
 	return mGraphicsQueue;
 }
 
-VkResult DeviceVK::startTmpCommandBuffer(VkCommandBuffer *outCommandBuffer)
+VkResult DeviceVK::startTmpCommandBuffer(VkCommandBuffer* outCommandBuffer)
 {
 	// TODO: this is crap
-	VkResult result;
+	VkResult					result;
 	VkCommandBufferAllocateInfo allocInfo = {};
-	VkCommandBufferBeginInfo beginInfo = {};
+	VkCommandBufferBeginInfo	beginInfo = {};
 
 	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
@@ -489,7 +492,7 @@ done:
 VkResult DeviceVK::endTmpCommandBuffer(VkCommandBuffer inCommandBuffer)
 {
 	// TODO: this is crap
-	VkResult result;
+	VkResult	 result;
 	VkSubmitInfo submitInfo = {};
 
 	CHECK_VK(result = vkEndCommandBuffer(inCommandBuffer));
@@ -554,8 +557,8 @@ done:
 VkResult DeviceVK::copyBufferToBuffer(VkBuffer inDstBuffer, VkBuffer inSrcBuffer, uint64_t inSize)
 {
 	// TODO: this is crap
-	VkResult result;
-	VkBufferCopy copyRegion = {0, 0, inSize};
+	VkResult		result;
+	VkBufferCopy	copyRegion = { 0, 0, inSize };
 	VkCommandBuffer commandBuffer = nullptr;
 
 	CHECK_VK(result = startTmpCommandBuffer(&commandBuffer));
@@ -649,19 +652,19 @@ void DeviceVK::transitionImageLayout(VkCommandBuffer inCommandBuffer, VkImage in
 	}
 
 	vkCmdPipelineBarrier(inCommandBuffer,
-						 srcStage,
-						 dstStage,
-						 0,
-						 0, nullptr,
-						 0, nullptr,
-						 1, &barrier);
+		srcStage,
+		dstStage,
+		0,
+		0, nullptr,
+		0, nullptr,
+		1, &barrier);
 }
 
 VkResult DeviceVK::copyBufferToImage(VkImage inDstImage, VkBuffer inSrcBuffer, VkFormat inFormat, uint32_t inWidth, uint32_t inHeight)
 {
 	// TODO: this is crap
-	VkResult result;
-	VkCommandBuffer commandBuffer = nullptr;
+	VkResult		  result;
+	VkCommandBuffer	  commandBuffer = nullptr;
 	VkBufferImageCopy region = {};
 
 	CHECK_VK(result = startTmpCommandBuffer(&commandBuffer));
@@ -679,8 +682,8 @@ VkResult DeviceVK::copyBufferToImage(VkImage inDstImage, VkBuffer inSrcBuffer, V
 	region.imageSubresource.baseArrayLayer = 0;
 	region.imageSubresource.layerCount = 1;
 
-	region.imageOffset = {0, 0, 0};
-	region.imageExtent = {inWidth, inHeight, 1};
+	region.imageOffset = { 0, 0, 0 };
+	region.imageExtent = { inWidth, inHeight, 1 };
 
 	vkCmdCopyBufferToImage(commandBuffer, inSrcBuffer, inDstImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 

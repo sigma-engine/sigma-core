@@ -12,7 +12,8 @@ class VertexBufferVK;
 class IndexBufferVK;
 class DescriptorSetVK;
 
-class CommandBufferVK : public CommandBuffer {
+class CommandBufferVK : public CommandBuffer
+{
 public:
 	CommandBufferVK(std::shared_ptr<DeviceVK> inDevice, VkCommandPool inCommandPool);
 
@@ -44,12 +45,12 @@ public:
 
 public:
 	std::shared_ptr<DeviceVK> mDevice = nullptr;
-	VkCommandPool mCommandPool = nullptr;
+	VkCommandPool			  mCommandPool = nullptr;
 
 	VkCommandBuffer mBuffer = nullptr;
 
-	std::shared_ptr<PipelineVK> mCurrentPipeline = nullptr;
-	std::shared_ptr<VertexBufferVK> mCurrentVertexBuffer = nullptr;
-	std::shared_ptr<IndexBufferVK> mCurrentIndexBuffer = nullptr;
+	std::shared_ptr<PipelineVK>		 mCurrentPipeline = nullptr;
+	std::shared_ptr<VertexBufferVK>	 mCurrentVertexBuffer = nullptr;
+	std::shared_ptr<IndexBufferVK>	 mCurrentIndexBuffer = nullptr;
 	std::shared_ptr<DescriptorSetVK> mCurrentDescriptorSet = nullptr;
 };

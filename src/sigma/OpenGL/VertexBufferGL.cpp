@@ -15,7 +15,8 @@ VertexBufferGL::VertexBufferGL(const VertexLayout& inLayout)
 	CHECK_GL(glBindVertexArray(mVAOHandle));
 	CHECK_GL(glBindBuffer(GL_ARRAY_BUFFER, mBufferHandle));
 
-	for (const auto& member : mLayout) {
+	for (const auto& member : mLayout)
+	{
 		CHECK_GL(glEnableVertexAttribArray(member.location));
 		CHECK_GL(glVertexAttribPointer(member.location,
 			componentCountOfDataType(member.type),

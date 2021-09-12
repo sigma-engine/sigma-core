@@ -4,10 +4,11 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/vec3.hpp>
 
-struct TransformComponent {
+struct TransformComponent
+{
 	glm::vec3 position = { 0, 0, 0 };
 	glm::quat rotation = { 0, 0, 0, 1 };
-	glm::vec3 scale = {1, 1, 1};
+	glm::vec3 scale = { 1, 1, 1 };
 
 	glm::mat4 local_matrix() const
 	{

@@ -8,7 +8,8 @@
 struct SDL_Window;
 class Device;
 
-class SurfaceSDLGL : public SurfaceGL {
+class SurfaceSDLGL : public SurfaceGL
+{
 public:
 	SurfaceSDLGL(SDL_Window* inWindow);
 
@@ -22,12 +23,13 @@ public:
 
 private:
 	SDL_Window* mWindow = nullptr;
-	void* mHandle = nullptr;
+	void*		mHandle = nullptr;
 };
 
 #ifdef SIGMA_VULKAN_SUPPORT
 #include <sigma/Vulkan/SurfaceVK.hpp>
-class SurfaceSDLVK : public SurfaceVK {
+class SurfaceSDLVK : public SurfaceVK
+{
 public:
 	SurfaceSDLVK(SDL_Window* inWindow);
 
@@ -38,12 +40,14 @@ private:
 };
 #endif
 
-class EventEmitterSDL : public EventEmitter {
+class EventEmitterSDL : public EventEmitter
+{
 public:
 	virtual bool process(const std::vector<std::weak_ptr<EventListener>>& inListeners) override;
 };
 
-class WindowSDL : public Window {
+class WindowSDL : public Window
+{
 public:
 	static void initializeSDL(std::shared_ptr<Engine> inEngine);
 
@@ -60,10 +64,10 @@ public:
 	SDL_Window* handle();
 
 private:
-	std::string mTitle;
-	uint32_t mWidth;
-	uint32_t mHeight;
-	std::shared_ptr<Engine> mEngine = nullptr;
+	std::string				 mTitle;
+	uint32_t				 mWidth;
+	uint32_t				 mHeight;
+	std::shared_ptr<Engine>	 mEngine = nullptr;
 	std::shared_ptr<Surface> mSurface = nullptr;
 
 	SDL_Window* mWindow = nullptr;

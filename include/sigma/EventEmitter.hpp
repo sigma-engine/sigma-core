@@ -5,7 +5,8 @@
 
 class EventListener;
 
-class EventEmitter {
+class EventEmitter
+{
 public:
 	virtual ~EventEmitter() = default;
 

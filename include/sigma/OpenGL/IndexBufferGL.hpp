@@ -2,7 +2,8 @@
 
 #include <sigma/IndexBuffer.hpp>
 
-class IndexBufferGL : public IndexBuffer {
+class IndexBufferGL : public IndexBuffer
+{
 public:
 	IndexBufferGL(PrimitiveType inPrimitiveType, DataType inDataType);
 
@@ -18,7 +19,7 @@ public:
 
 private:
 	PrimitiveType mPrimitiveType;
-	DataType mDataType;
-	uint64_t mCount;
-	uint32_t mHandle;
+	DataType	  mDataType;
+	uint64_t	  mCount;
+	uint32_t	  mHandle;
 };

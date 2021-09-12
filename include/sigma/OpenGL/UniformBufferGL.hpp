@@ -2,7 +2,8 @@
 
 #include <sigma/UniformBuffer.hpp>
 
-class UniformBufferGL : public UniformBuffer {
+class UniformBufferGL : public UniformBuffer
+{
 public:
 	UniformBufferGL();
 
@@ -18,5 +19,5 @@ public:
 
 private:
 	unsigned int mHandle;
-	uint64_t mSize;
+	uint64_t	 mSize;
 };

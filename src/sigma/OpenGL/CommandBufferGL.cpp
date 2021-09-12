@@ -8,7 +8,6 @@
 #include <sigma/OpenGL/UtilGL.hpp>
 #include <sigma/OpenGL/VertexBufferGL.hpp>
 
-
 #include <glad/glad.h>
 
 CommandBufferGL::CommandBufferGL()
@@ -59,7 +58,8 @@ void CommandBufferGL::bindIndexBuffer(std::shared_ptr<IndexBuffer> inBuffer)
 {
 	SIGMA_ASSERT(std::dynamic_pointer_cast<IndexBufferGL>(inBuffer), "Must use a opengl index buffer with a opengl command buffer!");
 	auto indexBuffer = std::static_pointer_cast<IndexBufferGL>(inBuffer);
-	if (indexBuffer != mIndexBuffer) {
+	if (indexBuffer != mIndexBuffer)
+	{
 		indexBuffer->bind();
 		mBoundIndexType = indexBuffer->dataType() == DataType::UShort ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
 	}

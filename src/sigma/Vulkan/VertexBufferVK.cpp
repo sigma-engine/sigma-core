@@ -12,7 +12,8 @@ VertexBufferVK::VertexBufferVK(std::shared_ptr<DeviceVK> inDevice, const VertexL
 
 VertexBufferVK::~VertexBufferVK()
 {
-	if (mDevice) {
+	if (mDevice)
+	{
 		if (mHandle)
 			vkDestroyBuffer(mDevice->handle(), mHandle, nullptr);
 
@@ -64,10 +65,10 @@ done:
 void VertexBufferVK::setData(const void* inData, uint64_t inSize)
 {
 	// TODO: This is still crap
-	VkResult result;
-	VkBuffer stagingBuffer = nullptr;
-	VmaAllocation stagingAllocation = nullptr;
-	void* dstData = nullptr;
+	VkResult		   result;
+	VkBuffer		   stagingBuffer = nullptr;
+	VmaAllocation	   stagingAllocation = nullptr;
+	void*			   dstData = nullptr;
 	VkBufferCreateInfo bufferInfo = {};
 
 	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;

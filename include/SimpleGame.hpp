@@ -1,12 +1,13 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
 
 class SimpleCameraController;
 
-class SimpleGame {
+class SimpleGame
+{
 public:
 	int run(const std::vector<std::string>& inArguments);
 

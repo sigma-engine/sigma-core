@@ -8,7 +8,8 @@
 
 class DeviceVK;
 
-class DeviceManagerVK : public std::enable_shared_from_this<DeviceManagerVK>, public DeviceManager {
+class DeviceManagerVK : public std::enable_shared_from_this<DeviceManagerVK>, public DeviceManager
+{
 public:
 	virtual ~DeviceManagerVK();
 
@@ -23,8 +24,8 @@ protected:
 	VkDebugUtilsMessengerEXT mDebugMessenger = nullptr;
 #endif
 
-	VkInstance mHandle = nullptr;
-	std::vector<std::string> mRequiredExtensions;
-	std::vector<std::string> mEnabledLayers;
+	VkInstance							   mHandle = nullptr;
+	std::vector<std::string>			   mRequiredExtensions;
+	std::vector<std::string>			   mEnabledLayers;
 	std::vector<std::shared_ptr<DeviceVK>> mDevices;
 };

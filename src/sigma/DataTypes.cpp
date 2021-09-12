@@ -4,7 +4,8 @@
 
 uint32_t sizeOfDataType(DataType inType)
 {
-	switch (inType) {
+	switch (inType)
+	{
 	case DataType::Float:
 		return 1 * sizeof(float);
 	case DataType::Vec2:
@@ -24,7 +25,8 @@ uint32_t sizeOfDataType(DataType inType)
 
 uint32_t componentCountOfDataType(DataType inType)
 {
-	switch (inType) {
+	switch (inType)
+	{
 	case DataType::Float:
 		return 1;
 	case DataType::Vec2:

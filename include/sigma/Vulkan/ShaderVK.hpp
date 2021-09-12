@@ -9,7 +9,8 @@
 
 class DeviceVK;
 
-class ShaderVK : public Shader {
+class ShaderVK : public Shader
+{
 public:
 	ShaderVK(ShaderType inType, std::shared_ptr<DeviceVK> inDevice);
 
@@ -21,5 +22,5 @@ public:
 
 private:
 	std::shared_ptr<DeviceVK> mDevice = nullptr;
-	VkShaderModule mModule = nullptr;
+	VkShaderModule			  mModule = nullptr;
 };

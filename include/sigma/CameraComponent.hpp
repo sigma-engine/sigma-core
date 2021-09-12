@@ -2,6 +2,7 @@
 
 #include <glm/mat4x4.hpp>
 
-struct CameraComponent {
+struct CameraComponent
+{
 	glm::mat4 projection;
 };

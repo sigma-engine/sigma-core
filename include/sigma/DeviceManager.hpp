@@ -8,7 +8,8 @@
 class Device;
 class Surface;
 
-class DeviceManager {
+class DeviceManager
+{
 public:
 	virtual ~DeviceManager() = default;
 

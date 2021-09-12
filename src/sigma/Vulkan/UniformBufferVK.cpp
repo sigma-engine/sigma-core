@@ -12,11 +12,13 @@ UniformBufferVK::UniformBufferVK(std::shared_ptr<DeviceVK> inDevice)
 
 UniformBufferVK::~UniformBufferVK()
 {
-	if (mDevice) {
+	if (mDevice)
+	{
 		if (mHandle)
 			vkDestroyBuffer(mDevice->handle(), mHandle, nullptr);
 
-		if (mAllocation) {
+		if (mAllocation)
+		{
 			if (mData)
 				vmaUnmapMemory(mDevice->allocator(), mAllocation);
 

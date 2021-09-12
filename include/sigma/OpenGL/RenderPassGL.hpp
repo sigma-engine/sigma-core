@@ -2,7 +2,8 @@
 
 #include <sigma/RenderPass.hpp>
 
-class RenderPassGL : public RenderPass {
+class RenderPassGL : public RenderPass
+{
 public:
 	const std::vector<RenderPassAttachment>& attachments() const override;
 

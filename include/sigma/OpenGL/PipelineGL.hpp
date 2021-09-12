@@ -7,7 +7,8 @@
 
 class Shader;
 
-class PipelineGL : public Pipeline {
+class PipelineGL : public Pipeline
+{
 public:
 	PipelineGL();
 

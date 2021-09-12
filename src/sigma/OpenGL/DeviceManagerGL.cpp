@@ -8,7 +8,8 @@
 
 void glDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 {
-	switch (severity) {
+	switch (severity)
+	{
 	case GL_DEBUG_SEVERITY_LOW:
 		SIGMA_WARN("0x{:x}: {}", id, message);
 		break;
@@ -42,20 +43,24 @@ bool DeviceManagerGL::initialize(const std::set<std::string>& inRequiredExtensio
 
 	GLint extensionCount;
 	CHECK_GL(glGetIntegerv(GL_NUM_EXTENSIONS, &extensionCount));
-	for (GLint i = 0; i < extensionCount; ++i) {
+	for (GLint i = 0; i < extensionCount; ++i)
+	{
 		const char* ext = reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, static_cast<GLuint>(i)));
 		mExtensions.insert(ext);
 	}
 
 	bool hasMissingExtensions = false;
-	for (auto reqExt : inRequiredExtensions) {
-		if (!mExtensions.count(reqExt)) {
+	for (auto reqExt : inRequiredExtensions)
+	{
+		if (!mExtensions.count(reqExt))
+		{
 			hasMissingExtensions = true;
 			SIGMA_ERROR("Missing Required OpenGL Extension: {}", reqExt);
 		}
 	}
 
-	if (hasMissingExtensions) {
+	if (hasMissingExtensions)
+	{
 		SIGMA_INFO("Supported OpenGL Extensions: {}", fmt::join(mExtensions.begin(), mExtensions.end(), ","));
 	}
 

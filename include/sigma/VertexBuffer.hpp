@@ -8,7 +8,8 @@
 
 class VertexLayout;
 
-class VertexBuffer {
+class VertexBuffer
+{
 public:
 	virtual ~VertexBuffer() = default;
 

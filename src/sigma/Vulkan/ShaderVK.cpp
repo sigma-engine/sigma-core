@@ -17,7 +17,7 @@ ShaderVK::~ShaderVK()
 
 bool ShaderVK::initialize(const std::vector<uint32_t>& inByteCode)
 {
-	VkResult result;
+	VkResult				 result;
 	VkShaderModuleCreateInfo createInfo = {};
 	createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 	createInfo.pCode = inByteCode.data();

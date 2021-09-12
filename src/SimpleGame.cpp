@@ -1,10 +1,10 @@
 #include <SimpleGame.hpp>
 
-#include <sigma/Context.hpp>
 #include <SimpleCameraController.hpp>
 #include <SimpleRenderer.hpp>
 #include <sigma/Algorithm.hpp>
 #include <sigma/CameraComponent.hpp>
+#include <sigma/Context.hpp>
 #include <sigma/Device.hpp>
 #include <sigma/DeviceManager.hpp>
 #include <sigma/Engine.hpp>
@@ -19,15 +19,18 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/vec3.hpp>
 
-int SimpleGame::run(const std::vector<std::string> &inArguments)
+int SimpleGame::run(const std::vector<std::string>& inArguments)
 {
-	bool useOpenGL = std::find_if(inArguments.begin(), inArguments.end(), [](auto a) { return a == "--opengl"; }) != inArguments.end();
+	bool useOpenGL = std::find_if(inArguments.begin(), inArguments.end(), [](auto a) {
+		return a == "--opengl";
+	}) != inArguments.end();
 
-	auto engine = Engine::create();
+	auto		engine = Engine::create();
 	GraphicsAPI graphicsAPI = GraphicsAPI::OpenGL;
 
 #ifdef SIGMA_VULKAN_SUPPORT
-	if (!useOpenGL) graphicsAPI = GraphicsAPI::Vulkan;
+	if (!useOpenGL)
+		graphicsAPI = GraphicsAPI::Vulkan;
 #endif
 
 	if (!engine->initialize(graphicsAPI))
@@ -47,7 +50,7 @@ int SimpleGame::run(const std::vector<std::string> &inArguments)
 		return -1;
 
 	auto device = surfaceDevices[0];
-	if (!device->initialize({window->surface()}))
+	if (!device->initialize({ window->surface() }))
 		return -1;
 
 	auto context = std::make_shared<Context>();

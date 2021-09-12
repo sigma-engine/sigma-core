@@ -1,10 +1,10 @@
 #include <vulkan/vulkan.h>
 
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDebugUtilsMessengerEXT(
-	VkInstance instance,
+	VkInstance								  instance,
 	const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
-	const VkAllocationCallbacks* pAllocator,
-	VkDebugUtilsMessengerEXT* pMessenger)
+	const VkAllocationCallbacks*			  pAllocator,
+	VkDebugUtilsMessengerEXT*				  pMessenger)
 {
 	static auto func = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT"));
 	if (func != nullptr)
@@ -14,8 +14,8 @@ VKAPI_ATTR VkResult VKAPI_CALL vkCreateDebugUtilsMessengerEXT(
 }
 
 VKAPI_ATTR void VKAPI_CALL vkDestroyDebugUtilsMessengerEXT(
-	VkInstance instance,
-	VkDebugUtilsMessengerEXT messenger,
+	VkInstance					 instance,
+	VkDebugUtilsMessengerEXT	 messenger,
 	const VkAllocationCallbacks* pAllocator)
 {
 	static auto func = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT"));

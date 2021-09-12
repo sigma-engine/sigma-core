@@ -2,14 +2,15 @@
 
 #include <sigma/FrameBuffer.hpp>
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 class DeviceGL;
 class RenderPassGL;
 class Texture2DGL;
 
-class FrameBufferGL : public FrameBuffer {
+class FrameBufferGL : public FrameBuffer
+{
 public:
 	FrameBufferGL(std::shared_ptr<RenderPassGL> inRenderPass, const glm::uvec2& inSize, unsigned int inHandle);
 
@@ -26,9 +27,9 @@ public:
 	void bind();
 
 private:
-	std::shared_ptr<RenderPassGL> mRenderPass = nullptr;
+	std::shared_ptr<RenderPassGL>			  mRenderPass = nullptr;
 	std::vector<std::shared_ptr<Texture2DGL>> mAttachments;
-	std::vector<unsigned int> mDrawBuffers;
-	glm::uvec2 mSize;
-	unsigned int mHandle = 0;
+	std::vector<unsigned int>				  mDrawBuffers;
+	glm::uvec2								  mSize;
+	unsigned int							  mHandle = 0;
 };

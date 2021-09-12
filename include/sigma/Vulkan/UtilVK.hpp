@@ -26,24 +26,29 @@ enum class SamplerWarpMode;
 enum class SamplerFilterMode;
 enum class SamplerMipmapMode;
 
-namespace fmt {
-	template <>
-	struct formatter<VkExtensionProperties>: formatter<string_view> {
-		template <typename FormatContext>
-		auto format(VkExtensionProperties prop, FormatContext& ctx) {
-			string_view name = prop.extensionName;
-			return formatter<string_view>::format(name, ctx);
-		}
-	};
+namespace fmt
+{
+template <>
+struct formatter<VkExtensionProperties> : formatter<string_view>
+{
+	template <typename FormatContext>
+	auto format(VkExtensionProperties prop, FormatContext& ctx)
+	{
+		string_view name = prop.extensionName;
+		return formatter<string_view>::format(name, ctx);
+	}
+};
 
-	template <>
-	struct formatter<VkLayerProperties>: formatter<string_view> {
-		template <typename FormatContext>
-		auto format(VkLayerProperties prop, FormatContext& ctx) {
-			string_view name = prop.layerName;
-			return formatter<string_view>::format(name, ctx);
-		}
-	};
+template <>
+struct formatter<VkLayerProperties> : formatter<string_view>
+{
+	template <typename FormatContext>
+	auto format(VkLayerProperties prop, FormatContext& ctx)
+	{
+		string_view name = prop.layerName;
+		return formatter<string_view>::format(name, ctx);
+	}
+};
 }
 
 VkFormat convertImageFormatVK(ImageFormat inFormat);

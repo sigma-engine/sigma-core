@@ -14,7 +14,7 @@ Sampler2DGL::~Sampler2DGL()
 	CHECK_GL(glDeleteSamplers(1, &mHandle));
 }
 
-bool Sampler2DGL::initialize(const SamplerCreateParams &inParams)
+bool Sampler2DGL::initialize(const SamplerCreateParams& inParams)
 {
 	CHECK_GL(glSamplerParameteri(mHandle, GL_TEXTURE_WRAP_S, convertSamplerWarpModeGL(inParams.warpU)));
 	CHECK_GL(glSamplerParameteri(mHandle, GL_TEXTURE_WRAP_T, convertSamplerWarpModeGL(inParams.warpV)));

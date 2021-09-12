@@ -5,7 +5,8 @@
 #include <cstdint>
 #include <string>
 
-class ShaderGL : public Shader {
+class ShaderGL : public Shader
+{
 public:
 	ShaderGL(ShaderType inType);
 

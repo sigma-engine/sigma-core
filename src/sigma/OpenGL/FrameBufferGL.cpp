@@ -16,14 +16,18 @@ FrameBufferGL::FrameBufferGL(std::shared_ptr<RenderPassGL> inRenderPass, const g
 	mDrawBuffers.resize(attachmentDesc.size());
 
 	uint32_t colorAttachmentNumber = 0;
-	for (size_t i = 0; i < attachmentDesc.size(); ++i) {
-		switch (attachmentDesc[i].type) {
-		case AttachmentType::ColorAttachment: {
+	for (size_t i = 0; i < attachmentDesc.size(); ++i)
+	{
+		switch (attachmentDesc[i].type)
+		{
+		case AttachmentType::ColorAttachment:
+		{
 			mDrawBuffers[i] = GL_COLOR_ATTACHMENT0 + colorAttachmentNumber;
 			colorAttachmentNumber++;
 			break;
 		}
-		default: {
+		default:
+		{
 			// TODO: other attachment types
 			SIGMA_ASSERT(false, "Attachment type not supported!");
 			break;
@@ -69,15 +73,18 @@ bool FrameBufferGL::initialize(const FrameBufferCreateParams& inParams)
 	CHECK_GL(glBindFramebuffer(GL_FRAMEBUFFER, mHandle));
 
 	uint32_t colorAttachmentNumber = 0;
-	for (size_t i = 0; i < inParams.attachments.size(); ++i) {
+	for (size_t i = 0; i < inParams.attachments.size(); ++i)
+	{
 		SIGMA_ASSERT(std::dynamic_pointer_cast<Texture2DGL>(inParams.attachments[i]), "Must use opengl texture with opengl framebuffer!");
 
 		mAttachments[i] = std::static_pointer_cast<Texture2DGL>(inParams.attachments[i]);
 
 		// TODO check format?
 
-		switch (attachmentDesc[i].type) {
-		case AttachmentType::ColorAttachment: {
+		switch (attachmentDesc[i].type)
+		{
+		case AttachmentType::ColorAttachment:
+		{
 			// TODO : texture types other than 2D?
 			// TODO: non zero mip level?
 			mDrawBuffers[i] = GL_COLOR_ATTACHMENT0 + colorAttachmentNumber;
@@ -85,7 +92,8 @@ bool FrameBufferGL::initialize(const FrameBufferCreateParams& inParams)
 			colorAttachmentNumber++;
 			break;
 		}
-		default: {
+		default:
+		{
 			SIGMA_ASSERT(false, "Attachment type not supported!");
 			return false;
 		}

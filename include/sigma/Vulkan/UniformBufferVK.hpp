@@ -10,7 +10,8 @@
 
 class DeviceVK;
 
-class UniformBufferVK : public UniformBuffer {
+class UniformBufferVK : public UniformBuffer
+{
 public:
 	UniformBufferVK(std::shared_ptr<DeviceVK> inDevice);
 
@@ -27,9 +28,9 @@ public:
 private:
 	std::shared_ptr<DeviceVK> mDevice = nullptr;
 
-	VkBuffer mHandle = nullptr;
+	VkBuffer	  mHandle = nullptr;
 	VmaAllocation mAllocation = nullptr;
-	void* mData = nullptr;
+	void*		  mData = nullptr;
 
 	uint64_t mSize;
 };

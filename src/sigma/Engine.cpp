@@ -52,7 +52,7 @@ bool Engine::initialize(GraphicsAPI inGraphicsAPI)
 	return true;
 }
 
-std::shared_ptr<Window> Engine::createWindow(const std::string &inTitle, uint32_t inWidth, uint32_t inHeight)
+std::shared_ptr<Window> Engine::createWindow(const std::string& inTitle, uint32_t inWidth, uint32_t inHeight)
 {
 	std::shared_ptr<Window> window = nullptr;
 	switch (mGraphicsAPI)
@@ -99,7 +99,9 @@ void Engine::addEmitter(std::weak_ptr<EventEmitter> inEmitter)
 
 void Engine::removeEmitter(std::weak_ptr<EventEmitter> inEmitter)
 {
-	auto it = std::remove_if(mEventEmitters.begin(), mEventEmitters.end(), [&](auto e) { return e.lock() == inEmitter.lock(); });
+	auto it = std::remove_if(mEventEmitters.begin(), mEventEmitters.end(), [&](auto e) {
+		return e.lock() == inEmitter.lock();
+	});
 	mEventEmitters.erase(it, mEventEmitters.end());
 }
 
@@ -110,7 +112,9 @@ void Engine::addListener(std::weak_ptr<EventListener> inListener)
 
 void Engine::removeListener(std::weak_ptr<EventListener> inListener)
 {
-	auto it = std::remove_if(mEventListeners.begin(), mEventListeners.end(), [&](auto e) { return e.lock() == inListener.lock(); });
+	auto it = std::remove_if(mEventListeners.begin(), mEventListeners.end(), [&](auto e) {
+		return e.lock() == inListener.lock();
+	});
 	mEventListeners.erase(it, mEventListeners.end());
 }
 
@@ -121,7 +125,9 @@ std::shared_ptr<DeviceManager> Engine::deviceManager()
 
 bool Engine::process()
 {
-	auto listIt = std::remove_if(mEventListeners.begin(), mEventListeners.end(), [](auto a) { return a.lock() == nullptr; });
+	auto listIt = std::remove_if(mEventListeners.begin(), mEventListeners.end(), [](auto a) {
+		return a.lock() == nullptr;
+	});
 	mEventListeners.erase(listIt, mEventListeners.end());
 
 	auto emitIt = std::remove_if(mEventEmitters.begin(), mEventEmitters.end(), [&](auto e) {

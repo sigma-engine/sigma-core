@@ -14,10 +14,10 @@ Sampler2DVK::~Sampler2DVK()
 		vkDestroySampler(mDevice->handle(), mHandle, nullptr);
 }
 
-bool Sampler2DVK::initialize(const SamplerCreateParams &inParams)
+bool Sampler2DVK::initialize(const SamplerCreateParams& inParams)
 {
 	// TODO: Don't hard code this info
-	VkResult result;
+	VkResult			result;
 	VkSamplerCreateInfo samplerInfo = {};
 	samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
 	samplerInfo.addressModeU = convertSamplerWarpModeVK(inParams.warpU);

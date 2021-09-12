@@ -41,7 +41,7 @@ bool DeviceGL::supportsSurface(std::shared_ptr<Surface> inSurface) const
 	return true;
 }
 
-bool DeviceGL::initialize(const std::vector<std::shared_ptr<Surface>> &inSurfaces)
+bool DeviceGL::initialize(const std::vector<std::shared_ptr<Surface>>& inSurfaces)
 {
 	GLint majorVersion, minorVersion;
 	CHECK_GL(glGetIntegerv(GL_MAJOR_VERSION, &majorVersion));
@@ -72,12 +72,12 @@ std::shared_ptr<CommandBuffer> DeviceGL::createCommandBuffer()
 	return std::make_shared<CommandBufferGL>();
 }
 
-std::shared_ptr<Shader> DeviceGL::createShader(ShaderType inType, const std::string &inSourcePath)
+std::shared_ptr<Shader> DeviceGL::createShader(ShaderType inType, const std::string& inSourcePath)
 {
 	std::ifstream file("opengl/" + inSourcePath + ".glsl", std::ios::ate | std::ios::binary);
 	if (!file.is_open())
 		return nullptr;
-	size_t fsize = file.tellg();
+	size_t		fsize = file.tellg();
 	std::string code(fsize, '\n');
 	file.seekg(0);
 	file.read(code.data(), fsize);
@@ -89,7 +89,7 @@ std::shared_ptr<Shader> DeviceGL::createShader(ShaderType inType, const std::str
 	return shader;
 }
 
-std::shared_ptr<RenderPass> DeviceGL::createRenderPass(const RenderPassCreateParams &inParams)
+std::shared_ptr<RenderPass> DeviceGL::createRenderPass(const RenderPassCreateParams& inParams)
 {
 	auto renderPass = std::make_shared<RenderPassGL>();
 	if (!renderPass->initialize(inParams))
@@ -98,7 +98,7 @@ std::shared_ptr<RenderPass> DeviceGL::createRenderPass(const RenderPassCreatePar
 	return renderPass;
 }
 
-std::shared_ptr<FrameBuffer> DeviceGL::createFrameBuffer(const FrameBufferCreateParams &inParams)
+std::shared_ptr<FrameBuffer> DeviceGL::createFrameBuffer(const FrameBufferCreateParams& inParams)
 {
 	auto framebuffer = std::make_shared<FrameBufferGL>();
 	if (!framebuffer->initialize(inParams))
@@ -107,12 +107,12 @@ std::shared_ptr<FrameBuffer> DeviceGL::createFrameBuffer(const FrameBufferCreate
 	return framebuffer;
 }
 
-std::shared_ptr<DescriptorSetLayout> DeviceGL::createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding> &inBindings)
+std::shared_ptr<DescriptorSetLayout> DeviceGL::createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding>& inBindings)
 {
 	return std::make_shared<DescriptorSetLayoutGL>(inBindings);
 }
 
-std::shared_ptr<DescriptorSet> DeviceGL::createDescriptorSet(const DescriptorSetCreateParams &inParams)
+std::shared_ptr<DescriptorSet> DeviceGL::createDescriptorSet(const DescriptorSetCreateParams& inParams)
 {
 	auto set = std::make_shared<DescriptorSetGL>();
 	if (!set->initialize(inParams))
@@ -121,7 +121,7 @@ std::shared_ptr<DescriptorSet> DeviceGL::createDescriptorSet(const DescriptorSet
 	return set;
 }
 
-std::shared_ptr<Pipeline> DeviceGL::createPipeline(const PipelineCreateParams &inParams)
+std::shared_ptr<Pipeline> DeviceGL::createPipeline(const PipelineCreateParams& inParams)
 {
 	auto pipeline = std::make_shared<PipelineGL>();
 	if (!pipeline->initialize(inParams))
@@ -130,7 +130,7 @@ std::shared_ptr<Pipeline> DeviceGL::createPipeline(const PipelineCreateParams &i
 	return pipeline;
 }
 
-std::shared_ptr<VertexBuffer> DeviceGL::createVertexBuffer(const VertexLayout &inLayout, uint64_t inSize)
+std::shared_ptr<VertexBuffer> DeviceGL::createVertexBuffer(const VertexLayout& inLayout, uint64_t inSize)
 {
 	return std::make_shared<VertexBufferGL>(inLayout);
 }
@@ -150,7 +150,7 @@ std::shared_ptr<UniformBuffer> DeviceGL::createUniformBuffer(uint64_t inSize)
 	return buffer;
 }
 
-std::shared_ptr<Texture2D> DeviceGL::createTexture2D(const TextureCreateParams &inParams)
+std::shared_ptr<Texture2D> DeviceGL::createTexture2D(const TextureCreateParams& inParams)
 {
 	auto texture = std::make_shared<Texture2DGL>();
 	if (!texture->initialize(inParams))
@@ -159,7 +159,7 @@ std::shared_ptr<Texture2D> DeviceGL::createTexture2D(const TextureCreateParams &
 	return texture;
 }
 
-std::shared_ptr<Sampler2D> DeviceGL::createSampler2D(const SamplerCreateParams &inParams)
+std::shared_ptr<Sampler2D> DeviceGL::createSampler2D(const SamplerCreateParams& inParams)
 {
 	auto sampler = std::make_shared<Sampler2DGL>();
 	if (!sampler->initialize(inParams))

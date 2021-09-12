@@ -3,7 +3,8 @@
 #include <type_traits>
 
 template <class T>
-class FlagSet {
+class FlagSet
+{
 public:
 	FlagSet(const T& inValue)
 		: mValue(static_cast<value_type>(inValue))

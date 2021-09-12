@@ -10,7 +10,8 @@
 
 class DeviceVK;
 
-class Texture2DVK : public Texture2D {
+class Texture2DVK : public Texture2D
+{
 public:
 	Texture2DVK(std::shared_ptr<DeviceVK> inDevice);
 
@@ -25,11 +26,11 @@ public:
 private:
 	std::shared_ptr<DeviceVK> mDevice = nullptr;
 
-	glm::uvec3 mSize;
+	glm::uvec3	mSize;
 	ImageFormat mFormat;
 
-	VkImage mImage = nullptr;
-	VkImageView mImageView = nullptr;
+	VkImage		  mImage = nullptr;
+	VkImageView	  mImageView = nullptr;
 	VmaAllocation mAllocation = nullptr;
 
 	VkResult setData(const void* inData, uint64_t inSize);

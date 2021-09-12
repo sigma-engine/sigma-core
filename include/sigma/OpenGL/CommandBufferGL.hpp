@@ -7,10 +7,11 @@ class DescriptorSetGL;
 class VertexBufferGL;
 class IndexBufferGL;
 
-class CommandBufferGL : public CommandBuffer {
+class CommandBufferGL : public CommandBuffer
+{
 public:
 	CommandBufferGL();
-	
+
 	virtual void begin() override;
 
 	virtual void beginRenderPass(const RenderPassBeginParams& inParams) override;
@@ -34,8 +35,8 @@ public:
 private:
 	unsigned int mBoundIndexType;
 
-	std::shared_ptr<PipelineGL> mPipeline = nullptr;
+	std::shared_ptr<PipelineGL>		 mPipeline = nullptr;
 	std::shared_ptr<DescriptorSetGL> mDescriptorSet = nullptr;
-	std::shared_ptr<VertexBufferGL> mVertexBuffer = nullptr;
-	std::shared_ptr<IndexBufferGL> mIndexBuffer = nullptr;
+	std::shared_ptr<VertexBufferGL>	 mVertexBuffer = nullptr;
+	std::shared_ptr<IndexBufferGL>	 mIndexBuffer = nullptr;
 };

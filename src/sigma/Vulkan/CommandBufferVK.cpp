@@ -20,14 +20,15 @@ CommandBufferVK::CommandBufferVK(std::shared_ptr<DeviceVK> inDevice, VkCommandPo
 
 CommandBufferVK::~CommandBufferVK()
 {
-	if (mDevice && mCommandPool && mBuffer) {
+	if (mDevice && mCommandPool && mBuffer)
+	{
 		vkFreeCommandBuffers(mDevice->handle(), mCommandPool, 1, &mBuffer);
 	}
 }
 
 bool CommandBufferVK::initialize()
 {
-	VkResult result;
+	VkResult					result;
 	VkCommandBufferAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 	allocInfo.commandPool = mCommandPool;
@@ -53,7 +54,7 @@ void CommandBufferVK::beginRenderPass(const RenderPassBeginParams& inParams)
 	SIGMA_ASSERT(std::dynamic_pointer_cast<FrameBufferVK>(inParams.frameBuffer), "Must use vulkan FrameBuffer with vulkan command buffer!");
 
 	// TODO: correct clear colors!
-	VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+	VkClearValue		  clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
 	VkRenderPassBeginInfo renderPassInfo = {};
 	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 	renderPassInfo.renderPass = std::static_pointer_cast<RenderPassVK>(inParams.frameBuffer->renderPass())->handle();
@@ -86,7 +87,7 @@ void CommandBufferVK::bindVertexBuffer(std::shared_ptr<VertexBuffer> inBuffer)
 	SIGMA_ASSERT(std::dynamic_pointer_cast<VertexBufferVK>(inBuffer), "Must use vulkan vertex buffer with vulkan command buffer!");
 	mCurrentVertexBuffer = std::static_pointer_cast<VertexBufferVK>(inBuffer);
 	VkDeviceSize offset = 0;
-	VkBuffer vertexBuffer = mCurrentVertexBuffer->handle();
+	VkBuffer	 vertexBuffer = mCurrentVertexBuffer->handle();
 	vkCmdBindVertexBuffers(mBuffer, 0, 1, &vertexBuffer, &offset);
 }
 

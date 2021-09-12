@@ -7,23 +7,26 @@
 #include <string>
 #include <vector>
 
-struct VertexMemberDescription {
-	uint32_t location;
-	DataType type;
+struct VertexMemberDescription
+{
+	uint32_t	location;
+	DataType	type;
 	std::string name;
-	bool normalized = false;
+	bool		normalized = false;
 };
 
-struct VertexMember {
-	uint32_t location;
-	uint32_t offset;
-	uint32_t size;
-	DataType type;
+struct VertexMember
+{
+	uint32_t	location;
+	uint32_t	offset;
+	uint32_t	size;
+	DataType	type;
 	std::string name;
-	bool normalized;
+	bool		normalized;
 };
 
-class VertexLayout {
+class VertexLayout
+{
 public:
 	VertexLayout(const std::initializer_list<VertexMemberDescription>& inLayout);
 
@@ -38,6 +41,6 @@ public:
 	std::vector<VertexMember>::const_iterator end() const;
 
 private:
-	uint32_t mStride;
+	uint32_t				  mStride;
 	std::vector<VertexMember> mMembers;
 };

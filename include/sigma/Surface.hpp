@@ -11,14 +11,16 @@ class RenderPass;
 class CommandBuffer;
 class FrameBuffer;
 
-struct SurfaceImageData {
-	uint32_t imageIndex;
-	uint32_t frameIndex;
-	std::shared_ptr<FrameBuffer> frameBuffer;
+struct SurfaceImageData
+{
+	uint32_t									imageIndex;
+	uint32_t									frameIndex;
+	std::shared_ptr<FrameBuffer>				frameBuffer;
 	std::vector<std::shared_ptr<CommandBuffer>> commandBuffers;
 };
 
-class Surface {
+class Surface
+{
 public:
 	virtual ~Surface() = default;
 

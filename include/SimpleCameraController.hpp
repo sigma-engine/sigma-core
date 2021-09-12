@@ -10,7 +10,8 @@
 class Event;
 struct CameraComponent;
 
-class SimpleCameraController : public EventListener {
+class SimpleCameraController : public EventListener
+{
 public:
 	const TransformComponent& transform() const { return mTransform; }
 
@@ -23,8 +24,8 @@ private:
 
 	glm::vec2 mCurrentLocation = { 0, 0 };
 	glm::vec2 mLastLocation = { 0, 0 };
-	bool mRotating = false;
-	bool mPanning = false;
+	bool	  mRotating = false;
+	bool	  mPanning = false;
 
 	TransformComponent mTransform;
 

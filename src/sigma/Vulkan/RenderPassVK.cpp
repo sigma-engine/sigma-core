@@ -23,12 +23,15 @@ bool RenderPassVK::initialize(const RenderPassCreateParams& inParams)
 {
 	mAttachments = inParams.attachments;
 
-	VkResult result;
+	VkResult							 result;
 	std::vector<VkAttachmentDescription> colorAttachments;
-	std::vector<VkAttachmentReference> colorAttachmentRefs;
-	for (const auto& attch : inParams.attachments) {
-		switch (attch.type) {
-		case AttachmentType::ColorAttachment: {
+	std::vector<VkAttachmentReference>	 colorAttachmentRefs;
+	for (const auto& attch : inParams.attachments)
+	{
+		switch (attch.type)
+		{
+		case AttachmentType::ColorAttachment:
+		{
 			VkAttachmentDescription colorAtt = {};
 			colorAtt.format = convertImageFormatVK(attch.format);
 			colorAtt.samples = VK_SAMPLE_COUNT_1_BIT;

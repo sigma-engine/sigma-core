@@ -34,7 +34,7 @@ public:
 
 	virtual bool initialize(GraphicsAPI inGraphicsAPI);
 
-	std::shared_ptr<Window> createWindow(const std::string &inTitle, uint32_t inWidth, uint32_t inHeight);
+	std::shared_ptr<Window> createWindow(const std::string& inTitle, uint32_t inWidth, uint32_t inHeight);
 
 	void addEmitter(std::weak_ptr<EventEmitter> inEmitter);
 
@@ -51,11 +51,11 @@ public:
 	static std::shared_ptr<Engine> create();
 
 private:
-	GraphicsAPI mGraphicsAPI;
-	bool mDeviceInitialized = false;
+	GraphicsAPI									 mGraphicsAPI;
+	bool										 mDeviceInitialized = false;
 	std::map<GraphicsAPI, std::set<std::string>> mRequiredExtensions;
-	std::shared_ptr<DeviceManager> mDeviceManger = nullptr;
-	std::shared_ptr<spdlog::logger> mConsole = nullptr;
-	std::vector<std::weak_ptr<EventEmitter>> mEventEmitters;
-	std::vector<std::weak_ptr<EventListener>> mEventListeners;
+	std::shared_ptr<DeviceManager>				 mDeviceManger = nullptr;
+	std::shared_ptr<spdlog::logger>				 mConsole = nullptr;
+	std::vector<std::weak_ptr<EventEmitter>>	 mEventEmitters;
+	std::vector<std::weak_ptr<EventListener>>	 mEventListeners;
 };

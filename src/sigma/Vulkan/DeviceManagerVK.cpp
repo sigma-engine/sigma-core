@@ -11,29 +11,35 @@
 
 #ifndef NDEBUG
 static VKAPI_ATTR VkBool32 VKAPI_CALL vkDebugCallback(
-	VkDebugUtilsMessageSeverityFlagBitsEXT inSeverity,
-	VkDebugUtilsMessageTypeFlagsEXT inType,
+	VkDebugUtilsMessageSeverityFlagBitsEXT		inSeverity,
+	VkDebugUtilsMessageTypeFlagsEXT				inType,
 	const VkDebugUtilsMessengerCallbackDataEXT* inCallbackData,
-	void* pUserData)
+	void*										pUserData)
 {
-	switch (inSeverity) {
-	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT: {
+	switch (inSeverity)
+	{
+	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
+	{
 		SIGMA_TRACE(inCallbackData->pMessage);
 		break;
 	}
-	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT: {
+	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
+	{
 		SIGMA_INFO(inCallbackData->pMessage);
 		break;
 	}
-	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT: {
+	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
+	{
 		SIGMA_WARN(inCallbackData->pMessage);
 		break;
 	}
-	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT: {
+	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
+	{
 		SIGMA_ERROR(inCallbackData->pMessage);
 		break;
 	}
-	default: {
+	default:
+	{
 		break;
 	}
 	}
@@ -60,12 +66,14 @@ bool DeviceManagerVK::initialize(const std::set<std::string>& s)
 	VkResult result;
 	uint32_t vulkanVersion;
 	CHECK_VK(result = vkEnumerateInstanceVersion(&vulkanVersion));
-	if (result != VK_SUCCESS) {
+	if (result != VK_SUCCESS)
+	{
 		SIGMA_ERROR("Could not enumerate vulkan instance version!");
 		return false;
 	}
 
-	if (vulkanVersion < VK_MAKE_VERSION(1, 1, 0)) {
+	if (vulkanVersion < VK_MAKE_VERSION(1, 1, 0))
+	{
 		SIGMA_ERROR("Vulkan 1.1.0 required!");
 		return false;
 	}
@@ -80,47 +88,53 @@ bool DeviceManagerVK::initialize(const std::set<std::string>& s)
 
 	// Check if required extensions exists
 	std::vector<VkExtensionProperties> extensionProperties;
-	uint32_t extensionCount;
+	uint32_t						   extensionCount;
 	CHECK_VK(result = vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr));
-	if (result != VK_SUCCESS) {
+	if (result != VK_SUCCESS)
+	{
 		SIGMA_ERROR("Could not enumerate extensions!");
 		return false;
 	}
 	extensionProperties.resize(extensionCount);
 	CHECK_VK(result = vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensionProperties.data()));
-	if (result != VK_SUCCESS) {
+	if (result != VK_SUCCESS)
+	{
 		SIGMA_ERROR("Could not enumerate extensions!");
 		return false;
 	}
 
 	// Find and report about missing extensions
-	auto extIt = std::remove_if(mRequiredExtensions.begin(), mRequiredExtensions.end(), [&](const auto &ext) {
-		auto it = std::find_if(extensionProperties.begin(), extensionProperties.end(), [&](const auto &prop) {
+	auto extIt = std::remove_if(mRequiredExtensions.begin(), mRequiredExtensions.end(), [&](const auto& ext) {
+		auto it = std::find_if(extensionProperties.begin(), extensionProperties.end(), [&](const auto& prop) {
 			return prop.extensionName == ext;
 		});
 		return it == extensionProperties.end();
 	});
 
-	for (auto it = extIt; it != mRequiredExtensions.end(); it++) {
+	for (auto it = extIt; it != mRequiredExtensions.end(); it++)
+	{
 		SIGMA_ERROR("Missing Required Vulkan Extension: {}", *it);
 	}
 
-	if (extIt != mRequiredExtensions.end()) {
+	if (extIt != mRequiredExtensions.end())
+	{
 		SIGMA_INFO("Supported Vulkan Extensions: {}", fmt::join(extensionProperties.begin(), extensionProperties.end(), ","));
 		return false;
 	}
 
 	// Check if layers exists
 	std::vector<VkLayerProperties> layerProperties;
-	uint32_t layerCount;
+	uint32_t					   layerCount;
 	CHECK_VK(result = vkEnumerateInstanceLayerProperties(&layerCount, nullptr));
-	if (result != VK_SUCCESS) {
+	if (result != VK_SUCCESS)
+	{
 		SIGMA_ERROR("Could not enumerate instance layers!");
 		return false;
 	}
 	layerProperties.resize(layerCount);
 	CHECK_VK(result = vkEnumerateInstanceLayerProperties(&layerCount, layerProperties.data()));
-	if (result != VK_SUCCESS) {
+	if (result != VK_SUCCESS)
+	{
 		SIGMA_ERROR("Could not enumerate instance layers!");
 		return false;
 	}
@@ -134,11 +148,13 @@ bool DeviceManagerVK::initialize(const std::set<std::string>& s)
 		return it == layerProperties.end();
 	});
 
-	for (auto it = layerIt; it != mEnabledLayers.end(); it++) {
+	for (auto it = layerIt; it != mEnabledLayers.end(); it++)
+	{
 		SIGMA_WARN("Skipping Missing Vulkan Layer: {}", *it);
 	}
 
-	if (layerIt != mEnabledLayers.end()) {
+	if (layerIt != mEnabledLayers.end())
+	{
 		SIGMA_INFO("Supported Vulkan Layers: {}", fmt::join(layerProperties.begin(), layerProperties.end(), ","));
 		mEnabledLayers.erase(layerIt, mEnabledLayers.end());
 	}
@@ -185,7 +201,8 @@ bool DeviceManagerVK::initialize(const std::set<std::string>& s)
 		createInfo.pUserData = nullptr;
 
 		CHECK_VK(result = vkCreateDebugUtilsMessengerEXT(mHandle, &createInfo, nullptr, &mDebugMessenger));
-		if (result != VK_SUCCESS) {
+		if (result != VK_SUCCESS)
+		{
 			SIGMA_ERROR("Could not create Debug Utils Messenger!");
 			return false;
 		}
@@ -193,15 +210,17 @@ bool DeviceManagerVK::initialize(const std::set<std::string>& s)
 #endif
 
 	std::vector<VkPhysicalDevice> physicalDevices;
-	uint32_t physicalDeviceCount = 0;
+	uint32_t					  physicalDeviceCount = 0;
 	CHECK_VK(result = vkEnumeratePhysicalDevices(mHandle, &physicalDeviceCount, nullptr));
-	if (result != VK_SUCCESS) {
+	if (result != VK_SUCCESS)
+	{
 		SIGMA_ERROR("Could not create enumerate physical devices!");
 		return false;
 	}
 	physicalDevices.resize(physicalDeviceCount);
 	CHECK_VK(result = vkEnumeratePhysicalDevices(mHandle, &physicalDeviceCount, physicalDevices.data()));
-	if (result != VK_SUCCESS) {
+	if (result != VK_SUCCESS)
+	{
 		SIGMA_ERROR("Could not create enumerate physical devices!");
 		return false;
 	}
@@ -217,8 +236,10 @@ bool DeviceManagerVK::initialize(const std::set<std::string>& s)
 void DeviceManagerVK::enumerateSurfaceDevices(std::shared_ptr<Surface> inSurface, std::vector<std::shared_ptr<Device>>& outDevices)
 {
 	outDevices.clear();
-	for (auto device : mDevices) {
-		if (device->supportsSurface(inSurface)) {
+	for (auto device : mDevices)
+	{
+		if (device->supportsSurface(inSurface))
+		{
 			outDevices.push_back(device);
 		}
 	}

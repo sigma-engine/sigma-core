@@ -4,11 +4,13 @@
 
 #include <cstdint>
 
-enum class PrimitiveType {
+enum class PrimitiveType
+{
 	Triangle
 };
 
-class IndexBuffer {
+class IndexBuffer
+{
 public:
 	virtual ~IndexBuffer() = default;
 

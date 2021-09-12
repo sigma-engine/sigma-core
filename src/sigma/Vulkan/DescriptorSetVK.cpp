@@ -20,10 +20,11 @@ DescriptorSetLayoutVK::~DescriptorSetLayoutVK()
 
 bool DescriptorSetLayoutVK::initialize(const std::vector<DescriptorSetLayoutBinding>& inBindings)
 {
-	VkResult result;
+	VkResult								  result;
 	std::vector<VkDescriptorSetLayoutBinding> bindings;
 	bindings.resize(inBindings.size());
-	for (size_t i = 0; i < inBindings.size(); ++i) {
+	for (size_t i = 0; i < inBindings.size(); ++i)
+	{
 		bindings[i].binding = inBindings[i].binding;
 		bindings[i].descriptorType = convertDescriptorTypeVK(inBindings[i].type);
 		bindings[i].descriptorCount = inBindings[i].count;
@@ -62,7 +63,7 @@ bool DescriptorSetVK::initialize(const DescriptorSetCreateParams& inParams)
 	VkResult result;
 	SIGMA_ASSERT(std::dynamic_pointer_cast<DescriptorSetLayoutVK>(inParams.layout), "Must use vulkan descriptor set layout with vulkan descriptor set!");
 	mLayout = std::static_pointer_cast<DescriptorSetLayoutVK>(inParams.layout);
-	VkDescriptorSetLayout layout = mLayout->handle();
+	VkDescriptorSetLayout		layout = mLayout->handle();
 	VkDescriptorSetAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 	allocInfo.descriptorPool = mDescriptorPool;
@@ -73,14 +74,15 @@ bool DescriptorSetVK::initialize(const DescriptorSetCreateParams& inParams)
 	if (result != VK_SUCCESS)
 		return false;
 
-	uint32_t wi = 0;
-	uint32_t i = 0;
+	uint32_t						  wi = 0;
+	uint32_t						  i = 0;
 	std::vector<VkWriteDescriptorSet> descriptorWrites;
 	descriptorWrites.resize(inParams.uniformBuffers.size() + inParams.imageSamplers.size());
 
 	i = 0;
 	std::vector<VkDescriptorBufferInfo> bufferInfos(inParams.uniformBuffers.size());
-	for (const auto& [binding, buffer] : inParams.uniformBuffers) {
+	for (const auto& [binding, buffer] : inParams.uniformBuffers)
+	{
 		SIGMA_ASSERT(std::dynamic_pointer_cast<UniformBufferVK>(buffer), "Must use vulkan uniform buffer with vulkan descriptor set!");
 		mUniformBuffers[binding] = std::static_pointer_cast<UniformBufferVK>(buffer);
 
@@ -103,7 +105,8 @@ bool DescriptorSetVK::initialize(const DescriptorSetCreateParams& inParams)
 
 	i = 0;
 	std::vector<VkDescriptorImageInfo> imageInfos(inParams.imageSamplers.size());
-	for (const auto& [binding, combindedSampler] : inParams.imageSamplers) {
+	for (const auto& [binding, combindedSampler] : inParams.imageSamplers)
+	{
 		SIGMA_ASSERT(std::dynamic_pointer_cast<Texture2DVK>(combindedSampler.image), "Must use vulkan image with vulkan descriptor set!");
 		SIGMA_ASSERT(std::dynamic_pointer_cast<Sampler2DVK>(combindedSampler.sampler), "Must use vulkan sampler with vulkan descriptor set!");
 		mCombinedImageSamplers[binding].image = std::static_pointer_cast<Texture2DVK>(combindedSampler.image);

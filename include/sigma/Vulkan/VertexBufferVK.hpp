@@ -10,7 +10,8 @@
 
 class DeviceVK;
 
-class VertexBufferVK : public VertexBuffer {
+class VertexBufferVK : public VertexBuffer
+{
 public:
 	VertexBufferVK(std::shared_ptr<DeviceVK> inDevice, const VertexLayout& inLayout);
 
@@ -26,8 +27,8 @@ public:
 
 private:
 	std::shared_ptr<DeviceVK> mDevice = nullptr;
-	VertexLayout mLayout;
-	VkBuffer mHandle = nullptr;
-	VmaAllocation mAllocation = nullptr;
-	uint64_t mSize = 0;
+	VertexLayout			  mLayout;
+	VkBuffer				  mHandle = nullptr;
+	VmaAllocation			  mAllocation = nullptr;
+	uint64_t				  mSize = 0;
 };

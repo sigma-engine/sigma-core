@@ -11,12 +11,14 @@ class VertexBuffer;
 class IndexBuffer;
 class DescriptorSet;
 
-struct RenderPassBeginParams {
+struct RenderPassBeginParams
+{
 	std::shared_ptr<FrameBuffer> frameBuffer;
-	Rect<int32_t> renderArea;
+	Rect<int32_t>				 renderArea;
 };
 
-class CommandBuffer {
+class CommandBuffer
+{
 public:
 	virtual ~CommandBuffer() = default;
 

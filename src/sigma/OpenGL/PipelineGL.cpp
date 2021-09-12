@@ -21,7 +21,8 @@ PipelineGL::~PipelineGL()
 
 bool PipelineGL::initialize(const PipelineCreateParams& inParams)
 {
-	for (auto shader : inParams.shaders) {
+	for (auto shader : inParams.shaders)
+	{
 		attach(shader);
 	}
 
@@ -40,7 +41,8 @@ bool PipelineGL::link()
 	GLint linked = GL_FALSE;
 	CHECK_GL(glLinkProgram(mHandle));
 	CHECK_GL(glGetProgramiv(mHandle, GL_LINK_STATUS, &linked));
-	if (linked == GL_FALSE) {
+	if (linked == GL_FALSE)
+	{
 		GLint length = 0;
 		CHECK_GL(glGetProgramiv(mHandle, GL_INFO_LOG_LENGTH, &length));
 		std::vector<GLchar> errorBuffer(static_cast<std::size_t>(length));

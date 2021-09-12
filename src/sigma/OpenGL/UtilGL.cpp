@@ -1,8 +1,8 @@
 #include <sigma/OpenGL/UtilGL.hpp>
 
 #include <sigma/Log.hpp>
-#include <sigma/Texture.hpp>
 #include <sigma/Sampler.hpp>
+#include <sigma/Texture.hpp>
 
 #include <glad/glad.h>
 

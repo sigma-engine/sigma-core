@@ -6,7 +6,7 @@ build
 CMakeLists.txt.user
 .unipac
 
-.*
+.vscode
 !/.gitignore
 
 # Thirdparty Library source files

@@ -2,7 +2,8 @@
 
 #include <cstdint>
 
-class UniformBuffer {
+class UniformBuffer
+{
 public:
 	virtual ~UniformBuffer() = default;
 

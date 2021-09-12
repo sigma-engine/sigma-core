@@ -12,12 +12,14 @@
 #include <cassert>
 
 static std::shared_ptr<EventEmitterSDL> sEventEmitter = nullptr;
-static SDL_GLContext sGLContext = nullptr;
+static SDL_GLContext					sGLContext = nullptr;
 
 void WindowSDL::initializeSDL(std::shared_ptr<Engine> inEngine)
 {
-	if (SDL_WasInit(SDL_INIT_EVERYTHING) == 0) {
-		if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+	if (SDL_WasInit(SDL_INIT_EVERYTHING) == 0)
+	{
+		if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+		{
 			throw std::runtime_error(SDL_GetError());
 		}
 		sEventEmitter = std::make_shared<EventEmitterSDL>();
@@ -33,8 +35,10 @@ WindowSDL::WindowSDL(std::shared_ptr<Engine> inEngine, const std::string& inTitl
 {
 
 	int flags = SDL_WINDOW_SHOWN;
-	switch (mEngine->graphicsAPI()) {
-	case GraphicsAPI::OpenGL: {
+	switch (mEngine->graphicsAPI())
+	{
+	case GraphicsAPI::OpenGL:
+	{
 		SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
 		//SDL_GL_SetAttribute(SDL_GL_RED_SIZE, context_attributes_.red);
 		//SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, context_attributes_.green);
@@ -68,12 +72,14 @@ WindowSDL::WindowSDL(std::shared_ptr<Engine> inEngine, const std::string& inTitl
 		break;
 	}
 #ifdef SIGMA_VULKAN_SUPPORT
-	case GraphicsAPI::Vulkan: {
+	case GraphicsAPI::Vulkan:
+	{
 		flags |= SDL_WINDOW_VULKAN;
 		break;
 	}
 #endif
-	default: {
+	default:
+	{
 		SIGMA_ASSERT(false, "Unknown Graphics API!");
 		break;
 	}
@@ -85,18 +91,22 @@ WindowSDL::WindowSDL(std::shared_ptr<Engine> inEngine, const std::string& inTitl
 
 	SDL_SetWindowData(mWindow, "this", this);
 
-	switch (mEngine->graphicsAPI()) {
-	case GraphicsAPI::OpenGL: {
+	switch (mEngine->graphicsAPI())
+	{
+	case GraphicsAPI::OpenGL:
+	{
 		mSurface = std::make_shared<SurfaceSDLGL>(mWindow);
 		break;
 	}
 #ifdef SIGMA_VULKAN_SUPPORT
-	case GraphicsAPI::Vulkan: {
+	case GraphicsAPI::Vulkan:
+	{
 		mSurface = std::make_shared<SurfaceSDLVK>(mWindow);
 		break;
 	}
 #endif
-	default: {
+	default:
+	{
 		break;
 	}
 	}
@@ -114,29 +124,35 @@ std::set<std::string> WindowSDL::requiredExtensions(GraphicsAPI inGraphicsAPI) c
 {
 	std::set<std::string> extsSet;
 
-	switch (inGraphicsAPI) {
+	switch (inGraphicsAPI)
+	{
 #ifdef SIGMA_VULKAN_SUPPORT
-	case GraphicsAPI::Vulkan: {
-		uint32_t count;
+	case GraphicsAPI::Vulkan:
+	{
+		uint32_t				 count;
 		std::vector<const char*> exts;
 
-		if (!SDL_Vulkan_GetInstanceExtensions(mWindow, &count, nullptr)) {
+		if (!SDL_Vulkan_GetInstanceExtensions(mWindow, &count, nullptr))
+		{
 			SIGMA_ERROR(SDL_GetError());
 		}
 
 		exts.resize(count);
 
-		if (!SDL_Vulkan_GetInstanceExtensions(mWindow, &count, exts.data())) {
+		if (!SDL_Vulkan_GetInstanceExtensions(mWindow, &count, exts.data()))
+		{
 			SIGMA_ERROR(SDL_GetError());
 		}
 		extsSet.insert(exts.begin(), exts.end());
 		break;
 	}
 #endif
-	case GraphicsAPI::Unknown: {
+	case GraphicsAPI::Unknown:
+	{
 		break;
 	}
-	default: {
+	default:
+	{
 		break;
 	}
 	}
@@ -146,7 +162,8 @@ std::set<std::string> WindowSDL::requiredExtensions(GraphicsAPI inGraphicsAPI) c
 
 bool WindowSDL::initialize()
 {
-	if (!mSurface->initialize(mEngine->deviceManager(), mWidth, mHeight)) {
+	if (!mSurface->initialize(mEngine->deviceManager(), mWidth, mHeight))
+	{
 		return false;
 	}
 	mOpen = true;
@@ -166,8 +183,10 @@ SDL_Window* WindowSDL::handle()
 bool EventEmitterSDL::process(const std::vector<std::weak_ptr<EventListener>>& inListeners)
 {
 	SDL_Event event;
-	while (SDL_PollEvent(&event) != 0) {
-		switch (event.type) {
+	while (SDL_PollEvent(&event) != 0)
+	{
+		switch (event.type)
+		{
 		// TODO: handle all events here
 		case SDL_MOUSEWHEEL:
 		{
@@ -205,7 +224,7 @@ bool EventEmitterSDL::process(const std::vector<std::weak_ptr<EventListener>>& i
 				auto ptr = l.lock();
 				if (ptr)
 					ptr->processEvent(&evt);
-				});
+			});
 			break;
 		}
 		case SDL_KEYDOWN:
@@ -218,18 +237,21 @@ bool EventEmitterSDL::process(const std::vector<std::weak_ptr<EventListener>>& i
 					auto ptr = l.lock();
 					if (ptr)
 						ptr->processEvent(&evt);
-					});
+				});
 				break;
 			}
 		}
-		case SDL_WINDOWEVENT: {
+		case SDL_WINDOWEVENT:
+		{
 			auto handle = SDL_GetWindowFromID(event.window.windowID);
 			auto window = static_cast<WindowSDL*>(SDL_GetWindowData(handle, "this"));
 			if (!window)
 				break;
 
-			switch (event.window.event) {
-			case SDL_WINDOWEVENT_CLOSE: {
+			switch (event.window.event)
+			{
+			case SDL_WINDOWEVENT_CLOSE:
+			{
 				WindowEvent evt(window->shared_from_this(), EventType::WindowClose);
 				std::for_each(inListeners.begin(), inListeners.end(), [&](auto l) {
 					auto ptr = l.lock();
@@ -295,7 +317,8 @@ bool SurfaceSDLVK::initialize(std::shared_ptr<DeviceManager> inDevice, uint32_t 
 	mInstance = std::static_pointer_cast<DeviceManagerVK>(inDevice);
 	mWidth = inWidth;
 	mHeight = inHeight;
-	if (!SDL_Vulkan_CreateSurface(mWindow, mInstance->handle(), &mSurface)) {
+	if (!SDL_Vulkan_CreateSurface(mWindow, mInstance->handle(), &mSurface))
+	{
 		SIGMA_ERROR(SDL_GetError());
 		return false;
 	}

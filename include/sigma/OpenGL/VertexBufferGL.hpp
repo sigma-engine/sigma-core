@@ -5,7 +5,8 @@
 
 #include <cstdint>
 
-class VertexBufferGL : public VertexBuffer {
+class VertexBufferGL : public VertexBuffer
+{
 public:
 	VertexBufferGL(const VertexLayout& inLayout);
 
@@ -19,6 +20,6 @@ public:
 
 private:
 	VertexLayout mLayout;
-	uint32_t mVAOHandle = 0;
-	uint32_t mBufferHandle = 0;
+	uint32_t	 mVAOHandle = 0;
+	uint32_t	 mBufferHandle = 0;
 };

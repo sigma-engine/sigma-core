@@ -12,7 +12,8 @@ class Window;
 class Surface;
 enum class GraphicsAPI;
 
-class WindowEvent : public Event {
+class WindowEvent : public Event
+{
 public:
 	WindowEvent(std::weak_ptr<Window> inWindow, EventType inType);
 
@@ -22,7 +23,8 @@ private:
 	std::weak_ptr<Window> mWindow;
 };
 
-class Window : public std::enable_shared_from_this<Window>, public EventListener {
+class Window : public std::enable_shared_from_this<Window>, public EventListener
+{
 public:
 	virtual ~Window() = default;
 

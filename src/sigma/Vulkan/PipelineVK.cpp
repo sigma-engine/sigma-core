@@ -14,7 +14,8 @@ PipelineVK::PipelineVK(std::shared_ptr<DeviceVK> inDevice)
 
 PipelineVK::~PipelineVK()
 {
-	if (mDevice) {
+	if (mDevice)
+	{
 		if (mPipeline)
 			vkDestroyPipeline(mDevice->handle(), mPipeline, nullptr);
 		if (mLayout)
@@ -29,7 +30,8 @@ bool PipelineVK::initialize(const PipelineCreateParams& inParams)
 
 	mSetLayouts.resize(inParams.setLayouts.size());
 	std::vector<VkDescriptorSetLayout> setLayouts(inParams.setLayouts.size());
-	for (size_t i = 0; i < inParams.setLayouts.size(); ++i) {
+	for (size_t i = 0; i < inParams.setLayouts.size(); ++i)
+	{
 		SIGMA_ASSERT(std::dynamic_pointer_cast<DescriptorSetLayoutVK>(inParams.setLayouts[i]), "Must use vulkan descriptor set layout with vulkan pipeline!");
 		mSetLayouts[i] = std::static_pointer_cast<DescriptorSetLayoutVK>(inParams.setLayouts[i]);
 		setLayouts[i] = mSetLayouts[i]->handle();
@@ -45,7 +47,8 @@ bool PipelineVK::initialize(const PipelineCreateParams& inParams)
 	std::vector<VkVertexInputAttributeDescription> attributeDescriptions;
 	attributeDescriptions.resize(inParams.vertexLayout.attributeCount());
 	uint32_t i = 0;
-	for (const auto& member : inParams.vertexLayout) {
+	for (const auto& member : inParams.vertexLayout)
+	{
 		attributeDescriptions[i].binding = 0; // TODO: Fixme
 		attributeDescriptions[i].location = member.location;
 		attributeDescriptions[i].format = formatForDataTypeVK(member.type);
@@ -145,9 +148,10 @@ bool PipelineVK::initialize(const PipelineCreateParams& inParams)
 	dynamicStateInfo.pDynamicStates = dynamicStates.data();
 
 	std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
-	for (const auto& shader : inParams.shaders) {
+	for (const auto& shader : inParams.shaders)
+	{
 		SIGMA_ASSERT(std::dynamic_pointer_cast<ShaderVK>(shader), "Must use vulkan shader to create vulkan pipeline!");
-		auto shaderVk = std::static_pointer_cast<ShaderVK>(shader);
+		auto							shaderVk = std::static_pointer_cast<ShaderVK>(shader);
 		VkPipelineShaderStageCreateInfo shaderStageInfo = {};
 		shaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		shaderStageInfo.stage = convertShaderTypeVK(shader->type());
@@ -164,7 +168,8 @@ bool PipelineVK::initialize(const PipelineCreateParams& inParams)
 	pipelineLayoutInfo.pPushConstantRanges = nullptr;
 
 	CHECK_VK(result = vkCreatePipelineLayout(mDevice->handle(), &pipelineLayoutInfo, nullptr, &mLayout));
-	if (result != VK_SUCCESS) {
+	if (result != VK_SUCCESS)
+	{
 		return false;
 	}
 

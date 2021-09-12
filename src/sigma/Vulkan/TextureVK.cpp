@@ -10,7 +10,8 @@ Texture2DVK::Texture2DVK(std::shared_ptr<DeviceVK> inDevice)
 
 Texture2DVK::~Texture2DVK()
 {
-	if (mDevice) {
+	if (mDevice)
+	{
 		if (mImageView)
 			vkDestroyImageView(mDevice->handle(), mImageView, nullptr);
 		if (mImage)
@@ -32,7 +33,7 @@ bool Texture2DVK::initialize(const TextureCreateParams& inParams)
 	uint64_t imageSize = mSize.x * mSize.y * imageFormatPixelSize(mFormat);
 	VkFormat format = convertImageFormatVK(mFormat);
 
-	VkResult result;
+	VkResult		  result;
 	VkImageCreateInfo imageInfo = {};
 	imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	imageInfo.imageType = VK_IMAGE_TYPE_2D;
@@ -88,7 +89,8 @@ bool Texture2DVK::initialize(const TextureCreateParams& inParams)
 	viewInfo.subresourceRange.layerCount = 1;
 	viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
 
-	if (inParams.pixels) {
+	if (inParams.pixels)
+	{
 		CHECK_VK(result = setData(inParams.pixels, imageSize));
 		if (result != VK_SUCCESS)
 			return false;

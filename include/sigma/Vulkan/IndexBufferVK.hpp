@@ -9,7 +9,8 @@
 
 class DeviceVK;
 
-class IndexBufferVK : public IndexBuffer {
+class IndexBufferVK : public IndexBuffer
+{
 public:
 	IndexBufferVK(std::shared_ptr<DeviceVK> inDevice, PrimitiveType inPrimitiveType, DataType inDataType);
 
@@ -27,10 +28,10 @@ public:
 
 private:
 	std::shared_ptr<DeviceVK> mDevice = nullptr;
-	VkBuffer mHandle = nullptr;
-	VmaAllocation mAllocation = nullptr;
-	uint64_t mSize = 0;
+	VkBuffer				  mHandle = nullptr;
+	VmaAllocation			  mAllocation = nullptr;
+	uint64_t				  mSize = 0;
 
 	PrimitiveType mPrimitiveType;
-	DataType mDataType;
+	DataType	  mDataType;
 };

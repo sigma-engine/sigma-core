@@ -6,7 +6,8 @@ class DeviceGL;
 class RenderPassGL;
 class CommandBufferGL;
 
-class SurfaceGL : public Surface {
+class SurfaceGL : public Surface
+{
 public:
 	virtual bool initialize(std::shared_ptr<DeviceManager> inDevice, uint32_t inWidth, uint32_t inHeight) override;
 

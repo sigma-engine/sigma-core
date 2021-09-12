@@ -10,7 +10,8 @@ class DeviceVK;
 class RenderPassVK;
 class Texture2DVK;
 
-class FrameBufferVK : public FrameBuffer {
+class FrameBufferVK : public FrameBuffer
+{
 public:
 	FrameBufferVK(std::shared_ptr<DeviceVK> inDevice);
 
@@ -24,12 +25,12 @@ public:
 
 	VkFramebuffer handle() const { return mFrameBuffer; }
 
-	bool initialize(const FrameBufferCreateParams &inParams);
+	bool initialize(const FrameBufferCreateParams& inParams);
 
 private:
-	std::shared_ptr<DeviceVK> mDevice = nullptr;
-	std::shared_ptr<RenderPassVK> mRenderPass = nullptr;
+	std::shared_ptr<DeviceVK>				  mDevice = nullptr;
+	std::shared_ptr<RenderPassVK>			  mRenderPass = nullptr;
 	std::vector<std::shared_ptr<Texture2DVK>> mAttachments;
-	VkFramebuffer mFrameBuffer = nullptr;
-	glm::uvec2 mSize;
+	VkFramebuffer							  mFrameBuffer = nullptr;
+	glm::uvec2								  mSize;
 };

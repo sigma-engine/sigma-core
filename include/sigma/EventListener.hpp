@@ -2,7 +2,8 @@
 
 class Event;
 
-class EventListener {
+class EventListener
+{
 public:
 	virtual ~EventListener() = default;
 

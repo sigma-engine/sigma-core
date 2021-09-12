@@ -12,7 +12,8 @@ class UniformBufferVK;
 class Texture2DVK;
 class Sampler2DVK;
 
-class DescriptorSetLayoutVK : public DescriptorSetLayout {
+class DescriptorSetLayoutVK : public DescriptorSetLayout
+{
 public:
 	DescriptorSetLayoutVK(std::shared_ptr<DeviceVK> inDevice);
 
@@ -24,10 +25,11 @@ public:
 
 private:
 	std::shared_ptr<DeviceVK> mDevice = nullptr;
-	VkDescriptorSetLayout mHandle = nullptr;
+	VkDescriptorSetLayout	  mHandle = nullptr;
 };
 
-class DescriptorSetVK : public DescriptorSet {
+class DescriptorSetVK : public DescriptorSet
+{
 public:
 	DescriptorSetVK(std::shared_ptr<DeviceVK> inDevice, VkDescriptorPool inDescriptorPool);
 
@@ -40,16 +42,17 @@ public:
 	bool initialize(const DescriptorSetCreateParams& inParams);
 
 private:
-	struct CombinedImageSamplerVK {
+	struct CombinedImageSamplerVK
+	{
 		std::shared_ptr<Texture2DVK> image;
 		std::shared_ptr<Sampler2DVK> sampler;
 	};
 
-	std::shared_ptr<DeviceVK> mDevice = nullptr;
+	std::shared_ptr<DeviceVK>			   mDevice = nullptr;
 	std::shared_ptr<DescriptorSetLayoutVK> mLayout = nullptr;
-	VkDescriptorPool mDescriptorPool = nullptr;
-	VkDescriptorSet mHandle = nullptr;
+	VkDescriptorPool					   mDescriptorPool = nullptr;
+	VkDescriptorSet						   mHandle = nullptr;
 
 	std::unordered_map<uint32_t, std::shared_ptr<UniformBufferVK>> mUniformBuffers;
-	std::unordered_map<uint32_t, CombinedImageSamplerVK> mCombinedImageSamplers;
+	std::unordered_map<uint32_t, CombinedImageSamplerVK>		   mCombinedImageSamplers;
 };

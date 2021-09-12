@@ -14,7 +14,8 @@
 
 SurfaceVK::~SurfaceVK()
 {
-	if (mDevice) {
+	if (mDevice)
+	{
 		CHECK_VK(vkWaitForFences(mDevice->handle(), static_cast<uint32_t>(mFrameFences.size()), mFrameFences.data(), VK_TRUE, std::numeric_limits<uint64_t>::max()));
 
 		for (auto fence : mFrameFences)
@@ -28,17 +29,20 @@ SurfaceVK::~SurfaceVK()
 
 		mFrameData.clear();
 
-		for (std::size_t i = 0; i < mImageViews.size(); ++i) {
+		for (std::size_t i = 0; i < mImageViews.size(); ++i)
+		{
 			if (mImageViews[i])
 				vkDestroyImageView(mDevice->handle(), mImageViews[i], nullptr);
 		}
 
-		if (mSwapChain) {
+		if (mSwapChain)
+		{
 			vkDestroySwapchainKHR(mDevice->handle(), mSwapChain, nullptr);
 		}
 	}
 
-	if (mSurface && mInstance) {
+	if (mSurface && mInstance)
+	{
 		vkDestroySurfaceKHR(mInstance->handle(), mSurface, nullptr);
 	}
 }
@@ -84,7 +88,7 @@ void SurfaceVK::presentImage(const SurfaceImageData* inData)
 	VkSubmitInfo submitInfo = {};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-	VkSemaphore waitSemaphores[] = { mImageAvailableSemaphores[inData->frameIndex] };
+	VkSemaphore			 waitSemaphores[] = { mImageAvailableSemaphores[inData->frameIndex] };
 	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 
 	submitInfo.waitSemaphoreCount = 1;
@@ -94,7 +98,8 @@ void SurfaceVK::presentImage(const SurfaceImageData* inData)
 	if (mFrameData[inData->imageIndex].vkCommandBuffers.size() < inData->commandBuffers.size())
 		mFrameData[inData->imageIndex].vkCommandBuffers.resize(inData->commandBuffers.size());
 
-	for (size_t i = 0; i < inData->commandBuffers.size(); ++i) {
+	for (size_t i = 0; i < inData->commandBuffers.size(); ++i)
+	{
 		SIGMA_ASSERT(std::dynamic_pointer_cast<CommandBufferVK>(inData->commandBuffers[i]), "Must use a vulkan command buffer to present to vulkan surface!");
 		mFrameData[inData->imageIndex].vkCommandBuffers[i] = std::static_pointer_cast<CommandBufferVK>(inData->commandBuffers[i])->handle();
 	}
@@ -108,7 +113,7 @@ void SurfaceVK::presentImage(const SurfaceImageData* inData)
 
 	CHECK_VK(vkQueueSubmit(mGraphicsQueue, 1, &submitInfo, mFrameFences[inData->frameIndex]));
 
-	VkSwapchainKHR swapChains[] = { mSwapChain };
+	VkSwapchainKHR	 swapChains[] = { mSwapChain };
 	VkPresentInfoKHR presetInfo = {};
 	presetInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 	presetInfo.waitSemaphoreCount = 1;
@@ -140,7 +145,7 @@ bool SurfaceVK::createSwapChain(std::shared_ptr<DeviceVK> inDevice, const Surfac
 	if (!mRenderPass)
 		return false;
 
-	uint32_t queueFamilyIndices[] = { inDevice->graphicsQueueFamily(), inInfo.presentFamily.value() };
+	uint32_t				 queueFamilyIndices[] = { inDevice->graphicsQueueFamily(), inInfo.presentFamily.value() };
 	VkSwapchainCreateInfoKHR createInfo = {};
 	createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 	createInfo.surface = mSurface;
@@ -151,11 +156,14 @@ bool SurfaceVK::createSwapChain(std::shared_ptr<DeviceVK> inDevice, const Surfac
 	createInfo.imageArrayLayers = 1;
 	createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-	if (queueFamilyIndices[0] != queueFamilyIndices[1]) {
+	if (queueFamilyIndices[0] != queueFamilyIndices[1])
+	{
 		createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
 		createInfo.queueFamilyIndexCount = 2;
 		createInfo.pQueueFamilyIndices = queueFamilyIndices;
-	} else {
+	}
+	else
+	{
 		createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
 		createInfo.queueFamilyIndexCount = 0;
 		createInfo.pQueueFamilyIndices = nullptr;
@@ -178,27 +186,31 @@ bool SurfaceVK::createSwapChain(std::shared_ptr<DeviceVK> inDevice, const Surfac
 
 	VkResult result;
 	CHECK_VK(result = vkCreateSwapchainKHR(mDevice->handle(), &createInfo, nullptr, &mSwapChain));
-	if (result != VK_SUCCESS) {
+	if (result != VK_SUCCESS)
+	{
 		SIGMA_ERROR("Could not create Swapchain for surface!");
 		return false;
 	}
 
 	CHECK_VK(result = vkGetSwapchainImagesKHR(mDevice->handle(), mSwapChain, &imageCount, nullptr));
-	if (result != VK_SUCCESS) {
+	if (result != VK_SUCCESS)
+	{
 		SIGMA_ERROR("Could not get Swapchain images!");
 		return false;
 	}
 
 	mImages.resize(imageCount);
 	CHECK_VK(result = vkGetSwapchainImagesKHR(mDevice->handle(), mSwapChain, &imageCount, mImages.data()));
-	if (result != VK_SUCCESS) {
+	if (result != VK_SUCCESS)
+	{
 		SIGMA_ERROR("Could not get Swapchain images!");
 		return false;
 	}
 
 	mImageViews.resize(imageCount);
 	mFrameData.resize(imageCount);
-	for (size_t i = 0; i < mImageViews.size(); ++i) {
+	for (size_t i = 0; i < mImageViews.size(); ++i)
+	{
 		VkImageViewCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 		createInfo.image = mImages[i];
@@ -214,7 +226,8 @@ bool SurfaceVK::createSwapChain(std::shared_ptr<DeviceVK> inDevice, const Surfac
 		createInfo.subresourceRange.baseArrayLayer = 0;
 		createInfo.subresourceRange.layerCount = 1;
 		CHECK_VK(result = vkCreateImageView(mDevice->handle(), &createInfo, nullptr, &mImageViews[i]));
-		if (result != VK_SUCCESS) {
+		if (result != VK_SUCCESS)
+		{
 			SIGMA_ERROR("Could not create Swapchain image view!");
 			return false;
 		}
@@ -234,28 +247,32 @@ bool SurfaceVK::createSwapChain(std::shared_ptr<DeviceVK> inDevice, const Surfac
 
 		VkFramebuffer FrameBuffer;
 		CHECK_VK(result = vkCreateFramebuffer(mDevice->handle(), &FrameBufferInfo, nullptr, &FrameBuffer));
-		if (result != VK_SUCCESS) {
+		if (result != VK_SUCCESS)
+		{
 			SIGMA_ERROR("Could not create Swapchain frame buffer!");
 			return false;
 		}
-		mFrameData[i].frameBuffer = std::make_shared<FrameBufferVK>(mDevice, FrameBuffer, mRenderPass, glm::uvec2{ mExtent.width, mExtent.height });
+		mFrameData[i].frameBuffer = std::make_shared<FrameBufferVK>(mDevice, FrameBuffer, mRenderPass, glm::uvec2 { mExtent.width, mExtent.height });
 	}
 
 	mImageAvailableSemaphores.resize(mMaxPendingFrames);
 	mRenderFinishedSemaphores.resize(mMaxPendingFrames);
 	mFrameFences.resize(mMaxPendingFrames);
-	for (uint32_t i = 0; i < mMaxPendingFrames; ++i) {
+	for (uint32_t i = 0; i < mMaxPendingFrames; ++i)
+	{
 		VkSemaphoreCreateInfo semaphoreInfo = {};
 		semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
 		CHECK_VK(result = vkCreateSemaphore(mDevice->handle(), &semaphoreInfo, nullptr, &mImageAvailableSemaphores[i]));
-		if (result != VK_SUCCESS) {
+		if (result != VK_SUCCESS)
+		{
 			SIGMA_ERROR("Could not create semaphore!");
 			return false;
 		}
 
 		CHECK_VK(result = vkCreateSemaphore(mDevice->handle(), &semaphoreInfo, nullptr, &mRenderFinishedSemaphores[i]));
-		if (result != VK_SUCCESS) {
+		if (result != VK_SUCCESS)
+		{
 			SIGMA_ERROR("Could not create semaphore!");
 			return false;
 		}
@@ -264,7 +281,8 @@ bool SurfaceVK::createSwapChain(std::shared_ptr<DeviceVK> inDevice, const Surfac
 		fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 		fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 		CHECK_VK(result = vkCreateFence(mDevice->handle(), &fenceInfo, nullptr, &mFrameFences[i]));
-		if (result != VK_SUCCESS) {
+		if (result != VK_SUCCESS)
+		{
 			SIGMA_ERROR("Could not create fence!");
 			return false;
 		}
@@ -275,12 +293,15 @@ bool SurfaceVK::createSwapChain(std::shared_ptr<DeviceVK> inDevice, const Surfac
 
 VkSurfaceFormatKHR SurfaceVK::chooseSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& inFormats) const
 {
-	if (inFormats.size() == 1 && inFormats[1].format == VK_FORMAT_UNDEFINED) {
+	if (inFormats.size() == 1 && inFormats[1].format == VK_FORMAT_UNDEFINED)
+	{
 		return { VK_FORMAT_B8G8R8A8_UNORM, VK_COLORSPACE_SRGB_NONLINEAR_KHR };
 	}
 
-	for (const auto& format : inFormats) {
-		if (format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR && format.format == VK_FORMAT_B8G8R8A8_UNORM) {
+	for (const auto& format : inFormats)
+	{
+		if (format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR && format.format == VK_FORMAT_B8G8R8A8_UNORM)
+		{
 			return format;
 		}
 	}
@@ -296,9 +317,12 @@ VkPresentModeKHR SurfaceVK::choosePresentMode(const std::vector<VkPresentModeKHR
 
 VkExtent2D SurfaceVK::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& inCapabilities) const
 {
-	if (inCapabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
+	if (inCapabilities.currentExtent.width != std::numeric_limits<uint32_t>::max())
+	{
 		return inCapabilities.currentExtent;
-	} else {
+	}
+	else
+	{
 		VkExtent2D extent;
 		extent.width = std::max(inCapabilities.minImageExtent.width, std::min(inCapabilities.maxImageExtent.width, mWidth));
 		extent.height = std::max(inCapabilities.minImageExtent.height, std::min(inCapabilities.maxImageExtent.height, mHeight));

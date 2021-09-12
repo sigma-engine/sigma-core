@@ -5,7 +5,6 @@
 #include <sigma/Vulkan/TextureVK.hpp>
 #include <sigma/Vulkan/UtilVK.hpp>
 
-
 FrameBufferVK::FrameBufferVK(std::shared_ptr<DeviceVK> inDecice)
 	: mDevice(inDecice)
 {
@@ -48,14 +47,15 @@ bool FrameBufferVK::initialize(const FrameBufferCreateParams& inParams)
 	SIGMA_ASSERT(attachmentDesc.size() == inParams.attachments.size(), "FrameBuffer attachments must match RenderPass!");
 
 	std::vector<VkImageView> attachmentViews(attachmentDesc.size());
-	for (size_t i = 0; i < attachmentDesc.size(); ++i) {
+	for (size_t i = 0; i < attachmentDesc.size(); ++i)
+	{
 		SIGMA_ASSERT(std::dynamic_pointer_cast<Texture2DVK>(inParams.attachments[i]), "Must use vulkan texture with vulkan framebuffer!");
 
 		mAttachments[i] = std::static_pointer_cast<Texture2DVK>(inParams.attachments[i]);
 		attachmentViews[i] = mAttachments[i]->imageViewHandle();
 	}
 
-	VkResult result;
+	VkResult				result;
 	VkFramebufferCreateInfo frameBufferInfo = {};
 	frameBufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 	frameBufferInfo.renderPass = mRenderPass->handle();

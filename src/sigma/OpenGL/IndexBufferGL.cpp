@@ -8,7 +8,8 @@
 
 uint64_t primitiveComponentCount(PrimitiveType inType)
 {
-	switch (inType) {
+	switch (inType)
+	{
 	case PrimitiveType::Triangle:
 		return 3;
 	}
@@ -18,7 +19,8 @@ uint64_t primitiveComponentCount(PrimitiveType inType)
 
 GLenum glEnumForPrimitive(PrimitiveType inType)
 {
-	switch (inType) {
+	switch (inType)
+	{
 	case PrimitiveType::Triangle:
 		return GL_TRIANGLES;
 	}

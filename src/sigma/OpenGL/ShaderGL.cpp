@@ -9,7 +9,8 @@
 
 constexpr GLenum glShaderType(ShaderType inType)
 {
-	switch (inType) {
+	switch (inType)
+	{
 	case ShaderType::VertexShader:
 		return GL_VERTEX_SHADER;
 	case ShaderType::FragmentShader:
@@ -37,11 +38,12 @@ uint32_t ShaderGL::handle() const
 bool ShaderGL::compile(const std::string& inCode)
 {
 	const char* srcCode = inCode.c_str();
-	GLint compiled;
+	GLint		compiled;
 	CHECK_GL(glShaderSource(mHandle, 1, &srcCode, nullptr));
 	CHECK_GL(glCompileShader(mHandle));
 	CHECK_GL(glGetShaderiv(mHandle, GL_COMPILE_STATUS, &compiled));
-	if (compiled == GL_FALSE) {
+	if (compiled == GL_FALSE)
+	{
 		GLint length = 0;
 		CHECK_GL(glGetShaderiv(mHandle, GL_INFO_LOG_LENGTH, &length));
 

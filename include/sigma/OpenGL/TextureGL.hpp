@@ -4,7 +4,8 @@
 
 #include <cstdint>
 
-class Texture2DGL : public Texture2D {
+class Texture2DGL : public Texture2D
+{
 public:
 	Texture2DGL();
 

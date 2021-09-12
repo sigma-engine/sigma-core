@@ -8,7 +8,8 @@
 
 class DeviceVK;
 
-class RenderPassVK : public RenderPass {
+class RenderPassVK : public RenderPass
+{
 public:
 	RenderPassVK(std::shared_ptr<DeviceVK> inDevice);
 
@@ -24,5 +25,5 @@ private:
 	std::vector<RenderPassAttachment> mAttachments;
 
 	std::shared_ptr<DeviceVK> mDevice = nullptr;
-	VkRenderPass mRenderPass = nullptr;
+	VkRenderPass			  mRenderPass = nullptr;
 };

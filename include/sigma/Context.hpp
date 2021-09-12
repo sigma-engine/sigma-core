@@ -14,6 +14,7 @@ public:
 	std::shared_ptr<Engine> engine() const { return mEngine; }
 
 	std::shared_ptr<Device> device() const { return mDevice; }
+
 private:
 	std::shared_ptr<Engine> mEngine = nullptr;
 	std::shared_ptr<Device> mDevice = nullptr;

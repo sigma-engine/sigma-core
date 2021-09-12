@@ -2,7 +2,8 @@
 
 #include <sigma/Device.hpp>
 
-class DeviceGL : public Device, public std::enable_shared_from_this<DeviceGL> {
+class DeviceGL : public Device, public std::enable_shared_from_this<DeviceGL>
+{
 public:
 	virtual DeviceType type() const override;
 
@@ -20,7 +21,7 @@ public:
 
 	virtual std::shared_ptr<RenderPass> createRenderPass(const RenderPassCreateParams& inParams) override;
 
-	virtual std::shared_ptr<FrameBuffer> createFrameBuffer(const FrameBufferCreateParams &inParams) override;
+	virtual std::shared_ptr<FrameBuffer> createFrameBuffer(const FrameBufferCreateParams& inParams) override;
 
 	virtual std::shared_ptr<DescriptorSetLayout> createDescriptorSetLayout(const std::vector<DescriptorSetLayoutBinding>& inBindings) override;
 
@@ -34,7 +35,7 @@ public:
 
 	virtual std::shared_ptr<UniformBuffer> createUniformBuffer(uint64_t inSize) override;
 
-	virtual std::shared_ptr<Texture2D> createTexture2D(const TextureCreateParams &inParams) override;
+	virtual std::shared_ptr<Texture2D> createTexture2D(const TextureCreateParams& inParams) override;
 
-	virtual std::shared_ptr<Sampler2D> createSampler2D(const SamplerCreateParams &inParams) override;
+	virtual std::shared_ptr<Sampler2D> createSampler2D(const SamplerCreateParams& inParams) override;
 };
