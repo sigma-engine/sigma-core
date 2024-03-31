@@ -18,7 +18,6 @@ find_package(assimp CONFIG REQUIRED)
 
 if (${SIGMA_VULKAN_SUPPORT})
 	find_package(Vulkan REQUIRED)
-	find_package(unofficial-vulkan-memory-allocator CONFIG REQUIRED)
 endif()
 
 include(cmake/GLSL.cmake)
@@ -141,7 +140,6 @@ if (${SIGMA_VULKAN_SUPPORT})
 	target_link_libraries(sigma-core
 	PRIVATE
 		Vulkan::Vulkan
-		unofficial::vulkan-memory-allocator::vulkan-memory-allocator
 	)
 endif()
 

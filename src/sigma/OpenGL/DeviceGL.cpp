@@ -48,10 +48,10 @@ bool DeviceGL::initialize(const std::vector<std::shared_ptr<Surface>>& inSurface
 	CHECK_GL(glGetIntegerv(GL_MINOR_VERSION, &minorVersion));
 
 	SIGMA_INFO("Graphics API: OpenGL");
-	SIGMA_INFO("Vendor: {}", glGetString(GL_VENDOR));
-	SIGMA_INFO("Model: {}", glGetString(GL_RENDERER));
+	SIGMA_INFO("Vendor: {}", (const char *)glGetString(GL_VENDOR));
+	SIGMA_INFO("Model: {}", (const char *)glGetString(GL_RENDERER));
 	SIGMA_INFO("API Version: {}.{}", majorVersion, minorVersion);
-	SIGMA_INFO("Driver Version: {}", glGetString(GL_VERSION));
+	SIGMA_INFO("Driver Version: {}", (const char *)glGetString(GL_VERSION));
 	// TODO: Get total video memory http://nasutechtips.blogspot.com/2011/02/how-to-get-gpu-memory-size-and-usage-in.html
 
 	for (std::size_t i = 0; i < inSurfaces.size(); ++i)
